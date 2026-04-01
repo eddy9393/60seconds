@@ -9,29 +9,38 @@
     body {
       background: #0b0b0b;
       color: white;
-      font-family: Arial;
+      font-family: Arial, sans-serif;
       text-align: center;
-      padding: 40px;
+      padding: 40px 20px;
+      margin: 0;
     }
 
     h1 {
       color: gold;
+      margin-bottom: 10px;
     }
 
     .card {
       background: #151515;
       padding: 30px;
       border-radius: 20px;
-      max-width: 500px;
-      margin: auto;
+      max-width: 560px;
+      margin: 20px auto;
     }
 
     input, textarea {
       width: 100%;
+      box-sizing: border-box;
       padding: 12px;
       margin: 10px 0;
       border-radius: 10px;
       border: none;
+      font-size: 16px;
+    }
+
+    input[type="file"] {
+      background: #fff;
+      color: #000;
     }
 
     button {
@@ -41,79 +50,168 @@
       border-radius: 999px;
       cursor: pointer;
       font-weight: bold;
+      font-size: 15px;
+      margin-top: 8px;
     }
 
     #status {
       margin-top: 15px;
       color: #ccc;
+      min-height: 20px;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    #debug {
+      margin-top: 8px;
+      color: #888;
+      font-size: 12px;
+      min-height: 16px;
+    }
+
+    .link {
+      color: gold;
+      text-decoration: none;
+      display: inline-block;
+      margin-top: 12px;
+    }
+
+    .note {
+      color: #aaa;
+      font-size: 14px;
+      line-height: 1.5;
     }
   </style>
 </head>
 <body>
 
-<h1>Join 60seconds</h1>
+  <h1>Join 60seconds</h1>
+  <p class="note">
+    Upload one track, save it to 60seconds, and make it playable in the radio.
+  </p>
 
-<div class="card">
-  <input id="title" placeholder="Track title" />
-  <input id="artist" placeholder="Artist name" />
-  <input id="file" placeholder="Track URL (mp3 link)" />
-  
-  <button id="submit">Upload Track</button>
+  <div class="card">
+    <input id="title" placeholder="Track title" />
+    <input id="artist" placeholder="Artist name" />
+    <input id="trackFile" type="file" accept=".mp3,audio/mpeg,audio/mp3" />
 
-  <div id="status">Ready</div>
-</div>
+    <button id="submit">Upload Track</button>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <div id="status">Ready</div>
+    <div id="debug"></div>
 
-<script>
-const supabaseClient = window.supabase.createClient(
-  "https://rgoutegbcpjytplqcwze.supabase.co",
-  "sb_publishable_255qyDKS77nMU0pbedfa_A_3hdgtEHh"
-);
+    <a class="link" href="index.html">← Back to homepage</a>
+  </div>
 
-const status = document.getElementById("status");
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-document.getElementById("submit").onclick = async () => {
-  const title = document.getElementById("title").value;
-  const artist = document.getElementById("artist").value;
-  const file = document.getElementById("file").value;
+  <script>
+    const supabaseClient = window.supabase.createClient(
+      "https://rgoutegbcpjytplqcwze.supabase.co",
+      "sb_publishable_255qyDKS77nMU0pbedfa_A_3hdgtEHh"
+    );
 
-  if (!title || !artist || !file) {
-    status.innerText = "Fill all fields";
-    return;
-  }
+    const statusEl = document.getElementById("status");
+    const debugEl = document.getElementById("debug");
 
-  status.innerText = "Uploading...";
+    function setStatus(message, isError = false) {
+      statusEl.textContent = message;
+      statusEl.style.color = isError ? "#ff8a8a" : "#ccc";
+      console.log(message);
+    }
 
-  const { data: userData } = await supabaseClient.auth.getUser();
+    function setDebug(message) {
+      debugEl.textContent = message;
+      console.log("DEBUG:", message);
+    }
 
-  if (!userData.user) {
-    status.innerText = "You must be logged in";
-    return;
-  }
+    document.getElementById("submit").onclick = async () => {
+      const title = document.getElementById("title").value.trim();
+      const artist = document.getElementById("artist").value.trim();
+      const file = document.getElementById("trackFile").files[0];
 
-  const { error } = await supabaseClient
-    .from("tracks")
-    .insert([
-      {
-        title: title,
-        artist: artist,
-        file_url: file,
-        user_id: userData.user.id
+      if (!title || !artist || !file) {
+        setStatus("Please fill in title, artist and choose an mp3 file.", true);
+        return;
       }
-    ]);
 
-  if (error) {
-    status.innerText = "Error: " + error.message;
-  } else {
-    status.innerText = "Track uploaded 🚀";
+      setStatus("Checking login...");
+      setDebug("Checking current user");
 
-    document.getElementById("title").value = "";
-    document.getElementById("artist").value = "";
-    document.getElementById("file").value = "";
-  }
-};
-</script>
+      const { data: userData, error: userError } = await supabaseClient.auth.getUser();
+
+      if (userError) {
+        setStatus("Could not check current user: " + userError.message, true);
+        return;
+      }
+
+      if (!userData.user) {
+        setStatus("You must be logged in before uploading a track.", true);
+        return;
+      }
+
+      const userId = userData.user.id;
+      const safeFileName = `${Date.now()}-${file.name.replace(/\s+/g, "-")}`;
+      const filePath = `${userId}/${safeFileName}`;
+
+      setStatus("Uploading file to Supabase Storage...");
+      setDebug("Uploading to bucket: tracks");
+
+      const { error: uploadError } = await supabaseClient
+        .storage
+        .from("tracks")
+        .upload(filePath, file, {
+          cacheControl: "3600",
+          upsert: false
+        });
+
+      if (uploadError) {
+        setStatus("Upload failed: " + uploadError.message, true);
+        return;
+      }
+
+      setStatus("Getting public file URL...");
+      setDebug("Fetching public URL");
+
+      const { data: publicUrlData } = supabaseClient
+        .storage
+        .from("tracks")
+        .getPublicUrl(filePath);
+
+      const publicUrl = publicUrlData.publicUrl;
+
+      if (!publicUrl) {
+        setStatus("Could not create public URL.", true);
+        return;
+      }
+
+      setStatus("Saving track in database...");
+      setDebug("Inserting row into tracks table");
+
+      const { error: insertError } = await supabaseClient
+        .from("tracks")
+        .insert([
+          {
+            title: title,
+            artist: artist,
+            file_url: publicUrl,
+            user_id: userId
+          }
+        ]);
+
+      if (insertError) {
+        setStatus("Database insert failed: " + insertError.message, true);
+        return;
+      }
+
+      setStatus("Track uploaded successfully 🚀");
+      setDebug("Done");
+
+      document.getElementById("title").value = "";
+      document.getElementById("artist").value = "";
+      document.getElementById("trackFile").value = "";
+    };
+  </script>
 
 </body>
 </html>
