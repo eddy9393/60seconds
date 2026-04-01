@@ -3,135 +3,37 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>60seconds.fm Test 2</title>
+  <title>60seconds hard test</title>
   <style>
     body {
       margin: 0;
-      background: #0b0b0b;
+      background: black;
       color: white;
       font-family: Arial, sans-serif;
       text-align: center;
-      padding: 40px 20px;
+      padding: 40px;
     }
-
-    .box {
-      max-width: 420px;
-      margin: 0 auto;
-      background: #151515;
-      border-radius: 20px;
-      padding: 24px;
-    }
-
-    h1 {
-      color: gold;
-      margin-top: 0;
-    }
-
-    input {
-      width: 100%;
-      box-sizing: border-box;
-      padding: 12px;
-      margin-bottom: 12px;
-      border: none;
-      border-radius: 10px;
-    }
-
+    h1 { color: gold; }
     button {
-      padding: 12px 18px;
+      padding: 14px 20px;
       border: none;
       border-radius: 999px;
       background: gold;
       color: black;
       font-weight: bold;
       cursor: pointer;
-      margin: 6px;
-    }
-
-    #status {
-      margin-top: 16px;
-      min-height: 24px;
-      color: #ddd;
-      white-space: pre-wrap;
-      word-break: break-word;
     }
   </style>
 </head>
 <body>
-  <div class="box">
-    <h1>60seconds.fm</h1>
-
-    <p id="jsLoaded">JavaScript not loaded yet</p>
-
-    <input id="email" type="email" placeholder="Email" />
-    <input id="password" type="password" placeholder="Password" />
-
-    <button id="testBtn" type="button">Test Button</button>
-    <button id="signupBtn" type="button">Sign up</button>
-
-    <div id="status">Waiting...</div>
-  </div>
-
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <h1>HARD TEST 123</h1>
+  <p id="testText">Before script</p>
+  <button onclick="alert('INLINE CLICK WORKS')">Inline test button</button>
 
   <script>
-    const statusEl = document.getElementById("status");
-    const jsLoadedEl = document.getElementById("jsLoaded");
-
-    function setStatus(text, isError = false) {
-      statusEl.textContent = text;
-      statusEl.style.color = isError ? "#ff8a8a" : "#ddd";
-      console.log(text);
-    }
-
-    jsLoadedEl.textContent = "JavaScript loaded";
-    setStatus("Page loaded");
-
-    document.getElementById("testBtn").addEventListener("click", () => {
-      setStatus("Test button works");
-      alert("Button click works");
-    });
-
-    if (!window.supabase) {
-      setStatus("Supabase library failed to load", true);
-      throw new Error("Supabase library missing");
-    }
-
-    const supabase = window.supabase.createClient(
-      "https://rgoutegbcpjytplqcwze.supabase.co",
-      "sb_publishable_255qyDKS77nMU0pbedfa_A_3hdgtEHh"
-    );
-
-    setStatus("Supabase loaded successfully");
-
-    document.getElementById("signupBtn").addEventListener("click", async () => {
-      const email = document.getElementById("email").value.trim();
-      const password = document.getElementById("password").value.trim();
-
-      if (!email || !password) {
-        setStatus("Please enter email and password", true);
-        return;
-      }
-
-      setStatus("Trying signup...");
-
-      try {
-        const result = await supabase.auth.signUp({
-          email,
-          password
-        });
-
-        if (result.error) {
-          setStatus("Signup error: " + result.error.message, true);
-          return;
-        }
-
-        setStatus("Signup request sent. Check your email.");
-        console.log(result);
-      } catch (err) {
-        setStatus("Unexpected error: " + err.message, true);
-        console.error(err);
-      }
-    });
+    document.getElementById("testText").textContent = "JavaScript loaded";
+    document.body.style.background = "darkred";
+    console.log("SCRIPT IS RUNNING");
   </script>
 </body>
 </html>
