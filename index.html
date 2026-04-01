@@ -284,11 +284,12 @@
     const progressFill = document.getElementById("progress");
 
     async function loadTracksFromSupabase() {
-      setDebug("Loading tracks from Supabase...");
+      setDebug("Loading approved tracks from Supabase...");
 
       const { data, error } = await supabaseClient
         .from("tracks")
-        .select("id, title, artist, file_url, created_at")
+        .select("id, title, artist, file_url, status, created_at")
+        .eq("status", "approved")
         .order("created_at", { ascending: false });
 
       if (error) {
@@ -299,7 +300,7 @@
       }
 
       if (!data || data.length === 0) {
-        setDebug("No database tracks found, using fallback");
+        setDebug("No approved tracks found, using fallback");
         tracks = fallbackTracks;
         return;
       }
@@ -308,10 +309,10 @@
         title: track.title,
         artist: track.artist,
         file_url: track.file_url,
-        source: "Supabase"
+        source: "Supabase approved"
       }));
 
-      setDebug(`Loaded ${tracks.length} track(s) from Supabase`);
+      setDebug(`Loaded ${tracks.length} approved track(s) from Supabase`);
     }
 
     function nextTrack() {
