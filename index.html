@@ -16,9 +16,7 @@
       --line: rgba(202, 165, 91, 0.22);
     }
 
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     body {
       margin: 0;
@@ -158,9 +156,9 @@
 
     .controls {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: 1fr 1fr;
       gap: 14px;
-      padding: 22px 26px 28px;
+      padding: 22px 26px 16px;
       background: var(--panel);
     }
 
@@ -181,11 +179,23 @@
       background: #212121;
     }
 
-    .control-btn.primary {
-      color: #0b0b0b;
-      background: var(--gold);
-      border-color: transparent;
-      font-weight: 700;
+    .volume-wrap {
+      padding: 0 26px 28px;
+      background: var(--panel);
+    }
+
+    .volume-label {
+      color: var(--muted);
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 10px;
+    }
+
+    .volume-slider {
+      width: 100%;
+      accent-color: var(--gold);
+      cursor: pointer;
     }
 
     .stats {
@@ -238,8 +248,10 @@
         padding: 22px 18px;
       }
 
-      .controls {
-        padding: 18px;
+      .controls,
+      .volume-wrap {
+        padding-left: 18px;
+        padding-right: 18px;
       }
     }
   </style>
@@ -276,8 +288,20 @@
 
         <div class="controls">
           <button class="control-btn" id="likeBtn">♡ Like</button>
-          <button class="control-btn primary" id="playPauseBtn">Play</button>
           <button class="control-btn" id="skipBtn">Skip ⏭</button>
+        </div>
+
+        <div class="volume-wrap">
+          <div class="volume-label">Volume</div>
+          <input
+            class="volume-slider"
+            id="volumeSlider"
+            type="range"
+            min="0"
+            max="1"
+            step="0.01"
+            value="0.8"
+          />
         </div>
       </div>
     </section>
@@ -304,9 +328,11 @@
     </div>
   </div>
 
-  <audio id="audio"></audio>
+  <audio id="audio" preload="auto"></audio>
 
   <script>
+    const MAX_PLAY_SECONDS = 60;
+
     const tracks = [
       {
         title: "Is It Me",
@@ -325,15 +351,16 @@
       }
     ];
 
-    let currentTrackIndex = 0;
+    let currentTrackIndex = -1;
+    let currentSliceStart = 0;
     let isLiked = false;
 
     const audio = document.getElementById("audio");
     const trackTitle = document.getElementById("trackTitle");
     const artistName = document.getElementById("artistName");
-    const playPauseBtn = document.getElementById("playPauseBtn");
     const skipBtn = document.getElementById("skipBtn");
     const likeBtn = document.getElementById("likeBtn");
+    const volumeSlider = document.getElementById("volumeSlider");
     const progressFill = document.getElementById("progressFill");
     const currentTimeEl = document.getElementById("currentTime");
     const durationEl = document.getElementById("duration");
@@ -347,8 +374,21 @@
       return `${mins}:${secs}`;
     }
 
-    function loadTrack(index) {
-      const track = tracks[index];
+    function getRandomNextIndex() {
+      if (tracks.length === 1) return 0;
+
+      let nextIndex;
+      do {
+        nextIndex = Math.floor(Math.random() * tracks.length);
+      } while (nextIndex === currentTrackIndex);
+
+      return nextIndex;
+    }
+
+    function loadRandomTrack() {
+      currentTrackIndex = getRandomNextIndex();
+      const track = tracks[currentTrackIndex];
+
       trackTitle.textContent = track.title;
       artistName.textContent = track.artist;
       audio.src = track.file;
@@ -361,50 +401,45 @@
       durationEl.textContent = "1:00";
     }
 
-    function playTrack() {
-      audio.play();
-      playPauseBtn.textContent = "Pause";
-    }
-
-    function pauseTrack() {
-      audio.pause();
-      playPauseBtn.textContent = "Play";
+    function startPlayback() {
+      audio.currentTime = 0;
+      currentSliceStart = 0;
+      audio.play().catch(() => {});
     }
 
     function nextTrack() {
-      currentTrackIndex = (currentTrackIndex + 1) % tracks.length;
-      loadTrack(currentTrackIndex);
-      playTrack();
+      loadRandomTrack();
     }
-
-    playPauseBtn.addEventListener("click", () => {
-      if (audio.paused) {
-        playTrack();
-      } else {
-        pauseTrack();
-      }
-    });
-
-    skipBtn.addEventListener("click", () => {
-      nextTrack();
-    });
 
     likeBtn.addEventListener("click", () => {
       isLiked = !isLiked;
       likeBtn.textContent = isLiked ? "♥ Liked" : "♡ Like";
     });
 
+    skipBtn.addEventListener("click", () => {
+      nextTrack();
+    });
+
+    volumeSlider.addEventListener("input", (e) => {
+      audio.volume = Number(e.target.value);
+    });
+
     audio.addEventListener("loadedmetadata", () => {
-      durationEl.textContent = formatTime(audio.duration || 60);
+      startPlayback();
     });
 
     audio.addEventListener("timeupdate", () => {
-      const current = audio.currentTime || 0;
-      const duration = audio.duration || 60;
-      const percent = (current / duration) * 100;
+      const elapsed = audio.currentTime - currentSliceStart;
+      const clampedElapsed = Math.max(0, Math.min(elapsed, MAX_PLAY_SECONDS));
+      const percent = (clampedElapsed / MAX_PLAY_SECONDS) * 100;
 
-      currentTimeEl.textContent = formatTime(current);
+      currentTimeEl.textContent = formatTime(clampedElapsed);
+      durationEl.textContent = "1:00";
       progressFill.style.width = `${percent}%`;
+
+      if (elapsed >= MAX_PLAY_SECONDS) {
+        nextTrack();
+      }
     });
 
     audio.addEventListener("ended", () => {
@@ -427,7 +462,8 @@
       dropsCount.textContent = currentDrops.toLocaleString("en-US");
     }, 5000);
 
-    loadTrack(currentTrackIndex);
+    audio.volume = 0.8;
+    loadRandomTrack();
   </script>
 </body>
 </html>
