@@ -2,438 +2,118 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Join 60seconds.fm</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Join 60seconds</title>
+
   <style>
-    :root {
-      --bg: #0b0b0b;
-      --panel: #151515;
-      --panel-2: #1b1b1b;
-      --text: #f5f1e8;
-      --muted: #b9b0a0;
-      --gold: #caa55b;
-      --gold-soft: rgba(202, 165, 91, 0.18);
-      --line: rgba(202, 165, 91, 0.22);
-      --danger: #d66b6b;
-      --success: #8fcf9c;
-    }
-
-    * {
-      box-sizing: border-box;
-    }
-
     body {
-      margin: 0;
-      background:
-        radial-gradient(circle at top, rgba(202, 165, 91, 0.10), transparent 30%),
-        linear-gradient(180deg, #0a0a0a 0%, #0d0d0d 100%);
-      color: var(--text);
-      font-family: Georgia, "Times New Roman", serif;
-      min-height: 100vh;
-    }
-
-    .container {
-      width: min(980px, calc(100% - 32px));
-      margin: 0 auto;
-    }
-
-    .nav {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 24px 0;
-    }
-
-    .brand {
-      font-size: 28px;
-      font-weight: 700;
-      letter-spacing: 0.4px;
-      color: var(--gold);
-      text-decoration: none;
-    }
-
-    .back-link {
-      color: var(--muted);
-      text-decoration: none;
-      font-size: 15px;
-    }
-
-    .hero {
+      background: #0b0b0b;
+      color: white;
+      font-family: Arial;
       text-align: center;
-      padding: 28px 0 12px;
+      padding: 40px;
     }
 
-    .hero h1 {
-      font-size: clamp(34px, 6vw, 60px);
-      color: var(--gold);
-      margin: 0 0 10px;
-      line-height: 1;
-      font-weight: 600;
-    }
-
-    .hero p {
-      max-width: 760px;
-      margin: 0 auto;
-      color: var(--muted);
-      font-size: 18px;
-      line-height: 1.6;
+    h1 {
+      color: gold;
     }
 
     .card {
-      margin: 32px auto 48px;
-      background: linear-gradient(180deg, #171717 0%, #111111 100%);
-      border: 1px solid var(--line);
-      border-radius: 28px;
-      box-shadow:
-        0 30px 80px rgba(0, 0, 0, 0.45),
-        0 0 0 1px rgba(255,255,255,0.02) inset,
-        0 0 40px var(--gold-soft);
-      overflow: hidden;
-      padding: 28px;
-    }
-
-    .intro-box {
-      background: rgba(255,255,255,0.02);
-      border: 1px solid var(--line);
+      background: #151515;
+      padding: 30px;
       border-radius: 20px;
-      padding: 18px 18px 8px;
-      margin-bottom: 24px;
+      max-width: 500px;
+      margin: auto;
     }
 
-    .intro-box h2 {
-      margin: 0 0 10px;
-      color: var(--gold);
-      font-size: 24px;
-    }
-
-    .intro-box p {
-      margin: 0 0 12px;
-      color: var(--muted);
-      line-height: 1.6;
-      font-size: 16px;
-    }
-
-    .intro-box ul {
-      margin: 0 0 8px 18px;
-      padding: 0;
-      color: var(--text);
-    }
-
-    .intro-box li {
-      margin-bottom: 8px;
-      line-height: 1.5;
-    }
-
-    .form-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 18px;
-    }
-
-    .field {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-
-    .field.full {
-      grid-column: 1 / -1;
-    }
-
-    label {
-      color: var(--muted);
-      font-size: 14px;
-      letter-spacing: 0.4px;
-    }
-
-    input,
-    textarea,
-    select {
+    input, textarea {
       width: 100%;
-      background: #121212;
-      color: var(--text);
-      border: 1px solid var(--line);
-      border-radius: 16px;
-      padding: 14px 16px;
-      font-size: 15px;
-      font-family: inherit;
-      outline: none;
-    }
-
-    textarea {
-      min-height: 130px;
-      resize: vertical;
-    }
-
-    input[type="file"] {
       padding: 12px;
-      background: #121212;
-    }
-
-    .audio-box {
-      background: rgba(255,255,255,0.02);
-      border: 1px solid var(--line);
-      border-radius: 20px;
-      padding: 18px;
-    }
-
-    .audio-preview {
-      margin-top: 12px;
-    }
-
-    .range-wrap {
-      margin-top: 14px;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 14px;
-    }
-
-    .range-field {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-
-    .hint {
-      color: var(--muted);
-      font-size: 13px;
-      line-height: 1.5;
-    }
-
-    .note {
-      color: var(--gold);
-      font-size: 14px;
-      margin-top: 8px;
-    }
-
-    .submit-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 18px;
-      margin-top: 28px;
-      flex-wrap: wrap;
-    }
-
-    .submit-note {
-      color: var(--muted);
-      font-size: 14px;
-      line-height: 1.5;
-      max-width: 520px;
-    }
-
-    .submit-btn {
-      background: var(--gold);
-      color: #0b0b0b;
+      margin: 10px 0;
+      border-radius: 10px;
       border: none;
+    }
+
+    button {
+      background: gold;
+      border: none;
+      padding: 12px 20px;
       border-radius: 999px;
-      padding: 15px 26px;
-      font-size: 16px;
-      font-weight: 700;
       cursor: pointer;
+      font-weight: bold;
     }
 
-    .status {
-      margin-top: 16px;
-      font-size: 14px;
-    }
-
-    .status.success {
-      color: var(--success);
-    }
-
-    .status.error {
-      color: var(--danger);
-    }
-
-    @media (max-width: 760px) {
-      .form-grid,
-      .range-wrap {
-        grid-template-columns: 1fr;
-      }
-
-      .card {
-        padding: 20px;
-      }
+    #status {
+      margin-top: 15px;
+      color: #ccc;
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <nav class="nav">
-      <a class="brand" href="index.html">60seconds.fm</a>
-      <a class="back-link" href="index.html">← Back to radio</a>
-    </nav>
 
-    <section class="hero">
-      <h1>Join 60seconds</h1>
-      <p>
-        Drop your track and claim your minute. Upload one song, choose the best 60 seconds,
-        add your photo, socials and bio, and get heard by a live audience.
-      </p>
-    </section>
+<h1>Join 60seconds</h1>
 
-    <div class="card">
-      <div class="intro-box">
-        <h2>How it works</h2>
-        <p>60seconds.fm is a radio platform for upcoming artists and producers.</p>
-        <ul>
-          <li>You can upload one original track.</li>
-          <li>You choose which 60 seconds of your song get played.</li>
-          <li>Listeners discover your music live through the radio.</li>
-          <li>You can add your artist photo, social link and bio.</li>
-        </ul>
-        <p class="note">Tip: pick the strongest 60 seconds of your track.</p>
-      </div>
+<div class="card">
+  <input id="title" placeholder="Track title" />
+  <input id="artist" placeholder="Artist name" />
+  <input id="file" placeholder="Track URL (mp3 link)" />
+  
+  <button id="submit">Upload Track</button>
 
-      <form id="joinForm">
-        <div class="form-grid">
-          <div class="field">
-            <label for="artistName">Artist name</label>
-            <input id="artistName" name="artistName" type="text" placeholder="Your artist name" required />
-          </div>
+  <div id="status">Ready</div>
+</div>
 
-          <div class="field">
-            <label for="trackTitle">Track title</label>
-            <input id="trackTitle" name="trackTitle" type="text" placeholder="Your track title" required />
-          </div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-          <div class="field full">
-            <label for="artistPhoto">Artist photo</label>
-            <input id="artistPhoto" name="artistPhoto" type="file" accept="image/*" required />
-            <div class="hint">Upload one clear artist image.</div>
-          </div>
+<script>
+const supabaseClient = window.supabase.createClient(
+  "https://rgoutegbcpjytplqcwze.supabase.co",
+  "sb_publishable_255qyDKS77nMU0pbedfa_A_3hdgtEHh"
+);
 
-          <div class="field full">
-            <label for="trackFile">Track upload</label>
-            <input id="trackFile" name="trackFile" type="file" accept="audio/*" required />
-            <div class="hint">Upload your song file. In this demo, the audio stays local in the browser.</div>
-          </div>
+const status = document.getElementById("status");
 
-          <div class="field full">
-            <div class="audio-box">
-              <label>Choose your 60-second radio moment</label>
-              <audio id="audioPreview" class="audio-preview" controls style="width: 100%; margin-top: 12px;"></audio>
+document.getElementById("submit").onclick = async () => {
+  const title = document.getElementById("title").value;
+  const artist = document.getElementById("artist").value;
+  const file = document.getElementById("file").value;
 
-              <div class="range-wrap">
-                <div class="range-field">
-                  <label for="startTime">Start second</label>
-                  <input id="startTime" type="number" min="0" step="1" value="0" />
-                </div>
+  if (!title || !artist || !file) {
+    status.innerText = "Fill all fields";
+    return;
+  }
 
-                <div class="range-field">
-                  <label for="endTime">End second</label>
-                  <input id="endTime" type="number" min="60" step="1" value="60" />
-                </div>
-              </div>
+  status.innerText = "Uploading...";
 
-              <div class="hint" id="audioHint">
-                Upload a track first. Then choose the 60-second section you want on the radio.
-              </div>
-            </div>
-          </div>
+  const { data: userData } = await supabaseClient.auth.getUser();
 
-          <div class="field full">
-            <label for="socialLink">Social or streaming link</label>
-            <input id="socialLink" name="socialLink" type="url" placeholder="https://instagram.com/... or Spotify link" />
-          </div>
+  if (!userData.user) {
+    status.innerText = "You must be logged in";
+    return;
+  }
 
-          <div class="field full">
-            <label for="bioText">Bio</label>
-            <textarea id="bioText" name="bioText" placeholder="Tell listeners who you are in a few lines..."></textarea>
-          </div>
-        </div>
-
-        <div class="submit-row">
-          <div class="submit-note">
-            This page is the first front-end version. Later we can connect this to a real database and store uploads for review.
-          </div>
-          <button class="submit-btn" type="submit">Submit Track</button>
-        </div>
-
-        <div id="formStatus" class="status"></div>
-      </form>
-    </div>
-  </div>
-
-  <script>
-    const trackFileInput = document.getElementById("trackFile");
-    const audioPreview = document.getElementById("audioPreview");
-    const startTimeInput = document.getElementById("startTime");
-    const endTimeInput = document.getElementById("endTime");
-    const audioHint = document.getElementById("audioHint");
-    const joinForm = document.getElementById("joinForm");
-    const formStatus = document.getElementById("formStatus");
-
-    let uploadedAudioDuration = 0;
-    let uploadedAudioUrl = null;
-
-    trackFileInput.addEventListener("change", (event) => {
-      const file = event.target.files[0];
-      if (!file) return;
-
-      if (uploadedAudioUrl) {
-        URL.revokeObjectURL(uploadedAudioUrl);
+  const { error } = await supabaseClient
+    .from("tracks")
+    .insert([
+      {
+        title: title,
+        artist: artist,
+        file_url: file,
+        user_id: userData.user.id
       }
+    ]);
 
-      uploadedAudioUrl = URL.createObjectURL(file);
-      audioPreview.src = uploadedAudioUrl;
-      audioPreview.load();
+  if (error) {
+    status.innerText = "Error: " + error.message;
+  } else {
+    status.innerText = "Track uploaded 🚀";
 
-      audioPreview.onloadedmetadata = () => {
-        uploadedAudioDuration = Math.floor(audioPreview.duration || 0);
+    document.getElementById("title").value = "";
+    document.getElementById("artist").value = "";
+    document.getElementById("file").value = "";
+  }
+};
+</script>
 
-        startTimeInput.max = Math.max(uploadedAudioDuration - 60, 0);
-        startTimeInput.value = 0;
-        endTimeInput.value = Math.min(60, uploadedAudioDuration);
-
-        audioHint.textContent =
-          uploadedAudioDuration >= 60
-            ? `Track loaded. Total length: ${uploadedAudioDuration} seconds. Choose exactly 60 seconds.`
-            : `This track is shorter than 60 seconds (${uploadedAudioDuration} seconds).`;
-      };
-    });
-
-    startTimeInput.addEventListener("input", () => {
-      const start = Number(startTimeInput.value || 0);
-      endTimeInput.value = start + 60;
-    });
-
-    endTimeInput.addEventListener("input", () => {
-      const end = Number(endTimeInput.value || 60);
-      startTimeInput.value = Math.max(0, end - 60);
-    });
-
-    joinForm.addEventListener("submit", (event) => {
-      event.preventDefault();
-
-      const artistName = document.getElementById("artistName").value.trim();
-      const trackTitle = document.getElementById("trackTitle").value.trim();
-      const start = Number(startTimeInput.value || 0);
-      const end = Number(endTimeInput.value || 0);
-
-      if (!artistName || !trackTitle) {
-        formStatus.className = "status error";
-        formStatus.textContent = "Please fill in your artist name and track title.";
-        return;
-      }
-
-      if (!trackFileInput.files[0]) {
-        formStatus.className = "status error";
-        formStatus.textContent = "Please upload a track.";
-        return;
-      }
-
-      if (end - start !== 60) {
-        formStatus.className = "status error";
-        formStatus.textContent = "Your selected radio section must be exactly 60 seconds.";
-        return;
-      }
-
-      formStatus.className = "status success";
-      formStatus.textContent =
-        "Demo complete: your track details are ready. Next step is connecting this page to real storage and submissions.";
-    });
-  </script>
 </body>
 </html>
