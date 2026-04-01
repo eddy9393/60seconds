@@ -1,254 +1,238 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <meta http-equiv="Content-Style-Type" content="text/css">
-  <title></title>
-  <meta name="Generator" content="Cocoa HTML Writer">
-  <meta name="CocoaVersion" content="2575.7">
-  <style type="text/css">
-    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
-    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>60seconds Admin</title>
+
+  <style>
+    body {
+      margin: 0;
+      background: #0b0b0b;
+      color: white;
+      font-family: Arial, sans-serif;
+      padding: 30px 20px;
+      text-align: center;
+    }
+
+    h1 {
+      color: gold;
+      margin-bottom: 10px;
+    }
+
+    .top-links {
+      margin-bottom: 20px;
+    }
+
+    .top-links a {
+      display: inline-block;
+      margin: 0 6px;
+      color: gold;
+      text-decoration: none;
+      border: 1px solid rgba(255, 215, 0, 0.4);
+      padding: 10px 16px;
+      border-radius: 999px;
+    }
+
+    .card {
+      background: #151515;
+      border-radius: 20px;
+      padding: 24px;
+      max-width: 900px;
+      margin: 20px auto;
+      text-align: left;
+    }
+
+    .track {
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 16px;
+      padding: 18px;
+      margin-bottom: 16px;
+      background: rgba(255,255,255,0.02);
+    }
+
+    .track h3 {
+      margin: 0 0 6px;
+      color: gold;
+    }
+
+    .track p {
+      margin: 6px 0;
+      color: #ddd;
+    }
+
+    audio {
+      width: 100%;
+      margin: 12px 0;
+    }
+
+    button {
+      padding: 12px 18px;
+      border-radius: 999px;
+      border: none;
+      cursor: pointer;
+      margin-right: 8px;
+      font-weight: bold;
+    }
+
+    .gold {
+      background: gold;
+      color: black;
+    }
+
+    .danger {
+      background: #a83333;
+      color: white;
+    }
+
+    #status, #debug {
+      max-width: 900px;
+      margin: 12px auto;
+      min-height: 20px;
+    }
+
+    #status {
+      color: #ddd;
+    }
+
+    #debug {
+      color: #888;
+      font-size: 13px;
+    }
+
+    .empty {
+      color: #999;
+      text-align: center;
+      padding: 20px 0;
+    }
   </style>
 </head>
 <body>
-<p class="p1">&lt;!DOCTYPE html&gt;</p>
-<p class="p1">&lt;html lang="en"&gt;</p>
-<p class="p1">&lt;head&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;meta charset="UTF-8" /&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;meta name="viewport" content="width=device-width, initial-scale=1.0" /&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;title&gt;60seconds Admin&lt;/title&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;style&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>body {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>margin: 0;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>background: #0b0b0b;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>color: white;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>font-family: Arial, sans-serif;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>padding: 30px 20px;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>text-align: center;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>h1 {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>color: gold;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>margin-bottom: 10px;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>.top-links {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>margin-bottom: 20px;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>.top-links a {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>display: inline-block;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>margin: 0 6px;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>color: gold;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>text-decoration: none;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>border: 1px solid rgba(255, 215, 0, 0.4);</p>
-<p class="p1"><span class="Apple-converted-space">      </span>padding: 10px 16px;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>border-radius: 999px;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>.card {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>background: #151515;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>border-radius: 20px;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>padding: 24px;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>max-width: 900px;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>margin: 20px auto;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>text-align: left;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>.track {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>border: 1px solid rgba(255,255,255,0.08);</p>
-<p class="p1"><span class="Apple-converted-space">      </span>border-radius: 16px;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>padding: 18px;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>margin-bottom: 16px;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>background: rgba(255,255,255,0.02);</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>.track h3 {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>margin: 0 0 6px;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>color: gold;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>.track p {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>margin: 6px 0;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>color: #ddd;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>audio {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>width: 100%;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>margin: 12px 0;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>button {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>padding: 12px 18px;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>border-radius: 999px;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>border: none;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>cursor: pointer;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>margin-right: 8px;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>font-weight: bold;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>.gold {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>background: gold;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>color: black;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>.danger {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>background: #a83333;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>color: white;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>#status, #debug {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>max-width: 900px;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>margin: 12px auto;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>min-height: 20px;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>#status {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>color: #ddd;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>#debug {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>color: #888;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>font-size: 13px;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>.empty {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>color: #999;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>text-align: center;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>padding: 20px 0;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;/style&gt;</p>
-<p class="p1">&lt;/head&gt;</p>
-<p class="p1">&lt;body&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;h1&gt;60seconds Admin&lt;/h1&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;div class="top-links"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;a href="index.html"&gt;Homepage&lt;/a&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;a href="join.html"&gt;Join page&lt;/a&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;/div&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;div id="status"&gt;Loading pending tracks...&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;div id="debug"&gt;&lt;/div&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;div class="card"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;div id="trackList"&gt;&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;/div&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"&gt;&lt;/script&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;script&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>const supabaseClient = window.supabase.createClient(</p>
-<p class="p1"><span class="Apple-converted-space">      </span>"https://rgoutegbcpjytplqcwze.supabase.co",</p>
-<p class="p1"><span class="Apple-converted-space">      </span>"sb_publishable_255qyDKS77nMU0pbedfa_A_3hdgtEHh"</p>
-<p class="p1"><span class="Apple-converted-space">    </span>);</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>const statusEl = document.getElementById("status");</p>
-<p class="p1"><span class="Apple-converted-space">    </span>const debugEl = document.getElementById("debug");</p>
-<p class="p1"><span class="Apple-converted-space">    </span>const trackListEl = document.getElementById("trackList");</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>function setStatus(msg, isError = false) {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>statusEl.textContent = msg;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>statusEl.style.color = isError ? "#ff8a8a" : "#ddd";</p>
-<p class="p1"><span class="Apple-converted-space">      </span>console.log(msg);</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>function setDebug(msg) {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>debugEl.textContent = msg;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>console.log("DEBUG:", msg);</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>async function loadPendingTracks() {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>setDebug("Loading pending tracks from Supabase...");</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">      </span>const { data, error } = await supabaseClient</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.from("tracks")</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.select("id, title, artist, file_url, status, created_at")</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.eq("status", "pending")</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.order("created_at", { ascending: false });</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">      </span>if (error) {</p>
-<p class="p1"><span class="Apple-converted-space">        </span>setStatus("Error loading tracks: " + error.message, true);</p>
-<p class="p1"><span class="Apple-converted-space">        </span>return;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">      </span>renderTracks(data || []);</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>function renderTracks(tracks) {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>trackListEl.innerHTML = "";</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">      </span>if (!tracks.length) {</p>
-<p class="p1"><span class="Apple-converted-space">        </span>trackListEl.innerHTML = `&lt;div class="empty"&gt;No pending tracks right now.&lt;/div&gt;`;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>setStatus("No pending tracks found.");</p>
-<p class="p1"><span class="Apple-converted-space">        </span>return;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">      </span>setStatus(`${tracks.length} pending track(s) found.`);</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">      </span>tracks.forEach(track =&gt; {</p>
-<p class="p1"><span class="Apple-converted-space">        </span>const div = document.createElement("div");</p>
-<p class="p1"><span class="Apple-converted-space">        </span>div.className = "track";</p>
-<p class="p1"><span class="Apple-converted-space">        </span>div.innerHTML = `</p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;h3&gt;${escapeHtml(track.title)}&lt;/h3&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;p&gt;&lt;strong&gt;Artist:&lt;/strong&gt; ${escapeHtml(track.artist)}&lt;/p&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;p&gt;&lt;strong&gt;Status:&lt;/strong&gt; ${escapeHtml(track.status)}&lt;/p&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;p&gt;&lt;strong&gt;ID:&lt;/strong&gt; ${escapeHtml(track.id)}&lt;/p&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;audio controls src="${track.file_url}"&gt;&lt;/audio&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;button class="gold" data-id="${track.id}" data-action="approve"&gt;Approve&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>`;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>trackListEl.appendChild(div);</p>
-<p class="p1"><span class="Apple-converted-space">      </span>});</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">      </span>wireButtons();</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>function wireButtons() {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>const buttons = document.querySelectorAll("button[data-action='approve']");</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">      </span>buttons.forEach(button =&gt; {</p>
-<p class="p1"><span class="Apple-converted-space">        </span>button.addEventListener("click", async () =&gt; {</p>
-<p class="p1"><span class="Apple-converted-space">          </span>const id = button.getAttribute("data-id");</p>
-<p class="p1"><span class="Apple-converted-space">          </span>await approveTrack(id);</p>
-<p class="p1"><span class="Apple-converted-space">        </span>});</p>
-<p class="p1"><span class="Apple-converted-space">      </span>});</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>async function approveTrack(trackId) {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>setStatus("Approving track...");</p>
-<p class="p1"><span class="Apple-converted-space">      </span>setDebug("Updating status to approved for track " + trackId);</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">      </span>const { error } = await supabaseClient</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.from("tracks")</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.update({ status: "approved" })</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.eq("id", trackId);</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">      </span>if (error) {</p>
-<p class="p1"><span class="Apple-converted-space">        </span>setStatus("Approve failed: " + error.message, true);</p>
-<p class="p1"><span class="Apple-converted-space">        </span>return;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">      </span>setStatus("Track approved ✅");</p>
-<p class="p1"><span class="Apple-converted-space">      </span>await loadPendingTracks();</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>function escapeHtml(str) {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>return String(str)</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.replaceAll("&amp;", "&amp;amp;")</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.replaceAll("&lt;", "&amp;lt;")</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.replaceAll("&gt;", "&amp;gt;")</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.replaceAll('"', "&amp;quot;")</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.replaceAll("'", "&amp;#039;");</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>loadPendingTracks();</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;/script&gt;</p>
-<p class="p2"><br></p>
-<p class="p1">&lt;/body&gt;</p>
-<p class="p1">&lt;/html&gt;</p>
+
+  <h1>60seconds Admin</h1>
+
+  <div class="top-links">
+    <a href="index.html">Homepage</a>
+    <a href="join.html">Join page</a>
+  </div>
+
+  <div id="status">Loading pending tracks...</div>
+  <div id="debug"></div>
+
+  <div class="card">
+    <div id="trackList"></div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <script>
+    const supabaseClient = window.supabase.createClient(
+      "https://rgoutegbcpjytplqcwze.supabase.co",
+      "sb_publishable_255qyDKS77nMU0pbedfa_A_3hdgtEHh"
+    );
+
+    const statusEl = document.getElementById("status");
+    const debugEl = document.getElementById("debug");
+    const trackListEl = document.getElementById("trackList");
+
+    function setStatus(msg, isError = false) {
+      statusEl.textContent = msg;
+      statusEl.style.color = isError ? "#ff8a8a" : "#ddd";
+      console.log(msg);
+    }
+
+    function setDebug(msg) {
+      debugEl.textContent = msg;
+      console.log("DEBUG:", msg);
+    }
+
+    async function loadPendingTracks() {
+      setDebug("Loading pending tracks from Supabase...");
+
+      const { data, error } = await supabaseClient
+        .from("tracks")
+        .select("id, title, artist, file_url, status, created_at")
+        .eq("status", "pending")
+        .order("created_at", { ascending: false });
+
+      if (error) {
+        setStatus("Error loading tracks: " + error.message, true);
+        return;
+      }
+
+      renderTracks(data || []);
+    }
+
+    function renderTracks(tracks) {
+      trackListEl.innerHTML = "";
+
+      if (!tracks.length) {
+        trackListEl.innerHTML = `<div class="empty">No pending tracks right now.</div>`;
+        setStatus("No pending tracks found.");
+        return;
+      }
+
+      setStatus(`${tracks.length} pending track(s) found.`);
+
+      tracks.forEach(track => {
+        const div = document.createElement("div");
+        div.className = "track";
+        div.innerHTML = `
+          <h3>${escapeHtml(track.title)}</h3>
+          <p><strong>Artist:</strong> ${escapeHtml(track.artist)}</p>
+          <p><strong>Status:</strong> ${escapeHtml(track.status)}</p>
+          <p><strong>ID:</strong> ${escapeHtml(track.id)}</p>
+          <audio controls src="${track.file_url}"></audio>
+          <div>
+            <button class="gold" data-id="${track.id}" data-action="approve">Approve</button>
+          </div>
+        `;
+        trackListEl.appendChild(div);
+      });
+
+      wireButtons();
+    }
+
+    function wireButtons() {
+      const buttons = document.querySelectorAll("button[data-action='approve']");
+
+      buttons.forEach(button => {
+        button.addEventListener("click", async () => {
+          const id = button.getAttribute("data-id");
+          await approveTrack(id);
+        });
+      });
+    }
+
+    async function approveTrack(trackId) {
+      setStatus("Approving track...");
+      setDebug("Updating status to approved for track " + trackId);
+
+      const { error } = await supabaseClient
+        .from("tracks")
+        .update({ status: "approved" })
+        .eq("id", trackId);
+
+      if (error) {
+        setStatus("Approve failed: " + error.message, true);
+        return;
+      }
+
+      setStatus("Track approved ✅");
+      await loadPendingTracks();
+    }
+
+    function escapeHtml(str) {
+      return String(str)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    loadPendingTracks();
+  </script>
+
 </body>
 </html>
