@@ -6,93 +6,57 @@
 <title>60seconds.fm</title>
 
 <style>
-:root {
-  --bg: #0b0b0b;
-  --panel: #151515;
-  --panel-2: #1b1b1b;
-  --text: #f5f1e8;
-  --muted: #b9b0a0;
-  --gold: #caa55b;
-  --line: rgba(202, 165, 91, 0.22);
-}
-
 body {
   margin: 0;
   background: #0b0b0b;
-  color: var(--text);
-  font-family: Georgia, serif;
+  color: white;
+  font-family: Arial, sans-serif;
+  text-align: center;
 }
 
 .container {
-  width: min(1100px, calc(100% - 32px));
-  margin: 0 auto;
+  max-width: 800px;
+  margin: auto;
+  padding: 20px;
 }
 
-.nav {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 24px 0;
+h1 {
+  color: gold;
 }
 
-.brand {
-  color: var(--gold);
-  font-size: 26px;
-  font-weight: bold;
+.card {
+  background: #151515;
+  padding: 25px;
+  border-radius: 20px;
+  margin-top: 20px;
 }
 
-.nav-btn {
-  text-decoration: none;
-  color: var(--gold);
-  border: 1px solid var(--line);
-  padding: 10px 16px;
+button {
+  padding: 12px 20px;
   border-radius: 999px;
-}
-
-.hero {
-  text-align: center;
-  margin-top: 40px;
-}
-
-.hero h1 {
-  color: var(--gold);
-  font-size: 50px;
-}
-
-.radio {
-  margin: 60px auto;
-  max-width: 500px;
-  background: var(--panel);
-  border-radius: 24px;
-  padding: 30px;
-  text-align: center;
-}
-
-.hidden {
-  display: none;
-}
-
-.start-btn {
-  background: var(--gold);
   border: none;
-  padding: 16px 24px;
+  cursor: pointer;
+  margin: 5px;
+}
+
+.gold {
+  background: gold;
+  color: black;
   font-weight: bold;
-  cursor: pointer;
-  border-radius: 999px;
 }
 
-.track-title {
-  font-size: 26px;
+.outline {
+  border: 1px solid gold;
+  background: transparent;
+  color: gold;
 }
 
-.artist {
-  color: var(--gold);
-}
-
-.controls button {
-  margin: 10px;
-  padding: 10px 20px;
-  cursor: pointer;
+input {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 10px;
+  border: none;
 }
 
 .progress {
@@ -101,14 +65,10 @@ body {
   margin: 10px 0;
 }
 
-.progress-fill {
+.fill {
   height: 100%;
   width: 0%;
   background: gold;
-}
-
-.volume {
-  width: 100%;
 }
 </style>
 </head>
@@ -117,38 +77,46 @@ body {
 
 <div class="container">
 
-<div class="nav">
-  <div class="brand">60seconds.fm</div>
-  <a href="join.html" class="nav-btn">Join 60seconds</a>
-</div>
+<h1>60seconds.fm</h1>
 
-<div class="hero">
-  <h1>Discover music in 60 seconds</h1>
-</div>
+<!-- AUTH -->
+<div class="card">
+  <div id="loggedOut">
+    <h3>Join 60seconds</h3>
+    <input id="email" placeholder="Email">
+    <input id="password" type="password" placeholder="Password">
 
-<div class="radio">
-
-  <div id="startScreen">
-    <p>Ready to discover new music?</p>
-    <button class="start-btn" id="startBtn">Start Radio</button>
+    <button class="gold" id="signup">Sign up</button>
+    <button class="outline" id="login">Log in</button>
   </div>
 
-  <div id="player" class="hidden">
-    <div class="track-title" id="trackTitle"></div>
-    <div class="artist" id="artist"></div>
+  <div id="loggedIn" style="display:none;">
+    <p id="user"></p>
+    <button class="gold" id="logout">Log out</button>
+  </div>
 
-    <div id="time">0:00 / 1:00</div>
+  <p id="status"></p>
+</div>
+
+<!-- RADIO -->
+<div class="card">
+
+  <div id="startScreen">
+    <button class="gold" id="start">Start Radio</button>
+  </div>
+
+  <div id="player" style="display:none;">
+    <h2 id="title"></h2>
+    <p id="artist"></p>
 
     <div class="progress">
-      <div class="progress-fill" id="progressFill"></div>
+      <div class="fill" id="progress"></div>
     </div>
 
-    <div class="controls">
-      <button id="likeBtn">♡ Like</button>
-      <button id="skipBtn">Skip ⏭</button>
-    </div>
+    <button id="skip">Skip</button>
 
-    <input type="range" id="volume" class="volume" min="0" max="1" step="0.01" value="0.8">
+    <br><br>
+    <input type="range" id="volume" min="0" max="1" step="0.01">
   </div>
 
 </div>
@@ -157,9 +125,68 @@ body {
 
 <audio id="audio"></audio>
 
-<script>
-const MAX = 60;
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
+<script>
+// 🔑 SUPABASE (JOUW GEGEVENS)
+const supabase = window.supabase.createClient(
+  "https://rgoutegbcpjytplqcwze.supabase.co",
+  "sb_publishable_255qyDKS77nMU0pbedfa_A_3hdgtEHh"
+);
+
+// AUTH ELEMENTS
+const email = document.getElementById("email");
+const password = document.getElementById("password");
+const status = document.getElementById("status");
+
+const loggedOut = document.getElementById("loggedOut");
+const loggedIn = document.getElementById("loggedIn");
+const userText = document.getElementById("user");
+
+// AUTH STATE
+async function updateUser() {
+  const { data } = await supabase.auth.getUser();
+
+  if (data.user) {
+    loggedOut.style.display = "none";
+    loggedIn.style.display = "block";
+    userText.textContent = "Logged in as " + data.user.email;
+  } else {
+    loggedOut.style.display = "block";
+    loggedIn.style.display = "none";
+  }
+}
+
+// SIGN UP
+document.getElementById("signup").onclick = async () => {
+  const { error } = await supabase.auth.signUp({
+    email: email.value,
+    password: password.value
+  });
+
+  status.textContent = error ? error.message : "Check your email to confirm!";
+};
+
+// LOGIN
+document.getElementById("login").onclick = async () => {
+  const { error } = await supabase.auth.signInWithPassword({
+    email: email.value,
+    password: password.value
+  });
+
+  status.textContent = error ? error.message : "Logged in!";
+  updateUser();
+};
+
+// LOGOUT
+document.getElementById("logout").onclick = async () => {
+  await supabase.auth.signOut();
+  updateUser();
+};
+
+updateUser();
+
+// RADIO
 const tracks = [
   { title: "Is It Me", artist: "Eddy Donato", file: "track1.mp3" },
   { title: "ff in me vibe", artist: "EARV", file: "track2.mp3" },
@@ -167,63 +194,36 @@ const tracks = [
 ];
 
 let current = -1;
-
 const audio = document.getElementById("audio");
-const startBtn = document.getElementById("startBtn");
-const startScreen = document.getElementById("startScreen");
-const player = document.getElementById("player");
 
-const title = document.getElementById("trackTitle");
-const artist = document.getElementById("artist");
-const progress = document.getElementById("progressFill");
-const time = document.getElementById("time");
-const volume = document.getElementById("volume");
-
-function rand() {
-  let i;
-  do {
-    i = Math.floor(Math.random() * tracks.length);
-  } while (i === current);
-  return i;
-}
-
-function load() {
-  current = rand();
+function nextTrack() {
+  current = Math.floor(Math.random() * tracks.length);
   const t = tracks[current];
-  title.textContent = t.title;
-  artist.textContent = t.artist;
+
+  document.getElementById("title").textContent = t.title;
+  document.getElementById("artist").textContent = t.artist;
+
   audio.src = t.file;
-  audio.load();
-}
-
-function next() {
-  load();
-}
-
-startBtn.onclick = () => {
-  startScreen.classList.add("hidden");
-  player.classList.remove("hidden");
-  load();
-};
-
-audio.onloadedmetadata = () => {
-  audio.currentTime = 0;
   audio.play();
+}
+
+document.getElementById("start").onclick = () => {
+  document.getElementById("startScreen").style.display = "none";
+  document.getElementById("player").style.display = "block";
+  nextTrack();
 };
+
+document.getElementById("skip").onclick = nextTrack;
 
 audio.ontimeupdate = () => {
-  let t = Math.min(audio.currentTime, MAX);
-  progress.style.width = (t / MAX * 100) + "%";
-  time.textContent = Math.floor(t/60)+":"+(Math.floor(t%60)).toString().padStart(2,"0")+" / 1:00";
+  const max = 60;
+  const t = Math.min(audio.currentTime, max);
+  document.getElementById("progress").style.width = (t/max*100)+"%";
 
-  if (audio.currentTime >= MAX) next();
+  if (audio.currentTime >= max) nextTrack();
 };
 
-audio.onended = next;
-
-document.getElementById("skipBtn").onclick = next;
-
-volume.oninput = e => {
+document.getElementById("volume").oninput = e => {
   audio.volume = e.target.value;
 };
 
@@ -231,13 +231,4 @@ audio.volume = 0.8;
 </script>
 
 </body>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-<script>
-const supabaseUrl = "https://rgoutegbcpjytplqcwze.supabase.co";
-const supabaseKey = "sb_publishable_255qyDKS77nMU0pbedfa_A_3hdgtEHh";
-
-const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
-  
-</script>
 </html>
