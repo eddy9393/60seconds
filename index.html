@@ -1,518 +1,234 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>60seconds.fm</title>
-  <style>
-    :root {
-      --bg: #0b0b0b;
-      --panel: #151515;
-      --panel-2: #1b1b1b;
-      --text: #f5f1e8;
-      --muted: #b9b0a0;
-      --gold: #caa55b;
-      --gold-soft: rgba(202, 165, 91, 0.18);
-      --line: rgba(202, 165, 91, 0.22);
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>60seconds.fm</title>
 
-    * { box-sizing: border-box; }
+<style>
+:root {
+  --bg: #0b0b0b;
+  --panel: #151515;
+  --panel-2: #1b1b1b;
+  --text: #f5f1e8;
+  --muted: #b9b0a0;
+  --gold: #caa55b;
+  --line: rgba(202, 165, 91, 0.22);
+}
 
-    body {
-      margin: 0;
-      background:
-        radial-gradient(circle at top, rgba(202, 165, 91, 0.10), transparent 30%),
-        linear-gradient(180deg, #0a0a0a 0%, #0d0d0d 100%);
-      color: var(--text);
-      font-family: Georgia, "Times New Roman", serif;
-      min-height: 100vh;
-    }
+body {
+  margin: 0;
+  background: #0b0b0b;
+  color: var(--text);
+  font-family: Georgia, serif;
+}
 
-    .container {
-      width: min(1100px, calc(100% - 32px));
-      margin: 0 auto;
-    }
+.container {
+  width: min(1100px, calc(100% - 32px));
+  margin: 0 auto;
+}
 
-    .nav {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 24px 0;
-    }
+.nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px 0;
+}
 
-    .brand {
-      font-size: 28px;
-      font-weight: 700;
-      letter-spacing: 0.4px;
-      color: var(--gold);
-    }
+.brand {
+  color: var(--gold);
+  font-size: 26px;
+  font-weight: bold;
+}
 
-    .nav-btn {
-      background: transparent;
-      color: var(--gold);
-      border: 1px solid var(--line);
-      border-radius: 999px;
-      padding: 12px 18px;
-      cursor: pointer;
-      font-size: 15px;
-    }
+.nav-btn {
+  text-decoration: none;
+  color: var(--gold);
+  border: 1px solid var(--line);
+  padding: 10px 16px;
+  border-radius: 999px;
+}
 
-    .hero {
-      text-align: center;
-      padding: 32px 0 24px;
-    }
+.hero {
+  text-align: center;
+  margin-top: 40px;
+}
 
-    .hero h1 {
-      font-size: clamp(38px, 6vw, 72px);
-      line-height: 0.98;
-      margin: 0 0 12px;
-      color: var(--gold);
-      font-weight: 600;
-    }
+.hero h1 {
+  color: var(--gold);
+  font-size: 50px;
+}
 
-    .hero p {
-      margin: 0;
-      color: var(--muted);
-      font-size: 20px;
-    }
+.radio {
+  margin: 60px auto;
+  max-width: 500px;
+  background: var(--panel);
+  border-radius: 24px;
+  padding: 30px;
+  text-align: center;
+}
 
-    .radio-wrap {
-      display: flex;
-      justify-content: center;
-      padding: 42px 0 28px;
-    }
+.hidden {
+  display: none;
+}
 
-    .radio {
-      width: min(760px, 100%);
-      background: linear-gradient(180deg, #171717 0%, #111111 100%);
-      border: 1px solid var(--line);
-      border-radius: 32px;
-      box-shadow:
-        0 30px 80px rgba(0, 0, 0, 0.45),
-        0 0 0 1px rgba(255,255,255,0.02) inset,
-        0 0 40px var(--gold-soft);
-      overflow: hidden;
-    }
+.start-btn {
+  background: var(--gold);
+  border: none;
+  padding: 16px 24px;
+  font-weight: bold;
+  cursor: pointer;
+  border-radius: 999px;
+}
 
-    .speaker {
-      height: 92px;
-      background:
-        radial-gradient(circle, rgba(202,165,91,0.08) 1px, transparent 1px);
-      background-size: 12px 12px;
-      border-bottom: 1px solid var(--line);
-    }
+.track-title {
+  font-size: 26px;
+}
 
-    .display {
-      padding: 26px;
-      background: linear-gradient(180deg, #131313 0%, #0f0f0f 100%);
-      border-bottom: 1px solid var(--line);
-      text-align: center;
-      min-height: 220px;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-    }
+.artist {
+  color: var(--gold);
+}
 
-    .now-playing {
-      color: var(--muted);
-      font-size: 13px;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      margin-bottom: 12px;
-    }
+.controls button {
+  margin: 10px;
+  padding: 10px 20px;
+  cursor: pointer;
+}
 
-    .track-title {
-      font-size: clamp(28px, 5vw, 42px);
-      line-height: 1.05;
-      margin: 0 0 6px;
-      color: var(--text);
-    }
+.progress {
+  height: 8px;
+  background: #333;
+  margin: 10px 0;
+}
 
-    .artist-name {
-      color: var(--gold);
-      font-size: 20px;
-      margin-bottom: 22px;
-    }
+.progress-fill {
+  height: 100%;
+  width: 0%;
+  background: gold;
+}
 
-    .placeholder {
-      color: var(--muted);
-      font-size: 22px;
-      margin-bottom: 24px;
-    }
-
-    .start-btn {
-      background: var(--gold);
-      color: #0b0b0b;
-      border: none;
-      border-radius: 999px;
-      padding: 16px 28px;
-      font-size: 18px;
-      font-weight: 700;
-      cursor: pointer;
-      align-self: center;
-    }
-
-    .progress-row {
-      display: grid;
-      grid-template-columns: 56px 1fr 56px;
-      gap: 14px;
-      align-items: center;
-      color: var(--muted);
-      font-size: 14px;
-    }
-
-    .progress {
-      position: relative;
-      height: 10px;
-      border-radius: 999px;
-      background: #262626;
-      overflow: hidden;
-    }
-
-    .progress-fill {
-      width: 0%;
-      height: 100%;
-      background: linear-gradient(90deg, #a47a32, #d8b26c);
-      border-radius: 999px;
-      transition: width 0.15s linear;
-    }
-
-    .controls {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 14px;
-      padding: 22px 26px 16px;
-      background: var(--panel);
-    }
-
-    .control-btn {
-      background: var(--panel-2);
-      border: 1px solid var(--line);
-      border-radius: 18px;
-      color: var(--text);
-      padding: 16px 18px;
-      font-size: 17px;
-      cursor: pointer;
-      transition: transform 0.15s ease, border-color 0.15s ease, background 0.15s ease;
-    }
-
-    .control-btn:hover {
-      transform: translateY(-1px);
-      border-color: rgba(202, 165, 91, 0.45);
-      background: #212121;
-    }
-
-    .volume-wrap {
-      padding: 0 26px 28px;
-      background: var(--panel);
-    }
-
-    .volume-label {
-      color: var(--muted);
-      font-size: 13px;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      margin-bottom: 10px;
-    }
-
-    .volume-slider {
-      width: 100%;
-      accent-color: var(--gold);
-      cursor: pointer;
-    }
-
-    .stats {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 14px;
-      padding: 0 0 20px;
-    }
-
-    .stat-card {
-      background: rgba(255,255,255,0.02);
-      border: 1px solid var(--line);
-      border-radius: 20px;
-      padding: 18px;
-      text-align: center;
-    }
-
-    .stat-label {
-      color: var(--muted);
-      font-size: 13px;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      margin-bottom: 8px;
-    }
-
-    .stat-value {
-      color: var(--gold);
-      font-size: 30px;
-      font-weight: 700;
-    }
-
-    .footer-note {
-      text-align: center;
-      color: var(--muted);
-      padding: 12px 0 42px;
-      font-size: 14px;
-    }
-
-    .hidden {
-      display: none !important;
-    }
-
-    @media (max-width: 700px) {
-      .controls,
-      .stats {
-        grid-template-columns: 1fr;
-      }
-
-      .progress-row {
-        grid-template-columns: 48px 1fr 48px;
-      }
-
-      .display {
-        padding: 22px 18px;
-      }
-
-      .controls,
-      .volume-wrap {
-        padding-left: 18px;
-        padding-right: 18px;
-      }
-    }
-  </style>
+.volume {
+  width: 100%;
+}
+</style>
 </head>
+
 <body>
-  <div class="container">
-    <nav class="nav">
-      <div class="brand">60seconds.fm</div>
-      <button class="nav-btn">Join Waitlist</button>
-    </nav>
 
-    <section class="hero">
-      <h1>Discover new music<br>in 60 seconds.</h1>
-      <p>A live radio for upcoming artists.</p>
-    </section>
+<div class="container">
 
-    <section class="radio-wrap">
-      <div class="radio">
-        <div class="speaker"></div>
+<div class="nav">
+  <div class="brand">60seconds.fm</div>
+  <a href="join.html" class="nav-btn">Join 60seconds</a>
+</div>
 
-        <div class="display">
-          <div id="startScreen">
-            <div class="placeholder">Ready to discover the next artist?</div>
-            <button class="start-btn" id="startRadioBtn">Start Radio</button>
-          </div>
+<div class="hero">
+  <h1>Discover music in 60 seconds</h1>
+</div>
 
-          <div id="playerScreen" class="hidden">
-            <div class="now-playing">Now Playing</div>
-            <h2 class="track-title" id="trackTitle">-</h2>
-            <div class="artist-name" id="artistName">-</div>
+<div class="radio">
 
-            <div class="progress-row">
-              <div id="currentTime">0:00</div>
-              <div class="progress">
-                <div class="progress-fill" id="progressFill"></div>
-              </div>
-              <div id="duration">1:00</div>
-            </div>
-          </div>
-        </div>
-
-        <div class="controls">
-          <button class="control-btn" id="likeBtn">♡ Like</button>
-          <button class="control-btn" id="skipBtn">Skip ⏭</button>
-        </div>
-
-        <div class="volume-wrap">
-          <div class="volume-label">Volume</div>
-          <input
-            class="volume-slider"
-            id="volumeSlider"
-            type="range"
-            min="0"
-            max="1"
-            step="0.01"
-            value="0.8"
-          />
-        </div>
-      </div>
-    </section>
-
-    <section class="stats">
-      <div class="stat-card">
-        <div class="stat-label">Tracks Dropped</div>
-        <div class="stat-value" id="dropsCount">12,398</div>
-      </div>
-
-      <div class="stat-card">
-        <div class="stat-label">Live Listeners</div>
-        <div class="stat-value" id="listenersCount">1,284</div>
-      </div>
-
-      <div class="stat-card">
-        <div class="stat-label">Your Plays Today</div>
-        <div class="stat-value" id="yourPlaysCount">220</div>
-      </div>
-    </section>
-
-    <div class="footer-note">
-      One track. One minute. One moment.
-    </div>
+  <div id="startScreen">
+    <p>Ready to discover new music?</p>
+    <button class="start-btn" id="startBtn">Start Radio</button>
   </div>
 
-  <audio id="audio" preload="auto"></audio>
+  <div id="player" class="hidden">
+    <div class="track-title" id="trackTitle"></div>
+    <div class="artist" id="artist"></div>
 
-  <script>
-    const MAX_PLAY_SECONDS = 60;
+    <div id="time">0:00 / 1:00</div>
 
-    const tracks = [
-      {
-        title: "Is It Me",
-        artist: "Eddy Donato",
-        file: "track1.mp3"
-      },
-      {
-        title: "ff in me vibe",
-        artist: "EARV",
-        file: "track2.mp3"
-      },
-      {
-        title: "Hitte In De Toko",
-        artist: "EARV",
-        file: "track3.mp3"
-      }
-    ];
+    <div class="progress">
+      <div class="progress-fill" id="progressFill"></div>
+    </div>
 
-    let currentTrackIndex = -1;
-    let isLiked = false;
-    let hasStarted = false;
+    <div class="controls">
+      <button id="likeBtn">♡ Like</button>
+      <button id="skipBtn">Skip ⏭</button>
+    </div>
 
-    const audio = document.getElementById("audio");
-    const trackTitle = document.getElementById("trackTitle");
-    const artistName = document.getElementById("artistName");
-    const skipBtn = document.getElementById("skipBtn");
-    const likeBtn = document.getElementById("likeBtn");
-    const volumeSlider = document.getElementById("volumeSlider");
-    const progressFill = document.getElementById("progressFill");
-    const currentTimeEl = document.getElementById("currentTime");
-    const durationEl = document.getElementById("duration");
-    const listenersCount = document.getElementById("listenersCount");
-    const dropsCount = document.getElementById("dropsCount");
-    const yourPlaysCount = document.getElementById("yourPlaysCount");
-    const startRadioBtn = document.getElementById("startRadioBtn");
-    const startScreen = document.getElementById("startScreen");
-    const playerScreen = document.getElementById("playerScreen");
+    <input type="range" id="volume" class="volume" min="0" max="1" step="0.01" value="0.8">
+  </div>
 
-    function formatTime(seconds) {
-      const mins = Math.floor(seconds / 60);
-      const secs = Math.floor(seconds % 60).toString().padStart(2, "0");
-      return `${mins}:${secs}`;
-    }
+</div>
 
-    function getRandomNextIndex() {
-      if (tracks.length === 1) return 0;
+</div>
 
-      let nextIndex;
-      do {
-        nextIndex = Math.floor(Math.random() * tracks.length);
-      } while (nextIndex === currentTrackIndex);
+<audio id="audio"></audio>
 
-      return nextIndex;
-    }
+<script>
+const MAX = 60;
 
-    function updateTrackInfo(track) {
-      trackTitle.textContent = track.title;
-      artistName.textContent = track.artist;
-      currentTimeEl.textContent = "0:00";
-      durationEl.textContent = "1:00";
-      progressFill.style.width = "0%";
-      isLiked = false;
-      likeBtn.textContent = "♡ Like";
-    }
+const tracks = [
+  { title: "Is It Me", artist: "Eddy Donato", file: "track1.mp3" },
+  { title: "ff in me vibe", artist: "EARV", file: "track2.mp3" },
+  { title: "Hitte In De Toko", artist: "EARV", file: "track3.mp3" }
+];
 
-    function loadRandomTrack() {
-      currentTrackIndex = getRandomNextIndex();
-      const track = tracks[currentTrackIndex];
-      updateTrackInfo(track);
-      audio.src = track.file;
-      audio.load();
-    }
+let current = -1;
 
-    function playLoadedTrack() {
-      audio.currentTime = 0;
-      audio.play().catch((err) => {
-        console.log("Playback blocked:", err);
-      });
-    }
+const audio = document.getElementById("audio");
+const startBtn = document.getElementById("startBtn");
+const startScreen = document.getElementById("startScreen");
+const player = document.getElementById("player");
 
-    function nextTrack() {
-      if (!hasStarted) return;
-      loadRandomTrack();
-    }
+const title = document.getElementById("trackTitle");
+const artist = document.getElementById("artist");
+const progress = document.getElementById("progressFill");
+const time = document.getElementById("time");
+const volume = document.getElementById("volume");
 
-    startRadioBtn.addEventListener("click", () => {
-      hasStarted = true;
-      startScreen.classList.add("hidden");
-      playerScreen.classList.remove("hidden");
-      loadRandomTrack();
-    });
+function rand() {
+  let i;
+  do {
+    i = Math.floor(Math.random() * tracks.length);
+  } while (i === current);
+  return i;
+}
 
-    likeBtn.addEventListener("click", () => {
-      if (!hasStarted) return;
-      isLiked = !isLiked;
-      likeBtn.textContent = isLiked ? "♥ Liked" : "♡ Like";
-    });
+function load() {
+  current = rand();
+  const t = tracks[current];
+  title.textContent = t.title;
+  artist.textContent = t.artist;
+  audio.src = t.file;
+  audio.load();
+}
 
-    skipBtn.addEventListener("click", () => {
-      nextTrack();
-    });
+function next() {
+  load();
+}
 
-    volumeSlider.addEventListener("input", (e) => {
-      audio.volume = Number(e.target.value);
-    });
+startBtn.onclick = () => {
+  startScreen.classList.add("hidden");
+  player.classList.remove("hidden");
+  load();
+};
 
-    audio.addEventListener("loadedmetadata", () => {
-      if (hasStarted) {
-        playLoadedTrack();
-      }
-    });
+audio.onloadedmetadata = () => {
+  audio.currentTime = 0;
+  audio.play();
+};
 
-    audio.addEventListener("timeupdate", () => {
-      const current = Math.min(audio.currentTime, MAX_PLAY_SECONDS);
-      const percent = (current / MAX_PLAY_SECONDS) * 100;
+audio.ontimeupdate = () => {
+  let t = Math.min(audio.currentTime, MAX);
+  progress.style.width = (t / MAX * 100) + "%";
+  time.textContent = Math.floor(t/60)+":"+(Math.floor(t%60)).toString().padStart(2,"0")+" / 1:00";
 
-      currentTimeEl.textContent = formatTime(current);
-      durationEl.textContent = "1:00";
-      progressFill.style.width = `${percent}%`;
+  if (audio.currentTime >= MAX) next();
+};
 
-      if (audio.currentTime >= MAX_PLAY_SECONDS) {
-        nextTrack();
-      }
-    });
+audio.onended = next;
 
-    audio.addEventListener("ended", () => {
-      nextTrack();
-    });
+document.getElementById("skipBtn").onclick = next;
 
-    setInterval(() => {
-      const listeners = 1200 + Math.floor(Math.random() * 180);
-      listenersCount.textContent = listeners.toLocaleString("en-US");
-    }, 4000);
+volume.oninput = e => {
+  audio.volume = e.target.value;
+};
 
-    setInterval(() => {
-      const plays = 200 + Math.floor(Math.random() * 40);
-      yourPlaysCount.textContent = plays.toLocaleString("en-US");
-    }, 7000);
+audio.volume = 0.8;
+</script>
 
-    setInterval(() => {
-      let currentDrops = Number(dropsCount.textContent.replace(/,/g, ""));
-      currentDrops += Math.random() > 0.7 ? 1 : 0;
-      dropsCount.textContent = currentDrops.toLocaleString("en-US");
-    }, 5000);
-
-    audio.volume = 0.8;
-  </script>
 </body>
 </html>
