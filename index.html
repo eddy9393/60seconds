@@ -1,234 +1,317 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>60seconds.fm</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>60seconds.fm</title>
+  <style>
+    body {
+      margin: 0;
+      background: #0b0b0b;
+      color: white;
+      font-family: Arial, sans-serif;
+      text-align: center;
+    }
 
-<style>
-body {
-  margin: 0;
-  background: #0b0b0b;
-  color: white;
-  font-family: Arial, sans-serif;
-  text-align: center;
-}
+    .container {
+      max-width: 800px;
+      margin: auto;
+      padding: 20px;
+    }
 
-.container {
-  max-width: 800px;
-  margin: auto;
-  padding: 20px;
-}
+    h1 {
+      color: gold;
+    }
 
-h1 {
-  color: gold;
-}
+    .card {
+      background: #151515;
+      padding: 25px;
+      border-radius: 20px;
+      margin-top: 20px;
+    }
 
-.card {
-  background: #151515;
-  padding: 25px;
-  border-radius: 20px;
-  margin-top: 20px;
-}
+    button {
+      padding: 12px 20px;
+      border-radius: 999px;
+      border: none;
+      cursor: pointer;
+      margin: 5px;
+    }
 
-button {
-  padding: 12px 20px;
-  border-radius: 999px;
-  border: none;
-  cursor: pointer;
-  margin: 5px;
-}
+    .gold {
+      background: gold;
+      color: black;
+      font-weight: bold;
+    }
 
-.gold {
-  background: gold;
-  color: black;
-  font-weight: bold;
-}
+    .outline {
+      border: 1px solid gold;
+      background: transparent;
+      color: gold;
+    }
 
-.outline {
-  border: 1px solid gold;
-  background: transparent;
-  color: gold;
-}
+    input {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 10px;
+      border-radius: 10px;
+      border: none;
+      box-sizing: border-box;
+    }
 
-input {
-  width: 100%;
-  padding: 10px;
-  margin-bottom: 10px;
-  border-radius: 10px;
-  border: none;
-}
+    .progress {
+      height: 8px;
+      background: #333;
+      margin: 10px 0;
+      border-radius: 999px;
+      overflow: hidden;
+    }
 
-.progress {
-  height: 8px;
-  background: #333;
-  margin: 10px 0;
-}
+    .fill {
+      height: 100%;
+      width: 0%;
+      background: gold;
+    }
 
-.fill {
-  height: 100%;
-  width: 0%;
-  background: gold;
-}
-</style>
+    #status {
+      margin-top: 12px;
+      color: #ddd;
+      min-height: 20px;
+      word-break: break-word;
+    }
+  </style>
 </head>
-
 <body>
+  <div class="container">
+    <h1>60seconds.fm</h1>
 
-<div class="container">
+    <div class="card">
+      <div id="loggedOut">
+        <h3>Join 60seconds</h3>
+        <input id="email" type="email" placeholder="Email" />
+        <input id="password" type="password" placeholder="Password" />
+        <button class="gold" id="signup" type="button">Sign up</button>
+        <button class="outline" id="login" type="button">Log in</button>
+      </div>
 
-<h1>60seconds.fm</h1>
+      <div id="loggedIn" style="display:none;">
+        <p id="user"></p>
+        <button class="gold" id="logout" type="button">Log out</button>
+      </div>
 
-<!-- AUTH -->
-<div class="card">
-  <div id="loggedOut">
-    <h3>Join 60seconds</h3>
-    <input id="email" placeholder="Email">
-    <input id="password" type="password" placeholder="Password">
-
-    <button class="gold" id="signup">Sign up</button>
-    <button class="outline" id="login">Log in</button>
-  </div>
-
-  <div id="loggedIn" style="display:none;">
-    <p id="user"></p>
-    <button class="gold" id="logout">Log out</button>
-  </div>
-
-  <p id="status"></p>
-</div>
-
-<!-- RADIO -->
-<div class="card">
-
-  <div id="startScreen">
-    <button class="gold" id="start">Start Radio</button>
-  </div>
-
-  <div id="player" style="display:none;">
-    <h2 id="title"></h2>
-    <p id="artist"></p>
-
-    <div class="progress">
-      <div class="fill" id="progress"></div>
+      <p id="status"></p>
     </div>
 
-    <button id="skip">Skip</button>
+    <div class="card">
+      <div id="startScreen">
+        <button class="gold" id="start" type="button">Start Radio</button>
+      </div>
 
-    <br><br>
-    <input type="range" id="volume" min="0" max="1" step="0.01">
+      <div id="player" style="display:none;">
+        <h2 id="title"></h2>
+        <p id="artist"></p>
+
+        <div class="progress">
+          <div class="fill" id="progress"></div>
+        </div>
+
+        <button id="skip" type="button">Skip</button>
+
+        <br /><br />
+        <input type="range" id="volume" min="0" max="1" step="0.01" value="0.8" />
+      </div>
+    </div>
   </div>
 
-</div>
+  <audio id="audio"></audio>
 
-</div>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-<audio id="audio"></audio>
+  <script>
+    const statusEl = document.getElementById("status");
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    function setStatus(message, isError = false) {
+      statusEl.textContent = message;
+      statusEl.style.color = isError ? "#ff8a8a" : "#ddd";
+      console.log(message);
+    }
 
-<script>
-// 🔑 SUPABASE (JOUW GEGEVENS)
-const supabase = window.supabase.createClient(
-  "https://rgoutegbcpjytplqcwze.supabase.co",
-  "sb_publishable_255qyDKS77nMU0pbedfa_A_3hdgtEHh"
-);
+    if (!window.supabase) {
+      setStatus("Supabase library failed to load.", true);
+      throw new Error("Supabase library missing");
+    }
 
-// AUTH ELEMENTS
-const email = document.getElementById("email");
-const password = document.getElementById("password");
-const status = document.getElementById("status");
+    const supabase = window.supabase.createClient(
+      "https://rgoutegbcpjytplqcwze.supabase.co",
+      "sb_publishable_255qyDKS77nMU0pbedfa_A_3hdgtEHh"
+    );
 
-const loggedOut = document.getElementById("loggedOut");
-const loggedIn = document.getElementById("loggedIn");
-const userText = document.getElementById("user");
+    const emailInput = document.getElementById("email");
+    const passwordInput = document.getElementById("password");
+    const signupBtn = document.getElementById("signup");
+    const loginBtn = document.getElementById("login");
+    const logoutBtn = document.getElementById("logout");
+    const loggedOut = document.getElementById("loggedOut");
+    const loggedIn = document.getElementById("loggedIn");
+    const userText = document.getElementById("user");
 
-// AUTH STATE
-async function updateUser() {
-  const { data } = await supabase.auth.getUser();
+    async function updateUser() {
+      try {
+        const { data, error } = await supabase.auth.getUser();
 
-  if (data.user) {
-    loggedOut.style.display = "none";
-    loggedIn.style.display = "block";
-    userText.textContent = "Logged in as " + data.user.email;
-  } else {
-    loggedOut.style.display = "block";
-    loggedIn.style.display = "none";
-  }
-}
+        if (error) {
+          setStatus(error.message, true);
+          return;
+        }
 
-// SIGN UP
-document.getElementById("signup").onclick = async () => {
-  const { error } = await supabase.auth.signUp({
-    email: email.value,
-    password: password.value
-  });
+        if (data.user) {
+          loggedOut.style.display = "none";
+          loggedIn.style.display = "block";
+          userText.textContent = "Logged in as " + data.user.email;
+        } else {
+          loggedOut.style.display = "block";
+          loggedIn.style.display = "none";
+          userText.textContent = "";
+        }
+      } catch (err) {
+        setStatus("Error checking user: " + err.message, true);
+      }
+    }
 
-  status.textContent = error ? error.message : "Check your email to confirm!";
-};
+    signupBtn.addEventListener("click", async () => {
+      const email = emailInput.value.trim();
+      const password = passwordInput.value.trim();
 
-// LOGIN
-document.getElementById("login").onclick = async () => {
-  const { error } = await supabase.auth.signInWithPassword({
-    email: email.value,
-    password: password.value
-  });
+      if (!email || !password) {
+        setStatus("Please fill in email and password.", true);
+        return;
+      }
 
-  status.textContent = error ? error.message : "Logged in!";
-  updateUser();
-};
+      setStatus("Creating account...");
 
-// LOGOUT
-document.getElementById("logout").onclick = async () => {
-  await supabase.auth.signOut();
-  updateUser();
-};
+      try {
+        const { data, error } = await supabase.auth.signUp({
+          email,
+          password
+        });
 
-updateUser();
+        if (error) {
+          setStatus(error.message, true);
+          return;
+        }
 
-// RADIO
-const tracks = [
-  { title: "Is It Me", artist: "Eddy Donato", file: "track1.mp3" },
-  { title: "ff in me vibe", artist: "EARV", file: "track2.mp3" },
-  { title: "Hitte In De Toko", artist: "EARV", file: "track3.mp3" }
-];
+        setStatus("Account created. Check your email to confirm.");
+        console.log("signUp result:", data);
+        await updateUser();
+      } catch (err) {
+        setStatus("Signup failed: " + err.message, true);
+      }
+    });
 
-let current = -1;
-const audio = document.getElementById("audio");
+    loginBtn.addEventListener("click", async () => {
+      const email = emailInput.value.trim();
+      const password = passwordInput.value.trim();
 
-function nextTrack() {
-  current = Math.floor(Math.random() * tracks.length);
-  const t = tracks[current];
+      if (!email || !password) {
+        setStatus("Please fill in email and password.", true);
+        return;
+      }
 
-  document.getElementById("title").textContent = t.title;
-  document.getElementById("artist").textContent = t.artist;
+      setStatus("Logging in...");
 
-  audio.src = t.file;
-  audio.play();
-}
+      try {
+        const { error } = await supabase.auth.signInWithPassword({
+          email,
+          password
+        });
 
-document.getElementById("start").onclick = () => {
-  document.getElementById("startScreen").style.display = "none";
-  document.getElementById("player").style.display = "block";
-  nextTrack();
-};
+        if (error) {
+          setStatus(error.message, true);
+          return;
+        }
 
-document.getElementById("skip").onclick = nextTrack;
+        setStatus("Logged in successfully.");
+        await updateUser();
+      } catch (err) {
+        setStatus("Login failed: " + err.message, true);
+      }
+    });
 
-audio.ontimeupdate = () => {
-  const max = 60;
-  const t = Math.min(audio.currentTime, max);
-  document.getElementById("progress").style.width = (t/max*100)+"%";
+    logoutBtn.addEventListener("click", async () => {
+      try {
+        const { error } = await supabase.auth.signOut();
 
-  if (audio.currentTime >= max) nextTrack();
-};
+        if (error) {
+          setStatus(error.message, true);
+          return;
+        }
 
-document.getElementById("volume").oninput = e => {
-  audio.volume = e.target.value;
-};
+        setStatus("Logged out.");
+        await updateUser();
+      } catch (err) {
+        setStatus("Logout failed: " + err.message, true);
+      }
+    });
 
-audio.volume = 0.8;
-</script>
+    const tracks = [
+      { title: "Is It Me", artist: "Eddy Donato", file: "track1.mp3" },
+      { title: "ff in me vibe", artist: "EARV", file: "track2.mp3" },
+      { title: "Hitte In De Toko", artist: "EARV", file: "track3.mp3" }
+    ];
 
+    let current = -1;
+    const audio = document.getElementById("audio");
+    const startBtn = document.getElementById("start");
+    const player = document.getElementById("player");
+    const startScreen = document.getElementById("startScreen");
+    const titleEl = document.getElementById("title");
+    const artistEl = document.getElementById("artist");
+    const progressEl = document.getElementById("progress");
+    const skipBtn = document.getElementById("skip");
+    const volumeEl = document.getElementById("volume");
+
+    function nextTrack() {
+      let next;
+      do {
+        next = Math.floor(Math.random() * tracks.length);
+      } while (tracks.length > 1 && next === current);
+
+      current = next;
+      const t = tracks[current];
+      titleEl.textContent = t.title;
+      artistEl.textContent = t.artist;
+      audio.src = t.file;
+      audio.currentTime = 0;
+      audio.play().catch(err => {
+        console.log("Audio play blocked:", err);
+      });
+    }
+
+    startBtn.addEventListener("click", () => {
+      startScreen.style.display = "none";
+      player.style.display = "block";
+      nextTrack();
+    });
+
+    skipBtn.addEventListener("click", nextTrack);
+
+    audio.addEventListener("timeupdate", () => {
+      const max = 60;
+      const t = Math.min(audio.currentTime, max);
+      progressEl.style.width = (t / max * 100) + "%";
+
+      if (audio.currentTime >= max) {
+        nextTrack();
+      }
+    });
+
+    volumeEl.addEventListener("input", e => {
+      audio.volume = Number(e.target.value);
+    });
+
+    audio.volume = 0.8;
+
+    updateUser();
+  </script>
 </body>
 </html>
