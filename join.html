@@ -80,6 +80,8 @@
       color: #aaa;
       font-size: 14px;
       line-height: 1.5;
+      max-width: 620px;
+      margin: 0 auto;
     }
   </style>
 </head>
@@ -87,7 +89,8 @@
 
   <h1>Join 60seconds</h1>
   <p class="note">
-    Upload one track, save it to 60seconds, and make it playable in the radio.
+    Upload one track to 60seconds. Your submission will be saved as <strong>pending</strong>
+    until it gets approved for the radio.
   </p>
 
   <div class="card">
@@ -186,7 +189,7 @@
       }
 
       setStatus("Saving track in database...");
-      setDebug("Inserting row into tracks table");
+      setDebug("Inserting row into tracks table with status pending");
 
       const { error: insertError } = await supabaseClient
         .from("tracks")
@@ -195,7 +198,7 @@
             title: title,
             artist: artist,
             file_url: publicUrl,
-            user_id: userId
+            user_id: userId,
             status: "pending"
           }
         ]);
