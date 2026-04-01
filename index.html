@@ -5,63 +5,429 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>60seconds.fm</title>
   <style>
+    :root {
+      --bg: #0b0b0b;
+      --panel: #151515;
+      --panel-2: #1b1b1b;
+      --text: #f5f1e8;
+      --muted: #b9b0a0;
+      --gold: #caa55b;
+      --gold-soft: rgba(202, 165, 91, 0.18);
+      --line: rgba(202, 165, 91, 0.22);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
     body {
       margin: 0;
-      background: #0b0b0b;
-      color: white;
-      font-family: Arial, sans-serif;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      background:
+        radial-gradient(circle at top, rgba(202, 165, 91, 0.10), transparent 30%),
+        linear-gradient(180deg, #0a0a0a 0%, #0d0d0d 100%);
+      color: var(--text);
+      font-family: Georgia, "Times New Roman", serif;
       min-height: 100vh;
-      flex-direction: column;
     }
 
-    h1 {
-      color: gold;
-      font-size: 48px;
-      margin-bottom: 12px;
+    .container {
+      width: min(1100px, calc(100% - 32px));
+      margin: 0 auto;
     }
 
-    p {
-      opacity: 0.8;
+    .nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 24px 0;
+    }
+
+    .brand {
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: 0.4px;
+      color: var(--gold);
+    }
+
+    .nav-btn {
+      background: transparent;
+      color: var(--gold);
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 12px 18px;
+      cursor: pointer;
+      font-size: 15px;
+    }
+
+    .hero {
+      text-align: center;
+      padding: 32px 0 24px;
+    }
+
+    .hero h1 {
+      font-size: clamp(38px, 6vw, 72px);
+      line-height: 0.98;
+      margin: 0 0 12px;
+      color: var(--gold);
+      font-weight: 600;
+    }
+
+    .hero p {
+      margin: 0;
+      color: var(--muted);
       font-size: 20px;
     }
 
-    .card {
-      margin-top: 30px;
-      background: #151515;
-      border: 1px solid #2a2a2a;
-      border-radius: 20px;
-      padding: 30px;
-      text-align: center;
-      width: 320px;
-      box-shadow: 0 0 30px rgba(255, 215, 0, 0.12);
+    .radio-wrap {
+      display: flex;
+      justify-content: center;
+      padding: 42px 0 28px;
     }
 
-    button {
-      margin: 10px 8px 0;
-      padding: 12px 18px;
-      border: none;
-      border-radius: 12px;
-      background: gold;
-      color: black;
-      font-weight: bold;
+    .radio {
+      width: min(760px, 100%);
+      background: linear-gradient(180deg, #171717 0%, #111111 100%);
+      border: 1px solid var(--line);
+      border-radius: 32px;
+      box-shadow:
+        0 30px 80px rgba(0, 0, 0, 0.45),
+        0 0 0 1px rgba(255,255,255,0.02) inset,
+        0 0 40px var(--gold-soft);
+      overflow: hidden;
+    }
+
+    .speaker {
+      height: 92px;
+      background:
+        radial-gradient(circle, rgba(202,165,91,0.08) 1px, transparent 1px);
+      background-size: 12px 12px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .display {
+      padding: 26px;
+      background: linear-gradient(180deg, #131313 0%, #0f0f0f 100%);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .now-playing {
+      color: var(--muted);
+      font-size: 13px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+
+    .track-title {
+      font-size: clamp(28px, 5vw, 42px);
+      line-height: 1.05;
+      margin: 0 0 6px;
+      color: var(--text);
+    }
+
+    .artist-name {
+      color: var(--gold);
+      font-size: 20px;
+      margin-bottom: 22px;
+    }
+
+    .progress-row {
+      display: grid;
+      grid-template-columns: 56px 1fr 56px;
+      gap: 14px;
+      align-items: center;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .progress {
+      position: relative;
+      height: 10px;
+      border-radius: 999px;
+      background: #262626;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      width: 0%;
+      height: 100%;
+      background: linear-gradient(90deg, #a47a32, #d8b26c);
+      border-radius: 999px;
+      transition: width 0.15s linear;
+    }
+
+    .controls {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      padding: 22px 26px 28px;
+      background: var(--panel);
+    }
+
+    .control-btn {
+      background: var(--panel-2);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      color: var(--text);
+      padding: 16px 18px;
+      font-size: 17px;
       cursor: pointer;
+      transition: transform 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+    }
+
+    .control-btn:hover {
+      transform: translateY(-1px);
+      border-color: rgba(202, 165, 91, 0.45);
+      background: #212121;
+    }
+
+    .control-btn.primary {
+      color: #0b0b0b;
+      background: var(--gold);
+      border-color: transparent;
+      font-weight: 700;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      padding: 0 0 20px;
+    }
+
+    .stat-card {
+      background: rgba(255,255,255,0.02);
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      padding: 18px;
+      text-align: center;
+    }
+
+    .stat-label {
+      color: var(--muted);
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 8px;
+    }
+
+    .stat-value {
+      color: var(--gold);
+      font-size: 30px;
+      font-weight: 700;
+    }
+
+    .footer-note {
+      text-align: center;
+      color: var(--muted);
+      padding: 12px 0 42px;
+      font-size: 14px;
+    }
+
+    @media (max-width: 700px) {
+      .controls,
+      .stats {
+        grid-template-columns: 1fr;
+      }
+
+      .progress-row {
+        grid-template-columns: 48px 1fr 48px;
+      }
+
+      .display {
+        padding: 22px 18px;
+      }
+
+      .controls {
+        padding: 18px;
+      }
     }
   </style>
 </head>
 <body>
-  <h1>60seconds.fm</h1>
-  <p>Discover music in 60 seconds.</p>
+  <div class="container">
+    <nav class="nav">
+      <div class="brand">60seconds.fm</div>
+      <button class="nav-btn">Join Waitlist</button>
+    </nav>
 
-  <div class="card">
-    <h2>Track Name</h2>
-    <p>Artist Name</p>
-    <button>❤️ Like</button>
-    <button>⏭ Skip</button>
-    <p>12,398 drops</p>
-    <p>220 plays</p>
+    <section class="hero">
+      <h1>Discover new music<br>in 60 seconds.</h1>
+      <p>A live radio for upcoming artists.</p>
+    </section>
+
+    <section class="radio-wrap">
+      <div class="radio">
+        <div class="speaker"></div>
+
+        <div class="display">
+          <div class="now-playing">Now Playing</div>
+          <h2 class="track-title" id="trackTitle">Midnight Drive</h2>
+          <div class="artist-name" id="artistName">Nova Lane</div>
+
+          <div class="progress-row">
+            <div id="currentTime">0:00</div>
+            <div class="progress">
+              <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <div id="duration">1:00</div>
+          </div>
+        </div>
+
+        <div class="controls">
+          <button class="control-btn" id="likeBtn">♡ Like</button>
+          <button class="control-btn primary" id="playPauseBtn">Play</button>
+          <button class="control-btn" id="skipBtn">Skip ⏭</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="stats">
+      <div class="stat-card">
+        <div class="stat-label">Tracks Dropped</div>
+        <div class="stat-value" id="dropsCount">12,398</div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-label">Live Listeners</div>
+        <div class="stat-value" id="listenersCount">1,284</div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-label">Your Plays Today</div>
+        <div class="stat-value" id="yourPlaysCount">220</div>
+      </div>
+    </section>
+
+    <div class="footer-note">
+      One track. One minute. One moment.
+    </div>
   </div>
+
+  <audio id="audio"></audio>
+
+  <script>
+    const tracks = [
+      {
+        title: "Midnight Drive",
+        artist: "Nova Lane",
+        file: "track1.mp3"
+      },
+      {
+        title: "Golden Hour",
+        artist: "Echo Saint",
+        file: "track2.mp3"
+      },
+      {
+        title: "Afterglow",
+        artist: "Velvet Avenue",
+        file: "track3.mp3"
+      }
+    ];
+
+    let currentTrackIndex = 0;
+    let isLiked = false;
+
+    const audio = document.getElementById("audio");
+    const trackTitle = document.getElementById("trackTitle");
+    const artistName = document.getElementById("artistName");
+    const playPauseBtn = document.getElementById("playPauseBtn");
+    const skipBtn = document.getElementById("skipBtn");
+    const likeBtn = document.getElementById("likeBtn");
+    const progressFill = document.getElementById("progressFill");
+    const currentTimeEl = document.getElementById("currentTime");
+    const durationEl = document.getElementById("duration");
+    const listenersCount = document.getElementById("listenersCount");
+    const dropsCount = document.getElementById("dropsCount");
+    const yourPlaysCount = document.getElementById("yourPlaysCount");
+
+    function formatTime(seconds) {
+      const mins = Math.floor(seconds / 60);
+      const secs = Math.floor(seconds % 60).toString().padStart(2, "0");
+      return `${mins}:${secs}`;
+    }
+
+    function loadTrack(index) {
+      const track = tracks[index];
+      trackTitle.textContent = track.title;
+      artistName.textContent = track.artist;
+      audio.src = track.file;
+      audio.load();
+
+      isLiked = false;
+      likeBtn.textContent = "♡ Like";
+      progressFill.style.width = "0%";
+      currentTimeEl.textContent = "0:00";
+      durationEl.textContent = "1:00";
+    }
+
+    function playTrack() {
+      audio.play();
+      playPauseBtn.textContent = "Pause";
+    }
+
+    function pauseTrack() {
+      audio.pause();
+      playPauseBtn.textContent = "Play";
+    }
+
+    function nextTrack() {
+      currentTrackIndex = (currentTrackIndex + 1) % tracks.length;
+      loadTrack(currentTrackIndex);
+      playTrack();
+    }
+
+    playPauseBtn.addEventListener("click", () => {
+      if (audio.paused) {
+        playTrack();
+      } else {
+        pauseTrack();
+      }
+    });
+
+    skipBtn.addEventListener("click", () => {
+      nextTrack();
+    });
+
+    likeBtn.addEventListener("click", () => {
+      isLiked = !isLiked;
+      likeBtn.textContent = isLiked ? "♥ Liked" : "♡ Like";
+    });
+
+    audio.addEventListener("loadedmetadata", () => {
+      durationEl.textContent = formatTime(audio.duration || 60);
+    });
+
+    audio.addEventListener("timeupdate", () => {
+      const current = audio.currentTime || 0;
+      const duration = audio.duration || 60;
+      const percent = (current / duration) * 100;
+
+      currentTimeEl.textContent = formatTime(current);
+      progressFill.style.width = `${percent}%`;
+    });
+
+    audio.addEventListener("ended", () => {
+      nextTrack();
+    });
+
+    setInterval(() => {
+      const listeners = 1200 + Math.floor(Math.random() * 180);
+      listenersCount.textContent = listeners.toLocaleString("en-US");
+    }, 4000);
+
+    setInterval(() => {
+      const plays = 200 + Math.floor(Math.random() * 40);
+      yourPlaysCount.textContent = plays.toLocaleString("en-US");
+    }, 7000);
+
+    setInterval(() => {
+      let currentDrops = Number(dropsCount.textContent.replace(/,/g, ""));
+      currentDrops += Math.random() > 0.7 ? 1 : 0;
+      dropsCount.textContent = currentDrops.toLocaleString("en-US");
+    }, 5000);
+
+    loadTrack(currentTrackIndex);
+  </script>
 </body>
 </html>
