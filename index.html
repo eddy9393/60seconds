@@ -12,11 +12,16 @@
       --panel-2: #1a1a1a;
       --gold: #d4af37;
       --gold-2: #f4d77a;
+      --gold-3: #fff3bf;
       --gold-dark: #8f6b13;
       --text: #f5f5f5;
       --muted: #a8a8a8;
       --line: rgba(212, 175, 55, 0.22);
       --top-btn-height: 52px;
+      --silver-1: #f5f5f5;
+      --silver-2: #d2d2d2;
+      --silver-3: #9f9f9f;
+      --silver-4: #5f5f5f;
     }
 
     * {
@@ -32,7 +37,7 @@
       color: var(--text);
       font-family: Arial, sans-serif;
       text-align: center;
-      padding: 24px 18px 44px;
+      padding: 18px 18px 44px;
     }
 
     .hidden {
@@ -41,13 +46,13 @@
 
     .hero {
       max-width: 900px;
-      margin: 0 auto 26px;
+      margin: 0 auto 20px;
     }
 
     .brand-link {
       text-decoration: none;
       display: inline-block;
-      margin-bottom: 20px;
+      margin-bottom: 6px;
     }
 
     .brand-logo {
@@ -58,7 +63,7 @@
     }
 
     .brand-subtitle {
-      margin: 14px auto 0;
+      margin: 12px auto 0;
       max-width: 680px;
       color: #c9c9c9;
       font-size: 17px;
@@ -71,7 +76,8 @@
       align-items: flex-start;
       gap: 12px;
       flex-wrap: wrap;
-      margin-bottom: 8px;
+      margin-top: 0;
+      margin-bottom: 6px;
     }
 
     .submit-link {
@@ -82,23 +88,31 @@
       padding: 0 28px;
       border-radius: 999px;
       text-decoration: none;
-      color: #141414;
-      font-weight: 800;
+      color: #231700;
+      font-weight: 900;
       font-size: 15px;
       letter-spacing: 0.4px;
-      background: linear-gradient(135deg, var(--gold-2), var(--gold), #b68818);
+      background:
+        linear-gradient(180deg, #fff5c9 0%, #f4d77a 20%, #d4af37 52%, #b98816 75%, #7c5a11 100%);
+      border: 1px solid rgba(255, 230, 150, 0.38);
       box-shadow:
-        0 12px 28px rgba(212,175,55,0.22),
-        inset 0 1px 0 rgba(255,255,255,0.35);
-      transition: transform 0.16s ease, box-shadow 0.16s ease;
+        inset 0 2px 0 rgba(255,255,255,0.45),
+        inset 0 -2px 4px rgba(90,50,0,0.28),
+        0 12px 26px rgba(212,175,55,0.22),
+        0 0 0 1px rgba(212,175,55,0.08);
+      transition: transform 0.16s ease, box-shadow 0.16s ease, filter 0.16s ease;
       white-space: nowrap;
+      text-shadow: 0 1px 0 rgba(255,255,255,0.22);
     }
 
     .submit-link:hover {
       transform: translateY(-1px);
+      filter: brightness(1.03);
       box-shadow:
+        inset 0 2px 0 rgba(255,255,255,0.48),
+        inset 0 -2px 4px rgba(90,50,0,0.30),
         0 16px 34px rgba(212,175,55,0.28),
-        inset 0 1px 0 rgba(255,255,255,0.38);
+        0 0 0 1px rgba(212,175,55,0.1);
     }
 
     .auth-inline {
@@ -129,7 +143,7 @@
     .auth-box {
       width: min(720px, 100%);
       text-align: left;
-      margin: 4px auto 0;
+      margin: 2px auto 0;
     }
 
     .auth-box h3 {
@@ -151,12 +165,22 @@
       width: 100%;
       padding: 12px 12px;
       border-radius: 12px;
-      border: 1px solid rgba(255,255,255,0.05);
-      background: #0f0f0f;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: linear-gradient(180deg, #101010 0%, #0c0c0c 100%);
       color: white;
       font-size: 14px;
       outline: none;
       min-height: 46px;
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.04),
+        0 6px 16px rgba(0,0,0,0.18);
+    }
+
+    .auth-box input:focus {
+      border-color: rgba(212,175,55,0.38);
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.04),
+        0 0 0 3px rgba(212,175,55,0.08);
     }
 
     .auth-row {
@@ -321,26 +345,32 @@
     }
 
     .metal-btn {
-      border: 1px solid rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.16);
       background:
-        linear-gradient(180deg, #4b4b4b 0%, #2e2e2e 48%, #1c1c1c 100%);
-      color: white;
+        linear-gradient(180deg, #fbfbfb 0%, #d6d6d6 16%, #b6b6b6 35%, #8b8b8b 52%, #d2d2d2 72%, #f4f4f4 100%);
+      color: #151515;
       padding: 13px 18px;
       border-radius: 999px;
       cursor: pointer;
-      font-weight: 700;
+      font-weight: 800;
       font-size: 14px;
+      text-shadow: 0 1px 0 rgba(255,255,255,0.45);
       box-shadow:
-        inset 0 1px 0 rgba(255,255,255,0.18),
-        0 10px 22px rgba(0,0,0,0.25);
-      transition: transform 0.15s ease, box-shadow 0.15s ease;
+        inset 0 2px 0 rgba(255,255,255,0.72),
+        inset 0 -2px 3px rgba(0,0,0,0.18),
+        0 10px 22px rgba(0,0,0,0.25),
+        0 0 0 1px rgba(255,255,255,0.04);
+      transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
     }
 
     .metal-btn:hover {
       transform: translateY(-1px);
+      filter: brightness(1.02);
       box-shadow:
-        inset 0 1px 0 rgba(255,255,255,0.2),
-        0 14px 24px rgba(0,0,0,0.32);
+        inset 0 2px 0 rgba(255,255,255,0.76),
+        inset 0 -2px 3px rgba(0,0,0,0.18),
+        0 14px 24px rgba(0,0,0,0.32),
+        0 0 0 1px rgba(255,255,255,0.05);
     }
 
     .metal-btn:disabled {
@@ -350,16 +380,17 @@
     }
 
     .metal-btn .icon {
-      color: var(--gold);
+      color: #6a560c;
       margin-right: 7px;
       font-size: 15px;
     }
 
     .liked {
       background:
-        linear-gradient(180deg, #6b5416 0%, #a27b1a 48%, #6f5312 100%);
+        linear-gradient(180deg, #fff6cb 0%, #e9c75f 24%, #d4af37 52%, #b98714 76%, #826113 100%);
       color: #111;
-      border-color: rgba(255,215,120,0.2);
+      border-color: rgba(255,220,120,0.35);
+      text-shadow: 0 1px 0 rgba(255,255,255,0.28);
     }
 
     .liked .icon {
@@ -437,6 +468,10 @@
     }
 
     @media (max-width: 760px) {
+      body {
+        padding-top: 14px;
+      }
+
       .stats-row {
         grid-template-columns: 1fr;
       }
