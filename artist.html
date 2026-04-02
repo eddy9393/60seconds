@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Artist Page - 60seconds.fm</title>
+
+  <style>
+    body {
+      margin: 0;
+      background: #0b0b0b;
+      color: white;
+      font-family: Arial, sans-serif;
+      padding: 30px 20px;
+      text-align: center;
+    }
+
+    h1, h2 {
+      color: gold;
+    }
+
+    .top-links {
+      margin-bottom: 20px;
+    }
+
+    .top-links a {
+      display: inline-block;
+      margin: 0 6px;
+      color: gold;
+      text-decoration: none;
+      border: 1px solid rgba(255, 215, 0, 0.4);
+      padding: 10px 16px;
+      border-radius: 999px;
+    }
+
+    .card {
+      background: #151515;
+      border-radius: 20px;
+      padding: 24px;
+      max-width: 800px;
+      margin: 20px auto;
+      text-align: left;
+    }
+
+    .profile {
+      text-align: center;
+    }
+
+    .profile img {
+      width: 140px;
+      height: 140px;
+      object-fit: cover;
+      border-radius: 50%;
+      border: 3px solid gold;
+      margin-bottom: 16px;
+    }
+
+    .bio {
+      color: #ddd;
+      line-height: 1.6;
+      max-width: 620px;
+      margin: 10px auto 0;
+      text-align: center;
+    }
+
+    .social {
+      margin-top: 14px;
+      text-align: center;
+    }
+
+    .social a {
+      color: gold;
+      text-decoration: none;
+      border-bottom: 1px solid rgba(255,215,0,0.35);
+    }
+
+    .track {
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 16px;
+      padding: 18px;
+      margin-bottom: 16px;
+      background: rgba(255,255,255,0.02);
+    }
+
+    .track h3 {
+      margin: 0 0 6px;
+      color: gold;
+    }
+
+    .track p {
+      margin: 6px 0 12px;
+      color: #ddd;
+    }
+
+    audio {
+      width: 100%;
+      margin-top: 10px;
+    }
+
+    #status {
+      color: #ddd;
+      min-height: 20px;
+      margin-bottom: 12px;
+    }
+
+    #debug {
+      color: #888;
+      font-size: 13px;
+      min-height: 18px;
+      margin-bottom: 20px;
+    }
+
+    .empty {
+      text-align: center;
+      color: #999;
+      padding: 20px 0;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>60seconds.fm</h1>
+
+  <div class="top-links">
+    <a href="index.html">Homepage</a>
+    <a href="join.html">Join</a>
+    <a href="admin.html">Admin</a>
+  </div>
+
+  <div id="status">Loading artist page...</div>
+  <div id="debug"></div>
+
+  <div class="card profile" id="profileCard" style="display:none;">
+    <img id="artistPhoto" src="" alt="Artist photo" />
+    <h2 id="artistName">Artist Name</h2>
+    <div class="bio" id="artistBio"></div>
+    <div class="social" id="artistSocial"></div>
+  </div>
+
+  <div class="card" id="tracksCard" style="display:none;">
+    <h2>Tracks</h2>
+    <div id="trackList"></div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <script>
+    const supabaseClient = window.supabase.createClient(
+      "https://rgoutegbcpjytplqcwze.supabase.co",
+      "sb_publishable_255qyDKS77nMU0pbedfa_A_3hdgtEHh"
+    );
+
+    const statusEl = document.getElementById("status");
+    const debugEl = document.getElementById("debug");
+    const profileCardEl = document.getElementById("profileCard");
+    const tracksCardEl = document.getElementById("tracksCard");
+    const artistPhotoEl = document.getElementById("artistPhoto");
+    const artistNameEl = document.getElementById("artistName");
+    const artistBioEl = document.getElementById("artistBio");
+    const artistSocialEl = document.getElementById("artistSocial");
+    const trackListEl = document.getElementById("trackList");
+
+    function setStatus(msg, isError = false) {
+      statusEl.textContent = msg;
+      statusEl.style.color = isError ? "#ff8a8a" : "#ddd";
+      console.log(msg);
+    }
+
+    function setDebug(msg) {
+      debugEl.textContent = msg;
+      console.log("DEBUG:", msg);
+    }
+
+    function getUserIdFromUrl() {
+      const params = new URLSearchParams(window.location.search);
+      return params.get("user_id");
+    }
+
+    function escapeHtml(str) {
+      return String(str || "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    async function loadArtistProfile(userId) {
+      setDebug("Loading profile...");
+
+      const { data, error } = await supabaseClient
+        .from("profiles")
+        .select("artist_name, bio, social_link, photo_url, user_id")
+        .eq("user_id", userId)
+        .maybeSingle();
+
+      if (error) {
+        setStatus("Error loading profile: " + error.message, true);
+        return null;
+      }
+
+      if (!data) {
+        setStatus("Artist profile not found.", true);
+        return null;
+      }
+
+      artistNameEl.textContent = data.artist_name || "Unknown Artist";
+      artistBioEl.textContent = data.bio || "No bio yet.";
+
+      if (data.photo_url) {
+        artistPhotoEl.src = data.photo_url;
+      } else {
+        artistPhotoEl.style.display = "none";
+      }
+
+      if (data.social_link) {
+        artistSocialEl.innerHTML = `<a href="${data.social_link}" target="_blank" rel="noopener noreferrer">Visit social / streaming link</a>`;
+      } else {
+        artistSocialEl.innerHTML = "";
+      }
+
+      profileCardEl.style.display = "block";
+      return data;
+    }
+
+    async function loadArtistTracks(userId) {
+      setDebug("Loading artist tracks...");
+
+      const { data, error } = await supabaseClient
+        .from("tracks")
+        .select("title, artist, file_url, status, created_at, user_id")
+        .eq("user_id", userId)
+        .order("created_at", { ascending: false });
+
+      if (error) {
+        setStatus("Error loading tracks: " + error.message, true);
+        return;
+      }
+
+      tracksCardEl.style.display = "block";
+      trackListEl.innerHTML = "";
+
+      if (!data || data.length === 0) {
+        trackListEl.innerHTML = `<div class="empty">No tracks found for this artist.</div>`;
+        return;
+      }
+
+      data.forEach(track => {
+        const div = document.createElement("div");
+        div.className = "track";
+        div.innerHTML = `
+          <h3>${escapeHtml(track.title)}</h3>
+          <p>Status: ${escapeHtml(track.status || "unknown")}</p>
+          <audio controls src="${track.file_url}"></audio>
+        `;
+        trackListEl.appendChild(div);
+      });
+    }
+
+    async function init() {
+      const userId = getUserIdFromUrl();
+
+      if (!userId) {
+        setStatus("Missing user_id in URL.", true);
+        return;
+      }
+
+      setStatus("Loading artist page...");
+
+      const profile = await loadArtistProfile(userId);
+      if (!profile) return;
+
+      await loadArtistTracks(userId);
+
+      setStatus("Artist page loaded.");
+    }
+
+    init();
+  </script>
+
+</body>
+</html>
