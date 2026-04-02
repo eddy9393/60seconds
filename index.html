@@ -2,12 +2,11 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>60 Seconds FM</title>
 
   <style>
     :root {
-      --bg: #090909;
       --gold: #d4af37;
       --gold-2: #f4d77a;
       --gold-dark: #8f6b13;
@@ -16,1236 +15,272 @@
       --top-btn-height: 52px;
     }
 
-    * {
-      box-sizing: border-box;
-    }
-
     body {
       margin: 0;
-      min-height: 100vh;
       background:
-        radial-gradient(circle at top, rgba(212, 175, 55, 0.10), transparent 28%),
-        linear-gradient(180deg, #080808 0%, #0d0d0d 100%);
+        radial-gradient(circle at top, rgba(212,175,55,0.10), transparent 28%),
+        linear-gradient(180deg,#080808,#0d0d0d);
       color: var(--text);
       font-family: Arial, sans-serif;
       text-align: center;
       padding: 24px 18px 44px;
     }
 
-    .hidden {
-      display: none !important;
-    }
+    .hidden { display: none !important; }
 
-    .hero {
-      max-width: 900px;
-      margin: 0 auto 26px;
-    }
-
-    .brand-link {
-      text-decoration: none;
-      display: inline-block;
+    /* LOGO */
+    .brand-logo {
+      width: min(700px, 92vw);
       margin-bottom: 20px;
     }
 
-    .brand-title {
-      margin: 0;
-      font-size: clamp(42px, 8vw, 78px);
-      line-height: 0.96;
-      font-weight: 900;
-      letter-spacing: -1px;
-      background: linear-gradient(180deg, #fff7d8 0%, #f4d77a 38%, #d4af37 70%, #8f6b13 100%);
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-      text-shadow: 0 16px 34px rgba(212,175,55,0.12);
-    }
-
-    .brand-subtitle {
-      margin: 14px auto 0;
-      max-width: 680px;
-      color: #c9c9c9;
-      font-size: 17px;
-      line-height: 1.6;
-    }
-
+    /* TOP */
     .top-actions {
       display: flex;
       justify-content: center;
-      align-items: flex-start;
       gap: 12px;
       flex-wrap: wrap;
-      margin-bottom: 8px;
+      margin-bottom: 10px;
     }
 
     .submit-link {
-      display: inline-flex;
+      display: flex;
       align-items: center;
       justify-content: center;
-      min-height: var(--top-btn-height);
+      height: var(--top-btn-height);
       padding: 0 28px;
       border-radius: 999px;
-      text-decoration: none;
-      color: #141414;
+      background: linear-gradient(135deg,var(--gold-2),var(--gold));
+      color: #111;
       font-weight: 800;
-      font-size: 15px;
-      letter-spacing: 0.4px;
-      background: linear-gradient(135deg, var(--gold-2), var(--gold), #b68818);
-      box-shadow:
-        0 12px 28px rgba(212,175,55,0.22),
-        inset 0 1px 0 rgba(255,255,255,0.35);
-      transition: transform 0.16s ease, box-shadow 0.16s ease;
-      white-space: nowrap;
+      text-decoration: none;
     }
 
-    .submit-link:hover {
-      transform: translateY(-1px);
-      box-shadow:
-        0 16px 34px rgba(212,175,55,0.28),
-        inset 0 1px 0 rgba(255,255,255,0.38);
-    }
-
-    .auth-inline {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .auth-trigger-row {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      min-height: var(--top-btn-height);
-    }
-
-    .auth-trigger-row .metal-btn,
-    .user-box .metal-btn {
-      min-height: var(--top-btn-height);
-      padding-top: 0;
-      padding-bottom: 0;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      white-space: nowrap;
-    }
-
-    .auth-box {
-      width: min(720px, 100%);
-      text-align: left;
-      margin: 4px auto 0;
-    }
-
-    .auth-box h3 {
-      margin: 0 0 10px;
-      color: var(--gold);
-      font-size: 15px;
+    .metal-btn {
+      height: var(--top-btn-height);
+      padding: 0 20px;
+      border-radius: 999px;
+      border: none;
+      cursor: pointer;
       font-weight: 700;
-      text-align: center;
+      background: linear-gradient(#444,#111);
+      color: white;
+    }
+
+    /* AUTH */
+    .auth-box {
+      margin-top: 10px;
     }
 
     .auth-inputs {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
+      display: flex;
       gap: 8px;
+      justify-content: center;
       margin-bottom: 8px;
     }
 
-    .auth-box input {
-      width: 100%;
-      padding: 12px 12px;
-      border-radius: 12px;
-      border: 1px solid rgba(255,255,255,0.06);
-      background: #0f0f0f;
+    .auth-inputs input {
+      padding: 10px;
+      border-radius: 10px;
+      border: none;
+      background: #111;
       color: white;
-      font-size: 14px;
-      outline: none;
-      min-height: 46px;
-    }
-
-    .auth-row {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      justify-content: center;
-    }
-
-    .auth-message {
-      min-height: 18px;
-      margin-top: 4px;
-      font-size: 12px;
-      color: #cfcfcf;
-      text-align: center;
     }
 
     .user-box {
       display: flex;
-      align-items: center;
+      gap: 10px;
       justify-content: center;
-      gap: 12px;
-      flex-wrap: wrap;
-    }
-
-    .avatar {
-      width: 52px;
-      height: 52px;
-      border-radius: 50%;
-      object-fit: cover;
-      border: 2px solid rgba(212,175,55,0.65);
-      box-shadow: 0 0 0 4px rgba(212,175,55,0.08);
-      background: #1b1b1b;
-    }
-
-    .avatar-fallback {
-      width: 52px;
-      height: 52px;
-      border-radius: 50%;
-      display: flex;
       align-items: center;
-      justify-content: center;
-      background: linear-gradient(180deg, #3a2d0d, #a98325);
-      color: #fff;
-      font-weight: 700;
-      border: 2px solid rgba(212,175,55,0.65);
-      box-shadow: 0 0 0 4px rgba(212,175,55,0.08);
     }
 
-    .radio-stage {
-      position: relative;
-      max-width: 760px;
-      margin: 0 auto;
-    }
-
+    /* RADIO */
     .radio-shell {
-      position: relative;
-      background:
-        linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.015)),
-        linear-gradient(180deg, #181818 0%, #111111 100%);
-      border: 1px solid rgba(255,255,255,0.05);
-      border-radius: 30px;
-      padding: 28px;
-      box-shadow:
-        0 30px 80px rgba(0,0,0,0.38),
-        inset 0 1px 0 rgba(255,255,255,0.04);
-      transition: opacity 0.35s ease, filter 0.35s ease, transform 0.35s ease;
-    }
-
-    .radio-shell.pre-live {
-      opacity: 0.42;
-      filter: blur(0.2px) saturate(0.86);
-      transform: scale(0.992);
-    }
-
-    .start-overlay {
-      position: absolute;
-      inset: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      pointer-events: auto;
-      z-index: 5;
-    }
-
-    .overlay-content {
-      text-align: center;
-      padding: 24px;
-    }
-
-    .overlay-label {
-      color: rgba(255,255,255,0.85);
-      font-size: 13px;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      margin-bottom: 16px;
-    }
-
-    .start-btn {
-      min-width: 190px;
-    }
-
-    .now-playing {
-      color: var(--muted);
-      font-size: 12px;
-      text-transform: uppercase;
-      letter-spacing: 2px;
-      margin-bottom: 10px;
+      margin-top: 30px;
+      padding: 20px;
+      border-radius: 20px;
+      background: #111;
     }
 
     .track-title {
-      font-size: clamp(28px, 5vw, 46px);
-      margin: 0 0 8px;
-      font-weight: 700;
-    }
-
-    .artist-wrap {
-      margin: 0 0 18px;
-      font-size: 18px;
-    }
-
-    .artist-link {
-      color: var(--gold);
-      text-decoration: none;
-      border-bottom: 1px solid rgba(212,175,55,0.32);
-    }
-
-    .artist-link:hover {
-      opacity: 0.88;
-    }
-
-    .time-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      color: var(--muted);
-      font-size: 14px;
-      margin-bottom: 8px;
+      font-size: 32px;
     }
 
     .progress {
-      height: 10px;
-      background: #2a2a2a;
+      height: 8px;
+      background: #333;
       border-radius: 999px;
       overflow: hidden;
-      box-shadow: inset 0 1px 3px rgba(0,0,0,0.35);
+      margin-top: 10px;
     }
 
     .fill {
       height: 100%;
       width: 0%;
-      background: linear-gradient(90deg, var(--gold-dark), var(--gold), var(--gold-2));
-      box-shadow: 0 0 12px rgba(212,175,55,0.28);
+      background: var(--gold);
     }
 
     .player-actions {
-      margin-top: 18px;
-      display: flex;
-      justify-content: center;
-      gap: 12px;
-      flex-wrap: wrap;
+      margin-top: 10px;
     }
 
-    .metal-btn {
-      border: 1px solid rgba(255,255,255,0.08);
-      background:
-        linear-gradient(180deg, #4b4b4b 0%, #2e2e2e 48%, #1c1c1c 100%);
-      color: white;
-      padding: 13px 18px;
-      border-radius: 999px;
-      cursor: pointer;
-      font-weight: 700;
-      font-size: 14px;
-      box-shadow:
-        inset 0 1px 0 rgba(255,255,255,0.18),
-        0 10px 22px rgba(0,0,0,0.25);
-      transition: transform 0.15s ease, box-shadow 0.15s ease;
-    }
-
-    .metal-btn:hover {
-      transform: translateY(-1px);
-      box-shadow:
-        inset 0 1px 0 rgba(255,255,255,0.2),
-        0 14px 24px rgba(0,0,0,0.32);
-    }
-
-    .metal-btn .icon {
-      color: var(--gold);
-      margin-right: 7px;
-      font-size: 15px;
-    }
-
-    .liked {
-      background:
-        linear-gradient(180deg, #6b5416 0%, #a27b1a 48%, #6f5312 100%);
-      color: #111;
-      border-color: rgba(255,215,120,0.2);
-    }
-
-    .liked .icon {
-      color: #111;
-    }
-
-    .listeners-pill {
-      margin: 18px auto 0;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 10px 16px;
-      border-radius: 999px;
-      background: rgba(255,255,255,0.03);
-      border: 1px solid rgba(255,255,255,0.05);
-      color: #f0f0f0;
-      font-size: 14px;
-      box-shadow: inset 0 1px 0 rgba(255,255,255,0.03);
-    }
-
-    .listeners-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: var(--gold);
-      box-shadow: 0 0 8px rgba(212,175,55,0.5);
-    }
-
-    .stats-row {
-      max-width: 760px;
-      margin: 18px auto 0;
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 14px;
-    }
-
-    .stat-card {
-      background: linear-gradient(180deg, #161616 0%, #101010 100%);
-      border-radius: 20px;
-      padding: 18px;
-      border: 1px solid rgba(255,255,255,0.05);
-      box-shadow: 0 12px 30px rgba(0,0,0,0.22);
-    }
-
-    .stat-label {
-      color: var(--muted);
-      font-size: 12px;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      margin-bottom: 8px;
-    }
-
-    .stat-value {
-      color: var(--gold);
-      font-size: clamp(26px, 4vw, 34px);
-      font-weight: 700;
-    }
-
-    .volume-wrap {
-      margin-top: 18px;
-      text-align: left;
-    }
-
-    .volume-wrap label {
-      display: block;
-      margin-bottom: 8px;
-      color: #aaa;
-      font-size: 13px;
-    }
-
-    .volume-wrap input[type="range"] {
-      width: 100%;
-      margin: 0;
-      accent-color: var(--gold);
-    }
-
-    @media (max-width: 760px) {
-      .stats-row {
-        grid-template-columns: 1fr;
-      }
-
-      .radio-shell {
-        padding: 20px;
-      }
-
-      .top-actions {
-        flex-direction: column;
-        align-items: center;
-      }
-
-      .submit-link,
-      .auth-trigger-row .metal-btn {
-        width: 100%;
-        max-width: 320px;
-      }
-
-      .auth-box {
-        width: min(420px, 100%);
-      }
-
-      .auth-inputs {
-        grid-template-columns: 1fr;
-      }
-
-      .auth-row {
-        flex-direction: column;
-      }
-
-      .auth-row .metal-btn {
-        width: 100%;
-      }
-    }
   </style>
 </head>
+
 <body>
 
-  <div class="hero">
-    <a href="/" class="brand-link">
-      <h1 class="brand-title">60 Seconds FM</h1>
-    </a>
+  <!-- LOGO -->
+  <img src="logo.png" class="brand-logo"/>
 
-    <div class="top-actions">
-      <a id="submitTrackBtn" class="submit-link hidden" href="join.html">Submit your track</a>
+  <!-- BUTTONS -->
+  <div class="top-actions">
+    <a id="submitTrackBtn" class="submit-link hidden" href="join.html">Submit your track</a>
 
-      <div class="auth-inline">
-        <div id="authCollapsed" class="auth-trigger-row">
-          <button id="showLoginBtn" class="metal-btn" type="button"><span class="icon">↳</span>Log in</button>
-        </div>
-
-        <div id="authBox" class="auth-box hidden">
-          <h3>Log in</h3>
-
-          <div class="auth-inputs">
-            <input id="email" type="email" placeholder="Email" autocomplete="email" />
-            <input id="password" type="password" placeholder="Password" autocomplete="current-password" />
-          </div>
-
-          <div class="auth-row">
-            <button id="signup" class="metal-btn" type="button"><span class="icon">✦</span>Sign up</button>
-            <button id="login" class="metal-btn" type="button"><span class="icon">↳</span>Log in</button>
-          </div>
-        </div>
-
-        <div id="userBox" class="hidden user-box">
-          <a id="profileLink" href="#" title="Open artist page">
-            <img id="userAvatar" class="avatar hidden" src="" alt="Profile photo" />
-            <div id="userAvatarFallback" class="avatar-fallback hidden">A</div>
-          </a>
-          <button id="logout" class="metal-btn" type="button"><span class="icon">⎋</span>Log out</button>
-        </div>
-
-        <div id="authMessage" class="auth-message"></div>
-      </div>
-    </div>
-
-    <p class="brand-subtitle">
-      Let’s make every minute count
-    </p>
+    <button id="showLoginBtn" class="metal-btn">Log in</button>
   </div>
 
-  <div class="radio-stage">
-    <div id="startOverlay" class="start-overlay">
-      <div class="overlay-content">
-        <div class="overlay-label">Live radio is on</div>
-        <button id="start" class="metal-btn start-btn" type="button"><span class="icon">▶</span>Start Radio</button>
-      </div>
+  <!-- LOGIN -->
+  <div id="authBox" class="auth-box hidden">
+    <div class="auth-inputs">
+      <input id="email" placeholder="Email"/>
+      <input id="password" placeholder="Password" type="password"/>
+    </div>
+    <button id="login" class="metal-btn">Login</button>
+    <button id="signup" class="metal-btn">Sign up</button>
+  </div>
+
+  <!-- USER -->
+  <div id="userBox" class="user-box hidden">
+    <span>Logged in</span>
+    <button id="logout" class="metal-btn">Log out</button>
+  </div>
+
+  <!-- RADIO -->
+  <div class="radio-shell">
+    <h2 id="title" class="track-title">Loading...</h2>
+
+    <div class="progress">
+      <div id="progress" class="fill"></div>
     </div>
 
-    <div id="radioShell" class="radio-shell pre-live">
-      <div id="player">
-        <div class="now-playing">Now Playing</div>
-        <h2 id="title" class="track-title">Loading...</h2>
-        <p id="artistWrap" class="artist-wrap"><span id="artist">—</span></p>
-
-        <div class="time-row">
-          <span id="elapsedTime">0:00</span>
-          <span>1:00</span>
-        </div>
-
-        <div class="progress">
-          <div class="fill" id="progress"></div>
-        </div>
-
-        <div class="player-actions">
-          <button id="likeBtn" class="metal-btn" type="button"><span class="icon">♥</span>Like</button>
-          <button id="skip" class="metal-btn" type="button"><span class="icon">⏭</span>Skip</button>
-        </div>
-
-        <div class="volume-wrap">
-          <label for="volume">Volume</label>
-          <input id="volume" type="range" min="0" max="1" step="0.01" value="0.8" />
-        </div>
-
-        <div class="listeners-pill">
-          <span class="listeners-dot"></span>
-          <span id="listenersCount">0 Listeners</span>
-        </div>
-      </div>
+    <div class="player-actions">
+      <button id="start" class="metal-btn">Start Radio</button>
+      <button id="skip" class="metal-btn">Skip</button>
     </div>
   </div>
 
-  <div class="stats-row">
-    <div class="stat-card">
-      <div class="stat-label">Submitted Tracks</div>
-      <div class="stat-value" id="submittedCount">0</div>
-    </div>
-
-    <div class="stat-card hidden" id="playsCard">
-      <div class="stat-label">Estimated Plays / Day</div>
-      <div class="stat-value" id="playsPerDay">0</div>
-    </div>
-
-    <div class="stat-card hidden" id="myPlaysCard">
-      <div class="stat-label">Your Total Plays</div>
-      <div class="stat-value" id="myTotalPlays">0</div>
-    </div>
-  </div>
-
-  <audio id="audio" autoplay playsinline></audio>
+  <audio id="audio"></audio>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <script>
-    const supabaseClient = window.supabase.createClient(
+    const supabase = window.supabase.createClient(
       "https://rgoutegbcpjytplqcwze.supabase.co",
       "sb_publishable_255qyDKS77nMU0pbedfa_A_3hdgtEHh"
     );
 
-    const showLoginBtn = document.getElementById("showLoginBtn");
     const email = document.getElementById("email");
     const password = document.getElementById("password");
-    const signupBtn = document.getElementById("signup");
-    const loginBtn = document.getElementById("login");
-    const logoutBtn = document.getElementById("logout");
-    const authCollapsed = document.getElementById("authCollapsed");
+
     const authBox = document.getElementById("authBox");
+    const showLoginBtn = document.getElementById("showLoginBtn");
     const userBox = document.getElementById("userBox");
-    const authMessageEl = document.getElementById("authMessage");
-    const userAvatar = document.getElementById("userAvatar");
-    const userAvatarFallback = document.getElementById("userAvatarFallback");
-    const profileLink = document.getElementById("profileLink");
-    const submitTrackBtn = document.getElementById("submitTrackBtn");
+    const submitBtn = document.getElementById("submitTrackBtn");
 
     const audio = document.getElementById("audio");
-    const startBtn = document.getElementById("start");
-    const startOverlay = document.getElementById("startOverlay");
-    const radioShell = document.getElementById("radioShell");
     const titleEl = document.getElementById("title");
-    const artistWrapEl = document.getElementById("artistWrap");
-    const likeBtn = document.getElementById("likeBtn");
-    const skipBtn = document.getElementById("skip");
-    const volume = document.getElementById("volume");
-    const progressFill = document.getElementById("progress");
-    const elapsedTimeEl = document.getElementById("elapsedTime");
-    const listenersCountEl = document.getElementById("listenersCount");
-    const submittedCountEl = document.getElementById("submittedCount");
-    const playsPerDayEl = document.getElementById("playsPerDay");
-    const playsCardEl = document.getElementById("playsCard");
-    const myPlaysCardEl = document.getElementById("myPlaysCard");
-    const myTotalPlaysEl = document.getElementById("myTotalPlays");
 
     let tracks = [];
-    let current = -1;
-    let liked = false;
-    let listenerIdentity = null;
-    let isLiveActivated = false;
-    let liveBooted = false;
 
-    function setAuthMessage(msg, error = false) {
-      authMessageEl.textContent = msg || "";
-      authMessageEl.style.color = error ? "#ff8a8a" : "#cfcfcf";
-    }
+    // AUTH
+    showLoginBtn.onclick = () => {
+      authBox.classList.toggle("hidden");
+    };
 
-    function clearLoginFields() {
-      email.value = "";
-      password.value = "";
-    }
-
-    function hideUserStats() {
-      playsCardEl.classList.add("hidden");
-      myPlaysCardEl.classList.add("hidden");
-      playsPerDayEl.textContent = "0";
-      myTotalPlaysEl.textContent = "0";
-    }
-
-    function setLoggedOutView() {
-      authCollapsed.classList.remove("hidden");
-      authBox.classList.add("hidden");
-      userBox.classList.add("hidden");
-      submitTrackBtn.classList.add("hidden");
-      userAvatar.classList.add("hidden");
-      userAvatarFallback.classList.add("hidden");
-      userAvatar.src = "";
-      profileLink.href = "#";
-      hideUserStats();
-    }
-
-    function setLoggedInView() {
-      authCollapsed.classList.add("hidden");
-      authBox.classList.add("hidden");
-      userBox.classList.remove("hidden");
-      submitTrackBtn.classList.remove("hidden");
-    }
-
-    async function loadMyProfile(userId) {
-      try {
-        const { data, error } = await supabaseClient
-          .from("profiles")
-          .select("artist_name, photo_url, user_id")
-          .eq("user_id", userId)
-          .maybeSingle();
-
-        if (error || !data) {
-          userAvatar.classList.add("hidden");
-          userAvatarFallback.classList.remove("hidden");
-          userAvatarFallback.textContent = "•";
-          profileLink.href = "#";
-          return;
-        }
-
-        if (data.photo_url) {
-          userAvatar.src = data.photo_url;
-          userAvatar.classList.remove("hidden");
-          userAvatarFallback.classList.add("hidden");
-        } else {
-          userAvatar.classList.add("hidden");
-          userAvatarFallback.classList.remove("hidden");
-          userAvatarFallback.textContent = (data.artist_name || "A").charAt(0).toUpperCase();
-        }
-
-        profileLink.href = `artist.html?user_id=${encodeURIComponent(data.user_id)}`;
-      } catch (err) {
-        console.error("loadMyProfile error:", err);
-      }
-    }
-
-    async function refreshAuthUI() {
-      try {
-        const { data, error } = await supabaseClient.auth.getSession();
-
-        if (error) {
-          console.error("getSession error:", error);
-          setLoggedOutView();
-          return null;
-        }
-
-        const user = data?.session?.user || null;
-
-        if (user) {
-          setLoggedInView();
-          await loadMyProfile(user.id);
-          return user;
-        } else {
-          setLoggedOutView();
-          return null;
-        }
-      } catch (err) {
-        console.error("refreshAuthUI error:", err);
-        setLoggedOutView();
-        return null;
-      }
-    }
-
-    async function loadTrackStats() {
-      try {
-        const { count: submittedCount } = await supabaseClient
-          .from("tracks")
-          .select("*", { count: "exact", head: true });
-
-        const { count: approvedCount } = await supabaseClient
-          .from("tracks")
-          .select("*", { count: "exact", head: true })
-          .eq("status", "approved");
-
-        submittedCountEl.textContent = (submittedCount || 0).toLocaleString();
-
-        const { data } = await supabaseClient.auth.getSession();
-        const user = data?.session?.user || null;
-
-        if (!user) {
-          playsCardEl.classList.add("hidden");
-          return;
-        }
-
-        const { count: myApproved } = await supabaseClient
-          .from("tracks")
-          .select("*", { count: "exact", head: true })
-          .eq("user_id", user.id)
-          .eq("status", "approved");
-
-        if (!myApproved || myApproved === 0) {
-          playsCardEl.classList.add("hidden");
-          return;
-        }
-
-        playsCardEl.classList.remove("hidden");
-        const perDay = approvedCount && approvedCount > 0 ? Math.floor(1440 / approvedCount) : 0;
-        playsPerDayEl.textContent = perDay.toLocaleString();
-      } catch (err) {
-        console.error("loadTrackStats error:", err);
-      }
-    }
-
-    async function loadMyTotalPlays() {
-      try {
-        const { data } = await supabaseClient.auth.getSession();
-        const user = data?.session?.user || null;
-
-        if (!user) {
-          myPlaysCardEl.classList.add("hidden");
-          return;
-        }
-
-        const { data: myTracks, error } = await supabaseClient
-          .from("tracks")
-          .select("play_count")
-          .eq("user_id", user.id);
-
-        if (error || !myTracks || myTracks.length === 0) {
-          myPlaysCardEl.classList.add("hidden");
-          return;
-        }
-
-        let total = 0;
-        myTracks.forEach(track => {
-          total += track.play_count || 0;
-        });
-
-        myPlaysCardEl.classList.remove("hidden");
-        myTotalPlaysEl.textContent = total.toLocaleString();
-      } catch (err) {
-        console.error("loadMyTotalPlays error:", err);
-      }
-    }
-
-    async function refreshAuthDependentUI() {
-      await refreshAuthUI();
-      await loadTrackStats();
-      await loadMyTotalPlays();
-    }
-
-    showLoginBtn.addEventListener("click", () => {
-      authCollapsed.classList.add("hidden");
-      authBox.classList.remove("hidden");
-      setAuthMessage("");
-      setTimeout(() => email.focus(), 0);
-    });
-
-    async function handleLogin() {
-      const emailValue = email.value.trim();
-      const passwordValue = password.value.trim();
-
-      if (!emailValue || !passwordValue) {
-        setAuthMessage("Please enter email and password.", true);
-        return;
-      }
-
-      setAuthMessage("");
-      loginBtn.disabled = true;
-      signupBtn.disabled = true;
-
-      try {
-        const { error } = await supabaseClient.auth.signInWithPassword({
-          email: emailValue,
-          password: passwordValue
-        });
-
-        if (error) {
-          console.error("login error:", error);
-          setAuthMessage(error.message || "Login failed.", true);
-          return;
-        }
-
-        clearLoginFields();
-        await refreshAuthDependentUI();
-      } catch (err) {
-        console.error("handleLogin error:", err);
-        setAuthMessage("Login failed. Try again.", true);
-      } finally {
-        loginBtn.disabled = false;
-        signupBtn.disabled = false;
-      }
-    }
-
-    async function handleSignup() {
-      const emailValue = email.value.trim();
-      const passwordValue = password.value.trim();
-
-      if (!emailValue || !passwordValue) {
-        setAuthMessage("Please enter email and password.", true);
-        return;
-      }
-
-      setAuthMessage("");
-      loginBtn.disabled = true;
-      signupBtn.disabled = true;
-
-      try {
-        const { error } = await supabaseClient.auth.signUp({
-          email: emailValue,
-          password: passwordValue
-        });
-
-        if (error) {
-          console.error("signup error:", error);
-          setAuthMessage(error.message || "Sign up failed.", true);
-          return;
-        }
-
-        setAuthMessage("Account created. Check your email.");
-        await refreshAuthDependentUI();
-      } catch (err) {
-        console.error("handleSignup error:", err);
-        setAuthMessage("Sign up failed. Try again.", true);
-      } finally {
-        loginBtn.disabled = false;
-        signupBtn.disabled = false;
-      }
-    }
-
-    async function handleLogout() {
-      logoutBtn.disabled = true;
-      setAuthMessage("");
-
-      try {
-        const { error } = await supabaseClient.auth.signOut();
-
-        if (error) {
-          console.error("logout error:", error);
-          setAuthMessage(error.message || "Logout failed.", true);
-          return;
-        }
-
-        clearLoginFields();
-        await refreshAuthDependentUI();
-      } catch (err) {
-        console.error("handleLogout error:", err);
-        setAuthMessage("Logout failed. Try again.", true);
-      } finally {
-        logoutBtn.disabled = false;
-      }
-    }
-
-    loginBtn.addEventListener("click", handleLogin);
-    signupBtn.addEventListener("click", handleSignup);
-    logoutBtn.addEventListener("click", handleLogout);
-
-    email.addEventListener("keydown", (e) => {
-      if (e.key === "Enter") handleLogin();
-    });
-
-    password.addEventListener("keydown", (e) => {
-      if (e.key === "Enter") handleLogin();
-    });
-
-    supabaseClient.auth.onAuthStateChange(() => {
-      refreshAuthDependentUI().catch(err => {
-        console.error("auth state refresh error:", err);
+    document.getElementById("login").onclick = async () => {
+      const { error } = await supabase.auth.signInWithPassword({
+        email: email.value,
+        password: password.value
       });
-    });
 
-    async function loadTracksFromSupabase() {
-      try {
-        const { data, error } = await supabaseClient
-          .from("tracks")
-          .select("id, title, artist, file_url, user_id, play_count, status, created_at")
-          .eq("status", "approved")
-          .order("created_at", { ascending: false });
-
-        if (error) {
-          console.error("loadTracks error:", error);
-          tracks = [];
-          return;
-        }
-
-        tracks = (data || []).map(track => ({
-          id: track.id,
-          title: track.title,
-          artist: track.artist,
-          file_url: track.file_url,
-          user_id: track.user_id || null,
-          play_count: track.play_count || 0
-        }));
-      } catch (err) {
-        console.error("loadTracksFromSupabase crash:", err);
-        tracks = [];
-      }
-    }
-
-    function escapeHtml(str) {
-      return String(str || "")
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("'", "&#039;");
-    }
-
-    function renderArtist(track) {
-      if (track.user_id) {
-        artistWrapEl.innerHTML = `
-          <a class="artist-link" href="artist.html?user_id=${encodeURIComponent(track.user_id)}">
-            ${escapeHtml(track.artist)}
-          </a>
-        `;
+      if (!error) {
+        updateUser();
       } else {
-        artistWrapEl.innerHTML = `<span>${escapeHtml(track.artist)}</span>`;
+        alert(error.message);
+      }
+    };
+
+    document.getElementById("signup").onclick = async () => {
+      const { error } = await supabase.auth.signUp({
+        email: email.value,
+        password: password.value
+      });
+
+      if (!error) alert("Check your email");
+      else alert(error.message);
+    };
+
+    document.getElementById("logout").onclick = async () => {
+      await supabase.auth.signOut();
+      updateUser();
+    };
+
+    async function updateUser() {
+      const { data } = await supabase.auth.getUser();
+
+      if (data.user) {
+        userBox.classList.remove("hidden");
+        submitBtn.classList.remove("hidden");
+        showLoginBtn.classList.add("hidden");
+        authBox.classList.add("hidden");
+      } else {
+        userBox.classList.add("hidden");
+        submitBtn.classList.add("hidden");
+        showLoginBtn.classList.remove("hidden");
       }
     }
 
-    function resetLike() {
-      liked = false;
-      likeBtn.innerHTML = `<span class="icon">♥</span>Like`;
-      likeBtn.classList.remove("liked");
-    }
-
-    function setTrackUI(track) {
-      titleEl.textContent = track.title || "Untitled";
-      renderArtist(track);
-      resetLike();
-    }
-
-    function incrementPlayCount(track) {
-      if (!track || !track.id) return;
-
-      supabaseClient
+    // RADIO
+    async function loadTracks() {
+      const { data } = await supabase
         .from("tracks")
-        .update({ play_count: (track.play_count || 0) + 1 })
-        .eq("id", track.id)
-        .then(() => {
-          track.play_count = (track.play_count || 0) + 1;
-        })
-        .catch(err => {
-          console.error("incrementPlayCount error:", err);
-        });
+        .select("*")
+        .eq("status","approved");
+
+      tracks = data || [];
     }
 
-    function chooseNextTrackIndex() {
-      if (!tracks.length) return -1;
+    function nextTrack() {
+      if (!tracks.length) return;
 
-      let next;
-      do {
-        next = Math.floor(Math.random() * tracks.length);
-      } while (tracks.length > 1 && next === current);
-
-      return next;
-    }
-
-    function playTrackAt(index, startSeconds = 0, countPlay = true) {
-      if (index < 0 || !tracks[index]) return;
-
-      current = index;
-      const track = tracks[index];
-
-      setTrackUI(track);
-      audio.src = track.file_url;
-      progressFill.style.width = "0%";
-      elapsedTimeEl.textContent = formatTime(startSeconds);
+      const t = tracks[Math.floor(Math.random()*tracks.length)];
+      titleEl.textContent = t.title;
+      audio.src = t.file_url;
 
       audio.onloadedmetadata = () => {
-        const safeStart = Math.max(0, Math.min(startSeconds, 59));
-        try {
-          audio.currentTime = safeStart;
-        } catch (e) {
-          console.error("set currentTime error:", e);
-        }
-
-        const playPromise = audio.play();
-        if (playPromise) {
-          playPromise.catch(err => {
-            console.log("audio play blocked:", err);
-          });
-        }
+        audio.currentTime = Math.random()*60;
+        audio.play();
       };
-
-      if (countPlay) {
-        incrementPlayCount(track);
-      }
     }
 
-    function nextTrack(startSeconds = 0, countPlay = true) {
-      if (!tracks.length) {
-        titleEl.textContent = "No live tracks yet";
-        artistWrapEl.innerHTML = `<span>Check back soon</span>`;
-        progressFill.style.width = "0%";
-        elapsedTimeEl.textContent = "0:00";
-        return;
-      }
+    document.getElementById("start").onclick = () => {
+      audio.muted = false;
+      nextTrack();
+    };
 
-      const nextIndex = chooseNextTrackIndex();
-      playTrackAt(nextIndex, startSeconds, countPlay);
-    }
-
-    function formatTime(seconds) {
-      const mins = Math.floor(seconds / 60);
-      const secs = Math.floor(seconds % 60).toString().padStart(2, "0");
-      return `${mins}:${secs}`;
-    }
-
-    async function getListenerIdentity() {
-      try {
-        const { data } = await supabaseClient.auth.getSession();
-        const user = data?.session?.user || null;
-
-        if (user?.id) return user.id;
-
-        let anonId = localStorage.getItem("listener_id");
-        if (!anonId) {
-          anonId = crypto.randomUUID();
-          localStorage.setItem("listener_id", anonId);
-        }
-        return anonId;
-      } catch (err) {
-        console.error("getListenerIdentity error:", err);
-        return "anon-" + Math.random().toString(36).slice(2);
-      }
-    }
-
-    async function registerListener() {
-      try {
-        if (!listenerIdentity) {
-          listenerIdentity = await getListenerIdentity();
-        }
-
-        const { error } = await supabaseClient
-          .from("listeners")
-          .upsert(
-            [{ user_id: listenerIdentity, last_seen: new Date().toISOString() }],
-            { onConflict: "user_id" }
-          );
-
-        if (error) {
-          console.error("registerListener error:", error);
-        }
-      } catch (err) {
-        console.error("registerListener crash:", err);
-      }
-    }
-
-    async function updateListeners() {
-      try {
-        const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000).toISOString();
-
-        const { count, error } = await supabaseClient
-          .from("listeners")
-          .select("*", { count: "exact", head: true })
-          .gt("last_seen", fiveMinutesAgo);
-
-        if (error) {
-          console.error("updateListeners error:", error);
-          return;
-        }
-
-        listenersCountEl.textContent = `${(count || 0).toLocaleString()} Listeners`;
-      } catch (err) {
-        console.error("updateListeners crash:", err);
-      }
-    }
-
-    async function bootstrapLiveRadio() {
-      await loadTracksFromSupabase();
-
-      if (!tracks.length) {
-        titleEl.textContent = "No live tracks yet";
-        artistWrapEl.innerHTML = `<span>Check back soon</span>`;
-        return;
-      }
-
-      audio.volume = Number(volume.value);
-      audio.muted = true;
-
-      const randomLiveOffset = Math.floor(Math.random() * 60);
-      nextTrack(randomLiveOffset, false);
-      liveBooted = true;
-    }
-
-    async function ensureBackgroundPlayback() {
-      if (!liveBooted || !audio.src) return;
-
-      if (audio.paused) {
-        audio.muted = true;
-        audio.play().catch(() => {});
-      }
-    }
-
-    startBtn.addEventListener("click", async () => {
-      isLiveActivated = true;
-
-      await registerListener();
-      await updateListeners();
-      await loadTrackStats();
-      await loadMyTotalPlays();
-
-      radioShell.classList.remove("pre-live");
-      startOverlay.classList.add("hidden");
-
-      if (!audio.src && tracks.length) {
-        nextTrack(Math.floor(Math.random() * 60), false);
-      }
-
-      if (Number(volume.value) > 0) {
-        audio.muted = false;
-      }
-
-      audio.play().catch(err => {
-        console.error("Start Radio play error:", err);
-      });
-    });
-
-    skipBtn.addEventListener("click", () => {
-      nextTrack(0, true);
-    });
-
-    likeBtn.addEventListener("click", () => {
-      liked = !liked;
-
-      if (liked) {
-        likeBtn.innerHTML = `<span class="icon">♥</span>Liked`;
-        likeBtn.classList.add("liked");
-      } else {
-        likeBtn.innerHTML = `<span class="icon">♥</span>Like`;
-        likeBtn.classList.remove("liked");
-      }
-    });
+    document.getElementById("skip").onclick = nextTrack;
 
     audio.addEventListener("timeupdate", () => {
-      const max = 60;
-      const t = Math.min(audio.currentTime || 0, max);
-      progressFill.style.width = `${(t / max) * 100}%`;
-      elapsedTimeEl.textContent = formatTime(t);
+      const t = Math.min(audio.currentTime,60);
+      document.getElementById("progress").style.width = (t/60*100)+"%";
 
-      if (audio.currentTime >= max) {
-        nextTrack(0, true);
-      }
+      if (audio.currentTime >= 60) nextTrack();
     });
 
-    audio.addEventListener("ended", () => {
-      nextTrack(0, true);
-    });
-
-    audio.addEventListener("error", (e) => {
-      console.error("audio element error:", e);
-    });
-
-    volume.addEventListener("input", (e) => {
-      const v = Number(e.target.value);
-      audio.volume = v;
-
-      if (isLiveActivated) {
-        audio.muted = v === 0;
-      } else {
-        audio.muted = true;
-      }
-    });
-
-    document.addEventListener("visibilitychange", () => {
-      ensureBackgroundPlayback();
-    });
-
-    window.addEventListener("focus", () => {
-      ensureBackgroundPlayback();
-    });
-
-    setInterval(() => {
-      if (isLiveActivated) {
-        updateListeners();
-      }
-    }, 10000);
-
-    setInterval(() => {
-      if (isLiveActivated) {
-        registerListener();
-      }
-    }, 15000);
-
-    setInterval(async () => {
-      await loadTracksFromSupabase();
-      await ensureBackgroundPlayback();
-    }, 30000);
-
-    async function initPage() {
-      setLoggedOutView();
-      await refreshAuthDependentUI();
-      await bootstrapLiveRadio();
-    }
-
-    initPage().catch(err => {
-      console.error("initPage error:", err);
-    });
+    // INIT
+    updateUser();
+    loadTracks();
   </script>
+
 </body>
 </html>
