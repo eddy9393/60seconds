@@ -2,285 +2,1235 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>60 Seconds FM</title>
 
   <style>
     :root {
+      --bg: #090909;
+      --panel: #141414;
+      --panel-2: #1a1a1a;
       --gold: #d4af37;
       --gold-2: #f4d77a;
       --gold-dark: #8f6b13;
       --text: #f5f5f5;
       --muted: #a8a8a8;
+      --line: rgba(212, 175, 55, 0.22);
       --top-btn-height: 52px;
+    }
+
+    * {
+      box-sizing: border-box;
     }
 
     body {
       margin: 0;
+      min-height: 100vh;
       background:
-        radial-gradient(circle at top, rgba(212,175,55,0.10), transparent 28%),
-        linear-gradient(180deg,#080808,#0d0d0d);
+        radial-gradient(circle at top, rgba(212, 175, 55, 0.10), transparent 28%),
+        linear-gradient(180deg, #080808 0%, #0d0d0d 100%);
       color: var(--text);
       font-family: Arial, sans-serif;
       text-align: center;
       padding: 24px 18px 44px;
     }
 
-    .hidden { display: none !important; }
+    .hidden {
+      display: none !important;
+    }
 
-    /* LOGO */
-    .brand-logo {
-      width: min(700px, 92vw);
+    .hero {
+      max-width: 900px;
+      margin: 0 auto 26px;
+    }
+
+    .brand-link {
+      text-decoration: none;
+      display: inline-block;
       margin-bottom: 20px;
     }
 
-    /* TOP */
+    .brand-logo {
+      display: block;
+      width: min(720px, 94vw);
+      height: auto;
+      margin: 0 auto;
+    }
+
+    .brand-subtitle {
+      margin: 14px auto 0;
+      max-width: 680px;
+      color: #c9c9c9;
+      font-size: 17px;
+      line-height: 1.6;
+    }
+
     .top-actions {
       display: flex;
       justify-content: center;
+      align-items: flex-start;
       gap: 12px;
       flex-wrap: wrap;
-      margin-bottom: 10px;
-    }
-
-    .submit-link {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      height: var(--top-btn-height);
-      padding: 0 28px;
-      border-radius: 999px;
-      background: linear-gradient(135deg,var(--gold-2),var(--gold));
-      color: #111;
-      font-weight: 800;
-      text-decoration: none;
-    }
-
-    .metal-btn {
-      height: var(--top-btn-height);
-      padding: 0 20px;
-      border-radius: 999px;
-      border: none;
-      cursor: pointer;
-      font-weight: 700;
-      background: linear-gradient(#444,#111);
-      color: white;
-    }
-
-    /* AUTH */
-    .auth-box {
-      margin-top: 10px;
-    }
-
-    .auth-inputs {
-      display: flex;
-      gap: 8px;
-      justify-content: center;
       margin-bottom: 8px;
     }
 
-    .auth-inputs input {
-      padding: 10px;
-      border-radius: 10px;
-      border: none;
-      background: #111;
+    .submit-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: var(--top-btn-height);
+      padding: 0 28px;
+      border-radius: 999px;
+      text-decoration: none;
+      color: #141414;
+      font-weight: 800;
+      font-size: 15px;
+      letter-spacing: 0.4px;
+      background: linear-gradient(135deg, var(--gold-2), var(--gold), #b68818);
+      box-shadow:
+        0 12px 28px rgba(212,175,55,0.22),
+        inset 0 1px 0 rgba(255,255,255,0.35);
+      transition: transform 0.16s ease, box-shadow 0.16s ease;
+      white-space: nowrap;
+    }
+
+    .submit-link:hover {
+      transform: translateY(-1px);
+      box-shadow:
+        0 16px 34px rgba(212,175,55,0.28),
+        inset 0 1px 0 rgba(255,255,255,0.38);
+    }
+
+    .auth-inline {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .auth-trigger-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: var(--top-btn-height);
+    }
+
+    .auth-trigger-row .metal-btn,
+    .user-box .metal-btn {
+      min-height: var(--top-btn-height);
+      padding-top: 0;
+      padding-bottom: 0;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      white-space: nowrap;
+    }
+
+    .auth-box {
+      width: min(720px, 100%);
+      text-align: left;
+      margin: 4px auto 0;
+    }
+
+    .auth-box h3 {
+      margin: 0 0 10px;
+      color: var(--gold);
+      font-size: 15px;
+      font-weight: 700;
+      text-align: center;
+    }
+
+    .auth-inputs {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .auth-box input {
+      width: 100%;
+      padding: 12px 12px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.05);
+      background: #0f0f0f;
       color: white;
+      font-size: 14px;
+      outline: none;
+      min-height: 46px;
+    }
+
+    .auth-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .auth-message {
+      min-height: 18px;
+      margin-top: 4px;
+      font-size: 12px;
+      color: #cfcfcf;
+      text-align: center;
     }
 
     .user-box {
       display: flex;
-      gap: 10px;
-      justify-content: center;
       align-items: center;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
     }
 
-    /* RADIO */
+    .avatar {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid rgba(212,175,55,0.65);
+      box-shadow: 0 0 0 4px rgba(212,175,55,0.08);
+      background: #1b1b1b;
+    }
+
+    .avatar-fallback {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(180deg, #3a2d0d, #a98325);
+      color: #fff;
+      font-weight: 700;
+      border: 2px solid rgba(212,175,55,0.65);
+      box-shadow: 0 0 0 4px rgba(212,175,55,0.08);
+    }
+
+    .radio-stage {
+      position: relative;
+      max-width: 760px;
+      margin: 0 auto;
+    }
+
     .radio-shell {
-      margin-top: 30px;
-      padding: 20px;
-      border-radius: 20px;
-      background: #111;
+      position: relative;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.015)),
+        linear-gradient(180deg, #181818 0%, #111111 100%);
+      border: 1px solid rgba(255,255,255,0.05);
+      border-radius: 30px;
+      padding: 28px;
+      box-shadow:
+        0 30px 80px rgba(0,0,0,0.38),
+        inset 0 1px 0 rgba(255,255,255,0.04);
+      transition: opacity 0.35s ease, filter 0.35s ease, transform 0.35s ease;
+    }
+
+    .radio-shell.pre-live {
+      opacity: 0.42;
+      filter: blur(0.2px) saturate(0.86);
+      transform: scale(0.992);
+    }
+
+    .start-overlay {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: auto;
+      z-index: 5;
+    }
+
+    .overlay-content {
+      text-align: center;
+      padding: 24px;
+    }
+
+    .overlay-label {
+      color: rgba(255,255,255,0.85);
+      font-size: 13px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+    }
+
+    .start-btn {
+      min-width: 190px;
+    }
+
+    .now-playing {
+      color: var(--muted);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-bottom: 10px;
     }
 
     .track-title {
-      font-size: 32px;
+      font-size: clamp(28px, 5vw, 46px);
+      margin: 0 0 8px;
+      font-weight: 700;
+    }
+
+    .artist-wrap {
+      margin: 0 0 18px;
+      font-size: 18px;
+    }
+
+    .artist-link {
+      color: var(--gold);
+      text-decoration: none;
+      border-bottom: 1px solid rgba(212,175,55,0.32);
+    }
+
+    .artist-link:hover {
+      opacity: 0.88;
+    }
+
+    .time-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: var(--muted);
+      font-size: 14px;
+      margin-bottom: 8px;
     }
 
     .progress {
-      height: 8px;
-      background: #333;
+      height: 10px;
+      background: #2a2a2a;
       border-radius: 999px;
       overflow: hidden;
-      margin-top: 10px;
+      box-shadow: inset 0 1px 3px rgba(0,0,0,0.35);
     }
 
     .fill {
       height: 100%;
       width: 0%;
-      background: var(--gold);
+      background: linear-gradient(90deg, var(--gold-dark), var(--gold), var(--gold-2));
+      box-shadow: 0 0 12px rgba(212,175,55,0.28);
     }
 
     .player-actions {
-      margin-top: 10px;
+      margin-top: 18px;
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
     }
 
+    .metal-btn {
+      border: 1px solid rgba(255,255,255,0.08);
+      background:
+        linear-gradient(180deg, #4b4b4b 0%, #2e2e2e 48%, #1c1c1c 100%);
+      color: white;
+      padding: 13px 18px;
+      border-radius: 999px;
+      cursor: pointer;
+      font-weight: 700;
+      font-size: 14px;
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.18),
+        0 10px 22px rgba(0,0,0,0.25);
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .metal-btn:hover {
+      transform: translateY(-1px);
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.2),
+        0 14px 24px rgba(0,0,0,0.32);
+    }
+
+    .metal-btn:disabled {
+      opacity: 0.7;
+      cursor: default;
+      transform: none;
+    }
+
+    .metal-btn .icon {
+      color: var(--gold);
+      margin-right: 7px;
+      font-size: 15px;
+    }
+
+    .liked {
+      background:
+        linear-gradient(180deg, #6b5416 0%, #a27b1a 48%, #6f5312 100%);
+      color: #111;
+      border-color: rgba(255,215,120,0.2);
+    }
+
+    .liked .icon {
+      color: #111;
+    }
+
+    .listeners-pill {
+      margin: 18px auto 0;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 16px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.05);
+      color: #f0f0f0;
+      font-size: 14px;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.03);
+    }
+
+    .listeners-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--gold);
+      box-shadow: 0 0 8px rgba(212,175,55,0.5);
+    }
+
+    .stats-row {
+      max-width: 760px;
+      margin: 18px auto 0;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+    }
+
+    .stat-card {
+      background: linear-gradient(180deg, #161616 0%, #101010 100%);
+      border-radius: 20px;
+      padding: 18px;
+      border: 1px solid rgba(255,255,255,0.05);
+      box-shadow: 0 12px 30px rgba(0,0,0,0.22);
+    }
+
+    .stat-label {
+      color: var(--muted);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 8px;
+    }
+
+    .stat-value {
+      color: var(--gold);
+      font-size: clamp(26px, 4vw, 34px);
+      font-weight: 700;
+    }
+
+    .volume-wrap {
+      margin-top: 18px;
+      text-align: left;
+    }
+
+    .volume-wrap label {
+      display: block;
+      margin-bottom: 8px;
+      color: #aaa;
+      font-size: 13px;
+    }
+
+    .volume-wrap input[type="range"] {
+      width: 100%;
+      margin: 0;
+      accent-color: var(--gold);
+    }
+
+    @media (max-width: 760px) {
+      .stats-row {
+        grid-template-columns: 1fr;
+      }
+
+      .radio-shell {
+        padding: 20px;
+      }
+
+      .top-actions {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .submit-link,
+      .auth-trigger-row .metal-btn {
+        width: 100%;
+        max-width: 320px;
+      }
+
+      .auth-box {
+        width: min(420px, 100%);
+      }
+
+      .auth-inputs {
+        grid-template-columns: 1fr;
+      }
+
+      .auth-row {
+        flex-direction: column;
+      }
+
+      .auth-row .metal-btn {
+        width: 100%;
+      }
+
+      .brand-logo {
+        width: min(94vw, 620px);
+      }
+    }
   </style>
 </head>
-
 <body>
 
-  <!-- LOGO -->
-  <img src="logo.png" class="brand-logo"/>
+  <div class="hero">
+    <a href="/" class="brand-link">
+      <img src="logo.png" alt="60 Seconds FM" class="brand-logo" />
+    </a>
 
-  <!-- BUTTONS -->
-  <div class="top-actions">
-    <a id="submitTrackBtn" class="submit-link hidden" href="join.html">Submit your track</a>
+    <div class="top-actions">
+      <a id="submitTrackBtn" class="submit-link hidden" href="join.html">Submit your track</a>
 
-    <button id="showLoginBtn" class="metal-btn">Log in</button>
-  </div>
+      <div class="auth-inline">
+        <div id="authCollapsed" class="auth-trigger-row">
+          <button id="showLoginBtn" class="metal-btn" type="button"><span class="icon">↳</span>Log in</button>
+        </div>
 
-  <!-- LOGIN -->
-  <div id="authBox" class="auth-box hidden">
-    <div class="auth-inputs">
-      <input id="email" placeholder="Email"/>
-      <input id="password" placeholder="Password" type="password"/>
+        <div id="authBox" class="auth-box hidden">
+          <h3>Log in</h3>
+
+          <div class="auth-inputs">
+            <input id="email" type="email" placeholder="Email" autocomplete="email" />
+            <input id="password" type="password" placeholder="Password" autocomplete="current-password" />
+          </div>
+
+          <div class="auth-row">
+            <button id="signup" class="metal-btn" type="button"><span class="icon">✦</span>Sign up</button>
+            <button id="login" class="metal-btn" type="button"><span class="icon">↳</span>Log in</button>
+          </div>
+        </div>
+
+        <div id="userBox" class="hidden user-box">
+          <a id="profileLink" href="#" title="Open artist page">
+            <img id="userAvatar" class="avatar hidden" src="" alt="Profile photo" />
+            <div id="userAvatarFallback" class="avatar-fallback hidden">A</div>
+          </a>
+          <button id="logout" class="metal-btn" type="button"><span class="icon">⎋</span>Log out</button>
+        </div>
+
+        <div id="authMessage" class="auth-message"></div>
+      </div>
     </div>
-    <button id="login" class="metal-btn">Login</button>
-    <button id="signup" class="metal-btn">Sign up</button>
+
+    <p class="brand-subtitle">
+      Let’s make every minute count
+    </p>
   </div>
 
-  <!-- USER -->
-  <div id="userBox" class="user-box hidden">
-    <span>Logged in</span>
-    <button id="logout" class="metal-btn">Log out</button>
-  </div>
-
-  <!-- RADIO -->
-  <div class="radio-shell">
-    <h2 id="title" class="track-title">Loading...</h2>
-
-    <div class="progress">
-      <div id="progress" class="fill"></div>
+  <div class="radio-stage">
+    <div id="startOverlay" class="start-overlay">
+      <div class="overlay-content">
+        <div class="overlay-label">Live radio is on</div>
+        <button id="start" class="metal-btn start-btn" type="button"><span class="icon">▶</span>Start Radio</button>
+      </div>
     </div>
 
-    <div class="player-actions">
-      <button id="start" class="metal-btn">Start Radio</button>
-      <button id="skip" class="metal-btn">Skip</button>
+    <div id="radioShell" class="radio-shell pre-live">
+      <div id="player">
+        <div class="now-playing">Now Playing</div>
+        <h2 id="title" class="track-title">Loading...</h2>
+        <p id="artistWrap" class="artist-wrap"><span id="artist">—</span></p>
+
+        <div class="time-row">
+          <span id="elapsedTime">0:00</span>
+          <span>1:00</span>
+        </div>
+
+        <div class="progress">
+          <div class="fill" id="progress"></div>
+        </div>
+
+        <div class="player-actions">
+          <button id="likeBtn" class="metal-btn" type="button"><span class="icon">♥</span>Like</button>
+          <button id="skip" class="metal-btn" type="button"><span class="icon">⏭</span>Skip</button>
+        </div>
+
+        <div class="volume-wrap">
+          <label for="volume">Volume</label>
+          <input id="volume" type="range" min="0" max="1" step="0.01" value="0.8" />
+        </div>
+
+        <div class="listeners-pill">
+          <span class="listeners-dot"></span>
+          <span id="listenersCount">0 Listeners</span>
+        </div>
+      </div>
     </div>
   </div>
 
-  <audio id="audio"></audio>
+  <div class="stats-row">
+    <div class="stat-card">
+      <div class="stat-label">Submitted Tracks</div>
+      <div class="stat-value" id="submittedCount">0</div>
+    </div>
+
+    <div class="stat-card hidden" id="playsCard">
+      <div class="stat-label">Estimated Plays / Day</div>
+      <div class="stat-value" id="playsPerDay">0</div>
+    </div>
+
+    <div class="stat-card hidden" id="myPlaysCard">
+      <div class="stat-label">Your Total Plays</div>
+      <div class="stat-value" id="myTotalPlays">0</div>
+    </div>
+  </div>
+
+  <audio id="audio" autoplay playsinline></audio>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <script>
-    const supabase = window.supabase.createClient(
+    const supabaseClient = window.supabase.createClient(
       "https://rgoutegbcpjytplqcwze.supabase.co",
       "sb_publishable_255qyDKS77nMU0pbedfa_A_3hdgtEHh"
     );
 
+    // AUTH UI
+    const showLoginBtn = document.getElementById("showLoginBtn");
     const email = document.getElementById("email");
     const password = document.getElementById("password");
-
+    const signupBtn = document.getElementById("signup");
+    const loginBtn = document.getElementById("login");
+    const logoutBtn = document.getElementById("logout");
+    const authCollapsed = document.getElementById("authCollapsed");
     const authBox = document.getElementById("authBox");
-    const showLoginBtn = document.getElementById("showLoginBtn");
     const userBox = document.getElementById("userBox");
-    const submitBtn = document.getElementById("submitTrackBtn");
+    const authMessageEl = document.getElementById("authMessage");
+    const userAvatar = document.getElementById("userAvatar");
+    const userAvatarFallback = document.getElementById("userAvatarFallback");
+    const profileLink = document.getElementById("profileLink");
+    const submitTrackBtn = document.getElementById("submitTrackBtn");
 
+    // RADIO + STATS
     const audio = document.getElementById("audio");
+    const startBtn = document.getElementById("start");
+    const startOverlay = document.getElementById("startOverlay");
+    const radioShell = document.getElementById("radioShell");
     const titleEl = document.getElementById("title");
+    const artistWrapEl = document.getElementById("artistWrap");
+    const likeBtn = document.getElementById("likeBtn");
+    const skipBtn = document.getElementById("skip");
+    const volume = document.getElementById("volume");
+    const progressFill = document.getElementById("progress");
+    const elapsedTimeEl = document.getElementById("elapsedTime");
+    const listenersCountEl = document.getElementById("listenersCount");
+    const submittedCountEl = document.getElementById("submittedCount");
+    const playsPerDayEl = document.getElementById("playsPerDay");
+    const playsCardEl = document.getElementById("playsCard");
+    const myPlaysCardEl = document.getElementById("myPlaysCard");
+    const myTotalPlaysEl = document.getElementById("myTotalPlays");
 
     let tracks = [];
+    let current = -1;
+    let liked = false;
+    let listenerIdentity = null;
+    let isLiveActivated = false;
+    let liveBooted = false;
 
-    // AUTH
-    showLoginBtn.onclick = () => {
-      authBox.classList.toggle("hidden");
-    };
+    function setAuthMessage(msg, error = false) {
+      if (msg === "Auth session missing!") msg = "";
+      authMessageEl.textContent = msg || "";
+      authMessageEl.style.color = error ? "#ff8a8a" : "#cfcfcf";
+    }
 
-    document.getElementById("login").onclick = async () => {
-      const { error } = await supabase.auth.signInWithPassword({
-        email: email.value,
-        password: password.value
-      });
+    function clearLoginFields() {
+      email.value = "";
+      password.value = "";
+    }
 
-      if (!error) {
-        updateUser();
-      } else {
-        alert(error.message);
+    function hideUserStats() {
+      playsCardEl.classList.add("hidden");
+      myPlaysCardEl.classList.add("hidden");
+      playsPerDayEl.textContent = "0";
+      myTotalPlaysEl.textContent = "0";
+    }
+
+    function setLoggedOutView() {
+      authCollapsed.classList.remove("hidden");
+      authBox.classList.add("hidden");
+      userBox.classList.add("hidden");
+      submitTrackBtn.classList.add("hidden");
+      userAvatar.classList.add("hidden");
+      userAvatarFallback.classList.add("hidden");
+      userAvatar.src = "";
+      profileLink.href = "#";
+      hideUserStats();
+    }
+
+    function setLoggedInView() {
+      authCollapsed.classList.add("hidden");
+      authBox.classList.add("hidden");
+      userBox.classList.remove("hidden");
+      submitTrackBtn.classList.remove("hidden");
+    }
+
+    async function loadMyProfile(userId) {
+      const { data, error } = await supabaseClient
+        .from("profiles")
+        .select("artist_name, photo_url, user_id")
+        .eq("user_id", userId)
+        .maybeSingle();
+
+      if (error || !data) {
+        userAvatar.classList.add("hidden");
+        userAvatarFallback.classList.remove("hidden");
+        userAvatarFallback.textContent = "•";
+        profileLink.href = "#";
+        return;
       }
-    };
 
-    document.getElementById("signup").onclick = async () => {
-      const { error } = await supabase.auth.signUp({
-        email: email.value,
-        password: password.value
-      });
-
-      if (!error) alert("Check your email");
-      else alert(error.message);
-    };
-
-    document.getElementById("logout").onclick = async () => {
-      await supabase.auth.signOut();
-      updateUser();
-    };
-
-    async function updateUser() {
-      const { data } = await supabase.auth.getUser();
-
-      if (data.user) {
-        userBox.classList.remove("hidden");
-        submitBtn.classList.remove("hidden");
-        showLoginBtn.classList.add("hidden");
-        authBox.classList.add("hidden");
+      if (data.photo_url) {
+        userAvatar.src = data.photo_url;
+        userAvatar.classList.remove("hidden");
+        userAvatarFallback.classList.add("hidden");
       } else {
-        userBox.classList.add("hidden");
-        submitBtn.classList.add("hidden");
-        showLoginBtn.classList.remove("hidden");
+        userAvatar.classList.add("hidden");
+        userAvatarFallback.classList.remove("hidden");
+        userAvatarFallback.textContent = (data.artist_name || "A").charAt(0).toUpperCase();
+      }
+
+      profileLink.href = `artist.html?user_id=${encodeURIComponent(data.user_id)}`;
+    }
+
+    async function refreshAuthUI() {
+      try {
+        const { data, error } = await supabaseClient.auth.getSession();
+
+        if (error) {
+          setLoggedOutView();
+          return null;
+        }
+
+        const user = data?.session?.user || null;
+
+        if (user) {
+          setLoggedInView();
+          await loadMyProfile(user.id);
+          return user;
+        } else {
+          setLoggedOutView();
+          return null;
+        }
+      } catch (err) {
+        console.error("refreshAuthUI error:", err);
+        setLoggedOutView();
+        return null;
       }
     }
 
-    // RADIO
-    async function loadTracks() {
-      const { data } = await supabase
+    async function loadTrackStats() {
+      const { count: submittedCount } = await supabaseClient
         .from("tracks")
-        .select("*")
-        .eq("status","approved");
+        .select("*", { count: "exact", head: true });
 
-      tracks = data || [];
+      const { count: approvedCount } = await supabaseClient
+        .from("tracks")
+        .select("*", { count: "exact", head: true })
+        .eq("status", "approved");
+
+      submittedCountEl.textContent = (submittedCount || 0).toLocaleString();
+
+      const { data } = await supabaseClient.auth.getSession();
+      const user = data?.session?.user || null;
+
+      if (!user) {
+        playsCardEl.classList.add("hidden");
+        return;
+      }
+
+      const { count: myApproved } = await supabaseClient
+        .from("tracks")
+        .select("*", { count: "exact", head: true })
+        .eq("user_id", user.id)
+        .eq("status", "approved");
+
+      if (!myApproved || myApproved === 0) {
+        playsCardEl.classList.add("hidden");
+        return;
+      }
+
+      playsCardEl.classList.remove("hidden");
+
+      const perDay = approvedCount && approvedCount > 0
+        ? Math.floor(1440 / approvedCount)
+        : 0;
+
+      playsPerDayEl.textContent = perDay.toLocaleString();
     }
 
-    function nextTrack() {
-      if (!tracks.length) return;
+    async function loadMyTotalPlays() {
+      const { data } = await supabaseClient.auth.getSession();
+      const user = data?.session?.user || null;
 
-      const t = tracks[Math.floor(Math.random()*tracks.length)];
-      titleEl.textContent = t.title;
-      audio.src = t.file_url;
+      if (!user) {
+        myPlaysCardEl.classList.add("hidden");
+        return;
+      }
 
-      audio.onloadedmetadata = () => {
-        audio.currentTime = Math.random()*60;
-        audio.play();
-      };
+      const { data: myTracks, error } = await supabaseClient
+        .from("tracks")
+        .select("play_count")
+        .eq("user_id", user.id);
+
+      if (error || !myTracks || myTracks.length === 0) {
+        myPlaysCardEl.classList.add("hidden");
+        return;
+      }
+
+      let total = 0;
+      myTracks.forEach(track => {
+        total += track.play_count || 0;
+      });
+
+      myPlaysCardEl.classList.remove("hidden");
+      myTotalPlaysEl.textContent = total.toLocaleString();
     }
 
-    document.getElementById("start").onclick = () => {
-      audio.muted = false;
-      nextTrack();
+    async function refreshAuthDependentUI() {
+      await refreshAuthUI();
+      await loadTrackStats();
+      await loadMyTotalPlays();
+    }
+
+    showLoginBtn.onclick = () => {
+      authCollapsed.classList.add("hidden");
+      authBox.classList.remove("hidden");
+      setAuthMessage("");
+      setTimeout(() => email.focus(), 0);
     };
 
-    document.getElementById("skip").onclick = nextTrack;
+    async function handleLogin() {
+      const emailValue = email.value.trim();
+      const passwordValue = password.value.trim();
 
-    audio.addEventListener("timeupdate", () => {
-      const t = Math.min(audio.currentTime,60);
-      document.getElementById("progress").style.width = (t/60*100)+"%";
+      if (!emailValue || !passwordValue) {
+        setAuthMessage("Please enter email and password.", true);
+        return;
+      }
 
-      if (audio.currentTime >= 60) nextTrack();
+      loginBtn.disabled = true;
+      signupBtn.disabled = true;
+      setAuthMessage("");
+
+      try {
+        const { error } = await supabaseClient.auth.signInWithPassword({
+          email: emailValue,
+          password: passwordValue
+        });
+
+        if (error) {
+          setAuthMessage(error.message, true);
+          return;
+        }
+
+        clearLoginFields();
+        await refreshAuthDependentUI();
+      } catch (err) {
+        console.error("handleLogin error:", err);
+        setAuthMessage("Login failed. Try again.", true);
+      } finally {
+        loginBtn.disabled = false;
+        signupBtn.disabled = false;
+      }
+    }
+
+    async function handleSignup() {
+      const emailValue = email.value.trim();
+      const passwordValue = password.value.trim();
+
+      if (!emailValue || !passwordValue) {
+        setAuthMessage("Please enter email and password.", true);
+        return;
+      }
+
+      loginBtn.disabled = true;
+      signupBtn.disabled = true;
+      setAuthMessage("");
+
+      try {
+        const { error } = await supabaseClient.auth.signUp({
+          email: emailValue,
+          password: passwordValue
+        });
+
+        if (error) {
+          setAuthMessage(error.message, true);
+          return;
+        }
+
+        setAuthMessage("Account created. Check your email.");
+        await refreshAuthDependentUI();
+      } catch (err) {
+        console.error("handleSignup error:", err);
+        setAuthMessage("Sign up failed. Try again.", true);
+      } finally {
+        loginBtn.disabled = false;
+        signupBtn.disabled = false;
+      }
+    }
+
+    async function handleLogout() {
+      logoutBtn.disabled = true;
+      setAuthMessage("");
+
+      try {
+        const { error } = await supabaseClient.auth.signOut();
+
+        if (error) {
+          setAuthMessage(error.message, true);
+          return;
+        }
+
+        clearLoginFields();
+        await refreshAuthDependentUI();
+      } catch (err) {
+        console.error("handleLogout error:", err);
+        setAuthMessage("Logout failed. Try again.", true);
+      } finally {
+        logoutBtn.disabled = false;
+      }
+    }
+
+    loginBtn.onclick = handleLogin;
+    signupBtn.onclick = handleSignup;
+    logoutBtn.onclick = handleLogout;
+
+    email.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") handleLogin();
     });
 
-    // INIT
-    updateUser();
-    loadTracks();
-  </script>
+    password.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") handleLogin();
+    });
 
+    supabaseClient.auth.onAuthStateChange(() => {
+      refreshAuthDependentUI().catch(err => console.error(err));
+    });
+
+    async function loadTracksFromSupabase() {
+      const { data, error } = await supabaseClient
+        .from("tracks")
+        .select("id, title, artist, file_url, user_id, play_count, status, created_at")
+        .eq("status", "approved")
+        .order("created_at", { ascending: false });
+
+      if (error) {
+        console.error("loadTracksFromSupabase error:", error);
+        tracks = [];
+        return;
+      }
+
+      tracks = (data || []).map(track => ({
+        id: track.id,
+        title: track.title,
+        artist: track.artist,
+        file_url: track.file_url,
+        user_id: track.user_id || null,
+        play_count: track.play_count || 0
+      }));
+    }
+
+    function escapeHtml(str) {
+      return String(str || "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function renderArtist(track) {
+      if (track.user_id) {
+        artistWrapEl.innerHTML = `
+          <a class="artist-link" href="artist.html?user_id=${encodeURIComponent(track.user_id)}">
+            ${escapeHtml(track.artist)}
+          </a>
+        `;
+      } else {
+        artistWrapEl.innerHTML = `<span>${escapeHtml(track.artist)}</span>`;
+      }
+    }
+
+    function resetLike() {
+      liked = false;
+      likeBtn.innerHTML = `<span class="icon">♥</span>Like`;
+      likeBtn.classList.remove("liked");
+    }
+
+    function setTrackUI(track) {
+      titleEl.textContent = track.title || "Untitled";
+      renderArtist(track);
+      resetLike();
+    }
+
+    function incrementPlayCount(track) {
+      if (!track || !track.id) return;
+
+      supabaseClient
+        .from("tracks")
+        .update({
+          play_count: (track.play_count || 0) + 1
+        })
+        .eq("id", track.id)
+        .then(() => {
+          track.play_count = (track.play_count || 0) + 1;
+        })
+        .catch(err => console.error("incrementPlayCount error:", err));
+    }
+
+    function chooseNextTrackIndex() {
+      if (!tracks.length) return -1;
+
+      let next;
+      do {
+        next = Math.floor(Math.random() * tracks.length);
+      } while (tracks.length > 1 && next === current);
+
+      return next;
+    }
+
+    function playTrackAt(index, startSeconds = 0, countPlay = true) {
+      if (index < 0 || !tracks[index]) return;
+
+      current = index;
+      const track = tracks[index];
+
+      setTrackUI(track);
+      audio.src = track.file_url;
+      progressFill.style.width = "0%";
+      elapsedTimeEl.textContent = formatTime(startSeconds);
+
+      audio.onloadedmetadata = () => {
+        const safeStart = Math.max(0, Math.min(startSeconds, 59));
+
+        try {
+          audio.currentTime = safeStart;
+        } catch (e) {
+          console.error("set currentTime error:", e);
+        }
+
+        const playPromise = audio.play();
+        if (playPromise) {
+          playPromise.catch(err => {
+            console.log("audio play blocked:", err);
+          });
+        }
+      };
+
+      if (countPlay) {
+        incrementPlayCount(track);
+      }
+    }
+
+    function nextTrack(startSeconds = 0, countPlay = true) {
+      if (!tracks.length) {
+        titleEl.textContent = "No live tracks yet";
+        artistWrapEl.innerHTML = `<span>Check back soon</span>`;
+        progressFill.style.width = "0%";
+        elapsedTimeEl.textContent = "0:00";
+        return;
+      }
+
+      const nextIndex = chooseNextTrackIndex();
+      playTrackAt(nextIndex, startSeconds, countPlay);
+    }
+
+    function formatTime(seconds) {
+      const mins = Math.floor(seconds / 60);
+      const secs = Math.floor(seconds % 60).toString().padStart(2, "0");
+      return `${mins}:${secs}`;
+    }
+
+    async function getListenerIdentity() {
+      const { data } = await supabaseClient.auth.getSession();
+      const user = data?.session?.user || null;
+
+      if (user?.id) return user.id;
+
+      let anonId = localStorage.getItem("listener_id");
+      if (!anonId) {
+        anonId = crypto.randomUUID();
+        localStorage.setItem("listener_id", anonId);
+      }
+      return anonId;
+    }
+
+    async function registerListener() {
+      try {
+        if (!listenerIdentity) {
+          listenerIdentity = await getListenerIdentity();
+        }
+
+        const { error } = await supabaseClient
+          .from("listeners")
+          .upsert(
+            [
+              {
+                user_id: listenerIdentity,
+                last_seen: new Date().toISOString()
+              }
+            ],
+            {
+              onConflict: "user_id"
+            }
+          );
+
+        if (error) {
+          console.error("registerListener error:", error);
+        }
+      } catch (err) {
+        console.error("registerListener crash:", err);
+      }
+    }
+
+    async function updateListeners() {
+      try {
+        const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000).toISOString();
+
+        const { count, error } = await supabaseClient
+          .from("listeners")
+          .select("*", { count: "exact", head: true })
+          .gt("last_seen", fiveMinutesAgo);
+
+        if (!error && count !== null) {
+          listenersCountEl.textContent = `${count.toLocaleString()} Listeners`;
+        }
+      } catch (err) {
+        console.error("updateListeners error:", err);
+      }
+    }
+
+    async function bootstrapLiveRadio() {
+      await loadTracksFromSupabase();
+
+      if (!tracks.length) {
+        titleEl.textContent = "No live tracks yet";
+        artistWrapEl.innerHTML = `<span>Check back soon</span>`;
+        return;
+      }
+
+      audio.volume = Number(volume.value);
+      audio.muted = true;
+
+      const randomLiveOffset = Math.floor(Math.random() * 60);
+      nextTrack(randomLiveOffset, false);
+      liveBooted = true;
+    }
+
+    async function ensureBackgroundPlayback() {
+      if (!liveBooted || !audio.src) return;
+
+      if (audio.paused) {
+        audio.muted = true;
+        audio.play().catch(() => {});
+      }
+    }
+
+    startBtn.onclick = async () => {
+      isLiveActivated = true;
+
+      await registerListener();
+      await updateListeners();
+      await loadTrackStats();
+      await loadMyTotalPlays();
+
+      radioShell.classList.remove("pre-live");
+      startOverlay.classList.add("hidden");
+
+      if (!audio.src && tracks.length) {
+        nextTrack(Math.floor(Math.random() * 60), false);
+      }
+
+      if (Number(volume.value) > 0) {
+        audio.muted = false;
+      }
+
+      audio.play().catch(err => {
+        console.error("Start Radio play error:", err);
+      });
+    };
+
+    skipBtn.onclick = () => nextTrack(0, true);
+
+    likeBtn.onclick = () => {
+      liked = !liked;
+
+      if (liked) {
+        likeBtn.innerHTML = `<span class="icon">♥</span>Liked`;
+        likeBtn.classList.add("liked");
+      } else {
+        likeBtn.innerHTML = `<span class="icon">♥</span>Like`;
+        likeBtn.classList.remove("liked");
+      }
+    };
+
+    audio.addEventListener("timeupdate", () => {
+      const max = 60;
+      const t = Math.min(audio.currentTime || 0, max);
+      progressFill.style.width = `${(t / max) * 100}%`;
+      elapsedTimeEl.textContent = formatTime(t);
+
+      if (audio.currentTime >= max) {
+        nextTrack(0, true);
+      }
+    });
+
+    audio.addEventListener("ended", () => {
+      nextTrack(0, true);
+    });
+
+    volume.addEventListener("input", (e) => {
+      const v = Number(e.target.value);
+      audio.volume = v;
+
+      if (isLiveActivated) {
+        audio.muted = v === 0;
+      } else {
+        audio.muted = true;
+      }
+    });
+
+    document.addEventListener("visibilitychange", () => {
+      ensureBackgroundPlayback();
+    });
+
+    window.addEventListener("focus", () => {
+      ensureBackgroundPlayback();
+    });
+
+    setInterval(() => {
+      if (isLiveActivated) {
+        updateListeners();
+      }
+    }, 10000);
+
+    setInterval(() => {
+      if (isLiveActivated) {
+        registerListener();
+      }
+    }, 15000);
+
+    setInterval(async () => {
+      await loadTracksFromSupabase();
+      await ensureBackgroundPlayback();
+    }, 30000);
+
+    async function initPage() {
+      setLoggedOutView();
+      await refreshAuthDependentUI();
+      await bootstrapLiveRadio();
+    }
+
+    initPage().catch(err => {
+      console.error("initPage error:", err);
+    });
+  </script>
 </body>
 </html>
