@@ -24,7 +24,7 @@
       background: #151515;
       padding: 30px;
       border-radius: 20px;
-      max-width: 560px;
+      max-width: 620px;
       margin: 20px auto;
     }
 
@@ -41,6 +41,11 @@
     input[type="file"] {
       background: #fff;
       color: #000;
+    }
+
+    textarea {
+      min-height: 120px;
+      resize: vertical;
     }
 
     button {
@@ -89,16 +94,19 @@
 
   <h1>Join 60seconds</h1>
   <p class="note">
-    Upload one track to 60seconds. Your submission will be saved as <strong>pending</strong>
+    Upload your artist profile and one track. Your track will be saved as <strong>pending</strong>
     until it gets approved for the radio.
   </p>
 
   <div class="card">
+    <input id="artistName" placeholder="Artist name" />
+    <textarea id="bio" placeholder="Short bio"></textarea>
+    <input id="socialLink" placeholder="Social or streaming link" />
+    <input id="photoFile" type="file" accept="image/jpeg,image/png,image/webp" />
     <input id="title" placeholder="Track title" />
-    <input id="artist" placeholder="Artist name" />
     <input id="trackFile" type="file" accept=".mp3,audio/mpeg,audio/mp3" />
 
-    <button id="submit">Upload Track</button>
+    <button id="submit">Save Profile + Upload Track</button>
 
     <div id="status">Ready</div>
     <div id="debug"></div>
@@ -129,18 +137,19 @@
     }
 
     document.getElementById("submit").onclick = async () => {
+      const artistName = document.getElementById("artistName").value.trim();
+      const bio = document.getElementById("bio").value.trim();
+      const socialLink = document.getElementById("socialLink").value.trim();
+      const photoFile = document.getElementById("photoFile").files[0];
       const title = document.getElementById("title").value.trim();
-      const artist = document.getElementById("artist").value.trim();
-      const file = document.getElementById("trackFile").files[0];
+      const trackFile = document.getElementById("trackFile").files[0];
 
-      if (!title || !artist || !file) {
-        setStatus("Please fill in title, artist and choose an mp3 file.", true);
+      if (!artistName || !title || !photoFile || !trackFile) {
+        setStatus("Please fill in artist name, track title, photo and track file.", true);
         return;
       }
 
       setStatus("Checking login...");
-      setDebug("Checking current user");
-
       const { data: userData, error: userError } = await supabaseClient.auth.getUser();
 
       if (userError) {
@@ -149,70 +158,114 @@
       }
 
       if (!userData.user) {
-        setStatus("You must be logged in before uploading a track.", true);
+        setStatus("You must be logged in before uploading.", true);
         return;
       }
 
       const userId = userData.user.id;
-      const safeFileName = `${Date.now()}-${file.name.replace(/\s+/g, "-")}`;
-      const filePath = `${userId}/${safeFileName}`;
 
-      setStatus("Uploading file to Supabase Storage...");
-      setDebug("Uploading to bucket: tracks");
+      // Upload profile photo
+      setStatus("Uploading artist photo...");
+      setDebug("Uploading to artist-photos bucket");
 
-      const { error: uploadError } = await supabaseClient
+      const photoPath = `${userId}/${Date.now()}-${photoFile.name.replace(/\s+/g, "-")}`;
+
+      const { error: photoUploadError } = await supabaseClient
+        .storage
+        .from("artist-photos")
+        .upload(photoPath, photoFile, {
+          cacheControl: "3600",
+          upsert: true
+        });
+
+      if (photoUploadError) {
+        setStatus("Photo upload failed: " + photoUploadError.message, true);
+        return;
+      }
+
+      const { data: photoUrlData } = supabaseClient
+        .storage
+        .from("artist-photos")
+        .getPublicUrl(photoPath);
+
+      const photoUrl = photoUrlData.publicUrl;
+
+      // Save profile
+      setStatus("Saving artist profile...");
+      setDebug("Upserting profile");
+
+      const { error: profileError } = await supabaseClient
+        .from("profiles")
+        .upsert([
+          {
+            user_id: userId,
+            artist_name: artistName,
+            bio: bio,
+            social_link: socialLink,
+            photo_url: photoUrl
+          }
+        ]);
+
+      if (profileError) {
+        setStatus("Saving profile failed: " + profileError.message, true);
+        return;
+      }
+
+      // Upload track
+      setStatus("Uploading track...");
+      setDebug("Uploading to tracks bucket");
+
+      const trackPath = `${userId}/${Date.now()}-${trackFile.name.replace(/\s+/g, "-")}`;
+
+      const { error: trackUploadError } = await supabaseClient
         .storage
         .from("tracks")
-        .upload(filePath, file, {
+        .upload(trackPath, trackFile, {
           cacheControl: "3600",
           upsert: false
         });
 
-      if (uploadError) {
-        setStatus("Upload failed: " + uploadError.message, true);
+      if (trackUploadError) {
+        setStatus("Track upload failed: " + trackUploadError.message, true);
         return;
       }
 
-      setStatus("Getting public file URL...");
-      setDebug("Fetching public URL");
-
-      const { data: publicUrlData } = supabaseClient
+      const { data: trackUrlData } = supabaseClient
         .storage
         .from("tracks")
-        .getPublicUrl(filePath);
+        .getPublicUrl(trackPath);
 
-      const publicUrl = publicUrlData.publicUrl;
+      const trackUrl = trackUrlData.publicUrl;
 
-      if (!publicUrl) {
-        setStatus("Could not create public URL.", true);
-        return;
-      }
-
+      // Save track row
       setStatus("Saving track in database...");
-      setDebug("Inserting row into tracks table with status pending");
+      setDebug("Inserting track row");
 
-      const { error: insertError } = await supabaseClient
+      const { error: trackInsertError } = await supabaseClient
         .from("tracks")
         .insert([
           {
             title: title,
-            artist: artist,
-            file_url: publicUrl,
+            artist: artistName,
+            file_url: trackUrl,
             user_id: userId,
             status: "pending"
           }
         ]);
 
-      if (insertError) {
-        setStatus("Database insert failed: " + insertError.message, true);
+      if (trackInsertError) {
+        setStatus("Saving track failed: " + trackInsertError.message, true);
         return;
       }
 
-      setStatus("Track uploaded successfully 🚀");
+      setStatus("Profile and track uploaded successfully 🚀");
       setDebug("Done");
 
+      document.getElementById("artistName").value = "";
+      document.getElementById("bio").value = "";
+      document.getElementById("socialLink").value = "";
+      document.getElementById("photoFile").value = "";
       document.getElementById("title").value = "";
-      document.getElementById("artist").value = "";
       document.getElementById("trackFile").value = "";
     };
   </script>
