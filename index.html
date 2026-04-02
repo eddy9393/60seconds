@@ -1,912 +1,336 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>60 Seconds FM</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>60 Seconds FM</title>
 
-  <style>
-    :root {
-      --bg: #090909;
-      --panel: #141414;
-      --panel-2: #1a1a1a;
-      --gold: #d4af37;
-      --gold-2: #f4d77a;
-      --gold-dark: #8f6b13;
-      --text: #f5f5f5;
-      --muted: #a8a8a8;
-      --line: rgba(212, 175, 55, 0.22);
-    }
+<style>
+body {
+  margin:0;
+  background:#0b0b0b;
+  color:white;
+  font-family:Arial;
+  text-align:center;
+}
 
-    * {
-      box-sizing: border-box;
-    }
+.brand-title {
+  font-size:64px;
+  font-weight:900;
+  background:linear-gradient(gold,#8f6b13);
+  -webkit-background-clip:text;
+  color:transparent;
+}
 
-    body {
-      margin: 0;
-      min-height: 100vh;
-      background:
-        radial-gradient(circle at top, rgba(212, 175, 55, 0.10), transparent 28%),
-        linear-gradient(180deg, #080808 0%, #0d0d0d 100%);
-      color: var(--text);
-      font-family: Arial, sans-serif;
-      text-align: center;
-      padding: 24px 18px 44px;
-    }
+.submit-btn {
+  margin-top:20px;
+  padding:14px 24px;
+  border-radius:999px;
+  background:gold;
+  color:black;
+  text-decoration:none;
+  font-weight:bold;
+  display:inline-block;
+}
 
-    .topbar {
-      max-width: 1050px;
-      margin: 0 auto 12px;
-      display: flex;
-      justify-content: flex-end;
-      align-items: flex-start;
-    }
+.radio {
+  max-width:600px;
+  margin:40px auto;
+  padding:30px;
+  background:#151515;
+  border-radius:20px;
+  opacity:.4;
+  transition:.3s;
+}
 
-    .auth-mini {
-      background: linear-gradient(180deg, #151515 0%, #101010 100%);
-      border: 1px solid rgba(255,255,255,0.05);
-      box-shadow: 0 12px 35px rgba(0,0,0,0.28);
-      border-radius: 18px;
-      padding: 14px;
-      width: 300px;
-      text-align: left;
-    }
+.radio.active {
+  opacity:1;
+}
 
-    .auth-mini h3 {
-      margin: 0 0 10px;
-      color: var(--gold);
-      font-size: 15px;
-      font-weight: 700;
-    }
+button {
+  padding:12px 18px;
+  border-radius:999px;
+  border:none;
+  margin:5px;
+  cursor:pointer;
+}
 
-    .auth-mini input {
-      width: 100%;
-      padding: 10px 12px;
-      margin-bottom: 8px;
-      border-radius: 12px;
-      border: 1px solid rgba(255,255,255,0.05);
-      background: #0f0f0f;
-      color: white;
-      font-size: 14px;
-      outline: none;
-    }
+.gold {
+  background:gold;
+  color:black;
+}
 
-    .auth-row {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
+.progress {
+  height:8px;
+  background:#333;
+  border-radius:999px;
+  margin:10px 0;
+}
 
-    .auth-message {
-      min-height: 18px;
-      margin-top: 8px;
-      font-size: 12px;
-      color: #cfcfcf;
-    }
+.fill {
+  height:100%;
+  width:0%;
+  background:gold;
+}
 
-    .hidden {
-      display: none !important;
-    }
-
-    .user-box {
-      display: flex;
-      align-items: center;
-      justify-content: flex-end;
-      gap: 12px;
-    }
-
-    .avatar {
-      width: 52px;
-      height: 52px;
-      border-radius: 50%;
-      object-fit: cover;
-      border: 2px solid rgba(212,175,55,0.65);
-      box-shadow: 0 0 0 4px rgba(212,175,55,0.08);
-      background: #1b1b1b;
-    }
-
-    .avatar-fallback {
-      width: 52px;
-      height: 52px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: linear-gradient(180deg, #3a2d0d, #a98325);
-      color: #fff;
-      font-weight: 700;
-      border: 2px solid rgba(212,175,55,0.65);
-      box-shadow: 0 0 0 4px rgba(212,175,55,0.08);
-    }
-
-    .hero {
-      max-width: 900px;
-      margin: 0 auto 26px;
-    }
-
-    .submit-link {
-      display: inline-block;
-      margin-bottom: 18px;
-      padding: 14px 28px;
-      border-radius: 999px;
-      text-decoration: none;
-      color: #141414;
-      font-weight: 800;
-      font-size: 15px;
-      letter-spacing: 0.4px;
-      background: linear-gradient(135deg, var(--gold-2), var(--gold), #b68818);
-      box-shadow:
-        0 12px 28px rgba(212,175,55,0.22),
-        inset 0 1px 0 rgba(255,255,255,0.35);
-      transition: transform 0.16s ease, box-shadow 0.16s ease;
-    }
-
-    .submit-link:hover {
-      transform: translateY(-1px);
-      box-shadow:
-        0 16px 34px rgba(212,175,55,0.28),
-        inset 0 1px 0 rgba(255,255,255,0.38);
-    }
-
-    .brand-title {
-      margin: 0;
-      font-size: clamp(42px, 8vw, 78px);
-      line-height: 0.96;
-      font-weight: 900;
-      letter-spacing: -1px;
-      background: linear-gradient(180deg, #fff7d8 0%, #f4d77a 38%, #d4af37 70%, #8f6b13 100%);
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-      text-shadow: 0 16px 34px rgba(212,175,55,0.12);
-    }
-
-    .brand-subtitle {
-      margin: 12px auto 0;
-      max-width: 680px;
-      color: #c9c9c9;
-      font-size: 17px;
-      line-height: 1.6;
-    }
-
-    .radio-stage {
-      position: relative;
-      max-width: 760px;
-      margin: 0 auto;
-    }
-
-    .radio-shell {
-      position: relative;
-      background:
-        linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.015)),
-        linear-gradient(180deg, #181818 0%, #111111 100%);
-      border: 1px solid rgba(255,255,255,0.05);
-      border-radius: 30px;
-      padding: 28px;
-      box-shadow:
-        0 30px 80px rgba(0,0,0,0.38),
-        inset 0 1px 0 rgba(255,255,255,0.04);
-      transition: opacity 0.35s ease, filter 0.35s ease, transform 0.35s ease;
-    }
-
-    .radio-shell.pre-live {
-      opacity: 0.42;
-      filter: blur(0.2px) saturate(0.86);
-      transform: scale(0.992);
-    }
-
-    .start-overlay {
-      position: absolute;
-      inset: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      pointer-events: auto;
-      z-index: 5;
-    }
-
-    .overlay-content {
-      text-align: center;
-      padding: 24px;
-    }
-
-    .overlay-label {
-      color: rgba(255,255,255,0.85);
-      font-size: 13px;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      margin-bottom: 16px;
-    }
-
-    .start-btn {
-      min-width: 190px;
-    }
-
-    .now-playing {
-      color: var(--muted);
-      font-size: 12px;
-      text-transform: uppercase;
-      letter-spacing: 2px;
-      margin-bottom: 10px;
-    }
-
-    .track-title {
-      font-size: clamp(28px, 5vw, 46px);
-      margin: 0 0 8px;
-      font-weight: 700;
-    }
-
-    .artist-wrap {
-      margin: 0 0 18px;
-      font-size: 18px;
-    }
-
-    .artist-link {
-      color: var(--gold);
-      text-decoration: none;
-      border-bottom: 1px solid rgba(212,175,55,0.32);
-    }
-
-    .artist-link:hover {
-      opacity: 0.88;
-    }
-
-    .time-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      color: var(--muted);
-      font-size: 14px;
-      margin-bottom: 8px;
-    }
-
-    .progress {
-      height: 10px;
-      background: #2a2a2a;
-      border-radius: 999px;
-      overflow: hidden;
-      box-shadow: inset 0 1px 3px rgba(0,0,0,0.35);
-    }
-
-    .fill {
-      height: 100%;
-      width: 0%;
-      background: linear-gradient(90deg, var(--gold-dark), var(--gold), var(--gold-2));
-      box-shadow: 0 0 12px rgba(212,175,55,0.28);
-    }
-
-    .player-actions {
-      margin-top: 18px;
-      display: flex;
-      justify-content: center;
-      gap: 12px;
-      flex-wrap: wrap;
-    }
-
-    .metal-btn {
-      border: 1px solid rgba(255,255,255,0.08);
-      background:
-        linear-gradient(180deg, #4b4b4b 0%, #2e2e2e 48%, #1c1c1c 100%);
-      color: white;
-      padding: 13px 18px;
-      border-radius: 999px;
-      cursor: pointer;
-      font-weight: 700;
-      font-size: 14px;
-      box-shadow:
-        inset 0 1px 0 rgba(255,255,255,0.18),
-        0 10px 22px rgba(0,0,0,0.25);
-      transition: transform 0.15s ease, box-shadow 0.15s ease;
-    }
-
-    .metal-btn:hover {
-      transform: translateY(-1px);
-      box-shadow:
-        inset 0 1px 0 rgba(255,255,255,0.2),
-        0 14px 24px rgba(0,0,0,0.32);
-    }
-
-    .metal-btn .icon {
-      color: var(--gold);
-      margin-right: 7px;
-      font-size: 15px;
-    }
-
-    .liked {
-      background:
-        linear-gradient(180deg, #6b5416 0%, #a27b1a 48%, #6f5312 100%);
-      color: #111;
-      border-color: rgba(255,215,120,0.2);
-    }
-
-    .liked .icon {
-      color: #111;
-    }
-
-    .listeners-pill {
-      margin: 18px auto 0;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 10px 16px;
-      border-radius: 999px;
-      background: rgba(255,255,255,0.03);
-      border: 1px solid rgba(255,255,255,0.05);
-      color: #f0f0f0;
-      font-size: 14px;
-      box-shadow: inset 0 1px 0 rgba(255,255,255,0.03);
-    }
-
-    .listeners-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: var(--gold);
-      box-shadow: 0 0 8px rgba(212,175,55,0.5);
-    }
-
-    .stats-row {
-      max-width: 760px;
-      margin: 18px auto 0;
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 14px;
-    }
-
-    .stat-card {
-      background: linear-gradient(180deg, #161616 0%, #101010 100%);
-      border-radius: 20px;
-      padding: 18px;
-      border: 1px solid rgba(255,255,255,0.05);
-      box-shadow: 0 12px 30px rgba(0,0,0,0.22);
-    }
-
-    .stat-label {
-      color: var(--muted);
-      font-size: 12px;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      margin-bottom: 8px;
-    }
-
-    .stat-value {
-      color: var(--gold);
-      font-size: clamp(26px, 4vw, 34px);
-      font-weight: 700;
-    }
-
-    .volume-wrap {
-      margin-top: 18px;
-      text-align: left;
-    }
-
-    .volume-wrap label {
-      display: block;
-      margin-bottom: 8px;
-      color: #aaa;
-      font-size: 13px;
-    }
-
-    .volume-wrap input[type="range"] {
-      width: 100%;
-      margin: 0;
-      accent-color: var(--gold);
-    }
-
-    @media (max-width: 760px) {
-      .topbar {
-        justify-content: center;
-      }
-
-      .auth-mini {
-        width: 100%;
-        max-width: 360px;
-      }
-
-      .stats-row {
-        grid-template-columns: 1fr;
-      }
-
-      .radio-shell {
-        padding: 20px;
-      }
-    }
-  </style>
+.hidden {
+  display:none;
+}
+</style>
 </head>
+
 <body>
 
-  <div class="topbar">
-    <div class="auth-mini">
-      <div id="authCollapsed">
-        <button id="showLoginBtn" class="metal-btn" type="button"><span class="icon">↳</span>Login</button>
-      </div>
+<a href="/">
+  <div class="brand-title">60 Seconds FM</div>
+</a>
 
-      <div id="authBox" class="hidden">
-        <h3>Log in</h3>
-        <input id="email" type="email" placeholder="Email" />
-        <input id="password" type="password" placeholder="Password" />
-        <div class="auth-row">
-          <button id="signup" class="metal-btn" type="button"><span class="icon">✦</span>Sign up</button>
-          <button id="login" class="metal-btn" type="button"><span class="icon">↳</span>Log in</button>
-        </div>
-      </div>
+<p>Let’s make every minute count</p>
 
-      <div id="userBox" class="hidden user-box">
-        <a id="profileLink" href="#" title="Open artist page">
-          <img id="userAvatar" class="avatar hidden" src="" alt="Profile photo" />
-          <div id="userAvatarFallback" class="avatar-fallback hidden">A</div>
-        </a>
-        <button id="logout" class="metal-btn" type="button"><span class="icon">⎋</span>Log out</button>
-      </div>
+<a href="join.html" class="submit-btn">Submit your track</a>
 
-      <div id="authMessage" class="auth-message"></div>
+<div id="authCollapsed">
+  <button id="showLogin">Login</button>
+</div>
+
+<div id="authBox" class="hidden">
+  <input id="email" placeholder="Email">
+  <input id="password" placeholder="Password">
+  <button id="signup">Sign up</button>
+  <button id="login">Log in</button>
+</div>
+
+<div id="userBox" class="hidden">
+  <img id="avatar" width="50" style="border-radius:50%">
+  <button id="logout">Logout</button>
+</div>
+
+<div class="radio" id="radio">
+  <button id="start">Start Radio</button>
+
+  <div id="player" class="hidden">
+    <h2 id="title"></h2>
+    <div id="artist"></div>
+
+    <div>
+      <span id="time">0:00</span> / 1:00
     </div>
+
+    <div class="progress">
+      <div class="fill" id="progress"></div>
+    </div>
+
+    <button id="like">Like</button>
+    <button id="skip">Skip</button>
+
+    <input id="volume" type="range" min="0" max="1" step="0.01" value="0.8">
+
+    <div id="listeners">0 Listeners</div>
   </div>
+</div>
+
+<div>
+  <div>Submitted Tracks: <span id="submitted"></span></div>
+  <div id="playsWrap">Estimated Plays: <span id="plays"></span></div>
+  <div id="myPlaysWrap" class="hidden">Your Plays: <span id="myPlays"></span></div>
+</div>
+
+<audio id="audio" autoplay></audio>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+const supabase = window.supabase.createClient(
+  "https://rgoutegbcpjytplqcwze.supabase.co",
+  "sb_publishable_255qyDKS77nMU0pbedfa_A_3hdgtEHh"
+);
+
+// AUTH
+const showLogin = document.getElementById("showLogin");
+const authBox = document.getElementById("authBox");
+const authCollapsed = document.getElementById("authCollapsed");
+const userBox = document.getElementById("userBox");
+const avatar = document.getElementById("avatar");
+
+showLogin.onclick = ()=>{
+  authCollapsed.classList.add("hidden");
+  authBox.classList.remove("hidden");
+};
+
+async function updateUser(){
+  const {data} = await supabase.auth.getUser();
+  if(data.user){
+    authBox.classList.add("hidden");
+    userBox.classList.remove("hidden");
+
+    const {data:profile} = await supabase
+      .from("profiles")
+      .select("*")
+      .eq("user_id",data.user.id)
+      .single();
+
+    if(profile?.photo_url) avatar.src = profile.photo_url;
+  }
+}
+
+document.getElementById("signup").onclick=async()=>{
+  await supabase.auth.signUp({
+    email:email.value,
+    password:password.value
+  });
+};
+
+document.getElementById("login").onclick=async()=>{
+  await supabase.auth.signInWithPassword({
+    email:email.value,
+    password:password.value
+  });
+  updateUser();
+};
+
+document.getElementById("logout").onclick=async()=>{
+  await supabase.auth.signOut();
+  location.reload();
+};
+
+updateUser();
+
+// RADIO
+let tracks=[];
+let current=-1;
+let listenerId=null;
+
+const audio=document.getElementById("audio");
+const radio=document.getElementById("radio");
+
+async function loadTracks(){
+  const {data}=await supabase
+    .from("tracks")
+    .select("*")
+    .eq("status","approved");
+
+  tracks=data||[];
+}
+
+async function nextTrack(){
+  if(!tracks.length)return;
+
+  current=Math.floor(Math.random()*tracks.length);
+  const t=tracks[current];
+
+  title.textContent=t.title;
+  artist.textContent=t.artist;
+
+  audio.src=t.file_url;
+  audio.play().catch(()=>{});
+
+  supabase.from("tracks")
+    .update({play_count:(t.play_count||0)+1})
+    .eq("id",t.id);
+}
+
+document.getElementById("start").onclick=async()=>{
+  radio.classList.add("active");
+  document.getElementById("start").classList.add("hidden");
+  document.getElementById("player").classList.remove("hidden");
+
+  await loadTracks();
+  await nextTrack();
+
+  registerListener();
+  updateListeners();
+  loadStats();
+  loadMyPlays();
+};
+
+document.getElementById("skip").onclick=nextTrack;
+
+// VOLUME FIX
+volume.addEventListener("input",(e)=>{
+  const v=Number(e.target.value);
+  audio.volume=v;
+  audio.muted=v===0;
+});
+
+// LISTENERS
+async function registerListener(){
+  if(!listenerId){
+    listenerId=crypto.randomUUID();
+  }
+
+  await supabase.from("listeners").upsert({
+    user_id:listenerId,
+    last_seen:new Date()
+  });
+}
+
+async function updateListeners(){
+  const {count}=await supabase
+    .from("listeners")
+    .select("*",{count:"exact",head:true});
+
+  listeners.textContent=count+" Listeners";
+}
+
+setInterval(updateListeners,10000);
+setInterval(registerListener,15000);
+
+// TIME
+audio.ontimeupdate=()=>{
+  const t=Math.min(audio.currentTime,60);
+  progress.style.width=(t/60*100)+"%";
+
+  const m=Math.floor(t/60);
+  const s=Math.floor(t%60).toString().padStart(2,"0");
+  time.textContent=m+":"+s;
+
+  if(t>=60) nextTrack();
+};
+
+// STATS
+async function loadStats(){
+  const {count:total}=await supabase.from("tracks").select("*",{count:"exact",head:true});
+  const {count:approved}=await supabase.from("tracks").select("*",{count:"exact",head:true}).eq("status","approved");
+
+  submitted.textContent=total;
+
+  const {data:user}=await supabase.auth.getUser();
+
+  if(!user.user){
+    playsWrap.style.display="none";
+    return;
+  }
+
+  const {count:mine}=await supabase.from("tracks")
+    .select("*",{count:"exact",head:true})
+    .eq("user_id",user.user.id)
+    .eq("status","approved");
+
+  if(!mine){
+    playsWrap.style.display="none";
+    return;
+  }
+
+  plays.textContent=Math.floor(1440/approved);
+}
+
+// MY PLAYS
+async function loadMyPlays(){
+  const {data:user}=await supabase.auth.getUser();
+  if(!user.user)return;
+
+  const {data}=await supabase
+    .from("tracks")
+    .select("play_count")
+    .eq("user_id",user.user.id);
+
+  let total=0;
+  data.forEach(t=> total+=t.play_count||0);
+
+  myPlaysWrap.classList.remove("hidden");
+  myPlays.textContent=total;
+}
+</script>
 
-  <div class="hero">
-    <a class="submit-link" href="join.html">Submit your track</a>
-    <h1 class="brand-title">60 Seconds FM</h1>
-    <p class="brand-subtitle">
-      Let’s make every minute count
-    </p>
-  </div>
-
-  <div class="radio-stage">
-    <div id="startOverlay" class="start-overlay">
-      <div class="overlay-content">
-        <div class="overlay-label">Live radio is on</div>
-        <button id="start" class="metal-btn start-btn" type="button"><span class="icon">▶</span>Start Radio</button>
-      </div>
-    </div>
-
-    <div id="radioShell" class="radio-shell pre-live">
-      <div id="player">
-        <div class="now-playing">Now Playing</div>
-        <h2 id="title" class="track-title">Loading...</h2>
-        <p id="artistWrap" class="artist-wrap"><span id="artist">—</span></p>
-
-        <div class="time-row">
-          <span id="elapsedTime">0:00</span>
-          <span>1:00</span>
-        </div>
-
-        <div class="progress">
-          <div class="fill" id="progress"></div>
-        </div>
-
-        <div class="player-actions">
-          <button id="likeBtn" class="metal-btn" type="button"><span class="icon">♥</span>Like</button>
-          <button id="skip" class="metal-btn" type="button"><span class="icon">⏭</span>Skip</button>
-        </div>
-
-        <div class="volume-wrap">
-          <label for="volume">Volume</label>
-          <input id="volume" type="range" min="0" max="1" step="0.01" value="0.8" />
-        </div>
-
-        <div class="listeners-pill">
-          <span class="listeners-dot"></span>
-          <span id="listenersCount">0 Listeners</span>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="stats-row">
-    <div class="stat-card">
-      <div class="stat-label">Submitted Tracks</div>
-      <div class="stat-value" id="submittedCount">0</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-label">Estimated Plays / Day</div>
-      <div class="stat-value" id="playsPerDay">0</div>
-    </div>
-  </div>
-
-  <audio id="audio" autoplay playsinline></audio>
-
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-  <script>
-    const supabaseClient = window.supabase.createClient(
-      "https://rgoutegbcpjytplqcwze.supabase.co",
-      "sb_publishable_255qyDKS77nMU0pbedfa_A_3hdgtEHh"
-    );
-
-    // AUTH UI
-    const showLoginBtn = document.getElementById("showLoginBtn");
-    const email = document.getElementById("email");
-    const password = document.getElementById("password");
-    const signupBtn = document.getElementById("signup");
-    const loginBtn = document.getElementById("login");
-    const logoutBtn = document.getElementById("logout");
-    const authCollapsed = document.getElementById("authCollapsed");
-    const authBox = document.getElementById("authBox");
-    const userBox = document.getElementById("userBox");
-    const authMessageEl = document.getElementById("authMessage");
-    const userAvatar = document.getElementById("userAvatar");
-    const userAvatarFallback = document.getElementById("userAvatarFallback");
-    const profileLink = document.getElementById("profileLink");
-
-    function setAuthMessage(msg, error = false) {
-      if (msg === "Auth session missing!") msg = "";
-      authMessageEl.textContent = msg || "";
-      authMessageEl.style.color = error ? "#ff8a8a" : "#cfcfcf";
-    }
-
-    showLoginBtn.onclick = () => {
-      authCollapsed.classList.add("hidden");
-      authBox.classList.remove("hidden");
-      setAuthMessage("");
-    };
-
-    async function loadMyProfile(userId) {
-      const { data, error } = await supabaseClient
-        .from("profiles")
-        .select("artist_name, photo_url, user_id")
-        .eq("user_id", userId)
-        .maybeSingle();
-
-      if (error || !data) {
-        userAvatar.classList.add("hidden");
-        userAvatarFallback.classList.remove("hidden");
-        userAvatarFallback.textContent = "•";
-        profileLink.href = "#";
-        return;
-      }
-
-      if (data.photo_url) {
-        userAvatar.src = data.photo_url;
-        userAvatar.classList.remove("hidden");
-        userAvatarFallback.classList.add("hidden");
-      } else {
-        userAvatar.classList.add("hidden");
-        userAvatarFallback.classList.remove("hidden");
-        userAvatarFallback.textContent = (data.artist_name || "A").charAt(0).toUpperCase();
-      }
-
-      profileLink.href = `artist.html?user_id=${encodeURIComponent(data.user_id)}`;
-    }
-
-    async function updateUser() {
-      const { data, error } = await supabaseClient.auth.getUser();
-
-      if (error) {
-        if (error.message !== "Auth session missing!") {
-          setAuthMessage(error.message, true);
-        }
-        return;
-      }
-
-      if (data.user) {
-        authCollapsed.classList.add("hidden");
-        authBox.classList.add("hidden");
-        userBox.classList.remove("hidden");
-        setAuthMessage("");
-        await loadMyProfile(data.user.id);
-      } else {
-        userBox.classList.add("hidden");
-        authBox.classList.add("hidden");
-        authCollapsed.classList.remove("hidden");
-        userAvatar.classList.add("hidden");
-        userAvatarFallback.classList.add("hidden");
-      }
-    }
-
-    signupBtn.onclick = async () => {
-      const emailValue = email.value.trim();
-      const passwordValue = password.value.trim();
-
-      if (!emailValue || !passwordValue) {
-        setAuthMessage("Please enter email and password.", true);
-        return;
-      }
-
-      const { error } = await supabaseClient.auth.signUp({
-        email: emailValue,
-        password: passwordValue
-      });
-
-      if (error) {
-        setAuthMessage(error.message, true);
-      } else {
-        setAuthMessage("Account created. Check your email.");
-        updateUser();
-      }
-    };
-
-    loginBtn.onclick = async () => {
-      const emailValue = email.value.trim();
-      const passwordValue = password.value.trim();
-
-      if (!emailValue || !passwordValue) {
-        setAuthMessage("Please enter email and password.", true);
-        return;
-      }
-
-      const { error } = await supabaseClient.auth.signInWithPassword({
-        email: emailValue,
-        password: passwordValue
-      });
-
-      if (error) {
-        setAuthMessage(error.message, true);
-      } else {
-        setAuthMessage("");
-        updateUser();
-      }
-    };
-
-    logoutBtn.onclick = async () => {
-      await supabaseClient.auth.signOut();
-      setAuthMessage("");
-      updateUser();
-    };
-
-    updateUser();
-
-    // RADIO + STATS
-    let tracks = [];
-    let current = -1;
-    let liked = false;
-    let listenerIdentity = null;
-    let isLiveActivated = false;
-
-    const audio = document.getElementById("audio");
-    const startBtn = document.getElementById("start");
-    const startOverlay = document.getElementById("startOverlay");
-    const radioShell = document.getElementById("radioShell");
-    const titleEl = document.getElementById("title");
-    const artistWrapEl = document.getElementById("artistWrap");
-    const likeBtn = document.getElementById("likeBtn");
-    const skipBtn = document.getElementById("skip");
-    const volume = document.getElementById("volume");
-    const progressFill = document.getElementById("progress");
-    const elapsedTimeEl = document.getElementById("elapsedTime");
-    const listenersCountEl = document.getElementById("listenersCount");
-    const submittedCountEl = document.getElementById("submittedCount");
-    const playsPerDayEl = document.getElementById("playsPerDay");
-
-    async function loadTracksFromSupabase() {
-      const { data, error } = await supabaseClient
-        .from("tracks")
-        .select("id, title, artist, file_url, user_id, status, created_at")
-        .eq("status", "approved")
-        .order("created_at", { ascending: false });
-
-      if (error) {
-        console.error(error);
-        tracks = [];
-        return;
-      }
-
-      tracks = (data || []).map(track => ({
-        id: track.id,
-        title: track.title,
-        artist: track.artist,
-        file_url: track.file_url,
-        user_id: track.user_id || null
-      }));
-    }
-
-    async function loadTrackStats() {
-      const { count: submittedCount } = await supabaseClient
-        .from("tracks")
-        .select("*", { count: "exact", head: true });
-
-      const { count: approvedCount } = await supabaseClient
-        .from("tracks")
-        .select("*", { count: "exact", head: true })
-        .eq("status", "approved");
-
-      submittedCountEl.textContent = (submittedCount || 0).toLocaleString();
-
-      const perDay = approvedCount && approvedCount > 0
-        ? Math.floor(1440 / approvedCount)
-        : 0;
-
-      playsPerDayEl.textContent = perDay.toLocaleString();
-    }
-
-    function renderArtist(track) {
-      if (track.user_id) {
-        artistWrapEl.innerHTML = `
-          <a class="artist-link" href="artist.html?user_id=${encodeURIComponent(track.user_id)}">
-            ${escapeHtml(track.artist)}
-          </a>
-        `;
-      } else {
-        artistWrapEl.innerHTML = `<span>${escapeHtml(track.artist)}</span>`;
-      }
-    }
-
-    function resetLike() {
-      liked = false;
-      likeBtn.innerHTML = `<span class="icon">♥</span>Like`;
-      likeBtn.classList.remove("liked");
-    }
-
-    async function getListenerIdentity() {
-      const { data } = await supabaseClient.auth.getUser();
-
-      if (data.user && data.user.id) {
-        return data.user.id;
-      }
-
-      let anonId = localStorage.getItem("listener_id");
-      if (!anonId) {
-        anonId = crypto.randomUUID();
-        localStorage.setItem("listener_id", anonId);
-      }
-      return anonId;
-    }
-
-    async function registerListener() {
-      if (!listenerIdentity) {
-        listenerIdentity = await getListenerIdentity();
-      }
-
-      const { error } = await supabaseClient
-        .from("listeners")
-        .upsert(
-          [
-            {
-              user_id: listenerIdentity,
-              last_seen: new Date().toISOString()
-            }
-          ],
-          {
-            onConflict: "user_id"
-          }
-        );
-
-      if (error) {
-        console.error("Listener register error:", error.message);
-      }
-    }
-
-    async function updateListeners() {
-      const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000).toISOString();
-
-      const { count, error } = await supabaseClient
-        .from("listeners")
-        .select("*", { count: "exact", head: true })
-        .gt("last_seen", fiveMinutesAgo);
-
-      if (!error && count !== null) {
-        listenersCountEl.textContent = `${count.toLocaleString()} Listeners`;
-      } else if (error) {
-        console.error("Listener count error:", error.message);
-      }
-    }
-
-    function nextTrack() {
-      if (!tracks.length) {
-        titleEl.textContent = "No live tracks yet";
-        artistWrapEl.innerHTML = `<span>Check back soon</span>`;
-        return;
-      }
-
-      let next;
-      do {
-        next = Math.floor(Math.random() * tracks.length);
-      } while (tracks.length > 1 && next === current);
-
-      current = next;
-      const t = tracks[current];
-
-      titleEl.textContent = t.title;
-      renderArtist(t);
-      audio.src = t.file_url;
-      audio.currentTime = 0;
-      progressFill.style.width = "0%";
-      elapsedTimeEl.textContent = "0:00";
-      resetLike();
-
-      const playPromise = audio.play();
-      if (playPromise) {
-        playPromise.catch(err => {
-          console.log("Audio autoplay blocked:", err);
-        });
-      }
-    }
-
-    async function bootstrapLiveRadio() {
-      await Promise.all([
-        loadTracksFromSupabase(),
-        loadTrackStats()
-      ]);
-
-      if (!tracks.length) {
-        titleEl.textContent = "No live tracks yet";
-        artistWrapEl.innerHTML = `<span>Check back soon</span>`;
-        return;
-      }
-
-      audio.muted = true;
-      nextTrack();
-    }
-
-    startBtn.onclick = async () => {
-      isLiveActivated = true;
-
-      await registerListener();
-      await updateListeners();
-
-      audio.muted = false;
-      startOverlay.classList.add("hidden");
-      radioShell.classList.remove("pre-live");
-
-      if (audio.paused) {
-        audio.play().catch(err => console.log("Manual start play error:", err));
-      }
-    };
-
-    skipBtn.onclick = nextTrack;
-
-    likeBtn.onclick = () => {
-      liked = !liked;
-      if (liked) {
-        likeBtn.innerHTML = `<span class="icon">♥</span>Liked`;
-        likeBtn.classList.add("liked");
-      } else {
-        likeBtn.innerHTML = `<span class="icon">♥</span>Like`;
-        likeBtn.classList.remove("liked");
-      }
-    };
-
-    audio.addEventListener("timeupdate", () => {
-      const max = 60;
-      const t = Math.min(audio.currentTime, max);
-      progressFill.style.width = (t / max * 100) + "%";
-      elapsedTimeEl.textContent = formatTime(t);
-
-      if (audio.currentTime >= max) {
-        nextTrack();
-      }
-    });
-
-    audio.addEventListener("ended", () => {
-      nextTrack();
-    });
-
-    volume.oninput = e => {
-      audio.volume = Number(e.target.value);
-      if (Number(e.target.value) > 0 && isLiveActivated) {
-        audio.muted = false;
-      }
-    };
-
-    audio.volume = 0.8;
-
-    setInterval(() => {
-      if (isLiveActivated) {
-        updateListeners();
-      }
-    }, 10000);
-
-    setInterval(() => {
-      if (isLiveActivated) {
-        registerListener();
-      }
-    }, 15000);
-
-    function formatTime(seconds) {
-      const mins = Math.floor(seconds / 60);
-      const secs = Math.floor(seconds % 60).toString().padStart(2, "0");
-      return `${mins}:${secs}`;
-    }
-
-    function escapeHtml(str) {
-      return String(str || "")
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("'", "&#039;");
-    }
-
-    bootstrapLiveRadio();
-  </script>
 </body>
 </html>
