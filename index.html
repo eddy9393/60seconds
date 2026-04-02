@@ -482,7 +482,7 @@
     </a>
 
     <div class="top-actions">
-      <a class="submit-link" href="join.html">Submit your track</a>
+      <a id="submitTrackBtn" class="submit-link hidden" href="join.html">Submit your track</a>
 
       <div class="auth-inline">
         <div id="authCollapsed" class="auth-trigger-row">
@@ -493,8 +493,8 @@
           <h3>Log in</h3>
 
           <div class="auth-inputs">
-            <input id="email" type="email" placeholder="Email" />
-            <input id="password" type="password" placeholder="Password" />
+            <input id="email" type="email" placeholder="Email" autocomplete="email" />
+            <input id="password" type="password" placeholder="Password" autocomplete="current-password" />
           </div>
 
           <div class="auth-row">
@@ -602,6 +602,7 @@
     const userAvatar = document.getElementById("userAvatar");
     const userAvatarFallback = document.getElementById("userAvatarFallback");
     const profileLink = document.getElementById("profileLink");
+    const submitTrackBtn = document.getElementById("submitTrackBtn");
 
     function setAuthMessage(msg, error = false) {
       if (msg === "Auth session missing!") msg = "";
@@ -616,23 +617,40 @@
       myTotalPlaysEl.textContent = "0";
     }
 
-    function resetLoggedOutUI() {
-      userBox.classList.add("hidden");
-      authBox.classList.add("hidden");
+    function setLoggedOutView() {
       authCollapsed.classList.remove("hidden");
+      authBox.classList.add("hidden");
+      userBox.classList.add("hidden");
+      submitTrackBtn.classList.add("hidden");
       userAvatar.classList.add("hidden");
       userAvatarFallback.classList.add("hidden");
       userAvatar.src = "";
-      email.value = "";
-      password.value = "";
       profileLink.href = "#";
       hideUserStats();
+    }
+
+    function setLoggedInView() {
+      authCollapsed.classList.add("hidden");
+      authBox.classList.add("hidden");
+      userBox.classList.remove("hidden");
+      submitTrackBtn.classList.remove("hidden");
+    }
+
+    function clearLoginFields() {
+      email.value = "";
+      password.value = "";
+    }
+
+    function resetLoggedOutUI() {
+      clearLoginFields();
+      setLoggedOutView();
     }
 
     showLoginBtn.onclick = () => {
       authCollapsed.classList.add("hidden");
       authBox.classList.remove("hidden");
       setAuthMessage("");
+      setTimeout(() => email.focus(), 0);
     };
 
     async function loadMyProfile(userId) {
@@ -670,18 +688,16 @@
         if (error.message !== "Auth session missing!") {
           setAuthMessage(error.message, true);
         }
-        resetLoggedOutUI();
+        setLoggedOutView();
         return;
       }
 
       if (data.user) {
-        authCollapsed.classList.add("hidden");
-        authBox.classList.add("hidden");
-        userBox.classList.remove("hidden");
+        setLoggedInView();
         setAuthMessage("");
         await loadMyProfile(data.user.id);
       } else {
-        resetLoggedOutUI();
+        setLoggedOutView();
       }
     }
 
@@ -694,20 +710,30 @@
         return;
       }
 
-      const { error } = await supabaseClient.auth.signUp({
-        email: emailValue,
-        password: passwordValue
-      });
+      signupBtn.disabled = true;
+      loginBtn.disabled = true;
 
-      if (error) {
-        setAuthMessage(error.message, true);
-      } else {
-        setAuthMessage("Account created. Check your email.");
-        updateUser();
+      try {
+        const { error } = await supabaseClient.auth.signUp({
+          email: emailValue,
+          password: passwordValue
+        });
+
+        if (error) {
+          setAuthMessage(error.message, true);
+        } else {
+          setAuthMessage("Account created. Check your email.");
+          await updateUser();
+          await loadTrackStats();
+          await loadMyTotalPlays();
+        }
+      } finally {
+        signupBtn.disabled = false;
+        loginBtn.disabled = false;
       }
     };
 
-    loginBtn.onclick = async () => {
+    async function handleLogin() {
       const emailValue = email.value.trim();
       const passwordValue = password.value.trim();
 
@@ -716,43 +742,75 @@
         return;
       }
 
-      const { error } = await supabaseClient.auth.signInWithPassword({
-        email: emailValue,
-        password: passwordValue
-      });
+      setAuthMessage("");
+      loginBtn.disabled = true;
+      signupBtn.disabled = true;
 
-      if (error) {
-        setAuthMessage(error.message, true);
-      } else {
-        setAuthMessage("");
-        updateUser();
+      try {
+        const { error } = await supabaseClient.auth.signInWithPassword({
+          email: emailValue,
+          password: passwordValue
+        });
+
+        if (error) {
+          setAuthMessage(error.message, true);
+          return;
+        }
+
+        clearLoginFields();
+        await updateUser();
+        await loadTrackStats();
+        await loadMyTotalPlays();
+      } finally {
+        loginBtn.disabled = false;
+        signupBtn.disabled = false;
       }
-    };
+    }
+
+    loginBtn.onclick = handleLogin;
+
+    password.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        handleLogin();
+      }
+    });
+
+    email.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        handleLogin();
+      }
+    });
 
     logoutBtn.onclick = async () => {
-      const { error } = await supabaseClient.auth.signOut();
-
-      if (error) {
-        setAuthMessage(error.message, true);
-        return;
-      }
-
+      logoutBtn.disabled = true;
       setAuthMessage("");
-      resetLoggedOutUI();
-      await updateUser();
-      await loadTrackStats();
-      await loadMyTotalPlays();
+
+      try {
+        const { error } = await supabaseClient.auth.signOut({ scope: "local" });
+
+        if (error) {
+          setAuthMessage(error.message, true);
+          return;
+        }
+
+        resetLoggedOutUI();
+        await loadTrackStats();
+        await loadMyTotalPlays();
+      } finally {
+        logoutBtn.disabled = false;
+      }
     };
 
-    supabaseClient.auth.onAuthStateChange(async (event) => {
-      if (event === "SIGNED_OUT") {
+    supabaseClient.auth.onAuthStateChange(async (event, session) => {
+      if (event === "SIGNED_OUT" || !session) {
         setAuthMessage("");
         resetLoggedOutUI();
         await loadTrackStats();
         await loadMyTotalPlays();
+        return;
       }
 
-      if (event === "SIGNED_IN") {
+      if (event === "SIGNED_IN" || event === "TOKEN_REFRESHED" || session?.user) {
         setAuthMessage("");
         await updateUser();
         await loadTrackStats();
@@ -760,7 +818,7 @@
       }
     });
 
-    updateUser();
+    setLoggedOutView();
 
     // RADIO + STATS
     let tracks = [];
@@ -1026,7 +1084,8 @@
       await Promise.all([
         loadTracksFromSupabase(),
         loadTrackStats(),
-        loadMyTotalPlays()
+        loadMyTotalPlays(),
+        updateUser()
       ]);
 
       if (!tracks.length) {
