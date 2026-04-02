@@ -148,6 +148,11 @@
         inset 0 1px 0 rgba(255,255,255,0.38);
     }
 
+    .brand-link {
+      text-decoration: none;
+      display: inline-block;
+    }
+
     .brand-title {
       margin: 0;
       font-size: clamp(42px, 8vw, 78px);
@@ -349,7 +354,7 @@
       max-width: 760px;
       margin: 18px auto 0;
       display: grid;
-      grid-template-columns: repeat(2, 1fr);
+      grid-template-columns: repeat(3, 1fr);
       gap: 14px;
     }
 
@@ -445,7 +450,9 @@
 
   <div class="hero">
     <a class="submit-link" href="join.html">Submit your track</a>
-    <h1 class="brand-title">60 Seconds FM</h1>
+    <a href="/" class="brand-link">
+      <h1 class="brand-title">60 Seconds FM</h1>
+    </a>
     <p class="brand-subtitle">
       Let’s make every minute count
     </p>
@@ -497,9 +504,15 @@
       <div class="stat-label">Submitted Tracks</div>
       <div class="stat-value" id="submittedCount">0</div>
     </div>
-    <div class="stat-card">
+
+    <div class="stat-card hidden" id="playsCard">
       <div class="stat-label">Estimated Plays / Day</div>
       <div class="stat-value" id="playsPerDay">0</div>
+    </div>
+
+    <div class="stat-card hidden" id="myPlaysCard">
+      <div class="stat-label">Your Total Plays</div>
+      <div class="stat-value" id="myTotalPlays">0</div>
     </div>
   </div>
 
@@ -641,6 +654,8 @@
       await supabaseClient.auth.signOut();
       setAuthMessage("");
       updateUser();
+      await loadTrackStats();
+      await loadMyTotalPlays();
     };
 
     updateUser();
@@ -666,11 +681,14 @@
     const listenersCountEl = document.getElementById("listenersCount");
     const submittedCountEl = document.getElementById("submittedCount");
     const playsPerDayEl = document.getElementById("playsPerDay");
+    const playsCardEl = document.getElementById("playsCard");
+    const myPlaysCardEl = document.getElementById("myPlaysCard");
+    const myTotalPlaysEl = document.getElementById("myTotalPlays");
 
     async function loadTracksFromSupabase() {
       const { data, error } = await supabaseClient
         .from("tracks")
-        .select("id, title, artist, file_url, user_id, status, created_at")
+        .select("id, title, artist, file_url, user_id, play_count, status, created_at")
         .eq("status", "approved")
         .order("created_at", { ascending: false });
 
@@ -685,7 +703,8 @@
         title: track.title,
         artist: track.artist,
         file_url: track.file_url,
-        user_id: track.user_id || null
+        user_id: track.user_id || null,
+        play_count: track.play_count || 0
       }));
     }
 
@@ -701,11 +720,58 @@
 
       submittedCountEl.textContent = (submittedCount || 0).toLocaleString();
 
+      const { data: userData } = await supabaseClient.auth.getUser();
+
+      if (!userData.user) {
+        playsCardEl.classList.add("hidden");
+        return;
+      }
+
+      const { count: myApproved } = await supabaseClient
+        .from("tracks")
+        .select("*", { count: "exact", head: true })
+        .eq("user_id", userData.user.id)
+        .eq("status", "approved");
+
+      if (!myApproved || myApproved === 0) {
+        playsCardEl.classList.add("hidden");
+        return;
+      }
+
+      playsCardEl.classList.remove("hidden");
+
       const perDay = approvedCount && approvedCount > 0
         ? Math.floor(1440 / approvedCount)
         : 0;
 
       playsPerDayEl.textContent = perDay.toLocaleString();
+    }
+
+    async function loadMyTotalPlays() {
+      const { data: userData } = await supabaseClient.auth.getUser();
+
+      if (!userData.user) {
+        myPlaysCardEl.classList.add("hidden");
+        return;
+      }
+
+      const { data: myTracks, error } = await supabaseClient
+        .from("tracks")
+        .select("play_count")
+        .eq("user_id", userData.user.id);
+
+      if (error || !myTracks || myTracks.length === 0) {
+        myPlaysCardEl.classList.add("hidden");
+        return;
+      }
+
+      let total = 0;
+      myTracks.forEach(track => {
+        total += track.play_count || 0;
+      });
+
+      myPlaysCardEl.classList.remove("hidden");
+      myTotalPlaysEl.textContent = total.toLocaleString();
     }
 
     function renderArtist(track) {
@@ -803,6 +869,17 @@
       elapsedTimeEl.textContent = "0:00";
       resetLike();
 
+      if (t.id) {
+        supabaseClient
+          .from("tracks")
+          .update({
+            play_count: (t.play_count || 0) + 1
+          })
+          .eq("id", t.id)
+          .then(() => {})
+          .catch(() => {});
+      }
+
       const playPromise = audio.play();
       if (playPromise) {
         playPromise.catch(err => {
@@ -814,7 +891,8 @@
     async function bootstrapLiveRadio() {
       await Promise.all([
         loadTracksFromSupabase(),
-        loadTrackStats()
+        loadTrackStats(),
+        loadMyTotalPlays()
       ]);
 
       if (!tracks.length) {
@@ -832,6 +910,8 @@
 
       await registerListener();
       await updateListeners();
+      await loadTrackStats();
+      await loadMyTotalPlays();
 
       audio.muted = false;
       startOverlay.classList.add("hidden");
@@ -870,12 +950,20 @@
       nextTrack();
     });
 
-    volume.oninput = e => {
-      audio.volume = Number(e.target.value);
-      if (Number(e.target.value) > 0 && isLiveActivated) {
+    volume.addEventListener("input", (e) => {
+      const v = Number(e.target.value);
+      audio.volume = v;
+
+      if (v === 0) {
+        audio.muted = true;
+      } else {
         audio.muted = false;
       }
-    };
+
+      if (!audio.paused && isLiveActivated) {
+        audio.play().catch(() => {});
+      }
+    });
 
     audio.volume = 0.8;
 
