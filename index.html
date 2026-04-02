@@ -104,12 +104,23 @@
       font-size: 13px;
       color: #999;
     }
+
+    .artist-link {
+      color: gold;
+      text-decoration: none;
+      border-bottom: 1px solid rgba(255, 215, 0, 0.35);
+    }
+
+    .artist-link:hover {
+      opacity: 0.85;
+    }
   </style>
 </head>
 <body>
 
   <h1>60seconds.fm</h1>
   <a class="nav-link" href="join.html">Join 60seconds</a>
+  <a class="nav-link" href="admin.html">Admin</a>
 
   <div class="card">
     <div id="authBox">
@@ -135,7 +146,7 @@
 
     <div id="player" class="hidden">
       <h2 id="title">-</h2>
-      <p id="artist">-</p>
+      <p id="artistWrap"><span id="artist">-</span></p>
       <p id="sourceLabel" class="small"></p>
 
       <div class="progress">
@@ -265,9 +276,9 @@
 
     // RADIO
     const fallbackTracks = [
-      { title: "Is It Me", artist: "Eddy Donato", file_url: "track1.mp3", source: "Local fallback" },
-      { title: "ff in me vibe", artist: "EARV", file_url: "track2.mp3", source: "Local fallback" },
-      { title: "Hitte In De Toko", artist: "EARV", file_url: "track3.mp3", source: "Local fallback" }
+      { title: "Is It Me", artist: "Eddy Donato", file_url: "track1.mp3", source: "Local fallback", user_id: null },
+      { title: "ff in me vibe", artist: "EARV", file_url: "track2.mp3", source: "Local fallback", user_id: null },
+      { title: "Hitte In De Toko", artist: "EARV", file_url: "track3.mp3", source: "Local fallback", user_id: null }
     ];
 
     let tracks = [];
@@ -277,7 +288,7 @@
     const startBtn = document.getElementById("start");
     const player = document.getElementById("player");
     const titleEl = document.getElementById("title");
-    const artistEl = document.getElementById("artist");
+    const artistWrapEl = document.getElementById("artistWrap");
     const sourceLabelEl = document.getElementById("sourceLabel");
     const skipBtn = document.getElementById("skip");
     const volume = document.getElementById("volume");
@@ -288,7 +299,7 @@
 
       const { data, error } = await supabaseClient
         .from("tracks")
-        .select("id, title, artist, file_url, status, created_at")
+        .select("id, title, artist, file_url, user_id, status, created_at")
         .eq("status", "approved")
         .order("created_at", { ascending: false });
 
@@ -309,10 +320,23 @@
         title: track.title,
         artist: track.artist,
         file_url: track.file_url,
+        user_id: track.user_id || null,
         source: "Supabase approved"
       }));
 
       setDebug(`Loaded ${tracks.length} approved track(s) from Supabase`);
+    }
+
+    function renderArtist(track) {
+      if (track.user_id) {
+        artistWrapEl.innerHTML = `
+          <a class="artist-link" href="artist.html?user_id=${encodeURIComponent(track.user_id)}">
+            ${escapeHtml(track.artist)}
+          </a>
+        `;
+      } else {
+        artistWrapEl.innerHTML = `<span id="artist">${escapeHtml(track.artist)}</span>`;
+      }
     }
 
     function nextTrack() {
@@ -330,7 +354,7 @@
       const t = tracks[current];
 
       titleEl.textContent = t.title;
-      artistEl.textContent = t.artist;
+      renderArtist(t);
       sourceLabelEl.textContent = t.source || "";
       audio.src = t.file_url;
       audio.currentTime = 0;
@@ -375,6 +399,15 @@
     };
 
     audio.volume = 0.8;
+
+    function escapeHtml(str) {
+      return String(str || "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
   </script>
 </body>
 </html>
