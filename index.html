@@ -225,7 +225,7 @@
       <h2 id="title">-</h2>
       <p id="artistWrap"><span id="artist">-</span></p>
 
-      <div class="listeners" id="listenersCount">1,284 listening now</div>
+      <div class="listeners" id="listenersCount">0 listening now</div>
 
       <div class="progress">
         <div class="fill" id="progress"></div>
@@ -360,6 +360,7 @@
     let tracks = [];
     let current = -1;
     let liked = false;
+    let listenerIdentity = null;
 
     const audio = document.getElementById("audio");
     const startBtn = document.getElementById("start");
@@ -416,24 +417,60 @@
       }
     }
 
-async function updateListeners() {
-  const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000).toISOString();
-
-  const { count, error } = await supabaseClient
-    .from("listeners")
-    .select("*", { count: "exact", head: true })
-    .gt("last_seen", fiveMinutesAgo);
-
-  if (!error && count !== null) {
-    listenersCountEl.textContent = count + " listening now";
-  }
-    }
-
     function resetLike() {
       liked = false;
       likeBtn.textContent = "♡ Like";
       likeBtn.classList.remove("gold");
       likeBtn.classList.add("outline");
+    }
+
+    async function getListenerIdentity() {
+      const { data } = await supabaseClient.auth.getUser();
+
+      if (data.user && data.user.id) {
+        return data.user.id;
+      }
+
+      let anonId = localStorage.getItem("listener_id");
+      if (!anonId) {
+        anonId = crypto.randomUUID();
+        localStorage.setItem("listener_id", anonId);
+      }
+      return anonId;
+    }
+
+    async function registerListener() {
+      if (!listenerIdentity) {
+        listenerIdentity = await getListenerIdentity();
+      }
+
+      const { error } = await supabaseClient
+        .from("listeners")
+        .upsert([
+          {
+            user_id: listenerIdentity,
+            last_seen: new Date().toISOString()
+          }
+        ]);
+
+      if (error) {
+        console.error("Listener register error:", error.message);
+      }
+    }
+
+    async function updateListeners() {
+      const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000).toISOString();
+
+      const { count, error } = await supabaseClient
+        .from("listeners")
+        .select("*", { count: "exact", head: true })
+        .gt("last_seen", fiveMinutesAgo);
+
+      if (!error && count !== null) {
+        listenersCountEl.textContent = count.toLocaleString() + " listening now";
+      } else if (error) {
+        console.error("Listener count error:", error.message);
+      }
     }
 
     function nextTrack() {
@@ -456,7 +493,6 @@ async function updateListeners() {
       audio.currentTime = 0;
       progressFill.style.width = "0%";
       resetLike();
-      updateListeners();
 
       audio.play().catch(err => {
         console.log("Audio play blocked:", err);
@@ -474,6 +510,9 @@ async function updateListeners() {
         startBtn.textContent = "Start Radio";
         return;
       }
+
+      await registerListener();
+      await updateListeners();
 
       startBtn.classList.add("hidden");
       player.classList.remove("hidden");
@@ -519,6 +558,12 @@ async function updateListeners() {
         updateListeners();
       }
     }, 10000);
+
+    setInterval(() => {
+      if (!player.classList.contains("hidden")) {
+        registerListener();
+      }
+    }, 15000);
 
     function escapeHtml(str) {
       return String(str || "")
