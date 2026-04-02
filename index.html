@@ -439,23 +439,28 @@
       return anonId;
     }
 
-    async function registerListener() {
-      if (!listenerIdentity) {
-        listenerIdentity = await getListenerIdentity();
-      }
+async function registerListener() {
+  if (!listenerIdentity) {
+    listenerIdentity = await getListenerIdentity();
+  }
 
-      const { error } = await supabaseClient
-        .from("listeners")
-        .upsert([
-          {
-            user_id: listenerIdentity,
-            last_seen: new Date().toISOString()
-          }
-        ]);
-
-      if (error) {
-        console.error("Listener register error:", error.message);
+  const { error } = await supabaseClient
+    .from("listeners")
+    .upsert(
+      [
+        {
+          user_id: listenerIdentity,
+          last_seen: new Date().toISOString()
+        }
+      ],
+      {
+        onConflict: "user_id"
       }
+    );
+
+  if (error) {
+    console.error("Listener register error:", error.message);
+  }
     }
 
     async function updateListeners() {
