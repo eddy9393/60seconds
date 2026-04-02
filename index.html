@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>60seconds.fm</title>
+  <title>60 Seconds FM</title>
 
   <style>
     :root {
@@ -417,7 +417,11 @@
 
   <div class="topbar">
     <div class="auth-mini">
-      <div id="authBox">
+      <div id="authCollapsed">
+        <button id="showLoginBtn" class="metal-btn" type="button"><span class="icon">↳</span>Login</button>
+      </div>
+
+      <div id="authBox" class="hidden">
         <h3>Log in</h3>
         <input id="email" type="email" placeholder="Email" />
         <input id="password" type="password" placeholder="Password" />
@@ -441,9 +445,9 @@
 
   <div class="hero">
     <a class="submit-link" href="join.html">Submit your track</a>
-    <h1 class="brand-title">60seconds.fm</h1>
+    <h1 class="brand-title">60 Seconds FM</h1>
     <p class="brand-subtitle">
-      A live discovery radio where emerging artists get one minute to make an impression.
+      Let’s make every minute count
     </p>
   </div>
 
@@ -510,11 +514,13 @@
     );
 
     // AUTH UI
+    const showLoginBtn = document.getElementById("showLoginBtn");
     const email = document.getElementById("email");
     const password = document.getElementById("password");
     const signupBtn = document.getElementById("signup");
     const loginBtn = document.getElementById("login");
     const logoutBtn = document.getElementById("logout");
+    const authCollapsed = document.getElementById("authCollapsed");
     const authBox = document.getElementById("authBox");
     const userBox = document.getElementById("userBox");
     const authMessageEl = document.getElementById("authMessage");
@@ -523,9 +529,16 @@
     const profileLink = document.getElementById("profileLink");
 
     function setAuthMessage(msg, error = false) {
+      if (msg === "Auth session missing!") msg = "";
       authMessageEl.textContent = msg || "";
       authMessageEl.style.color = error ? "#ff8a8a" : "#cfcfcf";
     }
+
+    showLoginBtn.onclick = () => {
+      authCollapsed.classList.add("hidden");
+      authBox.classList.remove("hidden");
+      setAuthMessage("");
+    };
 
     async function loadMyProfile(userId) {
       const { data, error } = await supabaseClient
@@ -559,18 +572,22 @@
       const { data, error } = await supabaseClient.auth.getUser();
 
       if (error) {
-        setAuthMessage(error.message, true);
+        if (error.message !== "Auth session missing!") {
+          setAuthMessage(error.message, true);
+        }
         return;
       }
 
       if (data.user) {
+        authCollapsed.classList.add("hidden");
         authBox.classList.add("hidden");
         userBox.classList.remove("hidden");
         setAuthMessage("");
         await loadMyProfile(data.user.id);
       } else {
-        authBox.classList.remove("hidden");
         userBox.classList.add("hidden");
+        authBox.classList.add("hidden");
+        authCollapsed.classList.remove("hidden");
         userAvatar.classList.add("hidden");
         userAvatarFallback.classList.add("hidden");
       }
