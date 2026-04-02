@@ -16,6 +16,7 @@
       --text: #f5f5f5;
       --muted: #a8a8a8;
       --line: rgba(212, 175, 55, 0.22);
+      --top-btn-height: 52px;
     }
 
     * {
@@ -73,15 +74,18 @@
     .top-actions {
       display: flex;
       justify-content: center;
-      align-items: center;
+      align-items: flex-start;
       gap: 12px;
       flex-wrap: wrap;
       margin-bottom: 8px;
     }
 
     .submit-link {
-      display: inline-block;
-      padding: 14px 28px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: var(--top-btn-height);
+      padding: 0 28px;
       border-radius: 999px;
       text-decoration: none;
       color: #141414;
@@ -93,6 +97,7 @@
         0 12px 28px rgba(212,175,55,0.22),
         inset 0 1px 0 rgba(255,255,255,0.35);
       transition: transform 0.16s ease, box-shadow 0.16s ease;
+      white-space: nowrap;
     }
 
     .submit-link:hover {
@@ -113,12 +118,22 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 12px;
-      flex-wrap: wrap;
+      min-height: var(--top-btn-height);
+    }
+
+    .auth-trigger-row .metal-btn,
+    .user-box .metal-btn {
+      min-height: var(--top-btn-height);
+      padding-top: 0;
+      padding-bottom: 0;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      white-space: nowrap;
     }
 
     .auth-box {
-      width: min(360px, 100%);
+      width: min(720px, 100%);
       text-align: left;
       margin: 4px auto 0;
     }
@@ -131,16 +146,23 @@
       text-align: center;
     }
 
+    .auth-inputs {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
     .auth-box input {
       width: 100%;
-      padding: 10px 12px;
-      margin-bottom: 8px;
+      padding: 12px 12px;
       border-radius: 12px;
       border: 1px solid rgba(255,255,255,0.05);
       background: #0f0f0f;
       color: white;
       font-size: 14px;
       outline: none;
+      min-height: 46px;
     }
 
     .auth-row {
@@ -425,16 +447,21 @@
 
       .top-actions {
         flex-direction: column;
-      }
-
-      .auth-trigger-row {
-        flex-direction: column;
+        align-items: center;
       }
 
       .submit-link,
       .auth-trigger-row .metal-btn {
         width: 100%;
         max-width: 320px;
+      }
+
+      .auth-box {
+        width: min(420px, 100%);
+      }
+
+      .auth-inputs {
+        grid-template-columns: 1fr;
       }
 
       .auth-row {
@@ -464,8 +491,12 @@
 
         <div id="authBox" class="auth-box hidden">
           <h3>Log in</h3>
-          <input id="email" type="email" placeholder="Email" />
-          <input id="password" type="password" placeholder="Password" />
+
+          <div class="auth-inputs">
+            <input id="email" type="email" placeholder="Email" />
+            <input id="password" type="password" placeholder="Password" />
+          </div>
+
           <div class="auth-row">
             <button id="signup" class="metal-btn" type="button"><span class="icon">✦</span>Sign up</button>
             <button id="login" class="metal-btn" type="button"><span class="icon">↳</span>Log in</button>
@@ -578,6 +609,13 @@
       authMessageEl.style.color = error ? "#ff8a8a" : "#cfcfcf";
     }
 
+    function hideUserStats() {
+      playsCardEl.classList.add("hidden");
+      myPlaysCardEl.classList.add("hidden");
+      playsPerDayEl.textContent = "0";
+      myTotalPlaysEl.textContent = "0";
+    }
+
     function resetLoggedOutUI() {
       userBox.classList.add("hidden");
       authBox.classList.add("hidden");
@@ -588,6 +626,7 @@
       email.value = "";
       password.value = "";
       profileLink.href = "#";
+      hideUserStats();
     }
 
     showLoginBtn.onclick = () => {
@@ -729,6 +768,7 @@
     let liked = false;
     let listenerIdentity = null;
     let isLiveActivated = false;
+    let liveBooted = false;
 
     const audio = document.getElementById("audio");
     const startBtn = document.getElementById("start");
@@ -909,38 +949,58 @@
       }
     }
 
-    function nextTrack() {
-      if (!tracks.length) {
-        titleEl.textContent = "No live tracks yet";
-        artistWrapEl.innerHTML = `<span>Check back soon</span>`;
-        return;
-      }
+    function setTrackUI(track) {
+      titleEl.textContent = track.title;
+      renderArtist(track);
+      resetLike();
+    }
+
+    function incrementPlayCount(track) {
+      if (!track || !track.id) return;
+
+      supabaseClient
+        .from("tracks")
+        .update({
+          play_count: (track.play_count || 0) + 1
+        })
+        .eq("id", track.id)
+        .then(() => {
+          track.play_count = (track.play_count || 0) + 1;
+        })
+        .catch(() => {});
+    }
+
+    function chooseNextTrackIndex() {
+      if (!tracks.length) return -1;
 
       let next;
       do {
         next = Math.floor(Math.random() * tracks.length);
       } while (tracks.length > 1 && next === current);
 
-      current = next;
+      return next;
+    }
+
+    function playTrackAt(index, startSeconds = 0, countPlay = true) {
+      if (index < 0 || !tracks[index]) return;
+
+      current = index;
       const t = tracks[current];
 
-      titleEl.textContent = t.title;
-      renderArtist(t);
+      setTrackUI(t);
       audio.src = t.file_url;
-      audio.currentTime = 0;
       progressFill.style.width = "0%";
       elapsedTimeEl.textContent = "0:00";
-      resetLike();
 
-      if (t.id) {
-        supabaseClient
-          .from("tracks")
-          .update({
-            play_count: (t.play_count || 0) + 1
-          })
-          .eq("id", t.id)
-          .then(() => {})
-          .catch(() => {});
+      audio.addEventListener("loadedmetadata", () => {
+        const safeStart = Math.max(0, Math.min(startSeconds, 59));
+        try {
+          audio.currentTime = safeStart;
+        } catch (e) {}
+      }, { once: true });
+
+      if (countPlay) {
+        incrementPlayCount(t);
       }
 
       const playPromise = audio.play();
@@ -949,6 +1009,17 @@
           console.log("Audio autoplay blocked:", err);
         });
       }
+    }
+
+    function nextTrack(startSeconds = 0, countPlay = true) {
+      if (!tracks.length) {
+        titleEl.textContent = "No live tracks yet";
+        artistWrapEl.innerHTML = `<span>Check back soon</span>`;
+        return;
+      }
+
+      const nextIndex = chooseNextTrackIndex();
+      playTrackAt(nextIndex, startSeconds, countPlay);
     }
 
     async function bootstrapLiveRadio() {
@@ -965,7 +1036,20 @@
       }
 
       audio.muted = true;
-      nextTrack();
+      audio.volume = Number(volume.value);
+
+      const randomLiveOffset = Math.floor(Math.random() * 60);
+      nextTrack(randomLiveOffset, false);
+      liveBooted = true;
+    }
+
+    async function ensureBackgroundPlayback() {
+      if (!liveBooted || !tracks.length) return;
+
+      if (audio.paused) {
+        audio.muted = true;
+        audio.play().catch(() => {});
+      }
     }
 
     startBtn.onclick = async () => {
@@ -976,16 +1060,19 @@
       await loadTrackStats();
       await loadMyTotalPlays();
 
-      audio.muted = false;
-      startOverlay.classList.add("hidden");
       radioShell.classList.remove("pre-live");
+      startOverlay.classList.add("hidden");
+
+      if (Number(volume.value) > 0) {
+        audio.muted = false;
+      }
 
       if (audio.paused) {
         audio.play().catch(err => console.log("Manual start play error:", err));
       }
     };
 
-    skipBtn.onclick = nextTrack;
+    skipBtn.onclick = () => nextTrack(0, true);
 
     likeBtn.onclick = () => {
       liked = !liked;
@@ -1005,30 +1092,39 @@
       elapsedTimeEl.textContent = formatTime(t);
 
       if (audio.currentTime >= max) {
-        nextTrack();
+        nextTrack(0, true);
       }
     });
 
     audio.addEventListener("ended", () => {
-      nextTrack();
+      nextTrack(0, true);
     });
 
     volume.addEventListener("input", (e) => {
       const v = Number(e.target.value);
       audio.volume = v;
 
-      if (v === 0) {
-        audio.muted = true;
+      if (isLiveActivated) {
+        audio.muted = v === 0;
       } else {
-        audio.muted = false;
+        audio.muted = true;
       }
 
-      if (!audio.paused && isLiveActivated) {
+      if (!audio.paused) {
         audio.play().catch(() => {});
       }
     });
 
+    document.addEventListener("visibilitychange", () => {
+      ensureBackgroundPlayback();
+    });
+
+    window.addEventListener("focus", () => {
+      ensureBackgroundPlayback();
+    });
+
     audio.volume = 0.8;
+    audio.muted = true;
 
     setInterval(() => {
       if (isLiveActivated) {
@@ -1041,6 +1137,15 @@
         registerListener();
       }
     }, 15000);
+
+    async function refreshTracksPeriodically() {
+      await loadTracksFromSupabase();
+    }
+
+    setInterval(() => {
+      refreshTracksPeriodically();
+      ensureBackgroundPlayback();
+    }, 30000);
 
     function formatTime(seconds) {
       const mins = Math.floor(seconds / 60);
