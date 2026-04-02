@@ -20,30 +20,61 @@
       margin-bottom: 10px;
     }
 
-    .card {
-      background: #151515;
-      border-radius: 20px;
-      padding: 24px;
-      max-width: 560px;
-      margin: 20px auto;
+    .topbar {
+      max-width: 900px;
+      margin: 0 auto 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 16px;
     }
 
-    input {
+    .brand-wrap {
+      text-align: left;
+    }
+
+    .brand-wrap a {
+      display: inline-block;
+      margin-top: 10px;
+      color: gold;
+      text-decoration: none;
+      border: 1px solid rgba(255, 215, 0, 0.4);
+      padding: 10px 16px;
+      border-radius: 999px;
+    }
+
+    .auth-mini {
+      background: #151515;
+      border-radius: 16px;
+      padding: 14px;
+      width: 280px;
+      text-align: left;
+    }
+
+    .auth-mini h3 {
+      margin: 0 0 10px;
+      color: gold;
+      font-size: 16px;
+    }
+
+    .auth-mini input {
       width: 100%;
-      padding: 12px;
-      margin-bottom: 10px;
+      padding: 10px;
+      margin-bottom: 8px;
       border-radius: 10px;
       border: none;
       box-sizing: border-box;
+      font-size: 14px;
     }
 
-    button {
-      padding: 12px 18px;
+    .auth-mini button {
+      padding: 10px 14px;
       border-radius: 999px;
       border: none;
       cursor: pointer;
-      margin: 5px;
+      margin: 4px 4px 0 0;
       font-weight: bold;
+      font-size: 13px;
     }
 
     .gold {
@@ -57,12 +88,21 @@
       color: gold;
     }
 
+    .card {
+      background: #151515;
+      border-radius: 20px;
+      padding: 24px;
+      max-width: 560px;
+      margin: 20px auto;
+    }
+
     #status {
-      margin-top: 15px;
+      margin-top: 10px;
       min-height: 20px;
       color: #ddd;
       white-space: pre-wrap;
       word-break: break-word;
+      font-size: 14px;
     }
 
     #debug {
@@ -74,16 +114,6 @@
 
     .hidden {
       display: none;
-    }
-
-    .nav-link {
-      display: inline-block;
-      margin-top: 10px;
-      color: gold;
-      text-decoration: none;
-      border: 1px solid rgba(255, 215, 0, 0.4);
-      padding: 10px 16px;
-      border-radius: 999px;
     }
 
     .progress {
@@ -100,11 +130,6 @@
       background: gold;
     }
 
-    .small {
-      font-size: 13px;
-      color: #999;
-    }
-
     .artist-link {
       color: gold;
       text-decoration: none;
@@ -114,31 +139,83 @@
     .artist-link:hover {
       opacity: 0.85;
     }
+
+    .listeners {
+      margin-top: 10px;
+      color: #cfcfcf;
+      font-size: 14px;
+    }
+
+    .player-actions {
+      margin-top: 10px;
+    }
+
+    .player-actions button {
+      padding: 12px 18px;
+      border-radius: 999px;
+      border: none;
+      cursor: pointer;
+      margin: 5px;
+      font-weight: bold;
+    }
+
+    .volume-wrap {
+      margin-top: 18px;
+    }
+
+    .volume-wrap label {
+      display: block;
+      margin-bottom: 8px;
+      color: #aaa;
+      font-size: 14px;
+    }
+
+    .volume-wrap input {
+      width: 100%;
+      margin: 0;
+    }
+
+    @media (max-width: 760px) {
+      .topbar {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .auth-mini {
+        width: auto;
+      }
+
+      .brand-wrap {
+        text-align: center;
+      }
+    }
   </style>
 </head>
 <body>
 
-  <h1>60seconds.fm</h1>
-  <a class="nav-link" href="join.html">Join 60seconds</a>
-  <a class="nav-link" href="admin.html">Admin</a>
-
-  <div class="card">
-    <div id="authBox">
-      <h2>Sign up / Log in</h2>
-      <input id="email" type="email" placeholder="Email" />
-      <input id="password" type="password" placeholder="Password" />
-
-      <button id="signup" class="gold" type="button">Sign up</button>
-      <button id="login" class="outline" type="button">Log in</button>
+  <div class="topbar">
+    <div class="brand-wrap">
+      <h1>60seconds.fm</h1>
+      <a href="join.html">Join 60seconds</a>
     </div>
 
-    <div id="userBox" class="hidden">
-      <p id="userText"></p>
-      <button id="logout" class="gold" type="button">Log out</button>
-    </div>
+    <div class="auth-mini">
+      <div id="authBox">
+        <h3>Log in</h3>
+        <input id="email" type="email" placeholder="Email" />
+        <input id="password" type="password" placeholder="Password" />
+        <button id="signup" class="gold" type="button">Sign up</button>
+        <button id="login" class="outline" type="button">Log in</button>
+      </div>
 
-    <div id="status">Ready</div>
-    <div id="debug"></div>
+      <div id="userBox" class="hidden">
+        <div id="userText" style="margin-bottom:8px;font-size:14px;"></div>
+        <button id="logout" class="gold" type="button">Log out</button>
+      </div>
+
+      <div id="status">Ready</div>
+      <div id="debug"></div>
+    </div>
   </div>
 
   <div class="card">
@@ -147,15 +224,22 @@
     <div id="player" class="hidden">
       <h2 id="title">-</h2>
       <p id="artistWrap"><span id="artist">-</span></p>
-      <p id="sourceLabel" class="small"></p>
+
+      <div class="listeners" id="listenersCount">1,284 listening now</div>
 
       <div class="progress">
         <div class="fill" id="progress"></div>
       </div>
 
-      <button id="skip" type="button">Skip</button>
-      <br /><br />
-      <input id="volume" type="range" min="0" max="1" step="0.01" value="0.8" />
+      <div class="player-actions">
+        <button id="likeBtn" class="outline" type="button">♡ Like</button>
+        <button id="skip" type="button">Skip</button>
+      </div>
+
+      <div class="volume-wrap">
+        <label for="volume">Volume</label>
+        <input id="volume" type="range" min="0" max="1" step="0.01" value="0.8" />
+      </div>
     </div>
   </div>
 
@@ -187,8 +271,6 @@
       "https://rgoutegbcpjytplqcwze.supabase.co",
       "sb_publishable_255qyDKS77nMU0pbedfa_A_3hdgtEHh"
     );
-
-    setDebug("Supabase ready");
 
     // AUTH
     const email = document.getElementById("email");
@@ -275,24 +357,20 @@
     updateUser();
 
     // RADIO
-    const fallbackTracks = [
-      { title: "Is It Me", artist: "Eddy Donato", file_url: "track1.mp3", source: "Local fallback", user_id: null },
-      { title: "ff in me vibe", artist: "EARV", file_url: "track2.mp3", source: "Local fallback", user_id: null },
-      { title: "Hitte In De Toko", artist: "EARV", file_url: "track3.mp3", source: "Local fallback", user_id: null }
-    ];
-
     let tracks = [];
     let current = -1;
+    let liked = false;
 
     const audio = document.getElementById("audio");
     const startBtn = document.getElementById("start");
     const player = document.getElementById("player");
     const titleEl = document.getElementById("title");
     const artistWrapEl = document.getElementById("artistWrap");
-    const sourceLabelEl = document.getElementById("sourceLabel");
     const skipBtn = document.getElementById("skip");
+    const likeBtn = document.getElementById("likeBtn");
     const volume = document.getElementById("volume");
     const progressFill = document.getElementById("progress");
+    const listenersCountEl = document.getElementById("listenersCount");
 
     async function loadTracksFromSupabase() {
       setDebug("Loading approved tracks from Supabase...");
@@ -304,15 +382,15 @@
         .order("created_at", { ascending: false });
 
       if (error) {
-        setDebug("Supabase read failed, using fallback");
+        setStatus("Could not load tracks.", true);
         console.error(error);
-        tracks = fallbackTracks;
+        tracks = [];
         return;
       }
 
       if (!data || data.length === 0) {
-        setDebug("No approved tracks found, using fallback");
-        tracks = fallbackTracks;
+        setStatus("No approved tracks available yet.", true);
+        tracks = [];
         return;
       }
 
@@ -320,11 +398,10 @@
         title: track.title,
         artist: track.artist,
         file_url: track.file_url,
-        user_id: track.user_id || null,
-        source: "Supabase approved"
+        user_id: track.user_id || null
       }));
 
-      setDebug(`Loaded ${tracks.length} approved track(s) from Supabase`);
+      setDebug(`Loaded ${tracks.length} approved track(s)`);
     }
 
     function renderArtist(track) {
@@ -335,8 +412,20 @@
           </a>
         `;
       } else {
-        artistWrapEl.innerHTML = `<span id="artist">${escapeHtml(track.artist)}</span>`;
+        artistWrapEl.innerHTML = `<span>${escapeHtml(track.artist)}</span>`;
       }
+    }
+
+    function updateListeners() {
+      const count = Math.floor(900 + Math.random() * 900);
+      listenersCountEl.textContent = count.toLocaleString() + " listening now";
+    }
+
+    function resetLike() {
+      liked = false;
+      likeBtn.textContent = "♡ Like";
+      likeBtn.classList.remove("gold");
+      likeBtn.classList.add("outline");
     }
 
     function nextTrack() {
@@ -355,10 +444,11 @@
 
       titleEl.textContent = t.title;
       renderArtist(t);
-      sourceLabelEl.textContent = t.source || "";
       audio.src = t.file_url;
       audio.currentTime = 0;
       progressFill.style.width = "0%";
+      resetLike();
+      updateListeners();
 
       audio.play().catch(err => {
         console.log("Audio play blocked:", err);
@@ -371,14 +461,30 @@
 
       await loadTracksFromSupabase();
 
+      if (!tracks.length) {
+        startBtn.disabled = false;
+        startBtn.textContent = "Start Radio";
+        return;
+      }
+
+      startBtn.classList.add("hidden");
       player.classList.remove("hidden");
       nextTrack();
-
-      startBtn.textContent = "Start Radio";
-      startBtn.disabled = false;
     };
 
     skipBtn.onclick = nextTrack;
+
+    likeBtn.onclick = () => {
+      liked = !liked;
+      likeBtn.textContent = liked ? "♥ Liked" : "♡ Like";
+      if (liked) {
+        likeBtn.classList.remove("outline");
+        likeBtn.classList.add("gold");
+      } else {
+        likeBtn.classList.remove("gold");
+        likeBtn.classList.add("outline");
+      }
+    };
 
     audio.addEventListener("timeupdate", () => {
       const max = 60;
@@ -395,10 +501,16 @@
     });
 
     volume.oninput = e => {
-      audio.volume = e.target.value;
+      audio.volume = Number(e.target.value);
     };
 
     audio.volume = 0.8;
+
+    setInterval(() => {
+      if (!player.classList.contains("hidden")) {
+        updateListeners();
+      }
+    }, 10000);
 
     function escapeHtml(str) {
       return String(str || "")
