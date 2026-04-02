@@ -416,9 +416,17 @@
       }
     }
 
-    function updateListeners() {
-      const count = Math.floor(900 + Math.random() * 900);
-      listenersCountEl.textContent = count.toLocaleString() + " listening now";
+async function updateListeners() {
+  const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000).toISOString();
+
+  const { count, error } = await supabaseClient
+    .from("listeners")
+    .select("*", { count: "exact", head: true })
+    .gt("last_seen", fiveMinutesAgo);
+
+  if (!error && count !== null) {
+    listenersCountEl.textContent = count + " listening now";
+  }
     }
 
     function resetLike() {
