@@ -16,9 +16,6 @@
       --text: #f5f5f5;
       --muted: #a8a8a8;
       --line: rgba(212, 175, 55, 0.22);
-      --metal-1: #2b2b2b;
-      --metal-2: #4a4a4a;
-      --metal-3: #1f1f1f;
     }
 
     * {
@@ -27,49 +24,22 @@
 
     body {
       margin: 0;
+      min-height: 100vh;
       background:
-        radial-gradient(circle at top, rgba(212, 175, 55, 0.08), transparent 30%),
+        radial-gradient(circle at top, rgba(212, 175, 55, 0.10), transparent 28%),
         linear-gradient(180deg, #080808 0%, #0d0d0d 100%);
       color: var(--text);
       font-family: Arial, sans-serif;
       text-align: center;
-      padding: 28px 18px 40px;
+      padding: 24px 18px 44px;
     }
 
     .topbar {
-      max-width: 980px;
-      margin: 0 auto 20px;
+      max-width: 1050px;
+      margin: 0 auto 12px;
       display: flex;
-      justify-content: space-between;
+      justify-content: flex-end;
       align-items: flex-start;
-      gap: 18px;
-    }
-
-    .brand-wrap {
-      text-align: left;
-    }
-
-    h1 {
-      margin: 0 0 12px;
-      color: var(--gold);
-      font-size: clamp(32px, 4vw, 48px);
-      letter-spacing: 0.3px;
-    }
-
-    .join-link {
-      display: inline-block;
-      color: var(--gold);
-      text-decoration: none;
-      border: 1px solid var(--line);
-      padding: 11px 16px;
-      border-radius: 999px;
-      background: rgba(255,255,255,0.02);
-      transition: 0.2s ease;
-    }
-
-    .join-link:hover {
-      transform: translateY(-1px);
-      border-color: rgba(212,175,55,0.45);
     }
 
     .auth-mini {
@@ -99,10 +69,6 @@
       color: white;
       font-size: 14px;
       outline: none;
-    }
-
-    .auth-mini input::placeholder {
-      color: #8d8d8d;
     }
 
     .auth-row {
@@ -153,22 +119,107 @@
       box-shadow: 0 0 0 4px rgba(212,175,55,0.08);
     }
 
-    .radio-shell {
-      max-width: 720px;
+    .hero {
+      max-width: 900px;
+      margin: 0 auto 26px;
+    }
+
+    .submit-link {
+      display: inline-block;
+      margin-bottom: 18px;
+      padding: 14px 28px;
+      border-radius: 999px;
+      text-decoration: none;
+      color: #141414;
+      font-weight: 800;
+      font-size: 15px;
+      letter-spacing: 0.4px;
+      background: linear-gradient(135deg, var(--gold-2), var(--gold), #b68818);
+      box-shadow:
+        0 12px 28px rgba(212,175,55,0.22),
+        inset 0 1px 0 rgba(255,255,255,0.35);
+      transition: transform 0.16s ease, box-shadow 0.16s ease;
+    }
+
+    .submit-link:hover {
+      transform: translateY(-1px);
+      box-shadow:
+        0 16px 34px rgba(212,175,55,0.28),
+        inset 0 1px 0 rgba(255,255,255,0.38);
+    }
+
+    .brand-title {
+      margin: 0;
+      font-size: clamp(42px, 8vw, 78px);
+      line-height: 0.96;
+      font-weight: 900;
+      letter-spacing: -1px;
+      background: linear-gradient(180deg, #fff7d8 0%, #f4d77a 38%, #d4af37 70%, #8f6b13 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      text-shadow: 0 16px 34px rgba(212,175,55,0.12);
+    }
+
+    .brand-subtitle {
+      margin: 12px auto 0;
+      max-width: 680px;
+      color: #c9c9c9;
+      font-size: 17px;
+      line-height: 1.6;
+    }
+
+    .radio-stage {
+      position: relative;
+      max-width: 760px;
       margin: 0 auto;
+    }
+
+    .radio-shell {
+      position: relative;
       background:
         linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.015)),
         linear-gradient(180deg, #181818 0%, #111111 100%);
       border: 1px solid rgba(255,255,255,0.05);
       border-radius: 30px;
-      padding: 26px;
+      padding: 28px;
       box-shadow:
         0 30px 80px rgba(0,0,0,0.38),
         inset 0 1px 0 rgba(255,255,255,0.04);
+      transition: opacity 0.35s ease, filter 0.35s ease, transform 0.35s ease;
+    }
+
+    .radio-shell.pre-live {
+      opacity: 0.42;
+      filter: blur(0.2px) saturate(0.86);
+      transform: scale(0.992);
+    }
+
+    .start-overlay {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: auto;
+      z-index: 5;
+    }
+
+    .overlay-content {
+      text-align: center;
+      padding: 24px;
+    }
+
+    .overlay-label {
+      color: rgba(255,255,255,0.85);
+      font-size: 13px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 16px;
     }
 
     .start-btn {
-      min-width: 180px;
+      min-width: 190px;
     }
 
     .now-playing {
@@ -295,7 +346,7 @@
     }
 
     .stats-row {
-      max-width: 720px;
+      max-width: 760px;
       margin: 18px auto 0;
       display: grid;
       grid-template-columns: repeat(2, 1fr);
@@ -344,16 +395,12 @@
 
     @media (max-width: 760px) {
       .topbar {
-        flex-direction: column;
-        align-items: stretch;
-      }
-
-      .brand-wrap {
-        text-align: center;
+        justify-content: center;
       }
 
       .auth-mini {
-        width: auto;
+        width: 100%;
+        max-width: 360px;
       }
 
       .stats-row {
@@ -369,11 +416,6 @@
 <body>
 
   <div class="topbar">
-    <div class="brand-wrap">
-      <h1>60seconds.fm</h1>
-      <a class="join-link" href="join.html">Join 60seconds</a>
-    </div>
-
     <div class="auth-mini">
       <div id="authBox">
         <h3>Log in</h3>
@@ -397,36 +439,51 @@
     </div>
   </div>
 
-  <div class="radio-shell">
-    <button id="start" class="metal-btn start-btn" type="button"><span class="icon">▶</span>Start Radio</button>
+  <div class="hero">
+    <a class="submit-link" href="join.html">Submit your track</a>
+    <h1 class="brand-title">60seconds.fm</h1>
+    <p class="brand-subtitle">
+      A live discovery radio where emerging artists get one minute to make an impression.
+    </p>
+  </div>
 
-    <div id="player" class="hidden">
-      <div class="now-playing">Now Playing</div>
-      <h2 id="title" class="track-title">-</h2>
-      <p id="artistWrap" class="artist-wrap"><span id="artist">-</span></p>
-
-      <div class="time-row">
-        <span id="elapsedTime">0:00</span>
-        <span>1:00</span>
+  <div class="radio-stage">
+    <div id="startOverlay" class="start-overlay">
+      <div class="overlay-content">
+        <div class="overlay-label">Live radio is on</div>
+        <button id="start" class="metal-btn start-btn" type="button"><span class="icon">▶</span>Start Radio</button>
       </div>
+    </div>
 
-      <div class="progress">
-        <div class="fill" id="progress"></div>
-      </div>
+    <div id="radioShell" class="radio-shell pre-live">
+      <div id="player">
+        <div class="now-playing">Now Playing</div>
+        <h2 id="title" class="track-title">Loading...</h2>
+        <p id="artistWrap" class="artist-wrap"><span id="artist">—</span></p>
 
-      <div class="player-actions">
-        <button id="likeBtn" class="metal-btn" type="button"><span class="icon">♥</span>Like</button>
-        <button id="skip" class="metal-btn" type="button"><span class="icon">⏭</span>Skip</button>
-      </div>
+        <div class="time-row">
+          <span id="elapsedTime">0:00</span>
+          <span>1:00</span>
+        </div>
 
-      <div class="volume-wrap">
-        <label for="volume">Volume</label>
-        <input id="volume" type="range" min="0" max="1" step="0.01" value="0.8" />
-      </div>
+        <div class="progress">
+          <div class="fill" id="progress"></div>
+        </div>
 
-      <div class="listeners-pill">
-        <span class="listeners-dot"></span>
-        <span id="listenersCount">0 Listeners</span>
+        <div class="player-actions">
+          <button id="likeBtn" class="metal-btn" type="button"><span class="icon">♥</span>Like</button>
+          <button id="skip" class="metal-btn" type="button"><span class="icon">⏭</span>Skip</button>
+        </div>
+
+        <div class="volume-wrap">
+          <label for="volume">Volume</label>
+          <input id="volume" type="range" min="0" max="1" step="0.01" value="0.8" />
+        </div>
+
+        <div class="listeners-pill">
+          <span class="listeners-dot"></span>
+          <span id="listenersCount">0 Listeners</span>
+        </div>
       </div>
     </div>
   </div>
@@ -442,7 +499,7 @@
     </div>
   </div>
 
-  <audio id="audio"></audio>
+  <audio id="audio" autoplay playsinline></audio>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
@@ -571,19 +628,21 @@
 
     updateUser();
 
-    // RADIO UI
+    // RADIO + STATS
     let tracks = [];
     let current = -1;
     let liked = false;
     let listenerIdentity = null;
+    let isLiveActivated = false;
 
     const audio = document.getElementById("audio");
     const startBtn = document.getElementById("start");
-    const player = document.getElementById("player");
+    const startOverlay = document.getElementById("startOverlay");
+    const radioShell = document.getElementById("radioShell");
     const titleEl = document.getElementById("title");
     const artistWrapEl = document.getElementById("artistWrap");
-    const skipBtn = document.getElementById("skip");
     const likeBtn = document.getElementById("likeBtn");
+    const skipBtn = document.getElementById("skip");
     const volume = document.getElementById("volume");
     const progressFill = document.getElementById("progress");
     const elapsedTimeEl = document.getElementById("elapsedTime");
@@ -706,6 +765,8 @@
 
     function nextTrack() {
       if (!tracks.length) {
+        titleEl.textContent = "No live tracks yet";
+        artistWrapEl.innerHTML = `<span>Check back soon</span>`;
         return;
       }
 
@@ -725,31 +786,43 @@
       elapsedTimeEl.textContent = "0:00";
       resetLike();
 
-      audio.play().catch(err => {
-        console.log("Audio play blocked:", err);
-      });
+      const playPromise = audio.play();
+      if (playPromise) {
+        playPromise.catch(err => {
+          console.log("Audio autoplay blocked:", err);
+        });
+      }
     }
 
-    startBtn.onclick = async () => {
-      startBtn.disabled = true;
-      startBtn.innerHTML = `<span class="icon">◌</span>Loading`;
-
+    async function bootstrapLiveRadio() {
       await Promise.all([
         loadTracksFromSupabase(),
-        loadTrackStats(),
-        registerListener(),
-        updateListeners()
+        loadTrackStats()
       ]);
 
       if (!tracks.length) {
-        startBtn.disabled = false;
-        startBtn.innerHTML = `<span class="icon">▶</span>Start Radio`;
+        titleEl.textContent = "No live tracks yet";
+        artistWrapEl.innerHTML = `<span>Check back soon</span>`;
         return;
       }
 
-      startBtn.classList.add("hidden");
-      player.classList.remove("hidden");
+      audio.muted = true;
       nextTrack();
+    }
+
+    startBtn.onclick = async () => {
+      isLiveActivated = true;
+
+      await registerListener();
+      await updateListeners();
+
+      audio.muted = false;
+      startOverlay.classList.add("hidden");
+      radioShell.classList.remove("pre-live");
+
+      if (audio.paused) {
+        audio.play().catch(err => console.log("Manual start play error:", err));
+      }
     };
 
     skipBtn.onclick = nextTrack;
@@ -782,18 +855,21 @@
 
     volume.oninput = e => {
       audio.volume = Number(e.target.value);
+      if (Number(e.target.value) > 0 && isLiveActivated) {
+        audio.muted = false;
+      }
     };
 
     audio.volume = 0.8;
 
     setInterval(() => {
-      if (!player.classList.contains("hidden")) {
+      if (isLiveActivated) {
         updateListeners();
       }
     }, 10000);
 
     setInterval(() => {
-      if (!player.classList.contains("hidden")) {
+      if (isLiveActivated) {
         registerListener();
       }
     }, 15000);
@@ -813,8 +889,7 @@
         .replaceAll("'", "&#039;");
     }
 
-    // Load stats once on page load too
-    loadTrackStats();
+    bootstrapLiveRadio();
   </script>
 </body>
 </html>
