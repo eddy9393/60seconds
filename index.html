@@ -604,6 +604,33 @@
     const profileLink = document.getElementById("profileLink");
     const submitTrackBtn = document.getElementById("submitTrackBtn");
 
+    // RADIO + STATS ELEMENTS
+    const audio = document.getElementById("audio");
+    const startBtn = document.getElementById("start");
+    const startOverlay = document.getElementById("startOverlay");
+    const radioShell = document.getElementById("radioShell");
+    const titleEl = document.getElementById("title");
+    const artistWrapEl = document.getElementById("artistWrap");
+    const likeBtn = document.getElementById("likeBtn");
+    const skipBtn = document.getElementById("skip");
+    const volume = document.getElementById("volume");
+    const progressFill = document.getElementById("progress");
+    const elapsedTimeEl = document.getElementById("elapsedTime");
+    const listenersCountEl = document.getElementById("listenersCount");
+    const submittedCountEl = document.getElementById("submittedCount");
+    const playsPerDayEl = document.getElementById("playsPerDay");
+    const playsCardEl = document.getElementById("playsCard");
+    const myPlaysCardEl = document.getElementById("myPlaysCard");
+    const myTotalPlaysEl = document.getElementById("myTotalPlays");
+
+    // STATE
+    let tracks = [];
+    let current = -1;
+    let liked = false;
+    let listenerIdentity = null;
+    let isLiveActivated = false;
+    let liveBooted = false;
+
     function setAuthMessage(msg, error = false) {
       if (msg === "Auth session missing!") msg = "";
       authMessageEl.textContent = msg || "";
@@ -689,16 +716,84 @@
           setAuthMessage(error.message, true);
         }
         setLoggedOutView();
-        return;
+        return null;
       }
 
       if (data.user) {
         setLoggedInView();
         setAuthMessage("");
         await loadMyProfile(data.user.id);
+        return data.user;
       } else {
         setLoggedOutView();
+        return null;
       }
+    }
+
+    async function loadTrackStats() {
+      const { count: submittedCount } = await supabaseClient
+        .from("tracks")
+        .select("*", { count: "exact", head: true });
+
+      const { count: approvedCount } = await supabaseClient
+        .from("tracks")
+        .select("*", { count: "exact", head: true })
+        .eq("status", "approved");
+
+      submittedCountEl.textContent = (submittedCount || 0).toLocaleString();
+
+      const { data: userData } = await supabaseClient.auth.getUser();
+
+      if (!userData.user) {
+        playsCardEl.classList.add("hidden");
+        return;
+      }
+
+      const { count: myApproved } = await supabaseClient
+        .from("tracks")
+        .select("*", { count: "exact", head: true })
+        .eq("user_id", userData.user.id)
+        .eq("status", "approved");
+
+      if (!myApproved || myApproved === 0) {
+        playsCardEl.classList.add("hidden");
+        return;
+      }
+
+      playsCardEl.classList.remove("hidden");
+
+      const perDay = approvedCount && approvedCount > 0
+        ? Math.floor(1440 / approvedCount)
+        : 0;
+
+      playsPerDayEl.textContent = perDay.toLocaleString();
+    }
+
+    async function loadMyTotalPlays() {
+      const { data: userData } = await supabaseClient.auth.getUser();
+
+      if (!userData.user) {
+        myPlaysCardEl.classList.add("hidden");
+        return;
+      }
+
+      const { data: myTracks, error } = await supabaseClient
+        .from("tracks")
+        .select("play_count")
+        .eq("user_id", userData.user.id);
+
+      if (error || !myTracks || myTracks.length === 0) {
+        myPlaysCardEl.classList.add("hidden");
+        return;
+      }
+
+      let total = 0;
+      myTracks.forEach(track => {
+        total += track.play_count || 0;
+      });
+
+      myPlaysCardEl.classList.remove("hidden");
+      myTotalPlaysEl.textContent = total.toLocaleString();
     }
 
     signupBtn.onclick = async () => {
@@ -786,7 +881,7 @@
       setAuthMessage("");
 
       try {
-        const { error } = await supabaseClient.auth.signOut({ scope: "local" });
+        const { error } = await supabaseClient.auth.signOut();
 
         if (error) {
           setAuthMessage(error.message, true);
@@ -818,34 +913,6 @@
       }
     });
 
-    setLoggedOutView();
-
-    // RADIO + STATS
-    let tracks = [];
-    let current = -1;
-    let liked = false;
-    let listenerIdentity = null;
-    let isLiveActivated = false;
-    let liveBooted = false;
-
-    const audio = document.getElementById("audio");
-    const startBtn = document.getElementById("start");
-    const startOverlay = document.getElementById("startOverlay");
-    const radioShell = document.getElementById("radioShell");
-    const titleEl = document.getElementById("title");
-    const artistWrapEl = document.getElementById("artistWrap");
-    const likeBtn = document.getElementById("likeBtn");
-    const skipBtn = document.getElementById("skip");
-    const volume = document.getElementById("volume");
-    const progressFill = document.getElementById("progress");
-    const elapsedTimeEl = document.getElementById("elapsedTime");
-    const listenersCountEl = document.getElementById("listenersCount");
-    const submittedCountEl = document.getElementById("submittedCount");
-    const playsPerDayEl = document.getElementById("playsPerDay");
-    const playsCardEl = document.getElementById("playsCard");
-    const myPlaysCardEl = document.getElementById("myPlaysCard");
-    const myTotalPlaysEl = document.getElementById("myTotalPlays");
-
     async function loadTracksFromSupabase() {
       const { data, error } = await supabaseClient
         .from("tracks")
@@ -867,72 +934,6 @@
         user_id: track.user_id || null,
         play_count: track.play_count || 0
       }));
-    }
-
-    async function loadTrackStats() {
-      const { count: submittedCount } = await supabaseClient
-        .from("tracks")
-        .select("*", { count: "exact", head: true });
-
-      const { count: approvedCount } = await supabaseClient
-        .from("tracks")
-        .select("*", { count: "exact", head: true })
-        .eq("status", "approved");
-
-      submittedCountEl.textContent = (submittedCount || 0).toLocaleString();
-
-      const { data: userData } = await supabaseClient.auth.getUser();
-
-      if (!userData.user) {
-        playsCardEl.classList.add("hidden");
-        return;
-      }
-
-      const { count: myApproved } = await supabaseClient
-        .from("tracks")
-        .select("*", { count: "exact", head: true })
-        .eq("user_id", userData.user.id)
-        .eq("status", "approved");
-
-      if (!myApproved || myApproved === 0) {
-        playsCardEl.classList.add("hidden");
-        return;
-      }
-
-      playsCardEl.classList.remove("hidden");
-
-      const perDay = approvedCount && approvedCount > 0
-        ? Math.floor(1440 / approvedCount)
-        : 0;
-
-      playsPerDayEl.textContent = perDay.toLocaleString();
-    }
-
-    async function loadMyTotalPlays() {
-      const { data: userData } = await supabaseClient.auth.getUser();
-
-      if (!userData.user) {
-        myPlaysCardEl.classList.add("hidden");
-        return;
-      }
-
-      const { data: myTracks, error } = await supabaseClient
-        .from("tracks")
-        .select("play_count")
-        .eq("user_id", userData.user.id);
-
-      if (error || !myTracks || myTracks.length === 0) {
-        myPlaysCardEl.classList.add("hidden");
-        return;
-      }
-
-      let total = 0;
-      myTracks.forEach(track => {
-        total += track.play_count || 0;
-      });
-
-      myPlaysCardEl.classList.remove("hidden");
-      myTotalPlaysEl.textContent = total.toLocaleString();
     }
 
     function renderArtist(track) {
@@ -1081,6 +1082,8 @@
     }
 
     async function bootstrapLiveRadio() {
+      setLoggedOutView();
+
       await Promise.all([
         loadTracksFromSupabase(),
         loadTrackStats(),
