@@ -10,130 +10,789 @@
   <style>
     :root {
       --gold: #d4af37;
+      --gold-2: #f4d77a;
+      --gold-dark: #8f6b13;
       --text: #f5f5f5;
       --muted: #a8a8a8;
+      --border: rgba(255,255,255,0.08);
+      --border-gold: rgba(212,175,55,0.18);
+    }
+
+    * {
+      box-sizing: border-box;
     }
 
     body {
       margin: 0;
-      background: #0b0b0b;
+      min-height: 100vh;
+      background:
+        linear-gradient(180deg, rgba(7, 7, 7, 0.48) 0%, rgba(7, 7, 7, 0.72) 45%, rgba(7, 7, 7, 0.82) 100%),
+        radial-gradient(circle at top, rgba(212, 175, 55, 0.14), transparent 30%),
+        url("bg-mobile-final-1080x1920.webp");
+      background-size: cover, auto, cover;
+      background-position: center top, center top, center center;
+      background-repeat: no-repeat, no-repeat, no-repeat;
+      background-attachment: fixed, scroll, fixed;
       color: var(--text);
       font-family: 'Manrope', sans-serif;
-      padding: 20px;
+      padding: 0 18px 44px;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
     }
 
-    h1 {
+    h1, h2, h3 {
       font-family: 'Space Grotesk', sans-serif;
+      margin: 0;
+    }
+
+    a {
+      color: inherit;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .site-shell {
+      max-width: 1180px;
+      margin: 0 auto;
+    }
+
+    .header-bar {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      display: grid;
+      grid-template-columns: 45px 1fr 45px;
+      align-items: center;
+      gap: 10px;
+      min-height: 74px;
+      padding: 8px 6px 4px;
+      background: linear-gradient(180deg, rgba(0,0,0,0.74), rgba(0,0,0,0.42) 70%, rgba(0,0,0,0));
+      backdrop-filter: blur(6px);
+    }
+
+    .header-left,
+    .header-center,
+    .header-right {
+      display: flex;
+      align-items: center;
+    }
+
+    .header-left {
+      justify-content: flex-start;
+    }
+
+    .header-center {
+      justify-content: center;
+    }
+
+    .header-right {
+      justify-content: flex-end;
+      position: relative;
+    }
+
+    .header-logo-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+    }
+
+    .header-logo {
+      display: block;
+      width: min(288px, 45vw);
+      height: auto;
+      filter:
+        drop-shadow(0 8px 18px rgba(0, 0, 0, 0.35))
+        drop-shadow(0 0 20px rgba(212, 175, 55, 0.08));
+    }
+
+    .header-icon-btn {
+      width: 42px;
+      height: 42px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.14);
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.12), rgba(255,255,255,0.04)),
+        linear-gradient(180deg, rgba(10,10,10,0.86), rgba(10,10,10,0.92));
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.08),
+        0 10px 22px rgba(0,0,0,0.24);
+      backdrop-filter: blur(4px);
+      transition: transform 0.14s ease, box-shadow 0.14s ease, filter 0.14s ease;
+      padding: 0;
+    }
+
+    .header-icon-btn:hover {
+      transform: translateY(-1px);
+      filter: brightness(1.03);
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.10),
+        0 14px 24px rgba(0,0,0,0.28);
+    }
+
+    .menu-icon {
+      position: relative;
+      width: 20px;
+      height: 16px;
+    }
+
+    .menu-icon span {
+      position: absolute;
+      left: 0;
+      width: 20px;
+      height: 3px;
+      border-radius: 999px;
+      background: #f5f5f5;
+      box-shadow: 0 1px 8px rgba(0,0,0,0.26);
+    }
+
+    .menu-icon span:nth-child(1) { top: 0; }
+    .menu-icon span:nth-child(2) { top: 6px; }
+    .menu-icon span:nth-child(3) { top: 12px; }
+
+    .person-icon {
+      position: relative;
+      width: 22px;
+      height: 22px;
+    }
+
+    .person-icon::before,
+    .person-icon::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      border: 2.2px solid #f5f5f5;
+      box-sizing: border-box;
+    }
+
+    .person-icon::before {
+      top: 0;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+    }
+
+    .person-icon::after {
+      bottom: -1px;
+      width: 21px;
+      height: 11px;
+      border-top-left-radius: 16px;
+      border-top-right-radius: 16px;
+      border-bottom: 0;
+    }
+
+    .header-avatar-btn {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      padding: 0;
+      overflow: hidden;
+      border: 2px solid rgba(212,175,55,0.55);
+      background: #111;
+      box-shadow:
+        0 10px 22px rgba(0,0,0,0.24),
+        0 0 0 3px rgba(212,175,55,0.08);
+      cursor: pointer;
+    }
+
+    .header-avatar-btn img,
+    .header-avatar-btn .header-avatar-fallback {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      display: block;
+      object-fit: cover;
+    }
+
+    .header-avatar-fallback {
+      display: flex !important;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(180deg, #3a2d0d, #a98325);
+      color: #fff;
+      font-weight: 700;
+      font-size: 15px;
+      font-family: 'Space Grotesk', sans-serif;
+    }
+
+    .account-menu {
+      position: absolute;
+      top: 52px;
+      right: 0;
+      min-width: 170px;
+      padding: 8px;
+      border-radius: 18px;
+      background:
+        linear-gradient(180deg, rgba(20,20,20,0.96), rgba(10,10,10,0.98));
+      border: 1px solid rgba(255,255,255,0.08);
+      box-shadow:
+        0 18px 40px rgba(0,0,0,0.38),
+        inset 0 1px 0 rgba(255,255,255,0.04);
+      backdrop-filter: blur(8px);
+    }
+
+    .account-menu button {
+      width: 100%;
+    }
+
+    .auth-panel-wrap {
+      max-width: 720px;
+      margin: 0 auto 0;
+    }
+
+    .auth-box {
+      width: min(720px, 100%);
+      text-align: left;
+      margin: 0 auto;
+      padding: 8px 0 0;
+    }
+
+    .auth-box h3 {
+      margin: 0 0 10px;
+      color: var(--gold);
+      font-size: 15px;
+      font-weight: 700;
       text-align: center;
+      text-shadow: 0 1px 10px rgba(0,0,0,0.28);
+      font-family: 'Space Grotesk', sans-serif;
+    }
+
+    .auth-inputs {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .auth-box input {
+      width: 100%;
+      padding: 12px 12px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: linear-gradient(180deg, rgba(16,16,16,0.92) 0%, rgba(12,12,12,0.96) 100%);
+      color: white;
+      font-size: 14px;
+      outline: none;
+      min-height: 46px;
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.04),
+        0 6px 16px rgba(0,0,0,0.18);
+      backdrop-filter: blur(4px);
+      font-family: 'Manrope', sans-serif;
+    }
+
+    .auth-box input:focus {
+      border-color: rgba(212,175,55,0.38);
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.04),
+        0 0 0 3px rgba(212,175,55,0.08);
+    }
+
+    .auth-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .auth-message {
+      min-height: 18px;
+      margin-top: 8px;
+      font-size: 12px;
+      color: #cfcfcf;
+      text-align: center;
+      text-shadow: 0 1px 8px rgba(0,0,0,0.28);
+      font-family: 'Manrope', sans-serif;
+    }
+
+    .metal-btn {
+      border: 1px solid rgba(255,255,255,0.16);
+      background:
+        linear-gradient(180deg, #fbfbfb 0%, #d6d6d6 16%, #b6b6b6 35%, #8b8b8b 52%, #d2d2d2 72%, #f4f4f4 100%);
+      color: #151515;
+      padding: 13px 18px;
+      border-radius: 999px;
+      cursor: pointer;
+      font-weight: 500;
+      font-size: 14px;
+      text-shadow: 0 1px 0 rgba(255,255,255,0.45);
+      box-shadow:
+        inset 0 2px 0 rgba(255,255,255,0.72),
+        inset 0 -2px 3px rgba(0,0,0,0.18),
+        0 10px 22px rgba(0,0,0,0.25);
+      transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
+      backdrop-filter: blur(2px);
+      font-family: 'Manrope', sans-serif;
+    }
+
+    .metal-btn:hover {
+      transform: translateY(-1px);
+      filter: brightness(1.02);
+    }
+
+    .metal-btn:disabled {
+      opacity: 0.7;
+      cursor: default;
+      transform: none;
+    }
+
+    .metal-btn .icon {
+      color: #6a560c;
+      margin-right: 7px;
+      font-size: 15px;
+    }
+
+    .submit-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 52px;
+      padding: 0 28px;
+      border-radius: 999px;
+      text-decoration: none;
+      color: #231700;
+      font-weight: 600;
+      font-size: 15px;
+      letter-spacing: 0.2px;
+      background:
+        linear-gradient(180deg, #fff5c9 0%, #f4d77a 20%, #d4af37 52%, #b98816 75%, #7c5a11 100%);
+      border: 1px solid rgba(255, 230, 150, 0.38);
+      box-shadow:
+        inset 0 2px 0 rgba(255,255,255,0.45),
+        inset 0 -2px 4px rgba(90,50,0,0.28),
+        0 12px 26px rgba(212,175,55,0.22),
+        0 0 0 1px rgba(212,175,55,0.08);
+      transition: transform 0.16s ease, box-shadow 0.16s ease, filter 0.16s ease;
+      white-space: nowrap;
+      text-shadow: 0 1px 0 rgba(255,255,255,0.22);
+      backdrop-filter: blur(2px);
+      font-family: 'Manrope', sans-serif;
+      border: none;
+      cursor: pointer;
+    }
+
+    .submit-link:hover {
+      transform: translateY(-1px);
+      filter: brightness(1.03);
+    }
+
+    .page-wrap {
+      max-width: 760px;
+      margin: 10px auto 0;
+    }
+
+    .join-hero {
+      position: relative;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.015)),
+        radial-gradient(circle at top, rgba(212,175,55,0.12), transparent 55%),
+        linear-gradient(180deg, rgba(24,24,24,0.88) 0%, rgba(17,17,17,0.94) 100%);
+      border: 1px solid var(--border-gold);
+      border-radius: 30px;
+      padding: 30px 28px;
+      box-shadow:
+        0 30px 80px rgba(0,0,0,0.42),
+        0 0 35px rgba(212,175,55,0.10),
+        inset 0 1px 0 rgba(255,255,255,0.05);
+      backdrop-filter: blur(6px);
+      text-align: center;
+    }
+
+    .section-kicker {
+      font-family: 'Space Grotesk', sans-serif;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      font-size: 12px;
+      color: var(--muted);
+      opacity: 0.82;
       margin-bottom: 10px;
     }
 
-    .subtitle {
-      text-align: center;
-      color: var(--muted);
-      max-width: 600px;
-      margin: 0 auto 30px;
+    .page-title {
+      font-size: clamp(30px, 5vw, 46px);
+      margin-bottom: 12px;
+      text-shadow: 0 2px 14px rgba(0,0,0,0.3);
     }
 
-    .card {
-      max-width: 600px;
+    .page-note {
+      max-width: 620px;
       margin: 0 auto;
-      background: #151515;
+      color: #ddd;
+      font-size: 15px;
+      line-height: 1.7;
+    }
+
+    .join-card {
+      margin-top: 18px;
+      background: linear-gradient(180deg, rgba(22,22,22,0.86) 0%, rgba(16,16,16,0.92) 100%);
+      border-radius: 26px;
       padding: 24px;
-      border-radius: 20px;
+      border: 1px solid rgba(255,255,255,0.06);
+      box-shadow:
+        0 12px 30px rgba(0,0,0,0.22),
+        inset 0 1px 0 rgba(255,255,255,0.03);
+      backdrop-filter: blur(6px);
     }
 
-    input, textarea, select {
+    .form-grid {
+      display: grid;
+      gap: 14px;
+    }
+
+    .field-group {
+      text-align: left;
+    }
+
+    .field-label {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--muted);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      font-family: 'Space Grotesk', sans-serif;
+      opacity: 0.82;
+    }
+
+    .field-input,
+    .field-textarea,
+    .field-file,
+    .field-select {
       width: 100%;
-      padding: 12px;
-      margin: 10px 0;
-      border-radius: 10px;
-      border: none;
-      background: #1f1f1f;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: linear-gradient(180deg, rgba(16,16,16,0.92) 0%, rgba(12,12,12,0.96) 100%);
       color: white;
+      font-size: 15px;
+      outline: none;
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.04),
+        0 6px 16px rgba(0,0,0,0.18);
+      backdrop-filter: blur(4px);
+      font-family: 'Manrope', sans-serif;
     }
 
-    textarea {
-      min-height: 100px;
+    .field-input,
+    .field-file,
+    .field-select {
+      min-height: 52px;
+      padding: 0 14px;
     }
 
-    button {
-      width: 100%;
+    .field-select {
+      appearance: none;
+    }
+
+    .field-textarea {
+      min-height: 130px;
       padding: 14px;
-      border-radius: 999px;
-      border: none;
-      background: linear-gradient(180deg, #fff5c9, #d4af37);
-      font-weight: bold;
+      resize: vertical;
+    }
+
+    .field-input:focus,
+    .field-textarea:focus,
+    .field-file:focus,
+    .field-select:focus {
+      border-color: rgba(212,175,55,0.38);
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.04),
+        0 0 0 3px rgba(212,175,55,0.08);
+    }
+
+    .field-file {
+      padding: 12px 14px;
+      color: #ddd;
       cursor: pointer;
-      margin-top: 12px;
     }
 
     .checkbox-row {
       display: flex;
-      gap: 10px;
-      margin-top: 10px;
       align-items: flex-start;
+      gap: 12px;
+      padding: 14px 16px;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: linear-gradient(180deg, rgba(16,16,16,0.92) 0%, rgba(12,12,12,0.96) 100%);
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.04),
+        0 6px 16px rgba(0,0,0,0.18);
     }
 
-    .checkbox-row input {
-      width: auto;
+    .checkbox-row input[type="checkbox"] {
+      margin-top: 2px;
+      width: 18px;
+      height: 18px;
+      accent-color: var(--gold);
+      flex: 0 0 auto;
     }
 
-    #status {
-      margin-top: 15px;
+    .checkbox-copy {
+      color: #ddd;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .checkbox-copy a {
+      color: var(--gold);
+      text-decoration: none;
+      border-bottom: 1px solid rgba(212,175,55,0.32);
+    }
+
+    .checkbox-copy a:hover {
+      opacity: 0.88;
+    }
+
+    .form-meta {
+      margin-top: 8px;
+      color: #9f9f9f;
+      font-size: 13px;
+      line-height: 1.6;
+      text-align: left;
+    }
+
+    .action-row {
+      margin-top: 22px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .status-box {
+      margin-top: 18px;
+      min-height: 22px;
+      color: #cfcfcf;
       text-align: center;
-      color: #ccc;
+      font-size: 14px;
+      line-height: 1.5;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .sub-link-row {
+      margin-top: 18px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .ghost-link {
+      color: var(--gold);
+      text-decoration: none;
+      border-bottom: 1px solid rgba(212,175,55,0.32);
+      font-weight: 500;
+    }
+
+    .ghost-link:hover {
+      opacity: 0.88;
+    }
+
+    .login-required {
+      margin-bottom: 18px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 18px;
+      padding: 16px 18px;
+      text-align: center;
+      color: #ddd;
+      line-height: 1.6;
+    }
+
+    @media (max-width: 760px) {
+      body {
+        padding: 0 14px 40px;
+        background:
+          linear-gradient(180deg, rgba(7, 7, 7, 0.50) 0%, rgba(7, 7, 7, 0.76) 42%, rgba(7, 7, 7, 0.86) 100%),
+          radial-gradient(circle at top, rgba(212, 175, 55, 0.12), transparent 26%),
+          url("bg-desktop-correct.webp");
+        background-size: cover, auto, cover;
+        background-position: center top, center top, center center;
+        background-repeat: no-repeat, no-repeat, no-repeat;
+        background-attachment: scroll, scroll, scroll;
+      }
+
+      .header-bar {
+        grid-template-columns: 42px 1fr 42px;
+        min-height: 68px;
+        padding: 6px 2px 2px;
+      }
+
+      .header-logo {
+        width: min(200px, 40vw);
+      }
+
+      .header-icon-btn,
+      .header-avatar-btn {
+        width: 38px;
+        height: 38px;
+      }
+
+      .account-menu {
+        top: 48px;
+        min-width: 150px;
+      }
+
+      .auth-box {
+        width: min(420px, 100%);
+      }
+
+      .auth-inputs {
+        grid-template-columns: 1fr;
+      }
+
+      .auth-row {
+        flex-direction: column;
+      }
+
+      .auth-row .metal-btn,
+      .submit-link {
+        width: 100%;
+      }
+
+      .join-hero,
+      .join-card {
+        padding: 20px;
+      }
     }
   </style>
 </head>
-
 <body>
+  <div class="site-shell">
+    <header class="header-bar">
+      <div class="header-left">
+        <button id="menuBtn" class="header-icon-btn" type="button" aria-label="Open menu">
+          <span class="menu-icon" aria-hidden="true">
+            <span></span>
+            <span></span>
+            <span></span>
+          </span>
+        </button>
+      </div>
 
-  <h1>Create Your Artist Profile</h1>
+      <div class="header-center">
+        <a href="/" class="header-logo-link" aria-label="60 Seconds FM home">
+          <img src="logo.png" alt="60 Seconds FM" class="header-logo" />
+        </a>
+      </div>
 
-  <div class="subtitle">
-    Set up your artist profile to enter the platform. After that, you can submit your track for radio approval.
-  </div>
+      <div class="header-right">
+        <button id="showLoginBtn" class="header-icon-btn" type="button" aria-label="Log in">
+          <span class="person-icon" aria-hidden="true"></span>
+        </button>
 
-  <div class="card">
+        <button id="headerAvatarBtn" class="header-avatar-btn hidden" type="button" aria-label="Open account menu">
+          <img id="headerAvatarImage" class="hidden" src="" alt="Profile photo" />
+          <div id="headerAvatarFallback" class="header-avatar-fallback hidden">A</div>
+        </button>
 
-    <input id="artistName" placeholder="Artist name" />
-    <textarea id="bio" placeholder="Short bio"></textarea>
+        <div id="accountMenu" class="account-menu hidden">
+          <button id="logout" class="metal-btn" type="button"><span class="icon">⎋</span>Log out</button>
+        </div>
+      </div>
+    </header>
 
-    <select id="nationality">
-      <option value="">Select nationality</option>
-      <option>Netherlands</option>
-      <option>United States</option>
-      <option>United Kingdom</option>
-      <option>Germany</option>
-      <option>France</option>
-      <option>Spain</option>
-      <option>Italy</option>
-      <option>Canada</option>
-      <option>Australia</option>
-      <!-- voeg eventueel later volledig landlijst toe -->
-    </select>
+    <div class="auth-panel-wrap">
+      <div id="authBox" class="auth-box hidden">
+        <h3>Log in</h3>
 
-    <input id="dob" type="date" />
+        <div class="auth-inputs">
+          <input id="email" type="email" placeholder="Email" autocomplete="email" />
+          <input id="password" type="password" placeholder="Password" autocomplete="current-password" />
+        </div>
 
-    <input id="social" placeholder="Social / streaming link" />
+        <div class="auth-row">
+          <button id="signup" class="metal-btn" type="button"><span class="icon">✦</span>Sign up</button>
+          <button id="login" class="metal-btn" type="button"><span class="icon">↳</span>Log in</button>
+        </div>
+      </div>
 
-    <input id="photo" type="file" accept="image/*" />
+      <div id="userBox" class="hidden">
+        <a id="profileLink" href="#" title="Open artist page" class="hidden"></a>
+      </div>
 
-    <div class="checkbox-row">
-      <input id="promo" type="checkbox" />
-      <label for="promo">Keep me updated on promotions</label>
+      <div id="authMessage" class="auth-message"></div>
     </div>
 
-    <div class="checkbox-row">
-      <input id="terms" type="checkbox" />
-      <label for="terms">I accept the terms and conditions</label>
-    </div>
+    <main class="page-wrap">
+      <section class="join-hero">
+        <div class="section-kicker">Artist Setup</div>
+        <h1 class="page-title">Create Your Artist Profile</h1>
+        <p class="page-note">
+          Set up your artist profile to enter the platform. After that, you can submit your track for radio approval.
+        </p>
+      </section>
 
-    <button id="submit">Create Profile</button>
+      <section class="join-card">
+        <div id="loginRequiredBox" class="login-required hidden">
+          You need to be logged in before creating your artist profile.
+        </div>
 
-    <div id="status"></div>
+        <div class="form-grid">
+          <div class="field-group">
+            <label class="field-label" for="artistName">Artist Name</label>
+            <input id="artistName" class="field-input" type="text" placeholder="Enter your artist name" />
+          </div>
 
+          <div class="field-group">
+            <label class="field-label" for="bio">Short Bio</label>
+            <textarea id="bio" class="field-textarea" placeholder="Tell listeners something about yourself"></textarea>
+          </div>
+
+          <div class="field-group">
+            <label class="field-label" for="nationality">Nationality</label>
+            <select id="nationality" class="field-select">
+              <option value="">Select your nationality</option>
+            </select>
+          </div>
+
+          <div class="field-group">
+            <label class="field-label" for="dateOfBirth">Date of Birth</label>
+            <input id="dateOfBirth" class="field-input" type="date" />
+          </div>
+
+          <div class="field-group">
+            <label class="field-label" for="socialLink">Social / Streaming Link</label>
+            <input id="socialLink" class="field-input" type="text" placeholder="https://..." />
+          </div>
+
+          <div class="field-group">
+            <label class="field-label" for="photoFile">Artist Photo</label>
+            <input id="photoFile" class="field-file" type="file" accept="image/jpeg,image/png,image/webp" />
+            <div class="form-meta">Accepted: JPG, PNG or WebP. Leave empty to keep your current photo when editing.</div>
+          </div>
+
+          <div class="field-group">
+            <label class="field-label">Promotions</label>
+            <label class="checkbox-row" for="wantsPromotions">
+              <input id="wantsPromotions" type="checkbox" />
+              <span class="checkbox-copy">Keep me updated on promotions and platform updates.</span>
+            </label>
+          </div>
+
+          <div class="field-group">
+            <label class="field-label">Terms</label>
+            <label class="checkbox-row" for="acceptTerms">
+              <input id="acceptTerms" type="checkbox" />
+              <span class="checkbox-copy">I accept the terms and conditions.</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="action-row">
+          <button id="submit" class="submit-link" type="button">Create Profile</button>
+        </div>
+
+        <div id="status" class="status-box"></div>
+
+        <div class="sub-link-row">
+          <a class="ghost-link" href="index.html">Back to homepage</a>
+        </div>
+      </section>
+    </main>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -144,85 +803,454 @@
       "sb_publishable_255qyDKS77nMU0pbedfa_A_3hdgtEHh"
     );
 
-    const statusEl = document.getElementById("status");
+    const COUNTRY_OPTIONS = [
+      "Afghanistan","Albania","Algeria","Andorra","Angola","Antigua and Barbuda","Argentina","Armenia","Australia","Austria",
+      "Azerbaijan","Bahamas","Bahrain","Bangladesh","Barbados","Belarus","Belgium","Belize","Benin","Bhutan",
+      "Bolivia","Bosnia and Herzegovina","Botswana","Brazil","Brunei","Bulgaria","Burkina Faso","Burundi","Cabo Verde","Cambodia",
+      "Cameroon","Canada","Central African Republic","Chad","Chile","China","Colombia","Comoros","Congo","Costa Rica",
+      "Croatia","Cuba","Cyprus","Czech Republic","Democratic Republic of the Congo","Denmark","Djibouti","Dominica","Dominican Republic","Ecuador",
+      "Egypt","El Salvador","Equatorial Guinea","Eritrea","Estonia","Eswatini","Ethiopia","Fiji","Finland","France",
+      "Gabon","Gambia","Georgia","Germany","Ghana","Greece","Grenada","Guatemala","Guinea","Guinea-Bissau",
+      "Guyana","Haiti","Honduras","Hungary","Iceland","India","Indonesia","Iran","Iraq","Ireland",
+      "Israel","Italy","Jamaica","Japan","Jordan","Kazakhstan","Kenya","Kiribati","Kuwait","Kyrgyzstan",
+      "Laos","Latvia","Lebanon","Lesotho","Liberia","Libya","Liechtenstein","Lithuania","Luxembourg","Madagascar",
+      "Malawi","Malaysia","Maldives","Mali","Malta","Marshall Islands","Mauritania","Mauritius","Mexico","Micronesia",
+      "Moldova","Monaco","Mongolia","Montenegro","Morocco","Mozambique","Myanmar","Namibia","Nauru","Nepal",
+      "Netherlands","New Zealand","Nicaragua","Niger","Nigeria","North Korea","North Macedonia","Norway","Oman","Pakistan",
+      "Palau","Palestine","Panama","Papua New Guinea","Paraguay","Peru","Philippines","Poland","Portugal","Qatar",
+      "Romania","Russia","Rwanda","Saint Kitts and Nevis","Saint Lucia","Saint Vincent and the Grenadines","Samoa","San Marino","Sao Tome and Principe","Saudi Arabia",
+      "Senegal","Serbia","Seychelles","Sierra Leone","Singapore","Slovakia","Slovenia","Solomon Islands","Somalia","South Africa",
+      "South Korea","South Sudan","Spain","Sri Lanka","Sudan","Suriname","Sweden","Switzerland","Syria","Taiwan",
+      "Tajikistan","Tanzania","Thailand","Timor-Leste","Togo","Tonga","Trinidad and Tobago","Tunisia","Turkey","Turkmenistan",
+      "Tuvalu","Uganda","Ukraine","United Arab Emirates","United Kingdom","United States","Uruguay","Uzbekistan","Vanuatu","Vatican City",
+      "Venezuela","Vietnam","Yemen","Zambia","Zimbabwe"
+    ];
 
-    function setStatus(msg, error = false) {
-      statusEl.textContent = msg;
-      statusEl.style.color = error ? "#ff8a8a" : "#ccc";
+    const showLoginBtn = document.getElementById("showLoginBtn");
+    const headerAvatarBtn = document.getElementById("headerAvatarBtn");
+    const headerAvatarImage = document.getElementById("headerAvatarImage");
+    const headerAvatarFallback = document.getElementById("headerAvatarFallback");
+    const accountMenu = document.getElementById("accountMenu");
+    const menuBtn = document.getElementById("menuBtn");
+    const email = document.getElementById("email");
+    const password = document.getElementById("password");
+    const signupBtn = document.getElementById("signup");
+    const loginBtn = document.getElementById("login");
+    const logoutBtn = document.getElementById("logout");
+    const authBox = document.getElementById("authBox");
+    const userBox = document.getElementById("userBox");
+    const authMessageEl = document.getElementById("authMessage");
+    const profileLink = document.getElementById("profileLink");
+
+    const artistNameInput = document.getElementById("artistName");
+    const bioInput = document.getElementById("bio");
+    const nationalityInput = document.getElementById("nationality");
+    const dateOfBirthInput = document.getElementById("dateOfBirth");
+    const socialLinkInput = document.getElementById("socialLink");
+    const photoFileInput = document.getElementById("photoFile");
+    const wantsPromotionsInput = document.getElementById("wantsPromotions");
+    const acceptTermsInput = document.getElementById("acceptTerms");
+    const submitBtn = document.getElementById("submit");
+    const statusEl = document.getElementById("status");
+    const loginRequiredBox = document.getElementById("loginRequiredBox");
+
+    let currentProfile = null;
+
+    function populateCountryOptions() {
+      nationalityInput.innerHTML = '<option value="">Select your nationality</option>';
+
+      COUNTRY_OPTIONS.forEach(country => {
+        const option = document.createElement("option");
+        option.value = country;
+        option.textContent = country;
+        nationalityInput.appendChild(option);
+      });
     }
 
-    document.getElementById("submit").onclick = async () => {
-      const artistName = document.getElementById("artistName").value.trim();
-      const bio = document.getElementById("bio").value.trim();
-      const nationality = document.getElementById("nationality").value;
-      const dob = document.getElementById("dob").value;
-      const social = document.getElementById("social").value;
-      const photo = document.getElementById("photo").files[0];
-      const promo = document.getElementById("promo").checked;
-      const terms = document.getElementById("terms").checked;
+    function setAuthMessage(msg, error = false) {
+      if (msg === "Auth session missing!") msg = "";
+      authMessageEl.textContent = msg || "";
+      authMessageEl.style.color = error ? "#ff8a8a" : "#cfcfcf";
+    }
 
-      if (!artistName) {
-        setStatus("Please enter artist name", true);
-        return;
+    function setStatus(message, isError = false) {
+      statusEl.textContent = message || "";
+      statusEl.style.color = isError ? "#ff8a8a" : "#cfcfcf";
+    }
+
+    function clearLoginFields() {
+      email.value = "";
+      password.value = "";
+    }
+
+    function closeMenus() {
+      authBox.classList.add("hidden");
+      accountMenu.classList.add("hidden");
+    }
+
+    function setLoggedOutView() {
+      closeMenus();
+      userBox.classList.add("hidden");
+      showLoginBtn.classList.remove("hidden");
+      headerAvatarBtn.classList.add("hidden");
+      headerAvatarImage.classList.add("hidden");
+      headerAvatarFallback.classList.add("hidden");
+      headerAvatarImage.src = "";
+      loginRequiredBox.classList.remove("hidden");
+    }
+
+    function setLoggedInView() {
+      authBox.classList.add("hidden");
+      userBox.classList.remove("hidden");
+      showLoginBtn.classList.add("hidden");
+      headerAvatarBtn.classList.remove("hidden");
+      loginRequiredBox.classList.add("hidden");
+    }
+
+    function setHeaderAvatar(photoUrl, artistName) {
+      if (photoUrl) {
+        headerAvatarImage.src = photoUrl;
+        headerAvatarImage.classList.remove("hidden");
+        headerAvatarFallback.classList.add("hidden");
+      } else {
+        headerAvatarImage.classList.add("hidden");
+        headerAvatarFallback.classList.remove("hidden");
+        headerAvatarFallback.textContent = (artistName || "A").charAt(0).toUpperCase();
       }
+    }
 
-      if (!terms) {
-        setStatus("You must accept the terms", true);
-        return;
-      }
+    function fillProfileForm(profile) {
+      artistNameInput.value = profile?.artist_name || "";
+      bioInput.value = profile?.bio || "";
+      nationalityInput.value = profile?.nationality || "";
+      dateOfBirthInput.value = profile?.date_of_birth || "";
+      socialLinkInput.value = profile?.social_link || "";
+      wantsPromotionsInput.checked = Boolean(profile?.wants_promotions);
+      acceptTermsInput.checked = Boolean(profile?.accepted_terms);
+      submitBtn.textContent = profile ? "Save Profile" : "Create Profile";
+    }
 
-      const { data: userData } = await supabaseClient.auth.getUser();
-
-      if (!userData.user) {
-        setStatus("You must be logged in", true);
-        return;
-      }
-
-      const userId = userData.user.id;
-
-      let photoUrl = null;
-
-      if (photo) {
-        const path = `${userId}/${Date.now()}-${photo.name}`;
-
-        await supabaseClient.storage
-          .from("artist-photos")
-          .upload(path, photo);
-
-        const { data } = supabaseClient.storage
-          .from("artist-photos")
-          .getPublicUrl(path);
-
-        photoUrl = data.publicUrl;
-      }
-
-      const { error } = await supabaseClient
+    async function loadMyProfile(userId) {
+      const { data, error } = await supabaseClient
         .from("profiles")
-        .upsert([
-          {
-            user_id: userId,
-            artist_name: artistName,
-            bio,
-            nationality,
-            date_of_birth: dob,
-            social_link: social,
-            photo_url: photoUrl,
-            wants_promotions: promo
-          }
-        ]);
+        .select("artist_name, bio, nationality, date_of_birth, social_link, photo_url, wants_promotions, accepted_terms, user_id")
+        .eq("user_id", userId)
+        .maybeSingle();
 
       if (error) {
-        setStatus(error.message, true);
+        console.error("loadMyProfile error:", error);
+        currentProfile = null;
+        profileLink.href = "#";
+        setHeaderAvatar("", "•");
+        fillProfileForm(null);
+        return null;
+      }
+
+      currentProfile = data || null;
+
+      if (!data) {
+        profileLink.href = "#";
+        setHeaderAvatar("", "A");
+        fillProfileForm(null);
+        return null;
+      }
+
+      setHeaderAvatar(data.photo_url, data.artist_name);
+      profileLink.href = `artist.html?user_id=${encodeURIComponent(data.user_id)}`;
+      fillProfileForm(data);
+      return data;
+    }
+
+    async function refreshAuthUI() {
+      try {
+        const { data, error } = await supabaseClient.auth.getSession();
+
+        if (error) {
+          setLoggedOutView();
+          fillProfileForm(null);
+          currentProfile = null;
+          return null;
+        }
+
+        const user = data?.session?.user || null;
+
+        if (user) {
+          setLoggedInView();
+          await loadMyProfile(user.id);
+          return user;
+        } else {
+          setLoggedOutView();
+          fillProfileForm(null);
+          currentProfile = null;
+          return null;
+        }
+      } catch (err) {
+        console.error("refreshAuthUI error:", err);
+        setLoggedOutView();
+        fillProfileForm(null);
+        currentProfile = null;
+        return null;
+      }
+    }
+
+    async function handleLogin() {
+      const emailValue = email.value.trim();
+      const passwordValue = password.value.trim();
+
+      if (!emailValue || !passwordValue) {
+        setAuthMessage("Please enter email and password.", true);
         return;
       }
 
-      setStatus("Profile saved successfully 🚀");
+      loginBtn.disabled = true;
+      signupBtn.disabled = true;
+      setAuthMessage("");
 
-      setTimeout(() => {
-        window.location.href = "submit-track.html";
-      }, 1000);
+      try {
+        const { error } = await supabaseClient.auth.signInWithPassword({
+          email: emailValue,
+          password: passwordValue
+        });
+
+        if (error) {
+          setAuthMessage(error.message, true);
+          return;
+        }
+
+        clearLoginFields();
+        setStatus("");
+        await refreshAuthUI();
+      } catch (err) {
+        console.error("handleLogin error:", err);
+        setAuthMessage("Login failed. Try again.", true);
+      } finally {
+        loginBtn.disabled = false;
+        signupBtn.disabled = false;
+      }
+    }
+
+    async function handleSignup() {
+      const emailValue = email.value.trim();
+      const passwordValue = password.value.trim();
+
+      if (!emailValue || !passwordValue) {
+        setAuthMessage("Please enter email and password.", true);
+        return;
+      }
+
+      loginBtn.disabled = true;
+      signupBtn.disabled = true;
+      setAuthMessage("");
+
+      try {
+        const { error } = await supabaseClient.auth.signUp({
+          email: emailValue,
+          password: passwordValue
+        });
+
+        if (error) {
+          setAuthMessage(error.message, true);
+          return;
+        }
+
+        setAuthMessage("Account created. Check your email.");
+        await refreshAuthUI();
+      } catch (err) {
+        console.error("handleSignup error:", err);
+        setAuthMessage("Sign up failed. Try again.", true);
+      } finally {
+        loginBtn.disabled = false;
+        signupBtn.disabled = false;
+      }
+    }
+
+    async function handleLogout() {
+      logoutBtn.disabled = true;
+      setAuthMessage("");
+
+      try {
+        const { error } = await supabaseClient.auth.signOut();
+
+        if (error) {
+          setAuthMessage(error.message, true);
+          return;
+        }
+
+        clearLoginFields();
+        setStatus("");
+        await refreshAuthUI();
+      } catch (err) {
+        console.error("handleLogout error:", err);
+        setAuthMessage("Logout failed. Try again.", true);
+      } finally {
+        logoutBtn.disabled = false;
+      }
+    }
+
+    async function uploadPhotoIfNeeded(userId, photoFile) {
+      if (!photoFile) {
+        return currentProfile?.photo_url || "";
+      }
+
+      const photoPath = `${userId}/${Date.now()}-${photoFile.name.replace(/\s+/g, "-")}`;
+
+      const { error: photoUploadError } = await supabaseClient
+        .storage
+        .from("artist-photos")
+        .upload(photoPath, photoFile, {
+          cacheControl: "3600",
+          upsert: true
+        });
+
+      if (photoUploadError) {
+        throw new Error("Photo upload failed: " + photoUploadError.message);
+      }
+
+      const { data: photoUrlData } = supabaseClient
+        .storage
+        .from("artist-photos")
+        .getPublicUrl(photoPath);
+
+      return photoUrlData.publicUrl;
+    }
+
+    async function handleSubmit() {
+      const artistName = artistNameInput.value.trim();
+      const bio = bioInput.value.trim();
+      const nationality = nationalityInput.value.trim();
+      const dateOfBirth = dateOfBirthInput.value;
+      const socialLink = socialLinkInput.value.trim();
+      const photoFile = photoFileInput.files[0];
+      const wantsPromotions = wantsPromotionsInput.checked;
+      const acceptedTerms = acceptTermsInput.checked;
+
+      if (!artistName) {
+        setStatus("Please enter your artist name.", true);
+        return;
+      }
+
+      if (!acceptedTerms) {
+        setStatus("You must accept the terms and conditions to continue.", true);
+        return;
+      }
+
+      submitBtn.disabled = true;
+      setStatus("Checking login...");
+
+      try {
+        const { data: userData, error: userError } = await supabaseClient.auth.getUser();
+
+        if (userError) {
+          setStatus("Could not check current user: " + userError.message, true);
+          return;
+        }
+
+        if (!userData.user) {
+          setStatus("You must be logged in before creating your profile.", true);
+          return;
+        }
+
+        const userId = userData.user.id;
+
+        setStatus("Saving artist profile...");
+
+        const photoUrl = await uploadPhotoIfNeeded(userId, photoFile);
+
+        const { error: profileError } = await supabaseClient
+          .from("profiles")
+          .upsert([
+            {
+              user_id: userId,
+              artist_name: artistName,
+              bio: bio,
+              nationality: nationality || null,
+              date_of_birth: dateOfBirth || null,
+              social_link: socialLink,
+              photo_url: photoUrl,
+              wants_promotions: wantsPromotions,
+              accepted_terms: acceptedTerms
+            }
+          ]);
+
+        if (profileError) {
+          setStatus("Saving profile failed: " + profileError.message, true);
+          return;
+        }
+
+        photoFileInput.value = "";
+        setStatus("Profile saved successfully.");
+
+        await loadMyProfile(userId);
+
+        window.location.href = `submit-track.html`;
+      } catch (err) {
+        console.error("profile submit error:", err);
+        setStatus(err.message || "Something went wrong while saving your profile.", true);
+      } finally {
+        submitBtn.disabled = false;
+      }
+    }
+
+    showLoginBtn.onclick = () => {
+      accountMenu.classList.add("hidden");
+      authBox.classList.toggle("hidden");
+      setAuthMessage("");
+      if (!authBox.classList.contains("hidden")) {
+        setTimeout(() => email.focus(), 0);
+      }
     };
-  </script>
 
+    headerAvatarBtn.onclick = () => {
+      authBox.classList.add("hidden");
+      accountMenu.classList.toggle("hidden");
+    };
+
+    menuBtn.onclick = () => {
+      setAuthMessage("");
+      authBox.classList.add("hidden");
+      accountMenu.classList.add("hidden");
+    };
+
+    document.addEventListener("click", (e) => {
+      const insideHeaderRight = e.target.closest(".header-right");
+      const insideAuthBox = e.target.closest("#authBox");
+      const isLoginButton = e.target.closest("#showLoginBtn");
+      const isAvatarButton = e.target.closest("#headerAvatarBtn");
+
+      if (!insideHeaderRight && !insideAuthBox && !isLoginButton && !isAvatarButton) {
+        authBox.classList.add("hidden");
+        accountMenu.classList.add("hidden");
+      }
+    });
+
+    loginBtn.onclick = handleLogin;
+    signupBtn.onclick = handleSignup;
+    logoutBtn.onclick = handleLogout;
+    submitBtn.onclick = handleSubmit;
+
+    email.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") handleLogin();
+    });
+
+    password.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") handleLogin();
+    });
+
+    supabaseClient.auth.onAuthStateChange(() => {
+      refreshAuthUI().catch(err => console.error(err));
+    });
+
+    async function initPage() {
+      populateCountryOptions();
+      setLoggedOutView();
+      fillProfileForm(null);
+      setStatus("");
+      await refreshAuthUI();
+    }
+
+    initPage().catch(err => {
+      console.error("initPage error:", err);
+    });
+  </script>
 </body>
 </html>
