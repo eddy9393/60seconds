@@ -17,6 +17,14 @@
       --muted: #a8a8a8;
       --line: rgba(212, 175, 55, 0.22);
       --top-btn-height: 52px;
+
+      --fs-label: 12px;
+      --fs-body: 14px;
+      --fs-body-lg: 17px;
+      --fs-artist: 18px;
+      --fs-stat-label: 12px;
+      --fs-stat-value: clamp(26px, 4vw, 34px);
+      --fs-track-title: clamp(30px, 5vw, 48px);
     }
 
     * {
@@ -55,7 +63,6 @@
       margin: 0 auto;
     }
 
-    /* HEADER */
     .header-bar {
       position: sticky;
       top: 0;
@@ -175,7 +182,6 @@
       width: 14px;
       height: 14px;
       border-radius: 50%;
-      border-bottom-color: #f5f5f5;
     }
 
     .person-icon::after {
@@ -241,7 +247,6 @@
       width: 100%;
     }
 
-    /* AUTH PANEL BELOW HEADER */
     .auth-panel-wrap {
       max-width: 720px;
       margin: 0 auto 0;
@@ -312,7 +317,6 @@
       font-family: 'Manrope', sans-serif;
     }
 
-    /* BUTTONS */
     .submit-link {
       display: inline-flex;
       align-items: center;
@@ -343,11 +347,6 @@
     .submit-link:hover {
       transform: translateY(-1px);
       filter: brightness(1.03);
-      box-shadow:
-        inset 0 2px 0 rgba(255,255,255,0.48),
-        inset 0 -2px 4px rgba(90,50,0,0.30),
-        0 16px 34px rgba(212,175,55,0.28),
-        0 0 0 1px rgba(212,175,55,0.1);
     }
 
     .metal-btn {
@@ -364,8 +363,7 @@
       box-shadow:
         inset 0 2px 0 rgba(255,255,255,0.72),
         inset 0 -2px 3px rgba(0,0,0,0.18),
-        0 10px 22px rgba(0,0,0,0.25),
-        0 0 0 1px rgba(255,255,255,0.04);
+        0 10px 22px rgba(0,0,0,0.25);
       transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
       backdrop-filter: blur(2px);
       font-family: 'Manrope', sans-serif;
@@ -374,11 +372,6 @@
     .metal-btn:hover {
       transform: translateY(-1px);
       filter: brightness(1.02);
-      box-shadow:
-        inset 0 2px 0 rgba(255,255,255,0.76),
-        inset 0 -2px 3px rgba(0,0,0,0.18),
-        0 14px 24px rgba(0,0,0,0.32),
-        0 0 0 1px rgba(255,255,255,0.05);
     }
 
     .metal-btn:disabled {
@@ -398,14 +391,12 @@
         linear-gradient(180deg, #fff6cb 0%, #e9c75f 24%, #d4af37 52%, #b98714 76%, #826113 100%);
       color: #111;
       border-color: rgba(255,220,120,0.35);
-      text-shadow: 0 1px 0 rgba(255,255,255,0.28);
     }
 
     .liked .icon {
       color: #111;
     }
 
-    /* RADIO */
     .radio-stage {
       position: relative;
       max-width: 760px;
@@ -424,8 +415,7 @@
       box-shadow:
         0 30px 80px rgba(0,0,0,0.42),
         0 0 35px rgba(212,175,55,0.10),
-        inset 0 1px 0 rgba(255,255,255,0.05),
-        inset 0 0 0 1px rgba(255,255,255,0.015);
+        inset 0 1px 0 rgba(255,255,255,0.05);
       backdrop-filter: blur(6px);
       transition: opacity 0.35s ease, filter 0.35s ease, transform 0.35s ease;
     }
@@ -456,7 +446,7 @@
       font-family: 'Space Grotesk', sans-serif;
       text-transform: uppercase;
       letter-spacing: 2px;
-      font-size: 12px;
+      font-size: var(--fs-label);
       opacity: 0.78;
     }
 
@@ -477,7 +467,7 @@
 
     .track-title {
       font-family: 'Space Grotesk', sans-serif;
-      font-size: clamp(28px, 5vw, 46px);
+      font-size: var(--fs-track-title);
       margin: 0 0 8px;
       font-weight: 600;
       letter-spacing: 0.5px;
@@ -486,7 +476,7 @@
 
     .artist-wrap {
       margin: 0 0 18px;
-      font-size: 18px;
+      font-size: var(--fs-artist);
       font-family: 'Manrope', sans-serif;
       font-weight: 400;
     }
@@ -506,7 +496,7 @@
       justify-content: space-between;
       align-items: center;
       color: var(--muted);
-      font-size: 14px;
+      font-size: var(--fs-body);
       margin-bottom: 8px;
       font-family: 'Manrope', sans-serif;
     }
@@ -534,6 +524,139 @@
       flex-wrap: wrap;
     }
 
+    .volume-wrap {
+      margin-top: 18px;
+      display: flex;
+      justify-content: center;
+      position: relative;
+      min-height: 50px;
+    }
+
+    .volume-control {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      position: relative;
+    }
+
+    .volume-slider-inline {
+      width: 0;
+      opacity: 0;
+      overflow: hidden;
+      transition: width 0.22s ease, opacity 0.18s ease, margin 0.22s ease;
+      margin-left: 0;
+    }
+
+    .volume-control.open .volume-slider-inline {
+      width: 150px;
+      opacity: 1;
+      margin-left: 4px;
+    }
+
+    .volume-slider-inline input[type="range"] {
+      width: 150px;
+      margin: 0;
+      accent-color: var(--gold);
+    }
+
+    .volume-button {
+      width: 50px;
+      height: 50px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.16);
+      background:
+        linear-gradient(180deg, #fbfbfb 0%, #d6d6d6 16%, #b6b6b6 35%, #8b8b8b 52%, #d2d2d2 72%, #f4f4f4 100%);
+      color: #151515;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow:
+        inset 0 2px 0 rgba(255,255,255,0.72),
+        inset 0 -2px 3px rgba(0,0,0,0.18),
+        0 10px 22px rgba(0,0,0,0.25);
+      flex: 0 0 auto;
+    }
+
+    .volume-button:hover {
+      filter: brightness(1.02);
+    }
+
+    .volume-icon {
+      position: relative;
+      width: 24px;
+      height: 24px;
+      display: inline-block;
+    }
+
+    .volume-icon .speaker-body {
+      position: absolute;
+      left: 1px;
+      top: 7px;
+      width: 8px;
+      height: 10px;
+      background: #1a1a1a;
+      border-radius: 2px;
+    }
+
+    .volume-icon .speaker-cone {
+      position: absolute;
+      left: 7px;
+      top: 4px;
+      width: 0;
+      height: 0;
+      border-top: 8px solid transparent;
+      border-bottom: 8px solid transparent;
+      border-left: 10px solid #1a1a1a;
+    }
+
+    .volume-icon .wave1,
+    .volume-icon .wave2,
+    .volume-icon .mute-line {
+      position: absolute;
+    }
+
+    .volume-icon .wave1 {
+      right: 3px;
+      top: 7px;
+      width: 6px;
+      height: 10px;
+      border: 2px solid #1a1a1a;
+      border-left: 0;
+      border-radius: 0 10px 10px 0;
+    }
+
+    .volume-icon .wave2 {
+      right: -1px;
+      top: 4px;
+      width: 10px;
+      height: 16px;
+      border: 2px solid #1a1a1a;
+      border-left: 0;
+      border-radius: 0 14px 14px 0;
+    }
+
+    .volume-button.muted .wave1,
+    .volume-button.muted .wave2 {
+      opacity: 0;
+    }
+
+    .volume-icon .mute-line {
+      display: none;
+      left: 3px;
+      top: 10px;
+      width: 18px;
+      height: 2.5px;
+      background: #1a1a1a;
+      transform: rotate(-45deg);
+      border-radius: 999px;
+    }
+
+    .volume-button.muted .mute-line {
+      display: block;
+    }
+
     .listeners-pill {
       margin: 18px auto 0;
       display: inline-flex;
@@ -544,7 +667,7 @@
       background: rgba(255,255,255,0.04);
       border: 1px solid rgba(255,255,255,0.06);
       color: #f0f0f0;
-      font-size: 14px;
+      font-size: var(--fs-body);
       box-shadow: inset 0 1px 0 rgba(255,255,255,0.03);
       backdrop-filter: blur(3px);
       font-family: 'Manrope', sans-serif;
@@ -564,7 +687,6 @@
       justify-content: center;
     }
 
-    /* STATS */
     .stats-row {
       max-width: 760px;
       margin: 18px auto 0;
@@ -586,7 +708,7 @@
 
     .stat-label {
       color: var(--muted);
-      font-size: 12px;
+      font-size: var(--fs-stat-label);
       text-transform: uppercase;
       letter-spacing: 2px;
       margin-bottom: 8px;
@@ -596,29 +718,10 @@
 
     .stat-value {
       color: var(--gold);
-      font-size: clamp(26px, 4vw, 34px);
+      font-size: var(--fs-stat-value);
       font-weight: 700;
       text-shadow: 0 1px 10px rgba(0,0,0,0.25);
       font-family: 'Space Grotesk', sans-serif;
-    }
-
-    .volume-wrap {
-      margin-top: 18px;
-      text-align: left;
-      font-family: 'Manrope', sans-serif;
-    }
-
-    .volume-wrap label {
-      display: block;
-      margin-bottom: 8px;
-      color: #aaa;
-      font-size: 13px;
-    }
-
-    .volume-wrap input[type="range"] {
-      width: 100%;
-      margin: 0;
-      accent-color: var(--gold);
     }
 
     @media (max-width: 760px) {
@@ -674,6 +777,14 @@
       .submit-link {
         width: 100%;
         max-width: 320px;
+      }
+
+      .volume-control.open .volume-slider-inline {
+        width: 120px;
+      }
+
+      .volume-slider-inline input[type="range"] {
+        width: 120px;
       }
     }
   </style>
@@ -767,8 +878,21 @@
           </div>
 
           <div class="volume-wrap">
-            <label for="volume">Volume</label>
-            <input id="volume" type="range" min="0" max="1" step="0.01" value="0.8" />
+            <div id="volumeControl" class="volume-control">
+              <button id="volumeBtn" class="volume-button" type="button" aria-label="Volume">
+                <span class="volume-icon" aria-hidden="true">
+                  <span class="speaker-body"></span>
+                  <span class="speaker-cone"></span>
+                  <span class="wave1"></span>
+                  <span class="wave2"></span>
+                  <span class="mute-line"></span>
+                </span>
+              </button>
+
+              <div class="volume-slider-inline">
+                <input id="volume" type="range" min="0" max="1" step="0.01" value="0.8" />
+              </div>
+            </div>
           </div>
 
           <div class="listeners-pill">
@@ -811,7 +935,6 @@
       "sb_publishable_255qyDKS77nMU0pbedfa_A_3hdgtEHh"
     );
 
-    // AUTH UI
     const showLoginBtn = document.getElementById("showLoginBtn");
     const headerAvatarBtn = document.getElementById("headerAvatarBtn");
     const headerAvatarImage = document.getElementById("headerAvatarImage");
@@ -831,7 +954,6 @@
     const profileLink = document.getElementById("profileLink");
     const submitTrackBtn = document.getElementById("submitTrackBtn");
 
-    // RADIO + STATS
     const audio = document.getElementById("audio");
     const startBtn = document.getElementById("start");
     const startOverlay = document.getElementById("startOverlay");
@@ -841,6 +963,8 @@
     const likeBtn = document.getElementById("likeBtn");
     const skipBtn = document.getElementById("skip");
     const volume = document.getElementById("volume");
+    const volumeBtn = document.getElementById("volumeBtn");
+    const volumeControl = document.getElementById("volumeControl");
     const progressFill = document.getElementById("progress");
     const elapsedTimeEl = document.getElementById("elapsedTime");
     const listenersCountEl = document.getElementById("listenersCount");
@@ -875,9 +999,16 @@
       myTotalPlaysEl.textContent = "0";
     }
 
+    function updateVolumeButtonState() {
+      const isMuted = audio.muted || Number(audio.volume) === 0;
+      volumeBtn.classList.toggle("muted", isMuted);
+      volumeBtn.setAttribute("aria-label", isMuted ? "Volume muted" : "Volume");
+    }
+
     function closeMenus() {
       authBox.classList.add("hidden");
       accountMenu.classList.add("hidden");
+      volumeControl.classList.remove("open");
     }
 
     function setLoggedOutView() {
@@ -1048,6 +1179,7 @@
 
     showLoginBtn.onclick = () => {
       accountMenu.classList.add("hidden");
+      volumeControl.classList.remove("open");
       authBox.classList.toggle("hidden");
       setAuthMessage("");
       if (!authBox.classList.contains("hidden")) {
@@ -1057,6 +1189,7 @@
 
     headerAvatarBtn.onclick = () => {
       authBox.classList.add("hidden");
+      volumeControl.classList.remove("open");
       accountMenu.classList.toggle("hidden");
     };
 
@@ -1064,17 +1197,29 @@
       setAuthMessage("");
       authBox.classList.add("hidden");
       accountMenu.classList.add("hidden");
+      volumeControl.classList.remove("open");
+    };
+
+    volumeBtn.onclick = () => {
+      authBox.classList.add("hidden");
+      accountMenu.classList.add("hidden");
+      volumeControl.classList.toggle("open");
     };
 
     document.addEventListener("click", (e) => {
       const insideHeaderRight = e.target.closest(".header-right");
       const insideAuthBox = e.target.closest("#authBox");
+      const insideVolumeWrap = e.target.closest(".volume-wrap");
       const isLoginButton = e.target.closest("#showLoginBtn");
       const isAvatarButton = e.target.closest("#headerAvatarBtn");
 
       if (!insideHeaderRight && !insideAuthBox && !isLoginButton && !isAvatarButton) {
         authBox.classList.add("hidden");
         accountMenu.classList.add("hidden");
+      }
+
+      if (!insideVolumeWrap) {
+        volumeControl.classList.remove("open");
       }
     });
 
@@ -1343,12 +1488,10 @@
         const { error } = await supabaseClient
           .from("listeners")
           .upsert(
-            [
-              {
-                user_id: listenerIdentity,
-                last_seen: new Date().toISOString()
-              }
-            ],
+            [{
+              user_id: listenerIdentity,
+              last_seen: new Date().toISOString()
+            }],
             {
               onConflict: "user_id"
             }
@@ -1390,10 +1533,13 @@
 
       audio.volume = Number(volume.value);
       audio.muted = true;
+      updateVolumeButtonState();
 
       const randomLiveOffset = Math.floor(Math.random() * 60);
       nextTrack(randomLiveOffset, false);
       liveBooted = true;
+
+      await updateListeners();
     }
 
     async function ensureBackgroundPlayback() {
@@ -1401,6 +1547,7 @@
 
       if (audio.paused) {
         audio.muted = true;
+        updateVolumeButtonState();
         audio.play().catch(() => {});
       }
     }
@@ -1423,6 +1570,8 @@
       if (Number(volume.value) > 0) {
         audio.muted = false;
       }
+
+      updateVolumeButtonState();
 
       audio.play().catch(err => {
         console.error("Start Radio play error:", err);
@@ -1467,27 +1616,35 @@
       } else {
         audio.muted = true;
       }
+
+      updateVolumeButtonState();
     });
 
     document.addEventListener("visibilitychange", () => {
+      if (!document.hidden && isLiveActivated) {
+        registerListener().catch(() => {});
+        updateListeners().catch(() => {});
+      }
       ensureBackgroundPlayback();
     });
 
     window.addEventListener("focus", () => {
+      if (isLiveActivated) {
+        registerListener().catch(() => {});
+        updateListeners().catch(() => {});
+      }
       ensureBackgroundPlayback();
     });
-
-    setInterval(() => {
-      if (isLiveActivated) {
-        updateListeners();
-      }
-    }, 10000);
 
     setInterval(() => {
       if (isLiveActivated) {
         registerListener();
       }
     }, 15000);
+
+    setInterval(() => {
+      updateListeners();
+    }, 10000);
 
     setInterval(async () => {
       await loadTracksFromSupabase();
@@ -1496,6 +1653,7 @@
 
     async function initPage() {
       setLoggedOutView();
+      updateVolumeButtonState();
       await refreshAuthDependentUI();
       await bootstrapLiveRadio();
     }
