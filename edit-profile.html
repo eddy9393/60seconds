@@ -600,7 +600,7 @@
         background:
           linear-gradient(180deg, rgba(7, 7, 7, 0.50) 0%, rgba(7, 7, 7, 0.76) 42%, rgba(7, 7, 7, 0.86) 100%),
           radial-gradient(circle at top, rgba(212, 175, 55, 0.12), transparent 26%),
-          url("bg-desktop-correct.webp");
+          url("bg-mobile-final-1080x1920.webp");
         background-size: cover, auto, cover;
         background-position: center top, center top, center center;
         background-repeat: no-repeat, no-repeat, no-repeat;
@@ -723,7 +723,14 @@
           You need to be logged in before editing your artist profile.
         </div>
 
-        <div class="form-grid" id="editFormWrap">
+        <div id="profileMissingBox" class="notice-box hidden">
+          You do not have an artist profile yet.
+          <div class="sub-link-row" style="margin-top: 12px;">
+            <a class="ghost-link" href="join.html">Create Artist Profile</a>
+          </div>
+        </div>
+
+        <div class="form-grid hidden" id="editFormWrap">
           <div class="field-group">
             <label class="field-label" for="artistName">Artist Name</label>
             <input id="artistName" class="field-input" type="text" placeholder="Enter your artist name" />
@@ -766,7 +773,7 @@
           </div>
         </div>
 
-        <div class="action-row" id="actionRow">
+        <div class="action-row hidden" id="actionRow">
           <button id="saveProfileBtn" class="submit-link" type="button">Save Profile</button>
         </div>
 
@@ -828,6 +835,7 @@
     const profileLink = document.getElementById("profileLink");
 
     const loginRequiredBox = document.getElementById("loginRequiredBox");
+    const profileMissingBox = document.getElementById("profileMissingBox");
     const editFormWrap = document.getElementById("editFormWrap");
     const actionRow = document.getElementById("actionRow");
     const viewArtistLink = document.getElementById("viewArtistLink");
@@ -896,8 +904,10 @@
       headerAvatarFallback.classList.add("hidden");
       headerAvatarImage.src = "";
       loginRequiredBox.classList.remove("hidden");
+      profileMissingBox.classList.add("hidden");
       editFormWrap.classList.add("hidden");
       actionRow.classList.add("hidden");
+      viewArtistLink.href = "#";
     }
 
     function setLoggedInView() {
@@ -906,6 +916,16 @@
       showLoginBtn.classList.add("hidden");
       headerAvatarBtn.classList.remove("hidden");
       loginRequiredBox.classList.add("hidden");
+    }
+
+    function setProfileMissingView() {
+      profileMissingBox.classList.remove("hidden");
+      editFormWrap.classList.add("hidden");
+      actionRow.classList.add("hidden");
+    }
+
+    function setProfileReadyView() {
+      profileMissingBox.classList.add("hidden");
       editFormWrap.classList.remove("hidden");
       actionRow.classList.remove("hidden");
     }
@@ -930,8 +950,9 @@
         currentProfile = null;
         profileLink.href = "#";
         viewArtistLink.href = "#";
-        setHeaderAvatar("", "•");
+        setHeaderAvatar("", "A");
         fillProfileForm(null);
+        setProfileMissingView();
         return null;
       }
 
@@ -940,6 +961,7 @@
       profileLink.href = `artist.html?user_id=${encodeURIComponent(data.user_id)}`;
       viewArtistLink.href = `artist.html?user_id=${encodeURIComponent(data.user_id)}`;
       fillProfileForm(data);
+      setProfileReadyView();
       return data;
     }
 
@@ -1128,25 +1150,30 @@
         }
 
         const userId = userData.user.id;
+
+        if (!currentProfile) {
+          setStatus("No artist profile found. Please create your profile first.", true);
+          setProfileMissingView();
+          return;
+        }
+
         const photoUrl = await uploadPhotoIfNeeded(userId, photoFile);
 
         setStatus("Saving profile...");
 
         const { error: profileError } = await supabaseClient
           .from("profiles")
-          .upsert([
-            {
-              user_id: userId,
-              artist_name: artistName,
-              bio: bio,
-              nationality: nationality || null,
-              date_of_birth: dateOfBirth || null,
-              social_link: socialLink || null,
-              photo_url: photoUrl || null,
-              wants_promotions: wantsPromotions,
-              accepted_terms: currentProfile?.accepted_terms ?? true
-            }
-          ]);
+          .update({
+            artist_name: artistName,
+            bio: bio || null,
+            nationality: nationality || null,
+            date_of_birth: dateOfBirth || null,
+            social_link: socialLink || null,
+            photo_url: photoUrl || null,
+            wants_promotions: wantsPromotions,
+            accepted_terms: currentProfile?.accepted_terms ?? true
+          })
+          .eq("user_id", userId);
 
         if (profileError) {
           setStatus("Saving profile failed: " + profileError.message, true);
