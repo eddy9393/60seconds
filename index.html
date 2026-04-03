@@ -509,6 +509,12 @@
       flex: 0 0 auto;
     }
 
+    .menu-link-icon svg {
+      width: 16px;
+      height: 16px;
+      display: block;
+    }
+
     .side-menu-divider {
       height: 1px;
       margin: 8px 0 6px;
@@ -1029,8 +1035,23 @@
 
     <nav class="side-menu-links">
       <a class="menu-link" href="index.html">
-        <span class="menu-link-icon">📻</span>
-        <span>Go back to Radio</span>
+        <span class="menu-link-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none">
+            <path d="M12 3V8" stroke="#111" stroke-width="2.2" stroke-linecap="round"/>
+            <path d="M8 21H16" stroke="#111" stroke-width="2.2" stroke-linecap="round"/>
+            <path d="M9.5 21V15.5" stroke="#111" stroke-width="2.2" stroke-linecap="round"/>
+            <path d="M14.5 21V15.5" stroke="#111" stroke-width="2.2" stroke-linecap="round"/>
+            <path d="M7.5 10.5H16.5V15.5H7.5Z" stroke="#111" stroke-width="2.2" stroke-linejoin="round"/>
+            <path d="M5 12C5 8.8 8 6.5 12 6.5C16 6.5 19 8.8 19 12" stroke="#111" stroke-width="2.2" stroke-linecap="round"/>
+            <path d="M3.5 9.5C5.8 6.5 8.6 5 12 5C15.4 5 18.2 6.5 20.5 9.5" stroke="#111" stroke-width="2.2" stroke-linecap="round"/>
+          </svg>
+        </span>
+        <span>Listen To Radio</span>
+      </a>
+
+      <a id="menuArtistPageLink" class="menu-link hidden" href="#">
+        <span class="menu-link-icon">★</span>
+        <span>My Artist Page</span>
       </a>
 
       <a id="menuCreateProfileLink" class="menu-link hidden" href="join.html">
@@ -1045,12 +1066,7 @@
 
       <a id="menuSubmitTrackLink" class="menu-link hidden" href="submit-track.html">
         <span class="menu-link-icon">♫</span>
-        <span>Submit Your Track</span>
-      </a>
-
-      <a id="menuArtistPageLink" class="menu-link hidden" href="#">
-        <span class="menu-link-icon">★</span>
-        <span>My Artist Page</span>
+        <span id="menuSubmitTrackLabel">Submit Your Track</span>
       </a>
 
       <div class="side-menu-divider"></div>
@@ -1253,6 +1269,7 @@
     const menuCreateProfileLink = document.getElementById("menuCreateProfileLink");
     const menuEditProfileLink = document.getElementById("menuEditProfileLink");
     const menuSubmitTrackLink = document.getElementById("menuSubmitTrackLink");
+    const menuSubmitTrackLabel = document.getElementById("menuSubmitTrackLabel");
     const menuArtistPageLink = document.getElementById("menuArtistPageLink");
     const menuAuthPanel = document.getElementById("menuAuthPanel");
     const menuAuthTitle = document.getElementById("menuAuthTitle");
@@ -1303,6 +1320,7 @@
     let isLiveActivated = false;
     let liveBooted = false;
     let currentProfileData = null;
+    let currentTrackData = null;
     let currentMenuAuthMode = "login";
 
     function setAuthMessage(msg, error = false, target = authMessageEl) {
@@ -1365,21 +1383,27 @@
       volumeControl.classList.remove("open");
     }
 
-    function updateMenuAuthState(user) {
+    function applyMenuState(user, profile, track) {
       const isLoggedIn = Boolean(user);
+      const hasProfile = Boolean(profile);
+      const hasTrack = Boolean(track);
 
       menuLoginBtn.classList.toggle("hidden", isLoggedIn);
       menuSignupBtn.classList.toggle("hidden", isLoggedIn);
       menuLogoutBtn.classList.toggle("hidden", !isLoggedIn);
 
-      menuCreateProfileLink.classList.toggle("hidden", !isLoggedIn);
-      menuEditProfileLink.classList.toggle("hidden", !isLoggedIn);
-      menuSubmitTrackLink.classList.toggle("hidden", !isLoggedIn);
-      menuArtistPageLink.classList.toggle("hidden", !isLoggedIn);
+      menuCreateProfileLink.classList.toggle("hidden", !isLoggedIn || hasProfile);
+      menuEditProfileLink.classList.toggle("hidden", !isLoggedIn || !hasProfile);
+      menuArtistPageLink.classList.toggle("hidden", !isLoggedIn || !hasProfile);
+      menuSubmitTrackLink.classList.toggle("hidden", !isLoggedIn || !hasProfile);
 
-      if (!isLoggedIn) {
+      if (hasProfile && profile?.user_id) {
+        menuArtistPageLink.href = `artist.html?user_id=${encodeURIComponent(profile.user_id)}`;
+      } else {
         menuArtistPageLink.href = "#";
       }
+
+      menuSubmitTrackLabel.textContent = hasTrack ? "Edit Your Track" : "Submit Your Track";
     }
 
     function setLoggedOutView() {
@@ -1396,7 +1420,8 @@
       headerAvatarFallback.classList.add("hidden");
       headerAvatarImage.src = "";
       currentProfileData = null;
-      updateMenuAuthState(null);
+      currentTrackData = null;
+      applyMenuState(null, null, null);
       hideUserStats();
     }
 
@@ -1407,7 +1432,6 @@
       submitTrackBtn.classList.add("hidden");
       showLoginBtn.classList.add("hidden");
       headerAvatarBtn.classList.remove("hidden");
-      updateMenuAuthState(true);
     }
 
     function setHeaderAvatar(photoUrl, artistName) {
@@ -1435,9 +1459,8 @@
         userAvatarFallback.classList.remove("hidden");
         userAvatarFallback.textContent = "•";
         profileLink.href = "#";
-        menuArtistPageLink.href = "#";
         setHeaderAvatar("", "•");
-        return;
+        return null;
       }
 
       currentProfileData = data;
@@ -1454,7 +1477,25 @@
 
       setHeaderAvatar(data.photo_url, data.artist_name);
       profileLink.href = `artist.html?user_id=${encodeURIComponent(data.user_id)}`;
-      menuArtistPageLink.href = `artist.html?user_id=${encodeURIComponent(data.user_id)}`;
+      return data;
+    }
+
+    async function loadMyTrack(userId) {
+      const { data, error } = await supabaseClient
+        .from("tracks")
+        .select("id, user_id, title, status, created_at")
+        .eq("user_id", userId)
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+
+      if (error || !data) {
+        currentTrackData = null;
+        return null;
+      }
+
+      currentTrackData = data;
+      return data;
     }
 
     async function refreshAuthUI() {
@@ -1470,8 +1511,11 @@
 
         if (user) {
           setLoggedInView();
-          await loadMyProfile(user.id);
-          updateMenuAuthState(user);
+
+          const profile = await loadMyProfile(user.id);
+          const track = await loadMyTrack(user.id);
+
+          applyMenuState(user, profile, track);
           return user;
         } else {
           setLoggedOutView();
@@ -2141,20 +2185,4 @@
     }, 10000);
 
     setInterval(async () => {
-      await loadTracksFromSupabase();
-      await ensureBackgroundPlayback();
-    }, 30000);
-
-    async function initPage() {
-      setLoggedOutView();
-      updateVolumeButtonState();
-      await refreshAuthDependentUI();
-      await bootstrapLiveRadio();
-    }
-
-    initPage().catch(err => {
-      console.error("initPage error:", err);
-    });
-  </script>
-</body>
-</html>
+      await loadT
