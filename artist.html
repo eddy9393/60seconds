@@ -613,10 +613,142 @@
       border: 1px solid rgba(255,255,255,0.05);
     }
 
-    audio {
-      width: 100%;
+    .preview-player {
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 18px;
+      padding: 14px;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.015)),
+        rgba(0,0,0,0.18);
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.03),
+        0 10px 20px rgba(0,0,0,0.16);
+    }
+
+    .preview-topbar {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .preview-play-btn {
+      width: 48px;
+      height: 48px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.16);
+      background:
+        linear-gradient(180deg, #fbfbfb 0%, #d6d6d6 16%, #b6b6b6 35%, #8b8b8b 52%, #d2d2d2 72%, #f4f4f4 100%);
+      color: #151515;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow:
+        inset 0 2px 0 rgba(255,255,255,0.72),
+        inset 0 -2px 3px rgba(0,0,0,0.18),
+        0 10px 22px rgba(0,0,0,0.25);
+      transition: transform 0.14s ease, box-shadow 0.18s ease, filter 0.18s ease;
+      flex: 0 0 auto;
+      padding: 0;
+    }
+
+    .preview-play-btn:hover {
+      transform: translateY(-1px);
+      filter: brightness(1.02);
+      box-shadow:
+        inset 0 2px 0 rgba(255,255,255,0.78),
+        inset 0 -2px 3px rgba(0,0,0,0.18),
+        0 12px 24px rgba(0,0,0,0.28),
+        0 0 14px rgba(212,175,55,0.14);
+    }
+
+    .preview-play-btn:active {
+      transform: scale(0.97);
+    }
+
+    .preview-play-btn svg {
+      width: 18px;
+      height: 18px;
       display: block;
-      filter: saturate(0.95) brightness(0.95);
+    }
+
+    .preview-play-btn .icon-pause {
+      display: none;
+    }
+
+    .preview-play-btn.playing .icon-play {
+      display: none;
+    }
+
+    .preview-play-btn.playing .icon-pause {
+      display: block;
+    }
+
+    .preview-info {
+      min-width: 0;
+      flex: 1;
+      text-align: left;
+    }
+
+    .preview-label {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 1.8px;
+      color: var(--muted);
+      opacity: 0.85;
+      margin-bottom: 4px;
+    }
+
+    .preview-caption {
+      font-size: 14px;
+      color: #f1f1f1;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .preview-time-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: var(--muted);
+      font-size: 13px;
+      margin-bottom: 8px;
+    }
+
+    .preview-progress {
+      position: relative;
+      height: 10px;
+      border-radius: 999px;
+      background: rgba(42,42,42,0.9);
+      overflow: hidden;
+      box-shadow: inset 0 1px 3px rgba(0,0,0,0.35);
+      cursor: pointer;
+    }
+
+    .preview-progress-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--gold-dark), var(--gold), var(--gold-2));
+      box-shadow: 0 0 12px rgba(212,175,55,0.25);
+      transition: width 0.08s linear;
+    }
+
+    .preview-progress:hover .preview-progress-fill {
+      filter: brightness(1.03);
+    }
+
+    .preview-hint {
+      margin-top: 10px;
+      font-size: 12px;
+      color: #a9a9a9;
+      text-align: left;
+    }
+
+    .preview-audio-hidden {
+      display: none;
     }
 
     .empty-state,
@@ -712,6 +844,10 @@
         flex-direction: column;
         align-items: flex-start;
         gap: 10px;
+      }
+
+      .preview-topbar {
+        align-items: flex-start;
       }
     }
   </style>
@@ -1106,68 +1242,109 @@
       });
     }
 
-    function stopOtherAudioPlayers(activeAudio) {
+    function formatTime(seconds) {
+      const safeSeconds = Math.max(0, Math.floor(seconds || 0));
+      const mins = Math.floor(safeSeconds / 60);
+      const secs = String(safeSeconds % 60).padStart(2, "0");
+      return `${mins}:${secs}`;
+    }
+
+    function stopAllPreviewPlayers(exceptAudio = null) {
       document.querySelectorAll("audio[data-preview-audio='true']").forEach(audioEl => {
-        if (audioEl !== activeAudio) {
+        if (audioEl !== exceptAudio) {
           audioEl.pause();
         }
       });
     }
 
-    function attachSixtySecondPreview(audioEl, startAt = 0, previewLength = PREVIEW_LENGTH_SECONDS) {
-      let previewStart = startAt;
-      let previewEnd = startAt + previewLength;
-      let seekingApplied = false;
+    function updatePlayerVisualState(audioEl, forcePaused = false) {
+      const playerEl = audioEl.closest("[data-preview-player]");
+      if (!playerEl) return;
+
+      const playBtn = playerEl.querySelector("[data-preview-play-btn]");
+      const fillEl = playerEl.querySelector("[data-preview-fill]");
+      const elapsedEl = playerEl.querySelector("[data-preview-elapsed]");
+
+      const current = Math.min(Number(audioEl.currentTime) || 0, PREVIEW_LENGTH_SECONDS);
+      const progress = Math.max(0, Math.min((current / PREVIEW_LENGTH_SECONDS) * 100, 100));
+
+      fillEl.style.width = `${progress}%`;
+      elapsedEl.textContent = formatTime(current);
+
+      if (forcePaused || audioEl.paused) {
+        playBtn.classList.remove("playing");
+        playBtn.setAttribute("aria-label", "Play preview");
+      } else {
+        playBtn.classList.add("playing");
+        playBtn.setAttribute("aria-label", "Pause preview");
+      }
+    }
+
+    function attachPreviewPlayer(cardEl) {
+      const audioEl = cardEl.querySelector("[data-preview-audio='true']");
+      const playBtn = cardEl.querySelector("[data-preview-play-btn]");
+      const progressEl = cardEl.querySelector("[data-preview-progress]");
 
       audioEl.addEventListener("play", () => {
-        stopOtherAudioPlayers(audioEl);
-      });
-
-      audioEl.addEventListener("loadedmetadata", () => {
-        const duration = Number(audioEl.duration) || 0;
-        previewStart = Math.max(0, Math.min(startAt, duration || startAt));
-        previewEnd = duration ? Math.min(previewStart + previewLength, duration) : previewStart + previewLength;
-        seekingApplied = false;
-      });
-
-      audioEl.addEventListener("play", () => {
-        if (!seekingApplied) {
-          try {
-            audioEl.currentTime = previewStart;
-          } catch (err) {
-            console.error("audio seek error:", err);
-          }
-          seekingApplied = true;
-        }
-      });
-
-      audioEl.addEventListener("seeking", () => {
-        const current = Number(audioEl.currentTime) || 0;
-
-        if (current < previewStart) {
-          audioEl.currentTime = previewStart;
-        }
-
-        if (current > previewEnd) {
-          audioEl.currentTime = previewEnd;
-        }
-      });
-
-      audioEl.addEventListener("timeupdate", () => {
-        if ((Number(audioEl.currentTime) || 0) >= previewEnd) {
-          audioEl.pause();
-        }
-      });
-
-      audioEl.addEventListener("ended", () => {
-        audioEl.currentTime = previewStart;
+        stopAllPreviewPlayers(audioEl);
+        updatePlayerVisualState(audioEl);
       });
 
       audioEl.addEventListener("pause", () => {
-        if ((Number(audioEl.currentTime) || 0) >= previewEnd) {
-          audioEl.currentTime = previewStart;
+        updatePlayerVisualState(audioEl, true);
+      });
+
+      audioEl.addEventListener("ended", () => {
+        audioEl.currentTime = 0;
+        updatePlayerVisualState(audioEl, true);
+      });
+
+      audioEl.addEventListener("timeupdate", () => {
+        if ((Number(audioEl.currentTime) || 0) >= PREVIEW_LENGTH_SECONDS) {
+          audioEl.pause();
+          audioEl.currentTime = 0;
+          updatePlayerVisualState(audioEl, true);
+          return;
+        }
+
+        updatePlayerVisualState(audioEl);
+      });
+
+      audioEl.addEventListener("loadedmetadata", () => {
+        audioEl.currentTime = 0;
+        updatePlayerVisualState(audioEl, true);
+      });
+
+      playBtn.addEventListener("click", async () => {
+        try {
+          if (audioEl.paused) {
+            stopAllPreviewPlayers(audioEl);
+
+            if ((Number(audioEl.currentTime) || 0) >= PREVIEW_LENGTH_SECONDS) {
+              audioEl.currentTime = 0;
+            }
+
+            await audioEl.play();
+            updatePlayerVisualState(audioEl);
+          } else {
+            audioEl.pause();
+            updatePlayerVisualState(audioEl, true);
+          }
+        } catch (err) {
+          console.error("preview play error:", err);
         }
       });
+
+      progressEl.addEventListener("click", (e) => {
+        const rect = progressEl.getBoundingClientRect();
+        const clickX = e.clientX - rect.left;
+        const ratio = rect.width > 0 ? clickX / rect.width : 0;
+        const nextTime = Math.max(0, Math.min(PREVIEW_LENGTH_SECONDS * ratio, PREVIEW_LENGTH_SECONDS));
+        audioEl.currentTime = nextTime;
+        updatePlayerVisualState(audioEl);
+      });
+
+      updatePlayerVisualState(audioEl, true);
     }
 
     function renderTracks(tracks) {
@@ -1206,14 +1383,49 @@
           </div>
 
           <div class="track-audio-wrap">
-            <audio controls preload="metadata" src="${track.file_url}" data-preview-audio="true"></audio>
+            <div class="preview-player" data-preview-player>
+              <div class="preview-topbar">
+                <button class="preview-play-btn" type="button" data-preview-play-btn aria-label="Play preview">
+                  <svg class="icon-play" viewBox="0 0 24 24" aria-hidden="true">
+                    <path fill="#1a1a1a" d="M8 5.5v13l10-6.5z"></path>
+                  </svg>
+                  <svg class="icon-pause" viewBox="0 0 24 24" aria-hidden="true">
+                    <rect x="7" y="5.5" width="3.5" height="13" rx="1" fill="#1a1a1a"></rect>
+                    <rect x="13.5" y="5.5" width="3.5" height="13" rx="1" fill="#1a1a1a"></rect>
+                  </svg>
+                </button>
+
+                <div class="preview-info">
+                  <div class="preview-label">Track Preview</div>
+                  <div class="preview-caption">Only the 60 second preview is playable here</div>
+                </div>
+              </div>
+
+              <div class="preview-time-row">
+                <span data-preview-elapsed>0:00</span>
+                <span>1:00</span>
+              </div>
+
+              <div class="preview-progress" data-preview-progress>
+                <div class="preview-progress-fill" data-preview-fill></div>
+              </div>
+
+              <div class="preview-hint">Preview only — full track length is hidden on this page.</div>
+
+              <audio
+                class="preview-audio-hidden"
+                preload="metadata"
+                src="${track.file_url}"
+                data-preview-audio="true"
+                controlslist="nodownload noplaybackrate noremoteplayback"
+                disablepictureinpicture
+              ></audio>
+            </div>
           </div>
         `;
 
         trackListEl.appendChild(card);
-
-        const audioEl = card.querySelector("audio");
-        attachSixtySecondPreview(audioEl, 0, PREVIEW_LENGTH_SECONDS);
+        attachPreviewPlayer(card);
       });
     }
 
