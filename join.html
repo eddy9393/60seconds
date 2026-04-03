@@ -463,7 +463,8 @@
 
     .field-input,
     .field-textarea,
-    .field-file {
+    .field-file,
+    .field-select {
       width: 100%;
       border-radius: 14px;
       border: 1px solid rgba(255,255,255,0.08);
@@ -479,9 +480,14 @@
     }
 
     .field-input,
-    .field-file {
+    .field-file,
+    .field-select {
       min-height: 52px;
       padding: 0 14px;
+    }
+
+    .field-select {
+      appearance: none;
     }
 
     .field-textarea {
@@ -492,7 +498,8 @@
 
     .field-input:focus,
     .field-textarea:focus,
-    .field-file:focus {
+    .field-file:focus,
+    .field-select:focus {
       border-color: rgba(212,175,55,0.38);
       box-shadow:
         inset 0 1px 0 rgba(255,255,255,0.04),
@@ -503,6 +510,33 @@
       padding: 12px 14px;
       color: #ddd;
       cursor: pointer;
+    }
+
+    .checkbox-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 14px 16px;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: linear-gradient(180deg, rgba(16,16,16,0.92) 0%, rgba(12,12,12,0.96) 100%);
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.04),
+        0 6px 16px rgba(0,0,0,0.18);
+    }
+
+    .checkbox-row input[type="checkbox"] {
+      margin-top: 2px;
+      width: 18px;
+      height: 18px;
+      accent-color: var(--gold);
+      flex: 0 0 auto;
+    }
+
+    .checkbox-copy {
+      color: #ddd;
+      font-size: 14px;
+      line-height: 1.6;
     }
 
     .form-meta {
@@ -699,6 +733,18 @@
           </div>
 
           <div class="field-group">
+            <label class="field-label" for="nationality">Nationality</label>
+            <select id="nationality" class="field-select">
+              <option value="">Select your nationality</option>
+            </select>
+          </div>
+
+          <div class="field-group">
+            <label class="field-label" for="dateOfBirth">Date of Birth</label>
+            <input id="dateOfBirth" class="field-input" type="date" />
+          </div>
+
+          <div class="field-group">
             <label class="field-label" for="socialLink">Social / Streaming Link</label>
             <input id="socialLink" class="field-input" type="text" placeholder="https://..." />
           </div>
@@ -707,6 +753,14 @@
             <label class="field-label" for="photoFile">Artist Photo</label>
             <input id="photoFile" class="field-file" type="file" accept="image/jpeg,image/png,image/webp" />
             <div class="form-meta">Accepted: JPG, PNG or WebP. Leave empty to keep your current photo when editing.</div>
+          </div>
+
+          <div class="field-group">
+            <label class="field-label">Promotions</label>
+            <label class="checkbox-row" for="wantsPromotions">
+              <input id="wantsPromotions" type="checkbox" />
+              <span class="checkbox-copy">Keep me updated on promotions and platform updates.</span>
+            </label>
           </div>
         </div>
 
@@ -731,6 +785,29 @@
       "sb_publishable_255qyDKS77nMU0pbedfa_A_3hdgtEHh"
     );
 
+    const COUNTRY_OPTIONS = [
+      "Afghanistan","Albania","Algeria","Andorra","Angola","Antigua and Barbuda","Argentina","Armenia","Australia","Austria",
+      "Azerbaijan","Bahamas","Bahrain","Bangladesh","Barbados","Belarus","Belgium","Belize","Benin","Bhutan",
+      "Bolivia","Bosnia and Herzegovina","Botswana","Brazil","Brunei","Bulgaria","Burkina Faso","Burundi","Cabo Verde","Cambodia",
+      "Cameroon","Canada","Central African Republic","Chad","Chile","China","Colombia","Comoros","Congo","Costa Rica",
+      "Croatia","Cuba","Cyprus","Czech Republic","Democratic Republic of the Congo","Denmark","Djibouti","Dominica","Dominican Republic","Ecuador",
+      "Egypt","El Salvador","Equatorial Guinea","Eritrea","Estonia","Eswatini","Ethiopia","Fiji","Finland","France",
+      "Gabon","Gambia","Georgia","Germany","Ghana","Greece","Grenada","Guatemala","Guinea","Guinea-Bissau",
+      "Guyana","Haiti","Honduras","Hungary","Iceland","India","Indonesia","Iran","Iraq","Ireland",
+      "Israel","Italy","Jamaica","Japan","Jordan","Kazakhstan","Kenya","Kiribati","Kuwait","Kyrgyzstan",
+      "Laos","Latvia","Lebanon","Lesotho","Liberia","Libya","Liechtenstein","Lithuania","Luxembourg","Madagascar",
+      "Malawi","Malaysia","Maldives","Mali","Malta","Marshall Islands","Mauritania","Mauritius","Mexico","Micronesia",
+      "Moldova","Monaco","Mongolia","Montenegro","Morocco","Mozambique","Myanmar","Namibia","Nauru","Nepal",
+      "Netherlands","New Zealand","Nicaragua","Niger","Nigeria","North Korea","North Macedonia","Norway","Oman","Pakistan",
+      "Palau","Palestine","Panama","Papua New Guinea","Paraguay","Peru","Philippines","Poland","Portugal","Qatar",
+      "Romania","Russia","Rwanda","Saint Kitts and Nevis","Saint Lucia","Saint Vincent and the Grenadines","Samoa","San Marino","Sao Tome and Principe","Saudi Arabia",
+      "Senegal","Serbia","Seychelles","Sierra Leone","Singapore","Slovakia","Slovenia","Solomon Islands","Somalia","South Africa",
+      "South Korea","South Sudan","Spain","Sri Lanka","Sudan","Suriname","Sweden","Switzerland","Syria","Taiwan",
+      "Tajikistan","Tanzania","Thailand","Timor-Leste","Togo","Tonga","Trinidad and Tobago","Tunisia","Turkey","Turkmenistan",
+      "Tuvalu","Uganda","Ukraine","United Arab Emirates","United Kingdom","United States","Uruguay","Uzbekistan","Vanuatu","Vatican City",
+      "Venezuela","Vietnam","Yemen","Zambia","Zimbabwe"
+    ];
+
     const showLoginBtn = document.getElementById("showLoginBtn");
     const headerAvatarBtn = document.getElementById("headerAvatarBtn");
     const headerAvatarImage = document.getElementById("headerAvatarImage");
@@ -749,13 +826,27 @@
 
     const artistNameInput = document.getElementById("artistName");
     const bioInput = document.getElementById("bio");
+    const nationalityInput = document.getElementById("nationality");
+    const dateOfBirthInput = document.getElementById("dateOfBirth");
     const socialLinkInput = document.getElementById("socialLink");
     const photoFileInput = document.getElementById("photoFile");
+    const wantsPromotionsInput = document.getElementById("wantsPromotions");
     const submitBtn = document.getElementById("submit");
     const statusEl = document.getElementById("status");
     const loginRequiredBox = document.getElementById("loginRequiredBox");
 
     let currentProfile = null;
+
+    function populateCountryOptions() {
+      nationalityInput.innerHTML = '<option value="">Select your nationality</option>';
+
+      COUNTRY_OPTIONS.forEach(country => {
+        const option = document.createElement("option");
+        option.value = country;
+        option.textContent = country;
+        nationalityInput.appendChild(option);
+      });
+    }
 
     function setAuthMessage(msg, error = false) {
       if (msg === "Auth session missing!") msg = "";
@@ -812,14 +903,17 @@
     function fillProfileForm(profile) {
       artistNameInput.value = profile?.artist_name || "";
       bioInput.value = profile?.bio || "";
+      nationalityInput.value = profile?.nationality || "";
+      dateOfBirthInput.value = profile?.date_of_birth || "";
       socialLinkInput.value = profile?.social_link || "";
+      wantsPromotionsInput.checked = Boolean(profile?.wants_promotions);
       submitBtn.textContent = profile ? "Save Profile" : "Create Profile";
     }
 
     async function loadMyProfile(userId) {
       const { data, error } = await supabaseClient
         .from("profiles")
-        .select("artist_name, bio, social_link, photo_url, user_id")
+        .select("artist_name, bio, nationality, date_of_birth, social_link, photo_url, wants_promotions, user_id")
         .eq("user_id", userId)
         .maybeSingle();
 
@@ -1003,8 +1097,11 @@
     async function handleSubmit() {
       const artistName = artistNameInput.value.trim();
       const bio = bioInput.value.trim();
+      const nationality = nationalityInput.value.trim();
+      const dateOfBirth = dateOfBirthInput.value;
       const socialLink = socialLinkInput.value.trim();
       const photoFile = photoFileInput.files[0];
+      const wantsPromotions = wantsPromotionsInput.checked;
 
       if (!artistName) {
         setStatus("Please enter your artist name.", true);
@@ -1040,8 +1137,11 @@
               user_id: userId,
               artist_name: artistName,
               bio: bio,
+              nationality: nationality || null,
+              date_of_birth: dateOfBirth || null,
               social_link: socialLink,
-              photo_url: photoUrl
+              photo_url: photoUrl,
+              wants_promotions: wantsPromotions
             }
           ]);
 
@@ -1114,6 +1214,7 @@
     });
 
     async function initPage() {
+      populateCountryOptions();
       setLoggedOutView();
       fillProfileForm(null);
       setStatus("");
