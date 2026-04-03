@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Submit Track - 60 Seconds FM</title>
 
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Manrope:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Manrope:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
   <style>
     :root {
@@ -14,8 +14,9 @@
       --gold-dark: #8f6b13;
       --text: #f5f5f5;
       --muted: #a8a8a8;
-      --border: rgba(255,255,255,0.08);
       --border-gold: rgba(212,175,55,0.18);
+      --danger: #ff8a8a;
+      --success: #cfcfcf;
     }
 
     * {
@@ -40,6 +41,10 @@
       -moz-osx-font-smoothing: grayscale;
     }
 
+    body.menu-open {
+      overflow: hidden;
+    }
+
     h1, h2, h3 {
       font-family: 'Space Grotesk', sans-serif;
       margin: 0;
@@ -47,6 +52,14 @@
 
     a {
       color: inherit;
+      text-decoration: none;
+    }
+
+    button,
+    input,
+    textarea,
+    select {
+      font: inherit;
     }
 
     .hidden {
@@ -56,20 +69,27 @@
     .site-shell {
       max-width: 1180px;
       margin: 0 auto;
+      padding-top: 8px;
+    }
+
+    .header-wrap {
+      position: sticky;
+      top: 0;
+      z-index: 80;
+      width: 100%;
+      background: linear-gradient(180deg, rgba(0,0,0,0.74), rgba(0,0,0,0.42) 70%, rgba(0,0,0,0));
+      backdrop-filter: blur(6px);
     }
 
     .header-bar {
-      position: sticky;
-      top: 0;
-      z-index: 40;
+      width: 100%;
+      min-height: 74px;
       display: grid;
-      grid-template-columns: 45px 1fr 45px;
+      grid-template-columns: 60px 1fr 60px;
       align-items: center;
       gap: 10px;
-      min-height: 74px;
-      padding: 8px 6px 4px;
-      background: linear-gradient(180deg, rgba(0,0,0,0.74), rgba(0,0,0,0.42) 70%, rgba(0,0,0,0));
-      backdrop-filter: blur(6px);
+      padding: 8px 16px 4px;
+      position: relative;
     }
 
     .header-left,
@@ -77,6 +97,7 @@
     .header-right {
       display: flex;
       align-items: center;
+      min-width: 0;
     }
 
     .header-left {
@@ -85,6 +106,11 @@
 
     .header-center {
       justify-content: center;
+      pointer-events: none;
+    }
+
+    .header-center > * {
+      pointer-events: auto;
     }
 
     .header-right {
@@ -96,7 +122,6 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      text-decoration: none;
     }
 
     .header-logo {
@@ -131,9 +156,6 @@
     .header-icon-btn:hover {
       transform: translateY(-1px);
       filter: brightness(1.03);
-      box-shadow:
-        inset 0 1px 0 rgba(255,255,255,0.10),
-        0 14px 24px rgba(0,0,0,0.28);
     }
 
     .menu-icon {
@@ -149,12 +171,26 @@
       height: 3px;
       border-radius: 999px;
       background: #f5f5f5;
-      box-shadow: 0 1px 8px rgba(0,0,0,0.26);
+      transition: transform 0.18s ease, opacity 0.18s ease, top 0.18s ease;
     }
 
     .menu-icon span:nth-child(1) { top: 0; }
     .menu-icon span:nth-child(2) { top: 6px; }
     .menu-icon span:nth-child(3) { top: 12px; }
+
+    .header-icon-btn.active .menu-icon span:nth-child(1) {
+      top: 6px;
+      transform: rotate(45deg);
+    }
+
+    .header-icon-btn.active .menu-icon span:nth-child(2) {
+      opacity: 0;
+    }
+
+    .header-icon-btn.active .menu-icon span:nth-child(3) {
+      top: 6px;
+      transform: rotate(-45deg);
+    }
 
     .person-icon {
       position: relative;
@@ -242,154 +278,298 @@
       width: 100%;
     }
 
-    .auth-panel-wrap {
-      max-width: 720px;
-      margin: 0 auto 0;
-    }
-
-    .auth-box {
-      width: min(720px, 100%);
+    .auth-box.compact-auth {
+      position: absolute;
+      top: 52px;
+      right: 0;
+      width: 250px;
       text-align: left;
-      margin: 0 auto;
-      padding: 8px 0 0;
+      margin: 0;
+      padding: 10px;
+      border-radius: 18px;
+      background:
+        linear-gradient(180deg, rgba(20,20,20,0.96), rgba(10,10,10,0.98));
+      border: 1px solid rgba(255,255,255,0.08);
+      box-shadow:
+        0 18px 40px rgba(0,0,0,0.38),
+        inset 0 1px 0 rgba(255,255,255,0.04);
+      backdrop-filter: blur(8px);
+      z-index: 90;
     }
 
-    .auth-box h3 {
+    .compact-auth h3 {
       margin: 0 0 10px;
       color: var(--gold);
-      font-size: 15px;
+      font-size: 13px;
       font-weight: 700;
       text-align: center;
-      text-shadow: 0 1px 10px rgba(0,0,0,0.28);
-      font-family: 'Space Grotesk', sans-serif;
+      text-transform: uppercase;
+      letter-spacing: 1px;
     }
 
-    .auth-inputs {
+    .compact-auth .auth-inputs {
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: 1fr;
       gap: 8px;
       margin-bottom: 8px;
     }
 
-    .auth-box input {
+    .compact-auth input,
+    .menu-auth-inputs input,
+    .field-input,
+    .field-textarea,
+    .field-file,
+    .field-select {
       width: 100%;
-      padding: 12px 12px;
-      border-radius: 12px;
+      border-radius: 14px;
       border: 1px solid rgba(255,255,255,0.08);
       background: linear-gradient(180deg, rgba(16,16,16,0.92) 0%, rgba(12,12,12,0.96) 100%);
       color: white;
-      font-size: 14px;
+      font-size: 15px;
       outline: none;
-      min-height: 46px;
       box-shadow:
         inset 0 1px 0 rgba(255,255,255,0.04),
         0 6px 16px rgba(0,0,0,0.18);
-      backdrop-filter: blur(4px);
       font-family: 'Manrope', sans-serif;
     }
 
-    .auth-box input:focus {
+    .compact-auth input,
+    .menu-auth-inputs input {
+      min-height: 40px;
+      padding: 10px 11px;
+      font-size: 13px;
+      border-radius: 12px;
+    }
+
+    .field-input,
+    .field-file,
+    .field-select {
+      min-height: 52px;
+      padding: 0 14px;
+    }
+
+    .field-textarea {
+      min-height: 120px;
+      padding: 14px;
+      resize: vertical;
+    }
+
+    .compact-auth input:focus,
+    .menu-auth-inputs input:focus,
+    .field-input:focus,
+    .field-textarea:focus,
+    .field-file:focus,
+    .field-select:focus {
       border-color: rgba(212,175,55,0.38);
       box-shadow:
         inset 0 1px 0 rgba(255,255,255,0.04),
         0 0 0 3px rgba(212,175,55,0.08);
     }
 
-    .auth-row {
-      display: flex;
+    .compact-auth .auth-row,
+    .menu-auth-actions {
+      display: grid;
+      grid-template-columns: 1fr;
       gap: 8px;
-      flex-wrap: wrap;
-      justify-content: center;
     }
 
-    .auth-message {
-      min-height: 18px;
+    .compact-auth .metal-btn,
+    .menu-auth-actions .metal-btn {
+      width: 100%;
+      padding: 11px 14px;
+      font-size: 13px;
+    }
+
+    .compact-auth .auth-message,
+    .menu-auth-message {
+      min-height: 16px;
       margin-top: 8px;
-      font-size: 12px;
+      font-size: 11px;
       color: #cfcfcf;
       text-align: center;
-      text-shadow: 0 1px 8px rgba(0,0,0,0.28);
-      font-family: 'Manrope', sans-serif;
     }
 
-    .metal-btn {
-      border: 1px solid rgba(255,255,255,0.16);
-      background:
-        linear-gradient(180deg, #fbfbfb 0%, #d6d6d6 16%, #b6b6b6 35%, #8b8b8b 52%, #d2d2d2 72%, #f4f4f4 100%);
-      color: #151515;
-      padding: 13px 18px;
-      border-radius: 999px;
-      cursor: pointer;
-      font-weight: 500;
-      font-size: 14px;
-      text-shadow: 0 1px 0 rgba(255,255,255,0.45);
-      box-shadow:
-        inset 0 2px 0 rgba(255,255,255,0.72),
-        inset 0 -2px 3px rgba(0,0,0,0.18),
-        0 10px 22px rgba(0,0,0,0.25);
-      transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
+    .side-menu-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
       backdrop-filter: blur(2px);
-      font-family: 'Manrope', sans-serif;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.22s ease;
+      z-index: 55;
     }
 
-    .metal-btn:hover {
-      transform: translateY(-1px);
-      filter: brightness(1.02);
+    .side-menu-overlay.open {
+      opacity: 1;
+      pointer-events: auto;
     }
 
-    .metal-btn:disabled {
-      opacity: 0.7;
-      cursor: default;
-      transform: none;
+    .side-menu {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: min(360px, 86vw);
+      height: 100vh;
+      padding: 22px 18px 24px;
+      background:
+        linear-gradient(180deg, rgba(20,20,20,0.98), rgba(10,10,10,0.98));
+      border-right: 1px solid rgba(255,255,255,0.08);
+      box-shadow:
+        20px 0 50px rgba(0,0,0,0.45),
+        inset 0 1px 0 rgba(255,255,255,0.04);
+      backdrop-filter: blur(12px);
+      transform: translateX(-104%);
+      transition: transform 0.24s ease;
+      z-index: 60;
+      text-align: left;
+      overflow-y: auto;
     }
 
-    .metal-btn .icon {
-      color: #6a560c;
-      margin-right: 7px;
-      font-size: 15px;
+    .side-menu.open {
+      transform: translateX(0);
     }
 
-    .submit-link {
+    .side-menu-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      margin-bottom: 18px;
+    }
+
+    .side-menu-brand {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .side-menu-kicker {
+      font-family: 'Space Grotesk', sans-serif;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      font-size: 11px;
+      color: var(--muted);
+      opacity: 0.8;
+    }
+
+    .side-menu-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 22px;
+      color: #fff;
+    }
+
+    .side-menu-close {
+      width: 42px;
+      height: 42px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.14);
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.12), rgba(255,255,255,0.04)),
+        linear-gradient(180deg, rgba(10,10,10,0.86), rgba(10,10,10,0.92));
+      color: #fff;
+      cursor: pointer;
+      font-size: 20px;
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      min-height: 52px;
-      padding: 0 28px;
-      border-radius: 999px;
-      text-decoration: none;
-      color: #231700;
-      font-weight: 600;
+    }
+
+    .side-menu-links {
+      display: grid;
+      gap: 10px;
+    }
+
+    .menu-link,
+    .menu-action-btn {
+      width: 100%;
+      text-align: left;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-height: 54px;
+      padding: 0 16px;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,0.06);
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.015)),
+        rgba(255,255,255,0.02);
+      color: #f4f4f4;
       font-size: 15px;
-      letter-spacing: 0.2px;
+      font-weight: 500;
+      font-family: 'Manrope', sans-serif;
+      cursor: pointer;
+      transition: transform 0.15s ease, border-color 0.15s ease;
+    }
+
+    .menu-link:hover,
+    .menu-action-btn:hover {
+      transform: translateX(2px);
+      border-color: rgba(212,175,55,0.22);
+    }
+
+    .menu-link-icon {
+      width: 30px;
+      height: 30px;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
       background:
         linear-gradient(180deg, #fff5c9 0%, #f4d77a 20%, #d4af37 52%, #b98816 75%, #7c5a11 100%);
-      border: 1px solid rgba(255, 230, 150, 0.38);
+      flex: 0 0 auto;
+      color: #111;
       box-shadow:
         inset 0 2px 0 rgba(255,255,255,0.45),
         inset 0 -2px 4px rgba(90,50,0,0.28),
-        0 12px 26px rgba(212,175,55,0.22),
-        0 0 0 1px rgba(212,175,55,0.08);
-      transition: transform 0.16s ease, box-shadow 0.16s ease, filter 0.16s ease;
-      white-space: nowrap;
-      text-shadow: 0 1px 0 rgba(255,255,255,0.22);
-      backdrop-filter: blur(2px);
-      font-family: 'Manrope', sans-serif;
-      border: none;
-      cursor: pointer;
+        0 8px 18px rgba(212,175,55,0.14);
     }
 
-    .submit-link:hover {
-      transform: translateY(-1px);
-      filter: brightness(1.03);
+    .menu-link-icon svg {
+      width: 16px;
+      height: 16px;
+      display: block;
+    }
+
+    .side-menu-divider {
+      height: 1px;
+      margin: 8px 0 6px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+    }
+
+    .menu-auth-panel {
+      margin-top: 8px;
+      padding: 12px;
+      border-radius: 18px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.015)),
+        rgba(255,255,255,0.02);
+    }
+
+    .menu-auth-title {
+      margin: 0 0 10px;
+      color: var(--gold);
+      font-size: 12px;
+      font-weight: 700;
+      text-align: center;
+      font-family: 'Space Grotesk', sans-serif;
+      text-transform: uppercase;
+      letter-spacing: 1.6px;
+    }
+
+    .menu-auth-inputs {
+      display: grid;
+      gap: 8px;
+      margin-bottom: 8px;
     }
 
     .page-wrap {
-      max-width: 760px;
+      max-width: 860px;
       margin: 10px auto 0;
     }
 
     .hero-card {
-      position: relative;
       background:
         linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.015)),
         radial-gradient(circle at top, rgba(212,175,55,0.12), transparent 55%),
@@ -401,7 +581,6 @@
         0 30px 80px rgba(0,0,0,0.42),
         0 0 35px rgba(212,175,55,0.10),
         inset 0 1px 0 rgba(255,255,255,0.05);
-      backdrop-filter: blur(6px);
       text-align: center;
     }
 
@@ -422,7 +601,7 @@
     }
 
     .page-note {
-      max-width: 620px;
+      max-width: 680px;
       margin: 0 auto;
       color: #ddd;
       font-size: 15px;
@@ -438,7 +617,6 @@
       box-shadow:
         0 12px 30px rgba(0,0,0,0.22),
         inset 0 1px 0 rgba(255,255,255,0.03);
-      backdrop-filter: blur(6px);
     }
 
     .form-grid {
@@ -461,54 +639,96 @@
       opacity: 0.82;
     }
 
-    .field-input,
-    .field-file {
-      width: 100%;
-      border-radius: 14px;
-      border: 1px solid rgba(255,255,255,0.08);
-      background: linear-gradient(180deg, rgba(16,16,16,0.92) 0%, rgba(12,12,12,0.96) 100%);
-      color: white;
-      font-size: 15px;
-      outline: none;
-      box-shadow:
-        inset 0 1px 0 rgba(255,255,255,0.04),
-        0 6px 16px rgba(0,0,0,0.18);
-      backdrop-filter: blur(4px);
-      font-family: 'Manrope', sans-serif;
-    }
-
-    .field-input,
-    .field-file {
-      min-height: 52px;
-      padding: 0 14px;
-    }
-
-    .field-input:focus,
-    .field-file:focus {
-      border-color: rgba(212,175,55,0.38);
-      box-shadow:
-        inset 0 1px 0 rgba(255,255,255,0.04),
-        0 0 0 3px rgba(212,175,55,0.08);
-    }
-
-    .field-file {
-      padding: 12px 14px;
-      color: #ddd;
-      cursor: pointer;
-    }
-
-    .form-meta {
+    .field-help {
       margin-top: 8px;
-      color: #9f9f9f;
+      color: #bababa;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .subtle-note {
+      margin-top: 10px;
+      padding: 12px 14px;
+      border-radius: 16px;
+      background: rgba(212,175,55,0.06);
+      border: 1px solid rgba(212,175,55,0.12);
+      color: #ddd;
       font-size: 13px;
       line-height: 1.6;
       text-align: left;
+    }
+
+    .notice-box {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 18px;
+      padding: 16px 18px;
+      text-align: center;
+      color: #ddd;
+      line-height: 1.6;
+      margin-bottom: 18px;
+    }
+
+    .option-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 10px;
+    }
+
+    .check-card {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 14px 14px;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: linear-gradient(180deg, rgba(16,16,16,0.92) 0%, rgba(12,12,12,0.96) 100%);
+      cursor: pointer;
+      min-height: 66px;
+    }
+
+    .check-card input {
+      margin-top: 2px;
+      accent-color: var(--gold);
+      flex: 0 0 auto;
+    }
+
+    .check-card span {
+      color: #e3e3e3;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .checkbox-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 14px 16px;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: linear-gradient(180deg, rgba(16,16,16,0.92) 0%, rgba(12,12,12,0.96) 100%);
+    }
+
+    .checkbox-row input[type="checkbox"] {
+      margin-top: 2px;
+      width: 18px;
+      height: 18px;
+      accent-color: var(--gold);
+      flex: 0 0 auto;
+    }
+
+    .checkbox-copy {
+      color: #ddd;
+      font-size: 14px;
+      line-height: 1.6;
     }
 
     .action-row {
       margin-top: 22px;
       display: flex;
       justify-content: center;
+      flex-wrap: wrap;
+      gap: 12px;
     }
 
     .status-box {
@@ -526,6 +746,8 @@
       margin-top: 18px;
       display: flex;
       justify-content: center;
+      gap: 18px;
+      flex-wrap: wrap;
     }
 
     .ghost-link {
@@ -539,104 +761,263 @@
       opacity: 0.88;
     }
 
-    .notice-box {
-      background: rgba(255,255,255,0.04);
-      border: 1px solid rgba(255,255,255,0.06);
-      border-radius: 18px;
-      padding: 16px 18px;
-      text-align: center;
-      color: #ddd;
-      line-height: 1.6;
-      margin-bottom: 18px;
-    }
-
-    .track-status-grid {
-      display: grid;
-      gap: 14px;
-      text-align: left;
-    }
-
-    .track-status-card {
-      border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 20px;
-      padding: 18px;
-      background:
-        linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.015)),
-        rgba(255,255,255,0.02);
-      box-shadow:
-        inset 0 1px 0 rgba(255,255,255,0.03),
-        0 12px 24px rgba(0,0,0,0.16);
-    }
-
-    .track-status-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      gap: 16px;
-      margin-bottom: 12px;
-    }
-
-    .track-status-title {
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: clamp(20px, 2.2vw, 28px);
-      color: #fff;
-      margin-bottom: 6px;
-      word-break: break-word;
-    }
-
-    .track-status-sub {
-      color: var(--gold);
-      font-size: 15px;
-      font-weight: 500;
-      word-break: break-word;
-    }
-
-    .status-pill {
-      flex: 0 0 auto;
+    .submit-link {
       display: inline-flex;
       align-items: center;
       justify-content: center;
+      min-height: 52px;
+      padding: 0 28px;
       border-radius: 999px;
-      padding: 8px 12px;
-      font-size: 12px;
-      letter-spacing: 1.5px;
-      text-transform: uppercase;
-      font-family: 'Space Grotesk', sans-serif;
+      text-decoration: none;
       color: #231700;
+      font-weight: 600;
+      font-size: 15px;
+      letter-spacing: 0.2px;
       background:
         linear-gradient(180deg, #fff5c9 0%, #f4d77a 20%, #d4af37 52%, #b98816 75%, #7c5a11 100%);
       border: 1px solid rgba(255, 230, 150, 0.38);
       box-shadow:
         inset 0 2px 0 rgba(255,255,255,0.45),
         inset 0 -2px 4px rgba(90,50,0,0.28),
-        0 12px 26px rgba(212,175,55,0.12);
-      text-shadow: 0 1px 0 rgba(255,255,255,0.22);
+        0 12px 26px rgba(212,175,55,0.22),
+        0 0 0 1px rgba(212,175,55,0.08);
+      font-family: 'Manrope', sans-serif;
+      cursor: pointer;
     }
 
-    .status-meta {
+    .metal-btn {
+      border: 1px solid rgba(255,255,255,0.16);
+      background:
+        linear-gradient(180deg, #fbfbfb 0%, #d6d6d6 16%, #b6b6b6 35%, #8b8b8b 52%, #d2d2d2 72%, #f4f4f4 100%);
+      color: #151515;
+      padding: 13px 18px;
+      border-radius: 999px;
+      cursor: pointer;
+      font-weight: 500;
+      font-size: 14px;
+      text-shadow: 0 1px 0 rgba(255,255,255,0.45);
+      box-shadow:
+        inset 0 2px 0 rgba(255,255,255,0.72),
+        inset 0 -2px 3px rgba(0,0,0,0.18),
+        0 10px 22px rgba(0,0,0,0.25);
+      font-family: 'Manrope', sans-serif;
+    }
+
+    .pill-counter {
+      margin-top: 10px;
+      color: #bfbfbf;
+      font-size: 12px;
+      text-align: left;
+    }
+
+    .clip-tool {
+      padding: 18px;
+      border-radius: 22px;
+      border: 1px solid rgba(212,175,55,0.14);
+      background:
+        radial-gradient(circle at top, rgba(212,175,55,0.08), transparent 60%),
+        linear-gradient(180deg, rgba(19,19,19,0.96), rgba(11,11,11,0.98));
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.04),
+        0 14px 30px rgba(0,0,0,0.22);
+    }
+
+    .clip-tool-top {
       display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
       flex-wrap: wrap;
-      gap: 8px;
+      margin-bottom: 14px;
     }
 
-    .status-meta-item {
+    .clip-badge-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .clip-badge {
+      min-height: 36px;
+      padding: 0 14px;
+      border-radius: 999px;
       display: inline-flex;
       align-items: center;
-      gap: 8px;
-      padding: 8px 12px;
-      border-radius: 999px;
-      background: rgba(255,255,255,0.04);
-      border: 1px solid rgba(255,255,255,0.06);
-      color: #ddd;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.015)),
+        rgba(255,255,255,0.02);
+      border: 1px solid rgba(255,255,255,0.08);
+      color: #e5e5e5;
       font-size: 13px;
     }
 
-    .status-meta-item .dot {
-      width: 7px;
-      height: 7px;
+    .clip-wave {
+      position: relative;
+      height: 72px;
+      border-radius: 18px;
+      overflow: hidden;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.035), rgba(255,255,255,0.01)),
+        rgba(255,255,255,0.02);
+      border: 1px solid rgba(255,255,255,0.06);
+      margin-bottom: 14px;
+    }
+
+    .clip-wave::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        repeating-linear-gradient(
+          90deg,
+          rgba(212,175,55,0.18) 0px,
+          rgba(212,175,55,0.18) 4px,
+          transparent 4px,
+          transparent 11px
+        );
+      opacity: 0.6;
+      mask-image: linear-gradient(90deg, rgba(0,0,0,0.45), #000, rgba(0,0,0,0.45));
+    }
+
+    .clip-selection {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      width: 20%;
+      background:
+        linear-gradient(180deg, rgba(244,215,122,0.12), rgba(212,175,55,0.18));
+      border-left: 1px solid rgba(244,215,122,0.85);
+      border-right: 1px solid rgba(244,215,122,0.85);
+      box-shadow:
+        0 0 0 1px rgba(212,175,55,0.10),
+        0 0 22px rgba(212,175,55,0.10);
+    }
+
+    .clip-selection::before,
+    .clip-selection::after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      width: 8px;
+      height: 28px;
+      transform: translateY(-50%);
+      border-radius: 999px;
+      background: linear-gradient(180deg, #fff5c9, #d4af37);
+      box-shadow: 0 0 12px rgba(212,175,55,0.18);
+    }
+
+    .clip-selection::before {
+      left: 6px;
+    }
+
+    .clip-selection::after {
+      right: 6px;
+    }
+
+    .clip-slider-row {
+      display: grid;
+      gap: 8px;
+    }
+
+    .clip-slider {
+      width: 100%;
+      appearance: none;
+      height: 8px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.08);
+      outline: none;
+    }
+
+    .clip-slider::-webkit-slider-thumb {
+      appearance: none;
+      width: 22px;
+      height: 22px;
       border-radius: 50%;
-      background: var(--gold);
-      box-shadow: 0 0 8px rgba(212,175,55,0.45);
+      background:
+        linear-gradient(180deg, #fff5c9 0%, #f4d77a 20%, #d4af37 52%, #b98816 75%, #7c5a11 100%);
+      border: 1px solid rgba(255,255,255,0.4);
+      box-shadow:
+        inset 0 2px 0 rgba(255,255,255,0.45),
+        0 6px 14px rgba(0,0,0,0.28);
+      cursor: pointer;
+    }
+
+    .clip-slider::-moz-range-thumb {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background:
+        linear-gradient(180deg, #fff5c9 0%, #f4d77a 20%, #d4af37 52%, #b98816 75%, #7c5a11 100%);
+      border: 1px solid rgba(255,255,255,0.4);
+      box-shadow:
+        inset 0 2px 0 rgba(255,255,255,0.45),
+        0 6px 14px rgba(0,0,0,0.28);
+      cursor: pointer;
+    }
+
+    .clip-meta {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      color: #cdcdcd;
+      font-size: 13px;
+      margin-top: 4px;
+    }
+
+    .clip-controls {
+      margin-top: 14px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .clip-play-btn {
+      min-width: 138px;
+      min-height: 46px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.14);
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.03)),
+        linear-gradient(180deg, rgba(15,15,15,0.95), rgba(10,10,10,0.98));
+      color: #f5f5f5;
+      cursor: pointer;
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.08),
+        0 10px 22px rgba(0,0,0,0.24);
+    }
+
+    .clip-progress {
+      position: relative;
+      flex: 1;
+      min-width: 180px;
+      height: 12px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.08);
+      overflow: hidden;
+      box-shadow: inset 0 1px 2px rgba(0,0,0,0.25);
+    }
+
+    .clip-progress-fill {
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 0%;
+      border-radius: inherit;
+      background:
+        linear-gradient(90deg, #b98816 0%, #d4af37 42%, #f4d77a 100%);
+      box-shadow: 0 0 16px rgba(212,175,55,0.18);
+    }
+
+    .clip-current-time {
+      min-width: 48px;
+      text-align: right;
+      font-size: 13px;
+      color: #d8d8d8;
+      font-variant-numeric: tabular-nums;
     }
 
     @media (max-width: 760px) {
@@ -645,7 +1026,7 @@
         background:
           linear-gradient(180deg, rgba(7, 7, 7, 0.50) 0%, rgba(7, 7, 7, 0.76) 42%, rgba(7, 7, 7, 0.86) 100%),
           radial-gradient(circle at top, rgba(212, 175, 55, 0.12), transparent 26%),
-          url("bg-desktop-correct.webp");
+          url("bg-mobile-final-1080x1920.webp");
         background-size: cover, auto, cover;
         background-position: center top, center top, center center;
         background-repeat: no-repeat, no-repeat, no-repeat;
@@ -655,7 +1036,7 @@
       .header-bar {
         grid-template-columns: 42px 1fr 42px;
         min-height: 68px;
-        padding: 6px 2px 2px;
+        padding: 6px 8px 2px;
       }
 
       .header-logo {
@@ -668,26 +1049,14 @@
         height: 38px;
       }
 
-      .account-menu {
+      .account-menu,
+      .auth-box.compact-auth {
         top: 48px;
-        min-width: 150px;
+        right: 0;
       }
 
-      .auth-box {
-        width: min(420px, 100%);
-      }
-
-      .auth-inputs {
-        grid-template-columns: 1fr;
-      }
-
-      .auth-row {
-        flex-direction: column;
-      }
-
-      .auth-row .metal-btn,
-      .submit-link {
-        width: 100%;
+      .auth-box.compact-auth {
+        width: min(240px, calc(100vw - 24px));
       }
 
       .hero-card,
@@ -695,19 +1064,112 @@
         padding: 20px;
       }
 
-      .track-status-top {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 10px;
+      .side-menu {
+        width: min(340px, 88vw);
+        padding: 18px 16px 22px;
+      }
+
+      .clip-controls {
+        align-items: stretch;
+      }
+
+      .clip-play-btn {
+        width: 100%;
+      }
+
+      .clip-progress {
+        min-width: 100%;
       }
     }
   </style>
 </head>
 <body>
-  <div class="site-shell">
+  <div id="sideMenuOverlay" class="side-menu-overlay"></div>
+
+  <aside id="sideMenu" class="side-menu" aria-hidden="true">
+    <div class="side-menu-top">
+      <div class="side-menu-brand">
+        <div class="side-menu-kicker">Navigation</div>
+        <div class="side-menu-title">60 Seconds FM</div>
+      </div>
+      <button id="closeMenuBtn" class="side-menu-close" type="button" aria-label="Close menu">×</button>
+    </div>
+
+    <nav class="side-menu-links">
+      <a class="menu-link" href="index.html">
+        <span class="menu-link-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none">
+            <path d="M12 3V8" stroke="#111" stroke-width="2.2" stroke-linecap="round"/>
+            <path d="M8 21H16" stroke="#111" stroke-width="2.2" stroke-linecap="round"/>
+            <path d="M9.5 21V15.5" stroke="#111" stroke-width="2.2" stroke-linecap="round"/>
+            <path d="M14.5 21V15.5" stroke="#111" stroke-width="2.2" stroke-linecap="round"/>
+            <path d="M7.5 10.5H16.5V15.5H7.5Z" stroke="#111" stroke-width="2.2" stroke-linejoin="round"/>
+            <path d="M5 12C5 8.8 8 6.5 12 6.5C16 6.5 19 8.8 19 12" stroke="#111" stroke-width="2.2" stroke-linecap="round"/>
+            <path d="M3.5 9.5C5.8 6.5 8.6 5 12 5C15.4 5 18.2 6.5 20.5 9.5" stroke="#111" stroke-width="2.2" stroke-linecap="round"/>
+          </svg>
+        </span>
+        <span>Listen To Radio</span>
+      </a>
+
+      <a id="menuArtistPageLink" class="menu-link hidden" href="#">
+        <span class="menu-link-icon">★</span>
+        <span>My Artist Page</span>
+      </a>
+
+      <a id="menuCreateProfileLink" class="menu-link hidden" href="join.html">
+        <span class="menu-link-icon">＋</span>
+        <span>Create Artist Profile</span>
+      </a>
+
+      <a id="menuEditProfileLink" class="menu-link hidden" href="edit-profile.html">
+        <span class="menu-link-icon">✎</span>
+        <span>Edit Profile</span>
+      </a>
+
+      <a id="menuSubmitTrackLink" class="menu-link hidden" href="submit-track.html">
+        <span class="menu-link-icon">♫</span>
+        <span id="menuSubmitTrackLabel">Submit Your Track</span>
+      </a>
+
+      <div class="side-menu-divider"></div>
+
+      <button id="menuLoginBtn" class="menu-action-btn" type="button">
+        <span class="menu-link-icon">↳</span>
+        <span>Log in</span>
+      </button>
+
+      <button id="menuSignupBtn" class="menu-action-btn" type="button">
+        <span class="menu-link-icon">✦</span>
+        <span>Sign up</span>
+      </button>
+
+      <div id="menuAuthPanel" class="menu-auth-panel hidden">
+        <div id="menuAuthTitle" class="menu-auth-title">Log in</div>
+
+        <div class="menu-auth-inputs">
+          <input id="menuEmail" type="email" placeholder="Email" autocomplete="email" />
+          <input id="menuPassword" type="password" placeholder="Password" autocomplete="current-password" />
+        </div>
+
+        <div class="menu-auth-actions">
+          <button id="menuSignupSubmitBtn" class="metal-btn" type="button">Sign up</button>
+          <button id="menuLoginSubmitBtn" class="metal-btn" type="button">Log in</button>
+        </div>
+
+        <div id="menuAuthMessage" class="menu-auth-message"></div>
+      </div>
+
+      <button id="menuLogoutBtn" class="menu-action-btn hidden" type="button">
+        <span class="menu-link-icon">⎋</span>
+        <span>Log out</span>
+      </button>
+    </nav>
+  </aside>
+
+  <div class="header-wrap">
     <header class="header-bar">
       <div class="header-left">
-        <button id="menuBtn" class="header-icon-btn" type="button" aria-label="Open menu">
+        <button id="menuBtn" class="header-icon-btn" type="button" aria-label="Open menu" aria-expanded="false">
           <span class="menu-icon" aria-hidden="true">
             <span></span>
             <span></span>
@@ -717,7 +1179,7 @@
       </div>
 
       <div class="header-center">
-        <a href="/" class="header-logo-link" aria-label="60 Seconds FM home">
+        <a href="index.html" class="header-logo-link" aria-label="60 Seconds FM home">
           <img src="logo.png" alt="60 Seconds FM" class="header-logo" />
         </a>
       </div>
@@ -732,40 +1194,36 @@
           <div id="headerAvatarFallback" class="header-avatar-fallback hidden">A</div>
         </button>
 
+        <div id="authBox" class="auth-box compact-auth hidden">
+          <h3>Log in</h3>
+
+          <div class="auth-inputs">
+            <input id="email" type="email" placeholder="Email" autocomplete="email" />
+            <input id="password" type="password" placeholder="Password" autocomplete="current-password" />
+          </div>
+
+          <div class="auth-row">
+            <button id="signup" class="metal-btn" type="button">Sign up</button>
+            <button id="login" class="metal-btn" type="button">Log in</button>
+          </div>
+
+          <div id="authMessage" class="auth-message"></div>
+        </div>
+
         <div id="accountMenu" class="account-menu hidden">
-          <button id="logout" class="metal-btn" type="button"><span class="icon">⎋</span>Log out</button>
+          <button id="logout" class="metal-btn" type="button">Log out</button>
         </div>
       </div>
     </header>
+  </div>
 
-    <div class="auth-panel-wrap">
-      <div id="authBox" class="auth-box hidden">
-        <h3>Log in</h3>
-
-        <div class="auth-inputs">
-          <input id="email" type="email" placeholder="Email" autocomplete="email" />
-          <input id="password" type="password" placeholder="Password" autocomplete="current-password" />
-        </div>
-
-        <div class="auth-row">
-          <button id="signup" class="metal-btn" type="button"><span class="icon">✦</span>Sign up</button>
-          <button id="login" class="metal-btn" type="button"><span class="icon">↳</span>Log in</button>
-        </div>
-      </div>
-
-      <div id="userBox" class="hidden">
-        <a id="profileLink" href="#" title="Open artist page" class="hidden"></a>
-      </div>
-
-      <div id="authMessage" class="auth-message"></div>
-    </div>
-
+  <div class="site-shell">
     <main class="page-wrap">
       <section class="hero-card">
         <div class="section-kicker">Track Submission</div>
-        <h1 class="page-title">Submit Your Track</h1>
-        <p class="page-note">
-          Upload your one track for radio approval. Your submission will be reviewed before it can go live on 60 Seconds FM.
+        <h1 id="pageTitle" class="page-title">Submit Your Track</h1>
+        <p id="pageNote" class="page-note">
+          Upload your track for review and choose which exact 60 seconds should be used as the radio preview.
         </p>
       </section>
 
@@ -775,68 +1233,134 @@
         </div>
 
         <div id="profileRequiredBox" class="notice-box hidden">
-          You need to create your artist profile first before submitting a track.
-          <div style="margin-top: 10px;">
-            <a class="ghost-link" href="join.html">Create your artist profile</a>
+          You need to create your artist profile before submitting a track.
+          <div class="sub-link-row" style="margin-top: 12px;">
+            <a class="ghost-link" href="join.html">Create Artist Profile</a>
           </div>
         </div>
 
-        <div id="trackExistsBox" class="hidden">
-          <div class="track-status-grid">
-            <div class="track-status-card">
-              <div class="track-status-top">
-                <div>
-                  <div id="existingTrackTitle" class="track-status-title">Your submitted track</div>
-                  <div id="existingTrackArtist" class="track-status-sub">Artist</div>
-                </div>
-                <div id="existingTrackStatus" class="status-pill">Pending</div>
-              </div>
+        <div id="formWrap" class="form-grid hidden">
+          <div class="field-group">
+            <label class="field-label" for="trackTitle">Track Title</label>
+            <input id="trackTitle" class="field-input" type="text" placeholder="Enter your track title" />
+          </div>
 
-              <div class="status-meta">
-                <div class="status-meta-item">
-                  <span class="dot"></span>
-                  <span>Only one track allowed</span>
-                </div>
-                <div class="status-meta-item">
-                  <span class="dot"></span>
-                  <span id="existingTrackDate">Recently submitted</span>
-                </div>
-                <div class="status-meta-item">
-                  <span class="dot"></span>
-                  <span id="existingTrackPlays">0 plays</span>
-                </div>
-              </div>
+          <div class="field-group">
+            <label class="field-label" for="trackFile">Track File</label>
+            <input id="trackFile" class="field-file" type="file" accept="audio/*" />
+            <div class="field-help">
+              Upload the full track file. On edit, you can leave this empty to keep your current uploaded file.
             </div>
           </div>
 
-          <div id="trackExistsMessage" class="status-box">
-            You already submitted a track. Right now, each artist can have only one track on the platform.
+          <div class="field-group">
+            <label class="field-label" for="genrePrimary">Primary Genre</label>
+            <select id="genrePrimary" class="field-select">
+              <option value="">Select primary genre</option>
+            </select>
           </div>
-        </div>
 
-        <div id="submitFormWrap" class="hidden">
-          <div class="form-grid">
-            <div class="field-group">
-              <label class="field-label" for="title">Track Title</label>
-              <input id="title" class="field-input" type="text" placeholder="Enter your track title" />
+          <div class="field-group">
+            <label class="field-label" for="genreSecondary">Secondary Genre (Optional)</label>
+            <select id="genreSecondary" class="field-select">
+              <option value="">Select secondary genre</option>
+            </select>
+          </div>
+
+          <div class="field-group">
+            <label class="field-label">Music Feelings (Optional, max 2)</label>
+            <div id="feelingsGrid" class="option-grid"></div>
+            <div id="feelingsCounter" class="pill-counter">0 / 2 selected</div>
+            <div class="subtle-note">
+              Optional, but useful: choosing feeling tags can increase the chance of being considered for themed selections and events such as Hip Hop Hour, Rave Nights, Late Night Vibes and similar formats.
+            </div>
+          </div>
+
+          <div class="field-group">
+            <label class="field-label">AI Usage</label>
+            <div class="option-grid">
+              <label class="check-card">
+                <input type="radio" name="aiUsage" value="none" />
+                <span>Without AI</span>
+              </label>
+
+              <label class="check-card">
+                <input type="radio" name="aiUsage" value="partial" />
+                <span>Partially made with AI</span>
+              </label>
+
+              <label class="check-card">
+                <input type="radio" name="aiUsage" value="full" />
+                <span>Fully made with AI</span>
+              </label>
+            </div>
+          </div>
+
+          <div id="aiDetailsWrap" class="field-group hidden">
+            <label class="field-label" for="aiDetails">AI Details (Optional)</label>
+            <textarea id="aiDetails" class="field-textarea" placeholder="Example: AI was used for stem cleanup, synth ideas, vocal texture concepts, arrangement suggestions, or lyric support."></textarea>
+          </div>
+
+          <div class="field-group">
+            <label class="field-label">Choose Your 60-Second Radio Preview</label>
+
+            <div id="clipTool" class="clip-tool hidden">
+              <div class="clip-tool-top">
+                <div class="clip-badge-row">
+                  <div class="clip-badge">Preview start: <strong id="clipStartLabel" style="margin-left:6px;">0:00</strong></div>
+                  <div class="clip-badge">Preview end: <strong id="clipEndLabel" style="margin-left:6px;">1:00</strong></div>
+                  <div class="clip-badge">Length: <strong id="clipDurationLabel" style="margin-left:6px;">60 sec</strong></div>
+                </div>
+              </div>
+
+              <div class="clip-wave">
+                <div id="clipSelection" class="clip-selection"></div>
+              </div>
+
+              <div class="clip-slider-row">
+                <input id="clipStartSlider" class="clip-slider" type="range" min="0" max="0" step="1" value="0" />
+                <div class="clip-meta">
+                  <span>Move the selector to choose where the 60 second preview starts.</span>
+                  <span id="fullTrackDurationLabel">Full track: 0:00</span>
+                </div>
+              </div>
+
+              <div class="clip-controls">
+                <button id="clipPlayBtn" class="clip-play-btn" type="button">Play Selected 60 sec</button>
+                <div class="clip-progress">
+                  <div id="clipProgressFill" class="clip-progress-fill"></div>
+                </div>
+                <div id="clipCurrentTime" class="clip-current-time">0:00</div>
+              </div>
             </div>
 
-            <div class="field-group">
-              <label class="field-label" for="trackFile">Track File</label>
-              <input id="trackFile" class="field-file" type="file" accept=".mp3,audio/mpeg,audio/mp3" />
-              <div class="form-meta">Accepted: MP3 only.</div>
+            <div id="clipToolPlaceholder" class="field-help">
+              Upload or load a track first to choose your 60 second radio preview.
             </div>
+
+            <audio id="previewAudio" preload="metadata" class="hidden"></audio>
+          </div>
+
+          <div class="field-group">
+            <label class="field-label">Rights Declaration</label>
+            <label class="checkbox-row" for="rightsConfirmed">
+              <input id="rightsConfirmed" type="checkbox" />
+              <span class="checkbox-copy">
+                I confirm that I own or control the rights needed to submit this music, including the master, composition, vocals, production elements and any samples used. I also confirm that this submission complies with the platform rules and the Terms, and I understand that unauthorized or misleading submissions may be rejected or removed.
+              </span>
+            </label>
           </div>
 
           <div class="action-row">
-            <button id="submitTrackBtn" class="submit-link" type="button">Submit Track</button>
+            <button id="saveTrackBtn" class="submit-link" type="button">Submit Your Track</button>
           </div>
         </div>
 
         <div id="status" class="status-box"></div>
 
         <div class="sub-link-row">
-          <a class="ghost-link" href="index.html">Back to homepage</a>
+          <a class="ghost-link" href="index.html">Back to radio</a>
+          <a id="backToArtistPageLink" class="ghost-link hidden" href="#">My Artist Page</a>
         </div>
       </section>
     </main>
@@ -850,44 +1374,102 @@
       "sb_publishable_255qyDKS77nMU0pbedfa_A_3hdgtEHh"
     );
 
+    const GENRE_OPTIONS = [
+      "Afrobeats", "Alternative", "Ambient", "Amapiano", "Classical", "Country",
+      "Dance", "Dancehall", "Deep House", "Disco", "Drill", "Drum & Bass",
+      "Dubstep", "EDM", "Electronic", "Folk", "Funk", "Garage", "Gospel",
+      "Grime", "Hardstyle", "Hip Hop", "House", "Indie", "Jazz", "Latin",
+      "Lo-fi", "Pop", "R&B", "Rap", "Reggae", "Reggaeton", "Rock", "Soul",
+      "Tech House", "Techno", "Trap", "Trance", "UK Garage", "Other"
+    ];
+
+    const FEELING_OPTIONS = [
+      "Energetic", "Emotional", "Melancholic", "Uplifting", "Dark",
+      "Dreamy", "Romantic", "Aggressive", "Hypnotic", "Chill",
+      "Party", "Nostalgic", "Sexy", "Epic", "Moody",
+      "Spiritual", "Happy", "Sad", "Raw", "Late Night"
+    ];
+
     const showLoginBtn = document.getElementById("showLoginBtn");
     const headerAvatarBtn = document.getElementById("headerAvatarBtn");
     const headerAvatarImage = document.getElementById("headerAvatarImage");
     const headerAvatarFallback = document.getElementById("headerAvatarFallback");
     const accountMenu = document.getElementById("accountMenu");
+
     const menuBtn = document.getElementById("menuBtn");
+    const sideMenu = document.getElementById("sideMenu");
+    const sideMenuOverlay = document.getElementById("sideMenuOverlay");
+    const closeMenuBtn = document.getElementById("closeMenuBtn");
+    const menuLoginBtn = document.getElementById("menuLoginBtn");
+    const menuSignupBtn = document.getElementById("menuSignupBtn");
+    const menuLogoutBtn = document.getElementById("menuLogoutBtn");
+    const menuCreateProfileLink = document.getElementById("menuCreateProfileLink");
+    const menuEditProfileLink = document.getElementById("menuEditProfileLink");
+    const menuSubmitTrackLink = document.getElementById("menuSubmitTrackLink");
+    const menuSubmitTrackLabel = document.getElementById("menuSubmitTrackLabel");
+    const menuArtistPageLink = document.getElementById("menuArtistPageLink");
+    const menuAuthPanel = document.getElementById("menuAuthPanel");
+    const menuAuthTitle = document.getElementById("menuAuthTitle");
+    const menuEmail = document.getElementById("menuEmail");
+    const menuPassword = document.getElementById("menuPassword");
+    const menuSignupSubmitBtn = document.getElementById("menuSignupSubmitBtn");
+    const menuLoginSubmitBtn = document.getElementById("menuLoginSubmitBtn");
+    const menuAuthMessage = document.getElementById("menuAuthMessage");
+
     const email = document.getElementById("email");
     const password = document.getElementById("password");
     const signupBtn = document.getElementById("signup");
     const loginBtn = document.getElementById("login");
     const logoutBtn = document.getElementById("logout");
     const authBox = document.getElementById("authBox");
-    const userBox = document.getElementById("userBox");
     const authMessageEl = document.getElementById("authMessage");
-    const profileLink = document.getElementById("profileLink");
 
+    const pageTitle = document.getElementById("pageTitle");
+    const pageNote = document.getElementById("pageNote");
     const loginRequiredBox = document.getElementById("loginRequiredBox");
     const profileRequiredBox = document.getElementById("profileRequiredBox");
-    const trackExistsBox = document.getElementById("trackExistsBox");
-    const submitFormWrap = document.getElementById("submitFormWrap");
-    const titleInput = document.getElementById("title");
-    const trackFileInput = document.getElementById("trackFile");
-    const submitTrackBtn = document.getElementById("submitTrackBtn");
+    const formWrap = document.getElementById("formWrap");
     const statusEl = document.getElementById("status");
+    const backToArtistPageLink = document.getElementById("backToArtistPageLink");
 
-    const existingTrackTitleEl = document.getElementById("existingTrackTitle");
-    const existingTrackArtistEl = document.getElementById("existingTrackArtist");
-    const existingTrackStatusEl = document.getElementById("existingTrackStatus");
-    const existingTrackDateEl = document.getElementById("existingTrackDate");
-    const existingTrackPlaysEl = document.getElementById("existingTrackPlays");
+    const trackTitleInput = document.getElementById("trackTitle");
+    const trackFileInput = document.getElementById("trackFile");
+    const genrePrimaryInput = document.getElementById("genrePrimary");
+    const genreSecondaryInput = document.getElementById("genreSecondary");
+    const feelingsGrid = document.getElementById("feelingsGrid");
+    const feelingsCounter = document.getElementById("feelingsCounter");
+    const aiDetailsWrap = document.getElementById("aiDetailsWrap");
+    const aiDetailsInput = document.getElementById("aiDetails");
+    const rightsConfirmedInput = document.getElementById("rightsConfirmed");
+    const saveTrackBtn = document.getElementById("saveTrackBtn");
 
-    let currentProfile = null;
-    let currentTrack = null;
+    const clipTool = document.getElementById("clipTool");
+    const clipToolPlaceholder = document.getElementById("clipToolPlaceholder");
+    const previewAudio = document.getElementById("previewAudio");
+    const clipSelection = document.getElementById("clipSelection");
+    const clipStartSlider = document.getElementById("clipStartSlider");
+    const clipStartLabel = document.getElementById("clipStartLabel");
+    const clipEndLabel = document.getElementById("clipEndLabel");
+    const clipDurationLabel = document.getElementById("clipDurationLabel");
+    const fullTrackDurationLabel = document.getElementById("fullTrackDurationLabel");
+    const clipPlayBtn = document.getElementById("clipPlayBtn");
+    const clipProgressFill = document.getElementById("clipProgressFill");
+    const clipCurrentTime = document.getElementById("clipCurrentTime");
 
-    function setAuthMessage(msg, error = false) {
+    let currentProfileData = null;
+    let currentTrackData = null;
+    let currentUser = null;
+    let currentMenuAuthMode = "login";
+
+    let previewObjectUrl = null;
+    let previewTrackDuration = 0;
+    let previewStartSeconds = 0;
+    let previewPlayTimer = null;
+
+    function setAuthMessage(msg, error = false, target = authMessageEl) {
       if (msg === "Auth session missing!") msg = "";
-      authMessageEl.textContent = msg || "";
-      authMessageEl.style.color = error ? "#ff8a8a" : "#cfcfcf";
+      target.textContent = msg || "";
+      target.style.color = error ? "#ff8a8a" : "#cfcfcf";
     }
 
     function setStatus(message, isError = false) {
@@ -898,11 +1480,117 @@
     function clearLoginFields() {
       email.value = "";
       password.value = "";
+      menuEmail.value = "";
+      menuPassword.value = "";
     }
 
-    function closeMenus() {
+    function openSideMenu() {
+      sideMenu.classList.add("open");
+      sideMenuOverlay.classList.add("open");
+      menuBtn.classList.add("active");
+      menuBtn.setAttribute("aria-expanded", "true");
+      sideMenu.setAttribute("aria-hidden", "false");
+      document.body.classList.add("menu-open");
+    }
+
+    function closeSideMenu() {
+      sideMenu.classList.remove("open");
+      sideMenuOverlay.classList.remove("open");
+      menuBtn.classList.remove("active");
+      menuBtn.setAttribute("aria-expanded", "false");
+      sideMenu.setAttribute("aria-hidden", "true");
+      document.body.classList.remove("menu-open");
+      menuAuthPanel.classList.add("hidden");
+      setAuthMessage("", false, menuAuthMessage);
+    }
+
+    function openMenuAuthPanel(mode = "login") {
+      currentMenuAuthMode = mode;
+      menuAuthPanel.classList.remove("hidden");
+      menuAuthTitle.textContent = mode === "signup" ? "Sign up" : "Log in";
+      setAuthMessage("", false, menuAuthMessage);
+      setTimeout(() => menuEmail.focus(), 0);
+    }
+
+    function closeHeaderPanels() {
       authBox.classList.add("hidden");
       accountMenu.classList.add("hidden");
+    }
+
+    function populateGenreSelects() {
+      [genrePrimaryInput, genreSecondaryInput].forEach((select, index) => {
+        const placeholder = index === 0 ? "Select primary genre" : "Select secondary genre";
+        select.innerHTML = `<option value="">${placeholder}</option>`;
+        GENRE_OPTIONS.forEach(genre => {
+          const option = document.createElement("option");
+          option.value = genre;
+          option.textContent = genre;
+          select.appendChild(option);
+        });
+      });
+    }
+
+    function renderFeelingOptions(selectedValues = []) {
+      feelingsGrid.innerHTML = "";
+      FEELING_OPTIONS.forEach(feeling => {
+        const label = document.createElement("label");
+        label.className = "check-card";
+        label.innerHTML = `
+          <input type="checkbox" class="feeling-checkbox" value="${escapeHtml(feeling)}">
+          <span>${escapeHtml(feeling)}</span>
+        `;
+        const checkbox = label.querySelector("input");
+        checkbox.checked = selectedValues.includes(feeling);
+        checkbox.addEventListener("change", () => enforceFeelingLimit(checkbox));
+        feelingsGrid.appendChild(label);
+      });
+      updateFeelingsCounter();
+    }
+
+    function getSelectedFeelings() {
+      return Array.from(document.querySelectorAll(".feeling-checkbox:checked")).map(el => el.value);
+    }
+
+    function updateFeelingsCounter() {
+      const selected = getSelectedFeelings();
+      feelingsCounter.textContent = `${selected.length} / 2 selected`;
+    }
+
+    function enforceFeelingLimit(changedInput) {
+      const selected = getSelectedFeelings();
+      if (selected.length > 2) {
+        changedInput.checked = false;
+      }
+      updateFeelingsCounter();
+    }
+
+    function getSelectedAiUsage() {
+      const selected = document.querySelector('input[name="aiUsage"]:checked');
+      return selected ? selected.value : "";
+    }
+
+    function updateAiDetailsVisibility() {
+      const aiUsage = getSelectedAiUsage();
+      aiDetailsWrap.classList.toggle("hidden", aiUsage !== "partial");
+      if (aiUsage !== "partial") {
+        aiDetailsInput.value = "";
+      }
+    }
+
+    function formatTime(seconds) {
+      const safe = Math.max(0, Math.floor(Number(seconds) || 0));
+      const mins = Math.floor(safe / 60);
+      const secs = safe % 60;
+      return `${mins}:${secs.toString().padStart(2, "0")}`;
+    }
+
+    function escapeHtml(value) {
+      return String(value ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
     }
 
     function setHeaderAvatar(photoUrl, artistName) {
@@ -917,185 +1605,256 @@
       }
     }
 
-    function resetPageState() {
-      loginRequiredBox.classList.add("hidden");
-      profileRequiredBox.classList.add("hidden");
-      trackExistsBox.classList.add("hidden");
-      submitFormWrap.classList.add("hidden");
+    function applyMenuState(user, profile, track) {
+      const isLoggedIn = Boolean(user);
+      const hasProfile = Boolean(profile);
+      const hasTrack = Boolean(track);
+
+      menuLoginBtn.classList.toggle("hidden", isLoggedIn);
+      menuSignupBtn.classList.toggle("hidden", isLoggedIn);
+      menuLogoutBtn.classList.toggle("hidden", !isLoggedIn);
+
+      menuCreateProfileLink.classList.toggle("hidden", !isLoggedIn || hasProfile);
+      menuEditProfileLink.classList.toggle("hidden", !isLoggedIn || !hasProfile);
+      menuArtistPageLink.classList.toggle("hidden", !isLoggedIn || !hasProfile);
+      menuSubmitTrackLink.classList.toggle("hidden", !isLoggedIn || !hasProfile);
+
+      if (hasProfile && profile?.user_id) {
+        const artistUrl = `artist.html?user_id=${encodeURIComponent(profile.user_id)}`;
+        menuArtistPageLink.href = artistUrl;
+        backToArtistPageLink.href = artistUrl;
+        backToArtistPageLink.classList.remove("hidden");
+      } else {
+        menuArtistPageLink.href = "#";
+        backToArtistPageLink.href = "#";
+        backToArtistPageLink.classList.add("hidden");
+      }
+
+      menuSubmitTrackLabel.textContent = hasTrack ? "Edit Your Track" : "Submit Your Track";
     }
 
     function setLoggedOutView() {
-      closeMenus();
-      userBox.classList.add("hidden");
+      closeHeaderPanels();
       showLoginBtn.classList.remove("hidden");
       headerAvatarBtn.classList.add("hidden");
       headerAvatarImage.classList.add("hidden");
       headerAvatarFallback.classList.add("hidden");
       headerAvatarImage.src = "";
-      resetPageState();
+
       loginRequiredBox.classList.remove("hidden");
+      profileRequiredBox.classList.add("hidden");
+      formWrap.classList.add("hidden");
+
+      currentProfileData = null;
+      currentTrackData = null;
+      currentUser = null;
+      applyMenuState(null, null, null);
     }
 
-    function setLoggedInView() {
+    function setLoggedInHeader() {
       authBox.classList.add("hidden");
-      userBox.classList.remove("hidden");
+      menuAuthPanel.classList.add("hidden");
       showLoginBtn.classList.add("hidden");
       headerAvatarBtn.classList.remove("hidden");
     }
 
-    function formatDate(dateString) {
-      if (!dateString) return "Recently submitted";
-      const date = new Date(dateString);
-      if (Number.isNaN(date.getTime())) return "Recently submitted";
+    function setPageMode(track) {
+      const isEdit = Boolean(track);
+      pageTitle.textContent = isEdit ? "Edit Your Track" : "Submit Your Track";
+      pageNote.textContent = isEdit
+        ? "Update your track information and choose the exact 60 second clip used as your radio preview."
+        : "Upload your track for review and choose which exact 60 seconds should be used as the radio preview.";
+      saveTrackBtn.textContent = isEdit ? "Save Track Changes" : "Submit Your Track";
+      menuSubmitTrackLabel.textContent = isEdit ? "Edit Your Track" : "Submit Your Track";
+    }
 
-      return date.toLocaleDateString("en-GB", {
-        day: "2-digit",
-        month: "short",
-        year: "numeric"
+    function stopPreviewPlayback() {
+      if (previewPlayTimer) {
+        clearInterval(previewPlayTimer);
+        previewPlayTimer = null;
+      }
+      previewAudio.pause();
+      clipPlayBtn.textContent = "Play Selected 60 sec";
+      clipProgressFill.style.width = "0%";
+      clipCurrentTime.textContent = "0:00";
+    }
+
+    function updateClipUi() {
+      const effectiveDuration = Math.min(60, Math.max(1, Math.floor(previewTrackDuration || 0)));
+      const maxStart = Math.max(0, Math.floor(previewTrackDuration - effectiveDuration));
+      const start = Math.min(Math.max(0, Number(previewStartSeconds) || 0), maxStart);
+      const end = Math.min(start + effectiveDuration, Math.floor(previewTrackDuration || 0));
+
+      clipStartSlider.max = String(maxStart);
+      clipStartSlider.value = String(start);
+
+      clipStartLabel.textContent = formatTime(start);
+      clipEndLabel.textContent = formatTime(end);
+      clipDurationLabel.textContent = `${effectiveDuration} sec`;
+      fullTrackDurationLabel.textContent = `Full track: ${formatTime(previewTrackDuration)}`;
+
+      const widthPercent = previewTrackDuration > 0 ? (effectiveDuration / previewTrackDuration) * 100 : 100;
+      const leftPercent = previewTrackDuration > 0 ? (start / previewTrackDuration) * 100 : 0;
+
+      clipSelection.style.width = `${Math.max(widthPercent, 8)}%`;
+      clipSelection.style.left = `${leftPercent}%`;
+
+      clipTool.classList.remove("hidden");
+      clipToolPlaceholder.classList.add("hidden");
+    }
+
+    function loadPreviewSource(sourceUrl, preferredStart = 0) {
+      stopPreviewPlayback();
+
+      previewTrackDuration = 0;
+      previewStartSeconds = Math.max(0, Number(preferredStart) || 0);
+
+      previewAudio.src = sourceUrl;
+      previewAudio.load();
+
+      previewAudio.onloadedmetadata = () => {
+        previewTrackDuration = Number.isFinite(previewAudio.duration) ? Math.floor(previewAudio.duration) : 0;
+
+        if (!previewTrackDuration || previewTrackDuration <= 0) {
+          clipTool.classList.add("hidden");
+          clipToolPlaceholder.classList.remove("hidden");
+          clipToolPlaceholder.textContent = "This track could not be analysed for preview selection.";
+          return;
+        }
+
+        const effectiveDuration = Math.min(60, previewTrackDuration);
+        const maxStart = Math.max(0, previewTrackDuration - effectiveDuration);
+        previewStartSeconds = Math.min(previewStartSeconds, maxStart);
+
+        updateClipUi();
+      };
+
+      previewAudio.onerror = () => {
+        clipTool.classList.add("hidden");
+        clipToolPlaceholder.classList.remove("hidden");
+        clipToolPlaceholder.textContent = "The preview tool could not load this track.";
+      };
+    }
+
+    function fillTrackForm(track) {
+      trackTitleInput.value = track?.title || "";
+      genrePrimaryInput.value = track?.genre_primary || "";
+      genreSecondaryInput.value = track?.genre_secondary || "";
+      renderFeelingOptions(Array.isArray(track?.feeling_tags) ? track.feeling_tags : []);
+
+      const aiUsage = track?.ai_usage || "";
+      document.querySelectorAll('input[name="aiUsage"]').forEach(input => {
+        input.checked = input.value === aiUsage;
       });
-    }
 
-    function normalizeStatusLabel(status) {
-      const value = String(status || "pending").toLowerCase();
-      if (value === "approved") return "Approved";
-      if (value === "pending") return "Pending";
-      if (value === "rejected") return "Rejected";
-      return value.charAt(0).toUpperCase() + value.slice(1);
-    }
+      aiDetailsInput.value = track?.ai_details || "";
+      rightsConfirmedInput.checked = Boolean(track?.rights_confirmed);
+      updateAiDetailsVisibility();
 
-    function renderExistingTrack(track) {
-      existingTrackTitleEl.textContent = track.title || "Untitled";
-      existingTrackArtistEl.textContent = track.artist || "Unknown Artist";
-      existingTrackStatusEl.textContent = normalizeStatusLabel(track.status);
-      existingTrackDateEl.textContent = formatDate(track.created_at);
-      existingTrackPlaysEl.textContent = `${Number(track.play_count || 0).toLocaleString()} plays`;
+      const previewStart = Number(track?.preview_start_seconds || 0);
+
+      if (track?.file_url) {
+        loadPreviewSource(track.file_url, previewStart);
+      } else {
+        stopPreviewPlayback();
+        clipTool.classList.add("hidden");
+        clipToolPlaceholder.classList.remove("hidden");
+        clipToolPlaceholder.textContent = "Upload or load a track first to choose your 60 second radio preview.";
+      }
     }
 
     async function loadMyProfile(userId) {
       const { data, error } = await supabaseClient
         .from("profiles")
-        .select("artist_name, photo_url, user_id")
+        .select("user_id, artist_name, photo_url")
         .eq("user_id", userId)
         .maybeSingle();
 
       if (error || !data) {
-        currentProfile = null;
-        profileLink.href = "#";
-        setHeaderAvatar("", "•");
+        currentProfileData = null;
+        setHeaderAvatar("", "A");
         return null;
       }
 
-      currentProfile = data;
+      currentProfileData = data;
       setHeaderAvatar(data.photo_url, data.artist_name);
-      profileLink.href = `artist.html?user_id=${encodeURIComponent(data.user_id)}`;
       return data;
     }
 
     async function loadMyTrack(userId) {
       const { data, error } = await supabaseClient
         .from("tracks")
-        .select("id, title, artist, file_url, status, play_count, created_at, user_id")
+        .select("id, user_id, title, artist, file_url, status, created_at, genre_primary, genre_secondary, feeling_tags, ai_usage, ai_details, rights_confirmed, preview_start_seconds, preview_duration_seconds")
         .eq("user_id", userId)
         .order("created_at", { ascending: false })
         .limit(1)
         .maybeSingle();
 
+      if (error || !data) {
+        currentTrackData = null;
+        return null;
+      }
+
+      currentTrackData = data;
+      return data;
+    }
+
+    async function loginWithCredentials(emailValue, passwordValue, messageTarget) {
+      if (!emailValue || !passwordValue) {
+        setAuthMessage("Please enter email and password.", true, messageTarget);
+        return false;
+      }
+
+      setAuthMessage("", false, messageTarget);
+
+      const { error } = await supabaseClient.auth.signInWithPassword({
+        email: emailValue,
+        password: passwordValue
+      });
+
       if (error) {
-        console.error("loadMyTrack error:", error);
-        currentTrack = null;
-        return null;
+        setAuthMessage(error.message, true, messageTarget);
+        return false;
       }
 
-      currentTrack = data || null;
-      return currentTrack;
+      clearLoginFields();
+      return true;
     }
 
-    async function refreshAuthUI() {
-      try {
-        const { data, error } = await supabaseClient.auth.getSession();
-
-        if (error) {
-          setLoggedOutView();
-          return null;
-        }
-
-        const user = data?.session?.user || null;
-
-        if (user) {
-          setLoggedInView();
-          await loadMyProfile(user.id);
-          return user;
-        } else {
-          setLoggedOutView();
-          return null;
-        }
-      } catch (err) {
-        console.error("refreshAuthUI error:", err);
-        setLoggedOutView();
-        return null;
-      }
-    }
-
-    async function refreshSubmissionState() {
-      resetPageState();
-      setStatus("");
-
-      const { data, error } = await supabaseClient.auth.getSession();
-      const user = error ? null : data?.session?.user || null;
-
-      if (!user) {
-        loginRequiredBox.classList.remove("hidden");
-        return;
+    async function signupWithCredentials(emailValue, passwordValue, messageTarget) {
+      if (!emailValue || !passwordValue) {
+        setAuthMessage("Please enter email and password.", true, messageTarget);
+        return false;
       }
 
-      const profile = currentProfile || await loadMyProfile(user.id);
+      setAuthMessage("", false, messageTarget);
 
-      if (!profile) {
-        profileRequiredBox.classList.remove("hidden");
-        return;
+      const { error } = await supabaseClient.auth.signUp({
+        email: emailValue,
+        password: passwordValue
+      });
+
+      if (error) {
+        setAuthMessage(error.message, true, messageTarget);
+        return false;
       }
 
-      const track = await loadMyTrack(user.id);
-
-      if (track) {
-        renderExistingTrack(track);
-        trackExistsBox.classList.remove("hidden");
-        return;
-      }
-
-      submitFormWrap.classList.remove("hidden");
+      setAuthMessage("Account created. Check your email.", false, messageTarget);
+      return true;
     }
 
     async function handleLogin() {
-      const emailValue = email.value.trim();
-      const passwordValue = password.value.trim();
-
-      if (!emailValue || !passwordValue) {
-        setAuthMessage("Please enter email and password.", true);
-        return;
-      }
-
       loginBtn.disabled = true;
       signupBtn.disabled = true;
-      setAuthMessage("");
 
       try {
-        const { error } = await supabaseClient.auth.signInWithPassword({
-          email: emailValue,
-          password: passwordValue
-        });
-
-        if (error) {
-          setAuthMessage(error.message, true);
-          return;
-        }
-
-        clearLoginFields();
-        await refreshAuthUI();
-        await refreshSubmissionState();
+        const ok = await loginWithCredentials(email.value.trim(), password.value.trim(), authMessageEl);
+        if (!ok) return;
+        authBox.classList.add("hidden");
+        await refreshPageState();
       } catch (err) {
-        console.error("handleLogin error:", err);
-        setAuthMessage("Login failed. Try again.", true);
+        console.error(err);
+        setAuthMessage("Login failed. Try again.", true, authMessageEl);
       } finally {
         loginBtn.disabled = false;
         signupBtn.disabled = false;
@@ -1103,166 +1862,277 @@
     }
 
     async function handleSignup() {
-      const emailValue = email.value.trim();
-      const passwordValue = password.value.trim();
-
-      if (!emailValue || !passwordValue) {
-        setAuthMessage("Please enter email and password.", true);
-        return;
-      }
-
       loginBtn.disabled = true;
       signupBtn.disabled = true;
-      setAuthMessage("");
 
       try {
-        const { error } = await supabaseClient.auth.signUp({
-          email: emailValue,
-          password: passwordValue
-        });
-
-        if (error) {
-          setAuthMessage(error.message, true);
-          return;
-        }
-
-        setAuthMessage("Account created. Check your email.");
-        await refreshAuthUI();
-        await refreshSubmissionState();
+        await signupWithCredentials(email.value.trim(), password.value.trim(), authMessageEl);
+        await refreshPageState();
       } catch (err) {
-        console.error("handleSignup error:", err);
-        setAuthMessage("Sign up failed. Try again.", true);
+        console.error(err);
+        setAuthMessage("Sign up failed. Try again.", true, authMessageEl);
       } finally {
         loginBtn.disabled = false;
         signupBtn.disabled = false;
       }
     }
 
+    async function handleMenuLogin() {
+      menuLoginSubmitBtn.disabled = true;
+      menuSignupSubmitBtn.disabled = true;
+
+      try {
+        const ok = await loginWithCredentials(menuEmail.value.trim(), menuPassword.value.trim(), menuAuthMessage);
+        if (!ok) return;
+        closeSideMenu();
+        await refreshPageState();
+      } catch (err) {
+        console.error(err);
+        setAuthMessage("Login failed. Try again.", true, menuAuthMessage);
+      } finally {
+        menuLoginSubmitBtn.disabled = false;
+        menuSignupSubmitBtn.disabled = false;
+      }
+    }
+
+    async function handleMenuSignup() {
+      menuLoginSubmitBtn.disabled = true;
+      menuSignupSubmitBtn.disabled = true;
+
+      try {
+        await signupWithCredentials(menuEmail.value.trim(), menuPassword.value.trim(), menuAuthMessage);
+        await refreshPageState();
+      } catch (err) {
+        console.error(err);
+        setAuthMessage("Sign up failed. Try again.", true, menuAuthMessage);
+      } finally {
+        menuLoginSubmitBtn.disabled = false;
+        menuSignupSubmitBtn.disabled = false;
+      }
+    }
+
     async function handleLogout() {
       logoutBtn.disabled = true;
-      setAuthMessage("");
+      menuLogoutBtn.disabled = true;
 
       try {
         const { error } = await supabaseClient.auth.signOut();
-
         if (error) {
-          setAuthMessage(error.message, true);
+          setAuthMessage(error.message, true, authMessageEl);
           return;
         }
 
         clearLoginFields();
-        currentProfile = null;
-        currentTrack = null;
-        await refreshAuthUI();
-        await refreshSubmissionState();
+        await refreshPageState();
       } catch (err) {
-        console.error("handleLogout error:", err);
-        setAuthMessage("Logout failed. Try again.", true);
+        console.error(err);
+        setAuthMessage("Logout failed. Try again.", true, authMessageEl);
       } finally {
         logoutBtn.disabled = false;
+        menuLogoutBtn.disabled = false;
       }
     }
 
-    async function handleTrackSubmit() {
-      const title = titleInput.value.trim();
-      const trackFile = trackFileInput.files[0];
+    async function uploadTrackIfNeeded(userId, file) {
+      if (!file) {
+        return currentTrackData?.file_url || "";
+      }
 
-      if (!title || !trackFile) {
-        setStatus("Please enter a track title and choose your MP3 file.", true);
+      const cleanName = file.name.replace(/\s+/g, "-");
+      const filePath = `${userId}/${Date.now()}-${cleanName}`;
+
+      const { error } = await supabaseClient
+        .storage
+        .from("tracks")
+        .upload(filePath, file, {
+          cacheControl: "3600",
+          upsert: true
+        });
+
+      if (error) {
+        throw new Error("Track upload failed: " + error.message);
+      }
+
+      const { data } = supabaseClient
+        .storage
+        .from("tracks")
+        .getPublicUrl(filePath);
+
+      return data.publicUrl;
+    }
+
+    async function refreshPageState() {
+      const { data, error } = await supabaseClient.auth.getSession();
+      const user = error ? null : data?.session?.user || null;
+
+      if (!user) {
+        setLoggedOutView();
+        fillTrackForm(null);
+        setPageMode(null);
         return;
       }
 
-      submitTrackBtn.disabled = true;
-      setStatus("Checking account...");
+      currentUser = user;
+      setLoggedInHeader();
+
+      const profile = await loadMyProfile(user.id);
+      const track = await loadMyTrack(user.id);
+
+      applyMenuState(user, profile, track);
+      setPageMode(track);
+
+      if (!profile) {
+        loginRequiredBox.classList.add("hidden");
+        profileRequiredBox.classList.remove("hidden");
+        formWrap.classList.add("hidden");
+        fillTrackForm(track);
+        return;
+      }
+
+      loginRequiredBox.classList.add("hidden");
+      profileRequiredBox.classList.add("hidden");
+      formWrap.classList.remove("hidden");
+      fillTrackForm(track);
+    }
+
+    async function handleSaveTrack() {
+      const title = trackTitleInput.value.trim();
+      const file = trackFileInput.files[0];
+      const genrePrimary = genrePrimaryInput.value.trim();
+      const genreSecondary = genreSecondaryInput.value.trim();
+      const feelingTags = getSelectedFeelings();
+      const aiUsage = getSelectedAiUsage();
+      const aiDetails = aiDetailsInput.value.trim();
+      const rightsConfirmed = rightsConfirmedInput.checked;
+
+      if (!currentUser) {
+        setStatus("You must be logged in before submitting a track.", true);
+        return;
+      }
+
+      if (!currentProfileData) {
+        setStatus("You need to create your artist profile first.", true);
+        return;
+      }
+
+      if (!title) {
+        setStatus("Please enter your track title.", true);
+        return;
+      }
+
+      if (!genrePrimary) {
+        setStatus("Please select a primary genre.", true);
+        return;
+      }
+
+      if (genreSecondary && genreSecondary === genrePrimary) {
+        setStatus("Secondary genre must be different from the primary genre.", true);
+        return;
+      }
+
+      if (feelingTags.length > 2) {
+        setStatus("You can select a maximum of 2 feeling tags.", true);
+        return;
+      }
+
+      if (!aiUsage) {
+        setStatus("Please select how AI was used for this track.", true);
+        return;
+      }
+
+      if (!rightsConfirmed) {
+        setStatus("You need to confirm the rights declaration before submitting.", true);
+        return;
+      }
+
+      if (!currentTrackData && !file) {
+        setStatus("Please upload your track file.", true);
+        return;
+      }
+
+      if (!previewAudio.src) {
+        setStatus("Please load a track and choose your 60 second preview.", true);
+        return;
+      }
+
+      if (!previewTrackDuration || previewTrackDuration <= 0) {
+        setStatus("The preview tool could not read the track duration.", true);
+        return;
+      }
+
+      saveTrackBtn.disabled = true;
+      setStatus("Uploading and saving track...");
 
       try {
-        const { data: userData, error: userError } = await supabaseClient.auth.getUser();
+        const fileUrl = await uploadTrackIfNeeded(currentUser.id, file);
 
-        if (userError) {
-          setStatus("Could not check current user: " + userError.message, true);
+        if (!fileUrl) {
+          setStatus("No valid track file could be saved.", true);
           return;
         }
 
-        if (!userData.user) {
-          setStatus("You must be logged in before submitting a track.", true);
-          return;
+        const effectivePreviewDuration = Math.min(60, Math.max(1, Math.floor(previewTrackDuration)));
+        const safePreviewStart = Math.max(0, Math.floor(previewStartSeconds || 0));
+
+        const shouldResetStatus =
+          Boolean(file) ||
+          Number(currentTrackData?.preview_start_seconds || 0) !== safePreviewStart;
+
+        const nextStatus = currentTrackData
+          ? (shouldResetStatus ? "pending" : (currentTrackData.status || "pending"))
+          : "pending";
+
+        const payload = {
+          title,
+          artist: currentProfileData.artist_name || null,
+          file_url: fileUrl,
+          user_id: currentUser.id,
+          status: nextStatus,
+          genre_primary: genrePrimary,
+          genre_secondary: genreSecondary || null,
+          feeling_tags: feelingTags.length ? feelingTags : [],
+          ai_usage: aiUsage,
+          ai_details: aiUsage === "partial" ? (aiDetails || null) : null,
+          rights_confirmed: rightsConfirmed,
+          preview_start_seconds: safePreviewStart,
+          preview_duration_seconds: effectivePreviewDuration
+        };
+
+        if (currentTrackData?.id) {
+          const { error: updateError } = await supabaseClient
+            .from("tracks")
+            .update(payload)
+            .eq("id", currentTrackData.id);
+
+          if (updateError) {
+            setStatus("Saving track failed: " + updateError.message, true);
+            return;
+          }
+        } else {
+          const { error: insertError } = await supabaseClient
+            .from("tracks")
+            .insert([payload]);
+
+          if (insertError) {
+            setStatus("Saving track failed: " + insertError.message, true);
+            return;
+          }
         }
 
-        const userId = userData.user.id;
-
-        const profile = currentProfile || await loadMyProfile(userId);
-        if (!profile) {
-          setStatus("Please create your artist profile first.", true);
-          await refreshSubmissionState();
-          return;
-        }
-
-        const existingTrack = await loadMyTrack(userId);
-        if (existingTrack) {
-          setStatus("You already submitted a track.", true);
-          await refreshSubmissionState();
-          return;
-        }
-
-        setStatus("Uploading track...");
-
-        const trackPath = `${userId}/${Date.now()}-${trackFile.name.replace(/\s+/g, "-")}`;
-
-        const { error: trackUploadError } = await supabaseClient
-          .storage
-          .from("tracks")
-          .upload(trackPath, trackFile, {
-            cacheControl: "3600",
-            upsert: false
-          });
-
-        if (trackUploadError) {
-          setStatus("Track upload failed: " + trackUploadError.message, true);
-          return;
-        }
-
-        const { data: trackUrlData } = supabaseClient
-          .storage
-          .from("tracks")
-          .getPublicUrl(trackPath);
-
-        const trackUrl = trackUrlData.publicUrl;
-
-        setStatus("Saving track...");
-
-        const { error: trackInsertError } = await supabaseClient
-          .from("tracks")
-          .insert([
-            {
-              title: title,
-              artist: profile.artist_name || "Unknown Artist",
-              file_url: trackUrl,
-              user_id: userId,
-              status: "pending",
-              play_count: 0
-            }
-          ]);
-
-        if (trackInsertError) {
-          setStatus("Saving track failed: " + trackInsertError.message, true);
-          return;
-        }
-
-        titleInput.value = "";
         trackFileInput.value = "";
-        setStatus("Track submitted successfully.");
-
-        await refreshSubmissionState();
+        setStatus("Track saved successfully.");
+        await refreshPageState();
       } catch (err) {
-        console.error("track submit error:", err);
-        setStatus("Something went wrong while submitting your track.", true);
+        console.error(err);
+        setStatus(err.message || "Something went wrong while saving your track.", true);
       } finally {
-        submitTrackBtn.disabled = false;
+        saveTrackBtn.disabled = false;
       }
     }
 
     showLoginBtn.onclick = () => {
       accountMenu.classList.add("hidden");
+      closeSideMenu();
       authBox.classList.toggle("hidden");
       setAuthMessage("");
       if (!authBox.classList.contains("hidden")) {
@@ -1272,31 +2142,46 @@
 
     headerAvatarBtn.onclick = () => {
       authBox.classList.add("hidden");
+      closeSideMenu();
       accountMenu.classList.toggle("hidden");
     };
 
     menuBtn.onclick = () => {
-      setAuthMessage("");
       authBox.classList.add("hidden");
       accountMenu.classList.add("hidden");
+      if (sideMenu.classList.contains("open")) {
+        closeSideMenu();
+      } else {
+        openSideMenu();
+      }
     };
 
-    document.addEventListener("click", (e) => {
-      const insideHeaderRight = e.target.closest(".header-right");
-      const insideAuthBox = e.target.closest("#authBox");
-      const isLoginButton = e.target.closest("#showLoginBtn");
-      const isAvatarButton = e.target.closest("#headerAvatarBtn");
+    closeMenuBtn.onclick = closeSideMenu;
+    sideMenuOverlay.onclick = closeSideMenu;
 
-      if (!insideHeaderRight && !insideAuthBox && !isLoginButton && !isAvatarButton) {
-        authBox.classList.add("hidden");
-        accountMenu.classList.add("hidden");
-      }
-    });
+    menuLoginBtn.onclick = () => {
+      authBox.classList.add("hidden");
+      accountMenu.classList.add("hidden");
+      openMenuAuthPanel("login");
+    };
+
+    menuSignupBtn.onclick = () => {
+      authBox.classList.add("hidden");
+      accountMenu.classList.add("hidden");
+      openMenuAuthPanel("signup");
+    };
+
+    menuLogoutBtn.onclick = async () => {
+      closeSideMenu();
+      await handleLogout();
+    };
 
     loginBtn.onclick = handleLogin;
     signupBtn.onclick = handleSignup;
     logoutBtn.onclick = handleLogout;
-    submitTrackBtn.onclick = handleTrackSubmit;
+    menuLoginSubmitBtn.onclick = handleMenuLogin;
+    menuSignupSubmitBtn.onclick = handleMenuSignup;
+    saveTrackBtn.onclick = handleSaveTrack;
 
     email.addEventListener("keydown", (e) => {
       if (e.key === "Enter") handleLogin();
@@ -1306,21 +2191,144 @@
       if (e.key === "Enter") handleLogin();
     });
 
+    menuEmail.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        if (currentMenuAuthMode === "signup") {
+          handleMenuSignup();
+        } else {
+          handleMenuLogin();
+        }
+      }
+    });
+
+    menuPassword.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        if (currentMenuAuthMode === "signup") {
+          handleMenuSignup();
+        } else {
+          handleMenuLogin();
+        }
+      }
+    });
+
+    document.querySelectorAll('input[name="aiUsage"]').forEach(input => {
+      input.addEventListener("change", updateAiDetailsVisibility);
+    });
+
+    trackFileInput.addEventListener("change", () => {
+      const file = trackFileInput.files[0];
+      stopPreviewPlayback();
+
+      if (previewObjectUrl) {
+        URL.revokeObjectURL(previewObjectUrl);
+        previewObjectUrl = null;
+      }
+
+      if (!file) {
+        if (currentTrackData?.file_url) {
+          loadPreviewSource(currentTrackData.file_url, Number(currentTrackData.preview_start_seconds || 0));
+        } else {
+          clipTool.classList.add("hidden");
+          clipToolPlaceholder.classList.remove("hidden");
+          clipToolPlaceholder.textContent = "Upload or load a track first to choose your 60 second radio preview.";
+        }
+        return;
+      }
+
+      previewObjectUrl = URL.createObjectURL(file);
+      loadPreviewSource(previewObjectUrl, 0);
+    });
+
+    clipStartSlider.addEventListener("input", () => {
+      previewStartSeconds = Number(clipStartSlider.value || 0);
+      stopPreviewPlayback();
+      updateClipUi();
+    });
+
+    clipPlayBtn.addEventListener("click", async () => {
+      if (!previewAudio.src || !previewTrackDuration) return;
+
+      const start = Math.max(0, Math.floor(previewStartSeconds || 0));
+      const duration = Math.min(60, Math.max(1, Math.floor(previewTrackDuration)));
+      const end = Math.min(start + duration, previewTrackDuration);
+
+      try {
+        if (!previewAudio.paused) {
+          stopPreviewPlayback();
+          return;
+        }
+
+        previewAudio.currentTime = start;
+        await previewAudio.play();
+        clipPlayBtn.textContent = "Stop Preview";
+
+        previewPlayTimer = setInterval(() => {
+          const elapsed = Math.max(0, previewAudio.currentTime - start);
+          const total = Math.max(1, end - start);
+          const percent = Math.min((elapsed / total) * 100, 100);
+
+          clipProgressFill.style.width = `${percent}%`;
+          clipCurrentTime.textContent = formatTime(elapsed);
+
+          if (previewAudio.currentTime >= end) {
+            stopPreviewPlayback();
+          }
+        }, 120);
+      } catch (err) {
+        console.error(err);
+        setStatus("The preview clip could not be played.", true);
+        stopPreviewPlayback();
+      }
+    });
+
+    previewAudio.addEventListener("ended", stopPreviewPlayback);
+
+    document.addEventListener("click", (e) => {
+      const insideHeaderRight = e.target.closest(".header-right");
+      const insideAuthBox = e.target.closest("#authBox");
+      const insideSideMenu = e.target.closest("#sideMenu");
+      const isLoginButton = e.target.closest("#showLoginBtn");
+      const isAvatarButton = e.target.closest("#headerAvatarBtn");
+      const isMenuButton = e.target.closest("#menuBtn");
+
+      if (!insideHeaderRight && !insideAuthBox && !isLoginButton && !isAvatarButton) {
+        authBox.classList.add("hidden");
+        accountMenu.classList.add("hidden");
+      }
+
+      if (!insideSideMenu && !isMenuButton) {
+        closeSideMenu();
+      }
+    });
+
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") {
+        authBox.classList.add("hidden");
+        accountMenu.classList.add("hidden");
+        closeSideMenu();
+      }
+    });
+
     supabaseClient.auth.onAuthStateChange(() => {
-      refreshAuthUI()
-        .then(() => refreshSubmissionState())
-        .catch(err => console.error(err));
+      refreshPageState().catch(err => {
+        console.error(err);
+        setStatus("The page could not be refreshed correctly.", true);
+      });
     });
 
     async function initPage() {
+      populateGenreSelects();
+      renderFeelingOptions([]);
       setLoggedOutView();
+      setPageMode(null);
       setStatus("");
-      await refreshAuthUI();
-      await refreshSubmissionState();
+      updateAiDetailsVisibility();
+      await refreshPageState();
     }
 
     initPage().catch(err => {
       console.error("initPage error:", err);
+      setStatus("The page could not be loaded correctly.", true);
     });
   </script>
 </body>
