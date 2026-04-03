@@ -79,6 +79,7 @@
 
     .header-right {
       justify-content: flex-end;
+      position: relative;
     }
 
     .header-logo-link {
@@ -178,10 +179,63 @@
       border-bottom: 0;
     }
 
-    /* AUTH */
+    .header-avatar-btn {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      padding: 0;
+      overflow: hidden;
+      border: 2px solid rgba(212,175,55,0.55);
+      background: #111;
+      box-shadow:
+        0 10px 22px rgba(0,0,0,0.24),
+        0 0 0 3px rgba(212,175,55,0.08);
+      cursor: pointer;
+    }
+
+    .header-avatar-btn img,
+    .header-avatar-btn .header-avatar-fallback {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      display: block;
+      object-fit: cover;
+    }
+
+    .header-avatar-fallback {
+      display: flex !important;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(180deg, #3a2d0d, #a98325);
+      color: #fff;
+      font-weight: 700;
+      font-size: 18px;
+    }
+
+    .account-menu {
+      position: absolute;
+      top: 62px;
+      right: 0;
+      min-width: 170px;
+      padding: 8px;
+      border-radius: 18px;
+      background:
+        linear-gradient(180deg, rgba(20,20,20,0.96), rgba(10,10,10,0.98));
+      border: 1px solid rgba(255,255,255,0.08);
+      box-shadow:
+        0 18px 40px rgba(0,0,0,0.38),
+        inset 0 1px 0 rgba(255,255,255,0.04);
+      backdrop-filter: blur(8px);
+    }
+
+    .account-menu button {
+      width: 100%;
+    }
+
+    /* AUTH PANEL BELOW HEADER */
     .auth-panel-wrap {
       max-width: 720px;
-      margin: 0 auto 10px;
+      margin: 0 auto 0;
     }
 
     .auth-box {
@@ -244,39 +298,6 @@
       color: #cfcfcf;
       text-align: center;
       text-shadow: 0 1px 8px rgba(0,0,0,0.28);
-    }
-
-    .user-box {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 12px;
-      flex-wrap: wrap;
-      margin-top: 4px;
-    }
-
-    .avatar {
-      width: 52px;
-      height: 52px;
-      border-radius: 50%;
-      object-fit: cover;
-      border: 2px solid rgba(212,175,55,0.65);
-      box-shadow: 0 0 0 4px rgba(212,175,55,0.08);
-      background: #1b1b1b;
-    }
-
-    .avatar-fallback {
-      width: 52px;
-      height: 52px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: linear-gradient(180deg, #3a2d0d, #a98325);
-      color: #fff;
-      font-weight: 700;
-      border: 2px solid rgba(212,175,55,0.65);
-      box-shadow: 0 0 0 4px rgba(212,175,55,0.08);
     }
 
     /* BUTTONS */
@@ -514,7 +535,6 @@
       box-shadow: 0 0 8px rgba(212,175,55,0.5);
     }
 
-    /* SUBMIT UNDER PLAYER */
     .submit-under-radio {
       margin: 18px auto 0;
       display: flex;
@@ -597,6 +617,12 @@
         width: min(250px, 46vw);
       }
 
+      .account-menu {
+        top: 58px;
+        right: 0;
+        min-width: 150px;
+      }
+
       .stats-row {
         grid-template-columns: 1fr;
       }
@@ -617,10 +643,7 @@
         flex-direction: column;
       }
 
-      .auth-row .metal-btn {
-        width: 100%;
-      }
-
+      .auth-row .metal-btn,
       .submit-link {
         width: 100%;
         max-width: 320px;
@@ -651,6 +674,15 @@
         <button id="showLoginBtn" class="header-icon-btn" type="button" aria-label="Log in">
           <span class="person-icon" aria-hidden="true"></span>
         </button>
+
+        <button id="headerAvatarBtn" class="header-avatar-btn hidden" type="button" aria-label="Open account menu">
+          <img id="headerAvatarImage" class="hidden" src="" alt="Profile photo" />
+          <div id="headerAvatarFallback" class="header-avatar-fallback hidden">A</div>
+        </button>
+
+        <div id="accountMenu" class="account-menu hidden">
+          <button id="logout" class="metal-btn" type="button"><span class="icon">⎋</span>Log out</button>
+        </div>
       </div>
     </header>
 
@@ -669,12 +701,11 @@
         </div>
       </div>
 
-      <div id="userBox" class="hidden user-box">
-        <a id="profileLink" href="#" title="Open artist page">
+      <div id="userBox" class="hidden">
+        <a id="profileLink" href="#" title="Open artist page" class="hidden">
           <img id="userAvatar" class="avatar hidden" src="" alt="Profile photo" />
           <div id="userAvatarFallback" class="avatar-fallback hidden">A</div>
         </a>
-        <button id="logout" class="metal-btn" type="button"><span class="icon">⎋</span>Log out</button>
       </div>
 
       <div id="authMessage" class="auth-message"></div>
@@ -755,6 +786,10 @@
 
     // AUTH UI
     const showLoginBtn = document.getElementById("showLoginBtn");
+    const headerAvatarBtn = document.getElementById("headerAvatarBtn");
+    const headerAvatarImage = document.getElementById("headerAvatarImage");
+    const headerAvatarFallback = document.getElementById("headerAvatarFallback");
+    const accountMenu = document.getElementById("accountMenu");
     const menuBtn = document.getElementById("menuBtn");
     const email = document.getElementById("email");
     const password = document.getElementById("password");
@@ -813,8 +848,13 @@
       myTotalPlaysEl.textContent = "0";
     }
 
-    function setLoggedOutView() {
+    function closeMenus() {
       authBox.classList.add("hidden");
+      accountMenu.classList.add("hidden");
+    }
+
+    function setLoggedOutView() {
+      closeMenus();
       userBox.classList.add("hidden");
       submitTrackBtn.classList.add("hidden");
       userAvatar.classList.add("hidden");
@@ -822,6 +862,10 @@
       userAvatar.src = "";
       profileLink.href = "#";
       showLoginBtn.classList.remove("hidden");
+      headerAvatarBtn.classList.add("hidden");
+      headerAvatarImage.classList.add("hidden");
+      headerAvatarFallback.classList.add("hidden");
+      headerAvatarImage.src = "";
       hideUserStats();
     }
 
@@ -830,6 +874,19 @@
       userBox.classList.remove("hidden");
       submitTrackBtn.classList.remove("hidden");
       showLoginBtn.classList.add("hidden");
+      headerAvatarBtn.classList.remove("hidden");
+    }
+
+    function setHeaderAvatar(photoUrl, artistName) {
+      if (photoUrl) {
+        headerAvatarImage.src = photoUrl;
+        headerAvatarImage.classList.remove("hidden");
+        headerAvatarFallback.classList.add("hidden");
+      } else {
+        headerAvatarImage.classList.add("hidden");
+        headerAvatarFallback.classList.remove("hidden");
+        headerAvatarFallback.textContent = (artistName || "A").charAt(0).toUpperCase();
+      }
     }
 
     async function loadMyProfile(userId) {
@@ -844,6 +901,7 @@
         userAvatarFallback.classList.remove("hidden");
         userAvatarFallback.textContent = "•";
         profileLink.href = "#";
+        setHeaderAvatar("", "•");
         return;
       }
 
@@ -857,6 +915,7 @@
         userAvatarFallback.textContent = (data.artist_name || "A").charAt(0).toUpperCase();
       }
 
+      setHeaderAvatar(data.photo_url, data.artist_name);
       profileLink.href = `artist.html?user_id=${encodeURIComponent(data.user_id)}`;
     }
 
@@ -961,6 +1020,7 @@
     }
 
     showLoginBtn.onclick = () => {
+      accountMenu.classList.add("hidden");
       authBox.classList.toggle("hidden");
       setAuthMessage("");
       if (!authBox.classList.contains("hidden")) {
@@ -968,9 +1028,28 @@
       }
     };
 
+    headerAvatarBtn.onclick = () => {
+      authBox.classList.add("hidden");
+      accountMenu.classList.toggle("hidden");
+    };
+
     menuBtn.onclick = () => {
       setAuthMessage("");
+      authBox.classList.add("hidden");
+      accountMenu.classList.add("hidden");
     };
+
+    document.addEventListener("click", (e) => {
+      const insideHeaderRight = e.target.closest(".header-right");
+      const insideAuthBox = e.target.closest("#authBox");
+      const isLoginButton = e.target.closest("#showLoginBtn");
+      const isAvatarButton = e.target.closest("#headerAvatarBtn");
+
+      if (!insideHeaderRight && !insideAuthBox && !isLoginButton && !isAvatarButton) {
+        authBox.classList.add("hidden");
+        accountMenu.classList.add("hidden");
+      }
+    });
 
     async function handleLogin() {
       const emailValue = email.value.trim();
