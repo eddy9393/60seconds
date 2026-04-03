@@ -19,7 +19,6 @@
       --border: rgba(255,255,255,0.08);
       --border-gold: rgba(212,175,55,0.18);
       --danger: #ff8a8a;
-      --success: #cfcfcf;
     }
 
     * {
@@ -758,12 +757,6 @@
       font-size: clamp(22px, 3vw, 30px);
     }
 
-    .panel-note {
-      color: #cfcfcf;
-      line-height: 1.7;
-      font-size: 15px;
-    }
-
     .status-box,
     .empty-box {
       padding: 18px;
@@ -899,13 +892,6 @@
         rgba(255,255,255,0.02);
       color: #dedede;
       font-size: 12px;
-    }
-
-    .footer-actions {
-      margin-top: 8px;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
     }
 
     @media (max-width: 940px) {
@@ -1227,10 +1213,12 @@
     let currentTrackData = null;
     let viewedArtistUserId = null;
     let currentUserId = null;
+
     let currentAudio = null;
     let currentAudioButton = null;
     let currentProgressBar = null;
     let currentTimeLabel = null;
+    let currentPreviewInterval = null;
 
     function getArtistUserIdFromUrl() {
       const params = new URLSearchParams(window.location.search);
@@ -1493,13 +1481,13 @@
 
       const profilePromise = supabaseClient
         .from("profiles")
-        .select("user_id, artist_name, photo_url, bio, nationality, date_of_birth, social_link, wants_promotions, accepted_terms")
+        .select("user_id, artist_name, photo_url, bio, nationality, date_of_birth, social_link")
         .eq("user_id", user.id)
         .maybeSingle();
 
       const trackPromise = supabaseClient
         .from("tracks")
-        .select("id, user_id, title, status, created_at")
+        .select("id, user_id, title, status, created_at, preview_start_seconds, preview_duration_seconds")
         .eq("user_id", user.id)
         .order("created_at", { ascending: false })
         .limit(1)
@@ -1527,16 +1515,20 @@
     }
 
     function formatTime(seconds) {
-      const safe = Math.max(0, Math.floor(seconds || 0));
+      const safe = Math.max(0, Math.floor(Number(seconds) || 0));
       const mins = Math.floor(safe / 60);
       const secs = safe % 60;
       return `${mins}:${secs.toString().padStart(2, "0")}`;
     }
 
     function stopCurrentAudio() {
+      if (currentPreviewInterval) {
+        clearInterval(currentPreviewInterval);
+        currentPreviewInterval = null;
+      }
+
       if (currentAudio) {
         currentAudio.pause();
-        currentAudio.currentTime = 0;
       }
 
       if (currentAudioButton) {
@@ -1626,6 +1618,8 @@
       card.className = "track-card";
 
       const createdAtLabel = formatDate(track.created_at);
+      const previewStart = Math.max(0, Number(track.preview_start_seconds || 0));
+      const previewDuration = Math.max(1, Math.min(60, Number(track.preview_duration_seconds || 60)));
 
       card.innerHTML = `
         <div class="track-top">
@@ -1646,7 +1640,7 @@
           </div>
 
           <div class="track-meta-row">
-            <div class="mini-pill">Preview length: 60 sec</div>
+            <div class="mini-pill">Preview: ${formatTime(previewStart)} - ${formatTime(previewStart + previewDuration)}</div>
             ${createdAtLabel ? `<div class="mini-pill">Submitted: ${escapeHtml(createdAtLabel)}</div>` : ""}
           </div>
         </div>
@@ -1659,74 +1653,49 @@
       const audio = new Audio(track.file_url);
       audio.preload = "metadata";
 
-      function updateUi() {
-        const capped = Math.min(audio.currentTime || 0, 60);
-        const percent = Math.min((capped / 60) * 100, 100);
-        progressBar.style.width = `${percent}%`;
-        timeLabel.textContent = formatTime(capped);
-      }
-
-      audio.addEventListener("timeupdate", () => {
-        if (audio.currentTime >= 60) {
-          audio.pause();
-          audio.currentTime = 0;
-          progressBar.style.width = "0%";
-          timeLabel.textContent = "0:00";
-          playBtn.textContent = "▶";
-
-          if (currentAudio === audio) {
-            currentAudio = null;
-            currentAudioButton = null;
-            currentProgressBar = null;
-            currentTimeLabel = null;
-          }
-          return;
-        }
-
-        updateUi();
-      });
-
-      audio.addEventListener("ended", () => {
-        progressBar.style.width = "0%";
-        timeLabel.textContent = "0:00";
-        playBtn.textContent = "▶";
-
-        if (currentAudio === audio) {
-          currentAudio = null;
-          currentAudioButton = null;
-          currentProgressBar = null;
-          currentTimeLabel = null;
-        }
-      });
-
-      audio.addEventListener("pause", () => {
-        if (audio.currentTime < 60) {
-          playBtn.textContent = "▶";
-        }
-      });
-
       playBtn.addEventListener("click", async () => {
         try {
           if (currentAudio && currentAudio !== audio) {
             stopCurrentAudio();
           }
 
-          if (audio.paused) {
-            currentAudio = audio;
-            currentAudioButton = playBtn;
-            currentProgressBar = progressBar;
-            currentTimeLabel = timeLabel;
-
-            await audio.play();
-            playBtn.textContent = "❚❚";
-            updateUi();
-          } else {
-            audio.pause();
-            playBtn.textContent = "▶";
+          if (!audio.paused && currentAudio === audio) {
+            stopCurrentAudio();
+            return;
           }
+
+          stopCurrentAudio();
+
+          currentAudio = audio;
+          currentAudioButton = playBtn;
+          currentProgressBar = progressBar;
+          currentTimeLabel = timeLabel;
+
+          audio.currentTime = previewStart;
+          await audio.play();
+          playBtn.textContent = "❚❚";
+
+          currentPreviewInterval = setInterval(() => {
+            const elapsed = Math.max(0, audio.currentTime - previewStart);
+            const percent = Math.min((elapsed / previewDuration) * 100, 100);
+
+            progressBar.style.width = `${percent}%`;
+            timeLabel.textContent = formatTime(elapsed);
+
+            if (audio.currentTime >= previewStart + previewDuration) {
+              stopCurrentAudio();
+            }
+          }, 120);
         } catch (err) {
           console.error(err);
           setArtistStatus("Preview could not be played.", true);
+          stopCurrentAudio();
+        }
+      });
+
+      audio.addEventListener("ended", () => {
+        if (currentAudio === audio) {
+          stopCurrentAudio();
         }
       });
 
@@ -1782,7 +1751,7 @@
 
       const { data: approvedTracks, error: tracksError } = await supabaseClient
         .from("tracks")
-        .select("id, title, artist, file_url, created_at, status, user_id")
+        .select("id, title, artist, file_url, created_at, status, user_id, preview_start_seconds, preview_duration_seconds")
         .eq("user_id", viewedArtistUserId)
         .eq("status", "approved")
         .order("created_at", { ascending: false });
