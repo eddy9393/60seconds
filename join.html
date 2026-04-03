@@ -1474,6 +1474,39 @@
       return data.publicUrl;
     }
 
+    async function saveProfileWithoutUpsert(profilePayload, userId) {
+      const { data: existingProfile, error: existingProfileError } = await supabaseClient
+        .from("profiles")
+        .select("user_id")
+        .eq("user_id", userId)
+        .maybeSingle();
+
+      if (existingProfileError) {
+        throw new Error("Could not check existing profile: " + existingProfileError.message);
+      }
+
+      if (existingProfile) {
+        const { error: updateError } = await supabaseClient
+          .from("profiles")
+          .update(profilePayload)
+          .eq("user_id", userId);
+
+        if (updateError) {
+          throw new Error("Saving profile failed: " + updateError.message);
+        }
+
+        return;
+      }
+
+      const { error: insertError } = await supabaseClient
+        .from("profiles")
+        .insert([profilePayload]);
+
+      if (insertError) {
+        throw new Error("Saving profile failed: " + insertError.message);
+      }
+    }
+
     async function handleCreateProfile() {
       const artistName = artistNameInput.value.trim();
       const bio = bioInput.value.trim();
@@ -1511,35 +1544,44 @@
         }
 
         const userId = userData.user.id;
+
+        const { data: alreadyExistingProfile, error: alreadyExistingProfileError } = await supabaseClient
+          .from("profiles")
+          .select("user_id")
+          .eq("user_id", userId)
+          .maybeSingle();
+
+        if (alreadyExistingProfileError) {
+          setStatus("Could not check existing profile: " + alreadyExistingProfileError.message, true);
+          return;
+        }
+
+        if (alreadyExistingProfile) {
+          setStatus("You already have an artist profile.", false);
+          await refreshPageState();
+          return;
+        }
+
         const photoUrl = await uploadPhotoIfNeeded(userId, photoFile);
 
         setStatus("Saving artist profile...");
 
-        const { error: profileError } = await supabaseClient
-          .from("profiles")
-          .upsert(
-            [{
-              user_id: userId,
-              artist_name: artistName,
-              bio: bio || null,
-              nationality: nationality || null,
-              date_of_birth: dateOfBirth || null,
-              social_link: socialLink || null,
-              photo_url: photoUrl || null,
-              wants_promotions: wantsPromotions,
-              accepted_terms: acceptedTerms
-            }],
-            { onConflict: "user_id" }
-          );
+        const profilePayload = {
+          user_id: userId,
+          artist_name: artistName,
+          bio: bio || null,
+          nationality: nationality || null,
+          date_of_birth: dateOfBirth || null,
+          social_link: socialLink || null,
+          photo_url: photoUrl || null,
+          wants_promotions: wantsPromotions,
+          accepted_terms: acceptedTerms
+        };
 
-        if (profileError) {
-          setStatus("Saving profile failed: " + profileError.message, true);
-          return;
-        }
+        await saveProfileWithoutUpsert(profilePayload, userId);
 
         setStatus("Artist profile created successfully.");
         photoFileInput.value = "";
-
         window.location.href = `artist.html?user_id=${encodeURIComponent(userId)}`;
       } catch (err) {
         console.error(err);
