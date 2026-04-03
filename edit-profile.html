@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Submit Track - 60 Seconds FM</title>
+  <title>Edit Profile - 60 Seconds FM</title>
 
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Manrope:wght@300;400;500;600&display=swap" rel="stylesheet">
 
@@ -462,7 +462,9 @@
     }
 
     .field-input,
-    .field-file {
+    .field-textarea,
+    .field-file,
+    .field-select {
       width: 100%;
       border-radius: 14px;
       border: 1px solid rgba(255,255,255,0.08);
@@ -478,13 +480,26 @@
     }
 
     .field-input,
-    .field-file {
+    .field-file,
+    .field-select {
       min-height: 52px;
       padding: 0 14px;
     }
 
+    .field-select {
+      appearance: none;
+    }
+
+    .field-textarea {
+      min-height: 130px;
+      padding: 14px;
+      resize: vertical;
+    }
+
     .field-input:focus,
-    .field-file:focus {
+    .field-textarea:focus,
+    .field-file:focus,
+    .field-select:focus {
       border-color: rgba(212,175,55,0.38);
       box-shadow:
         inset 0 1px 0 rgba(255,255,255,0.04),
@@ -497,12 +512,50 @@
       cursor: pointer;
     }
 
+    .checkbox-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 14px 16px;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: linear-gradient(180deg, rgba(16,16,16,0.92) 0%, rgba(12,12,12,0.96) 100%);
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.04),
+        0 6px 16px rgba(0,0,0,0.18);
+    }
+
+    .checkbox-row input[type="checkbox"] {
+      margin-top: 2px;
+      width: 18px;
+      height: 18px;
+      accent-color: var(--gold);
+      flex: 0 0 auto;
+    }
+
+    .checkbox-copy {
+      color: #ddd;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
     .form-meta {
       margin-top: 8px;
       color: #9f9f9f;
       font-size: 13px;
       line-height: 1.6;
       text-align: left;
+    }
+
+    .notice-box {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 18px;
+      padding: 16px 18px;
+      text-align: center;
+      color: #ddd;
+      line-height: 1.6;
+      margin-bottom: 18px;
     }
 
     .action-row {
@@ -526,6 +579,8 @@
       margin-top: 18px;
       display: flex;
       justify-content: center;
+      gap: 18px;
+      flex-wrap: wrap;
     }
 
     .ghost-link {
@@ -537,106 +592,6 @@
 
     .ghost-link:hover {
       opacity: 0.88;
-    }
-
-    .notice-box {
-      background: rgba(255,255,255,0.04);
-      border: 1px solid rgba(255,255,255,0.06);
-      border-radius: 18px;
-      padding: 16px 18px;
-      text-align: center;
-      color: #ddd;
-      line-height: 1.6;
-      margin-bottom: 18px;
-    }
-
-    .track-status-grid {
-      display: grid;
-      gap: 14px;
-      text-align: left;
-    }
-
-    .track-status-card {
-      border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 20px;
-      padding: 18px;
-      background:
-        linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.015)),
-        rgba(255,255,255,0.02);
-      box-shadow:
-        inset 0 1px 0 rgba(255,255,255,0.03),
-        0 12px 24px rgba(0,0,0,0.16);
-    }
-
-    .track-status-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      gap: 16px;
-      margin-bottom: 12px;
-    }
-
-    .track-status-title {
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: clamp(20px, 2.2vw, 28px);
-      color: #fff;
-      margin-bottom: 6px;
-      word-break: break-word;
-    }
-
-    .track-status-sub {
-      color: var(--gold);
-      font-size: 15px;
-      font-weight: 500;
-      word-break: break-word;
-    }
-
-    .status-pill {
-      flex: 0 0 auto;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 999px;
-      padding: 8px 12px;
-      font-size: 12px;
-      letter-spacing: 1.5px;
-      text-transform: uppercase;
-      font-family: 'Space Grotesk', sans-serif;
-      color: #231700;
-      background:
-        linear-gradient(180deg, #fff5c9 0%, #f4d77a 20%, #d4af37 52%, #b98816 75%, #7c5a11 100%);
-      border: 1px solid rgba(255, 230, 150, 0.38);
-      box-shadow:
-        inset 0 2px 0 rgba(255,255,255,0.45),
-        inset 0 -2px 4px rgba(90,50,0,0.28),
-        0 12px 26px rgba(212,175,55,0.12);
-      text-shadow: 0 1px 0 rgba(255,255,255,0.22);
-    }
-
-    .status-meta {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
-
-    .status-meta-item {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 8px 12px;
-      border-radius: 999px;
-      background: rgba(255,255,255,0.04);
-      border: 1px solid rgba(255,255,255,0.06);
-      color: #ddd;
-      font-size: 13px;
-    }
-
-    .status-meta-item .dot {
-      width: 7px;
-      height: 7px;
-      border-radius: 50%;
-      background: var(--gold);
-      box-shadow: 0 0 8px rgba(212,175,55,0.45);
     }
 
     @media (max-width: 760px) {
@@ -693,12 +648,6 @@
       .hero-card,
       .panel-card {
         padding: 20px;
-      }
-
-      .track-status-top {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 10px;
       }
     }
   </style>
@@ -762,81 +711,70 @@
 
     <main class="page-wrap">
       <section class="hero-card">
-        <div class="section-kicker">Track Submission</div>
-        <h1 class="page-title">Submit Your Track</h1>
+        <div class="section-kicker">Profile Settings</div>
+        <h1 class="page-title">Edit Your Artist Profile</h1>
         <p class="page-note">
-          Upload your one track for radio approval. Your submission will be reviewed before it can go live on 60 Seconds FM.
+          Update your artist details, profile photo and preferences while keeping your public profile current.
         </p>
       </section>
 
       <section class="panel-card">
         <div id="loginRequiredBox" class="notice-box hidden">
-          You need to be logged in before submitting a track.
+          You need to be logged in before editing your artist profile.
         </div>
 
-        <div id="profileRequiredBox" class="notice-box hidden">
-          You need to create your artist profile first before submitting a track.
-          <div style="margin-top: 10px;">
-            <a class="ghost-link" href="join.html">Create your artist profile</a>
+        <div class="form-grid" id="editFormWrap">
+          <div class="field-group">
+            <label class="field-label" for="artistName">Artist Name</label>
+            <input id="artistName" class="field-input" type="text" placeholder="Enter your artist name" />
+          </div>
+
+          <div class="field-group">
+            <label class="field-label" for="bio">Short Bio</label>
+            <textarea id="bio" class="field-textarea" placeholder="Tell listeners something about yourself"></textarea>
+          </div>
+
+          <div class="field-group">
+            <label class="field-label" for="nationality">Nationality</label>
+            <select id="nationality" class="field-select">
+              <option value="">Select your nationality</option>
+            </select>
+          </div>
+
+          <div class="field-group">
+            <label class="field-label" for="dateOfBirth">Date of Birth</label>
+            <input id="dateOfBirth" class="field-input" type="date" />
+          </div>
+
+          <div class="field-group">
+            <label class="field-label" for="socialLink">Social / Streaming Link</label>
+            <input id="socialLink" class="field-input" type="text" placeholder="https://..." />
+          </div>
+
+          <div class="field-group">
+            <label class="field-label" for="photoFile">Artist Photo</label>
+            <input id="photoFile" class="field-file" type="file" accept="image/jpeg,image/png,image/webp" />
+            <div class="form-meta">Accepted: JPG, PNG or WebP. Leave empty to keep your current photo.</div>
+          </div>
+
+          <div class="field-group">
+            <label class="field-label">Promotions</label>
+            <label class="checkbox-row" for="wantsPromotions">
+              <input id="wantsPromotions" type="checkbox" />
+              <span class="checkbox-copy">Keep me updated on promotions and platform updates.</span>
+            </label>
           </div>
         </div>
 
-        <div id="trackExistsBox" class="hidden">
-          <div class="track-status-grid">
-            <div class="track-status-card">
-              <div class="track-status-top">
-                <div>
-                  <div id="existingTrackTitle" class="track-status-title">Your submitted track</div>
-                  <div id="existingTrackArtist" class="track-status-sub">Artist</div>
-                </div>
-                <div id="existingTrackStatus" class="status-pill">Pending</div>
-              </div>
-
-              <div class="status-meta">
-                <div class="status-meta-item">
-                  <span class="dot"></span>
-                  <span>Only one track allowed</span>
-                </div>
-                <div class="status-meta-item">
-                  <span class="dot"></span>
-                  <span id="existingTrackDate">Recently submitted</span>
-                </div>
-                <div class="status-meta-item">
-                  <span class="dot"></span>
-                  <span id="existingTrackPlays">0 plays</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div id="trackExistsMessage" class="status-box">
-            You already submitted a track. Right now, each artist can have only one track on the platform.
-          </div>
-        </div>
-
-        <div id="submitFormWrap" class="hidden">
-          <div class="form-grid">
-            <div class="field-group">
-              <label class="field-label" for="title">Track Title</label>
-              <input id="title" class="field-input" type="text" placeholder="Enter your track title" />
-            </div>
-
-            <div class="field-group">
-              <label class="field-label" for="trackFile">Track File</label>
-              <input id="trackFile" class="field-file" type="file" accept=".mp3,audio/mpeg,audio/mp3" />
-              <div class="form-meta">Accepted: MP3 only.</div>
-            </div>
-          </div>
-
-          <div class="action-row">
-            <button id="submitTrackBtn" class="submit-link" type="button">Submit Track</button>
-          </div>
+        <div class="action-row" id="actionRow">
+          <button id="saveProfileBtn" class="submit-link" type="button">Save Profile</button>
         </div>
 
         <div id="status" class="status-box"></div>
 
         <div class="sub-link-row">
           <a class="ghost-link" href="index.html">Back to homepage</a>
+          <a class="ghost-link" id="viewArtistLink" href="#">View artist page</a>
         </div>
       </section>
     </main>
@@ -849,6 +787,29 @@
       "https://rgoutegbcpjytplqcwze.supabase.co",
       "sb_publishable_255qyDKS77nMU0pbedfa_A_3hdgtEHh"
     );
+
+    const COUNTRY_OPTIONS = [
+      "Afghanistan","Albania","Algeria","Andorra","Angola","Antigua and Barbuda","Argentina","Armenia","Australia","Austria",
+      "Azerbaijan","Bahamas","Bahrain","Bangladesh","Barbados","Belarus","Belgium","Belize","Benin","Bhutan",
+      "Bolivia","Bosnia and Herzegovina","Botswana","Brazil","Brunei","Bulgaria","Burkina Faso","Burundi","Cabo Verde","Cambodia",
+      "Cameroon","Canada","Central African Republic","Chad","Chile","China","Colombia","Comoros","Congo","Costa Rica",
+      "Croatia","Cuba","Cyprus","Czech Republic","Democratic Republic of the Congo","Denmark","Djibouti","Dominica","Dominican Republic","Ecuador",
+      "Egypt","El Salvador","Equatorial Guinea","Eritrea","Estonia","Eswatini","Ethiopia","Fiji","Finland","France",
+      "Gabon","Gambia","Georgia","Germany","Ghana","Greece","Grenada","Guatemala","Guinea","Guinea-Bissau",
+      "Guyana","Haiti","Honduras","Hungary","Iceland","India","Indonesia","Iran","Iraq","Ireland",
+      "Israel","Italy","Jamaica","Japan","Jordan","Kazakhstan","Kenya","Kiribati","Kuwait","Kyrgyzstan",
+      "Laos","Latvia","Lebanon","Lesotho","Liberia","Libya","Liechtenstein","Lithuania","Luxembourg","Madagascar",
+      "Malawi","Malaysia","Maldives","Mali","Malta","Marshall Islands","Mauritania","Mauritius","Mexico","Micronesia",
+      "Moldova","Monaco","Mongolia","Montenegro","Morocco","Mozambique","Myanmar","Namibia","Nauru","Nepal",
+      "Netherlands","New Zealand","Nicaragua","Niger","Nigeria","North Korea","North Macedonia","Norway","Oman","Pakistan",
+      "Palau","Palestine","Panama","Papua New Guinea","Paraguay","Peru","Philippines","Poland","Portugal","Qatar",
+      "Romania","Russia","Rwanda","Saint Kitts and Nevis","Saint Lucia","Saint Vincent and the Grenadines","Samoa","San Marino","Sao Tome and Principe","Saudi Arabia",
+      "Senegal","Serbia","Seychelles","Sierra Leone","Singapore","Slovakia","Slovenia","Solomon Islands","Somalia","South Africa",
+      "South Korea","South Sudan","Spain","Sri Lanka","Sudan","Suriname","Sweden","Switzerland","Syria","Taiwan",
+      "Tajikistan","Tanzania","Thailand","Timor-Leste","Togo","Tonga","Trinidad and Tobago","Tunisia","Turkey","Turkmenistan",
+      "Tuvalu","Uganda","Ukraine","United Arab Emirates","United Kingdom","United States","Uruguay","Uzbekistan","Vanuatu","Vatican City",
+      "Venezuela","Vietnam","Yemen","Zambia","Zimbabwe"
+    ];
 
     const showLoginBtn = document.getElementById("showLoginBtn");
     const headerAvatarBtn = document.getElementById("headerAvatarBtn");
@@ -867,22 +828,31 @@
     const profileLink = document.getElementById("profileLink");
 
     const loginRequiredBox = document.getElementById("loginRequiredBox");
-    const profileRequiredBox = document.getElementById("profileRequiredBox");
-    const trackExistsBox = document.getElementById("trackExistsBox");
-    const submitFormWrap = document.getElementById("submitFormWrap");
-    const titleInput = document.getElementById("title");
-    const trackFileInput = document.getElementById("trackFile");
-    const submitTrackBtn = document.getElementById("submitTrackBtn");
+    const editFormWrap = document.getElementById("editFormWrap");
+    const actionRow = document.getElementById("actionRow");
+    const viewArtistLink = document.getElementById("viewArtistLink");
+
+    const artistNameInput = document.getElementById("artistName");
+    const bioInput = document.getElementById("bio");
+    const nationalityInput = document.getElementById("nationality");
+    const dateOfBirthInput = document.getElementById("dateOfBirth");
+    const socialLinkInput = document.getElementById("socialLink");
+    const photoFileInput = document.getElementById("photoFile");
+    const wantsPromotionsInput = document.getElementById("wantsPromotions");
+    const saveProfileBtn = document.getElementById("saveProfileBtn");
     const statusEl = document.getElementById("status");
 
-    const existingTrackTitleEl = document.getElementById("existingTrackTitle");
-    const existingTrackArtistEl = document.getElementById("existingTrackArtist");
-    const existingTrackStatusEl = document.getElementById("existingTrackStatus");
-    const existingTrackDateEl = document.getElementById("existingTrackDate");
-    const existingTrackPlaysEl = document.getElementById("existingTrackPlays");
-
     let currentProfile = null;
-    let currentTrack = null;
+
+    function populateCountryOptions() {
+      nationalityInput.innerHTML = '<option value="">Select your nationality</option>';
+      COUNTRY_OPTIONS.forEach(country => {
+        const option = document.createElement("option");
+        option.value = country;
+        option.textContent = country;
+        nationalityInput.appendChild(option);
+      });
+    }
 
     function setAuthMessage(msg, error = false) {
       if (msg === "Auth session missing!") msg = "";
@@ -917,13 +887,6 @@
       }
     }
 
-    function resetPageState() {
-      loginRequiredBox.classList.add("hidden");
-      profileRequiredBox.classList.add("hidden");
-      trackExistsBox.classList.add("hidden");
-      submitFormWrap.classList.add("hidden");
-    }
-
     function setLoggedOutView() {
       closeMenus();
       userBox.classList.add("hidden");
@@ -932,8 +895,9 @@
       headerAvatarImage.classList.add("hidden");
       headerAvatarFallback.classList.add("hidden");
       headerAvatarImage.src = "";
-      resetPageState();
       loginRequiredBox.classList.remove("hidden");
+      editFormWrap.classList.add("hidden");
+      actionRow.classList.add("hidden");
     }
 
     function setLoggedInView() {
@@ -941,73 +905,42 @@
       userBox.classList.remove("hidden");
       showLoginBtn.classList.add("hidden");
       headerAvatarBtn.classList.remove("hidden");
+      loginRequiredBox.classList.add("hidden");
+      editFormWrap.classList.remove("hidden");
+      actionRow.classList.remove("hidden");
     }
 
-    function formatDate(dateString) {
-      if (!dateString) return "Recently submitted";
-      const date = new Date(dateString);
-      if (Number.isNaN(date.getTime())) return "Recently submitted";
-
-      return date.toLocaleDateString("en-GB", {
-        day: "2-digit",
-        month: "short",
-        year: "numeric"
-      });
-    }
-
-    function normalizeStatusLabel(status) {
-      const value = String(status || "pending").toLowerCase();
-      if (value === "approved") return "Approved";
-      if (value === "pending") return "Pending";
-      if (value === "rejected") return "Rejected";
-      return value.charAt(0).toUpperCase() + value.slice(1);
-    }
-
-    function renderExistingTrack(track) {
-      existingTrackTitleEl.textContent = track.title || "Untitled";
-      existingTrackArtistEl.textContent = track.artist || "Unknown Artist";
-      existingTrackStatusEl.textContent = normalizeStatusLabel(track.status);
-      existingTrackDateEl.textContent = formatDate(track.created_at);
-      existingTrackPlaysEl.textContent = `${Number(track.play_count || 0).toLocaleString()} plays`;
+    function fillProfileForm(profile) {
+      artistNameInput.value = profile?.artist_name || "";
+      bioInput.value = profile?.bio || "";
+      nationalityInput.value = profile?.nationality || "";
+      dateOfBirthInput.value = profile?.date_of_birth || "";
+      socialLinkInput.value = profile?.social_link || "";
+      wantsPromotionsInput.checked = Boolean(profile?.wants_promotions);
     }
 
     async function loadMyProfile(userId) {
       const { data, error } = await supabaseClient
         .from("profiles")
-        .select("artist_name, photo_url, user_id")
+        .select("artist_name, bio, nationality, date_of_birth, social_link, photo_url, wants_promotions, accepted_terms, user_id")
         .eq("user_id", userId)
         .maybeSingle();
 
       if (error || !data) {
         currentProfile = null;
         profileLink.href = "#";
+        viewArtistLink.href = "#";
         setHeaderAvatar("", "•");
+        fillProfileForm(null);
         return null;
       }
 
       currentProfile = data;
       setHeaderAvatar(data.photo_url, data.artist_name);
       profileLink.href = `artist.html?user_id=${encodeURIComponent(data.user_id)}`;
+      viewArtistLink.href = `artist.html?user_id=${encodeURIComponent(data.user_id)}`;
+      fillProfileForm(data);
       return data;
-    }
-
-    async function loadMyTrack(userId) {
-      const { data, error } = await supabaseClient
-        .from("tracks")
-        .select("id, title, artist, file_url, status, play_count, created_at, user_id")
-        .eq("user_id", userId)
-        .order("created_at", { ascending: false })
-        .limit(1)
-        .maybeSingle();
-
-      if (error) {
-        console.error("loadMyTrack error:", error);
-        currentTrack = null;
-        return null;
-      }
-
-      currentTrack = data || null;
-      return currentTrack;
     }
 
     async function refreshAuthUI() {
@@ -1016,6 +949,8 @@
 
         if (error) {
           setLoggedOutView();
+          currentProfile = null;
+          fillProfileForm(null);
           return null;
         }
 
@@ -1027,43 +962,17 @@
           return user;
         } else {
           setLoggedOutView();
+          currentProfile = null;
+          fillProfileForm(null);
           return null;
         }
       } catch (err) {
         console.error("refreshAuthUI error:", err);
         setLoggedOutView();
+        currentProfile = null;
+        fillProfileForm(null);
         return null;
       }
-    }
-
-    async function refreshSubmissionState() {
-      resetPageState();
-      setStatus("");
-
-      const { data, error } = await supabaseClient.auth.getSession();
-      const user = error ? null : data?.session?.user || null;
-
-      if (!user) {
-        loginRequiredBox.classList.remove("hidden");
-        return;
-      }
-
-      const profile = currentProfile || await loadMyProfile(user.id);
-
-      if (!profile) {
-        profileRequiredBox.classList.remove("hidden");
-        return;
-      }
-
-      const track = await loadMyTrack(user.id);
-
-      if (track) {
-        renderExistingTrack(track);
-        trackExistsBox.classList.remove("hidden");
-        return;
-      }
-
-      submitFormWrap.classList.remove("hidden");
     }
 
     async function handleLogin() {
@@ -1091,8 +1000,8 @@
         }
 
         clearLoginFields();
+        setStatus("");
         await refreshAuthUI();
-        await refreshSubmissionState();
       } catch (err) {
         console.error("handleLogin error:", err);
         setAuthMessage("Login failed. Try again.", true);
@@ -1128,7 +1037,6 @@
 
         setAuthMessage("Account created. Check your email.");
         await refreshAuthUI();
-        await refreshSubmissionState();
       } catch (err) {
         console.error("handleSignup error:", err);
         setAuthMessage("Sign up failed. Try again.", true);
@@ -1152,9 +1060,8 @@
 
         clearLoginFields();
         currentProfile = null;
-        currentTrack = null;
+        setStatus("");
         await refreshAuthUI();
-        await refreshSubmissionState();
       } catch (err) {
         console.error("handleLogout error:", err);
         setAuthMessage("Logout failed. Try again.", true);
@@ -1163,17 +1070,49 @@
       }
     }
 
-    async function handleTrackSubmit() {
-      const title = titleInput.value.trim();
-      const trackFile = trackFileInput.files[0];
+    async function uploadPhotoIfNeeded(userId, photoFile) {
+      if (!photoFile) {
+        return currentProfile?.photo_url || "";
+      }
 
-      if (!title || !trackFile) {
-        setStatus("Please enter a track title and choose your MP3 file.", true);
+      const photoPath = `${userId}/${Date.now()}-${photoFile.name.replace(/\s+/g, "-")}`;
+
+      const { error: photoUploadError } = await supabaseClient
+        .storage
+        .from("artist-photos")
+        .upload(photoPath, photoFile, {
+          cacheControl: "3600",
+          upsert: true
+        });
+
+      if (photoUploadError) {
+        throw new Error("Photo upload failed: " + photoUploadError.message);
+      }
+
+      const { data: photoUrlData } = supabaseClient
+        .storage
+        .from("artist-photos")
+        .getPublicUrl(photoPath);
+
+      return photoUrlData.publicUrl;
+    }
+
+    async function handleSaveProfile() {
+      const artistName = artistNameInput.value.trim();
+      const bio = bioInput.value.trim();
+      const nationality = nationalityInput.value.trim();
+      const dateOfBirth = dateOfBirthInput.value;
+      const socialLink = socialLinkInput.value.trim();
+      const photoFile = photoFileInput.files[0];
+      const wantsPromotions = wantsPromotionsInput.checked;
+
+      if (!artistName) {
+        setStatus("Please enter your artist name.", true);
         return;
       }
 
-      submitTrackBtn.disabled = true;
-      setStatus("Checking account...");
+      saveProfileBtn.disabled = true;
+      setStatus("Checking login...");
 
       try {
         const { data: userData, error: userError } = await supabaseClient.auth.getUser();
@@ -1184,80 +1123,47 @@
         }
 
         if (!userData.user) {
-          setStatus("You must be logged in before submitting a track.", true);
+          setStatus("You must be logged in before editing your profile.", true);
           return;
         }
 
         const userId = userData.user.id;
+        const photoUrl = await uploadPhotoIfNeeded(userId, photoFile);
 
-        const profile = currentProfile || await loadMyProfile(userId);
-        if (!profile) {
-          setStatus("Please create your artist profile first.", true);
-          await refreshSubmissionState();
-          return;
-        }
+        setStatus("Saving profile...");
 
-        const existingTrack = await loadMyTrack(userId);
-        if (existingTrack) {
-          setStatus("You already submitted a track.", true);
-          await refreshSubmissionState();
-          return;
-        }
-
-        setStatus("Uploading track...");
-
-        const trackPath = `${userId}/${Date.now()}-${trackFile.name.replace(/\s+/g, "-")}`;
-
-        const { error: trackUploadError } = await supabaseClient
-          .storage
-          .from("tracks")
-          .upload(trackPath, trackFile, {
-            cacheControl: "3600",
-            upsert: false
-          });
-
-        if (trackUploadError) {
-          setStatus("Track upload failed: " + trackUploadError.message, true);
-          return;
-        }
-
-        const { data: trackUrlData } = supabaseClient
-          .storage
-          .from("tracks")
-          .getPublicUrl(trackPath);
-
-        const trackUrl = trackUrlData.publicUrl;
-
-        setStatus("Saving track...");
-
-        const { error: trackInsertError } = await supabaseClient
-          .from("tracks")
-          .insert([
+        const { error: profileError } = await supabaseClient
+          .from("profiles")
+          .upsert([
             {
-              title: title,
-              artist: profile.artist_name || "Unknown Artist",
-              file_url: trackUrl,
               user_id: userId,
-              status: "pending",
-              play_count: 0
+              artist_name: artistName,
+              bio: bio,
+              nationality: nationality || null,
+              date_of_birth: dateOfBirth || null,
+              social_link: socialLink,
+              photo_url: photoUrl,
+              wants_promotions: wantsPromotions,
+              accepted_terms: currentProfile?.accepted_terms ?? true
             }
           ]);
 
-        if (trackInsertError) {
-          setStatus("Saving track failed: " + trackInsertError.message, true);
+        if (profileError) {
+          setStatus("Saving profile failed: " + profileError.message, true);
           return;
         }
 
-        titleInput.value = "";
-        trackFileInput.value = "";
-        setStatus("Track submitted successfully.");
+        photoFileInput.value = "";
+        setStatus("Profile updated successfully.");
 
-        await refreshSubmissionState();
+        await loadMyProfile(userId);
+
+        window.location.href = `artist.html?user_id=${encodeURIComponent(userId)}`;
       } catch (err) {
-        console.error("track submit error:", err);
-        setStatus("Something went wrong while submitting your track.", true);
+        console.error("save profile error:", err);
+        setStatus(err.message || "Something went wrong while saving your profile.", true);
       } finally {
-        submitTrackBtn.disabled = false;
+        saveProfileBtn.disabled = false;
       }
     }
 
@@ -1296,7 +1202,7 @@
     loginBtn.onclick = handleLogin;
     signupBtn.onclick = handleSignup;
     logoutBtn.onclick = handleLogout;
-    submitTrackBtn.onclick = handleTrackSubmit;
+    saveProfileBtn.onclick = handleSaveProfile;
 
     email.addEventListener("keydown", (e) => {
       if (e.key === "Enter") handleLogin();
@@ -1307,16 +1213,15 @@
     });
 
     supabaseClient.auth.onAuthStateChange(() => {
-      refreshAuthUI()
-        .then(() => refreshSubmissionState())
-        .catch(err => console.error(err));
+      refreshAuthUI().catch(err => console.error(err));
     });
 
     async function initPage() {
+      populateCountryOptions();
       setLoggedOutView();
+      fillProfileForm(null);
       setStatus("");
       await refreshAuthUI();
-      await refreshSubmissionState();
     }
 
     initPage().catch(err => {
