@@ -11,16 +11,13 @@
     :root {
       --gold: #d4af37;
       --gold-2: #f4d77a;
-      --gold-3: #fff3bf;
       --gold-dark: #8f6b13;
       --text: #f5f5f5;
       --muted: #a8a8a8;
-      --line: rgba(212, 175, 55, 0.22);
       --top-btn-height: 52px;
 
       --fs-label: 12px;
       --fs-body: 14px;
-      --fs-body-lg: 17px;
       --fs-artist: 18px;
       --fs-stat-label: 12px;
       --fs-stat-value: clamp(26px, 4vw, 34px);
@@ -528,16 +525,13 @@
       margin-top: 18px;
       display: flex;
       justify-content: center;
-      position: relative;
       min-height: 50px;
     }
 
     .volume-control {
       display: inline-flex;
       align-items: center;
-      justify-content: center;
-      gap: 12px;
-      position: relative;
+      gap: 10px;
     }
 
     .volume-slider-inline {
@@ -549,13 +543,13 @@
     }
 
     .volume-control.open .volume-slider-inline {
-      width: 150px;
+      width: 156px;
       opacity: 1;
       margin-left: 4px;
     }
 
     .volume-slider-inline input[type="range"] {
-      width: 150px;
+      width: 156px;
       margin: 0;
       accent-color: var(--gold);
     }
@@ -577,83 +571,28 @@
         inset 0 -2px 3px rgba(0,0,0,0.18),
         0 10px 22px rgba(0,0,0,0.25);
       flex: 0 0 auto;
+      padding: 0;
     }
 
     .volume-button:hover {
       filter: brightness(1.02);
     }
 
-    .volume-icon {
-      position: relative;
-      width: 24px;
-      height: 24px;
-      display: inline-block;
+    .volume-button svg {
+      width: 23px;
+      height: 23px;
+      display: block;
     }
 
-    .volume-icon .speaker-body {
-      position: absolute;
-      left: 1px;
-      top: 7px;
-      width: 8px;
-      height: 10px;
-      background: #1a1a1a;
-      border-radius: 2px;
-    }
-
-    .volume-icon .speaker-cone {
-      position: absolute;
-      left: 7px;
-      top: 4px;
-      width: 0;
-      height: 0;
-      border-top: 8px solid transparent;
-      border-bottom: 8px solid transparent;
-      border-left: 10px solid #1a1a1a;
-    }
-
-    .volume-icon .wave1,
-    .volume-icon .wave2,
-    .volume-icon .mute-line {
-      position: absolute;
-    }
-
-    .volume-icon .wave1 {
-      right: 3px;
-      top: 7px;
-      width: 6px;
-      height: 10px;
-      border: 2px solid #1a1a1a;
-      border-left: 0;
-      border-radius: 0 10px 10px 0;
-    }
-
-    .volume-icon .wave2 {
-      right: -1px;
-      top: 4px;
-      width: 10px;
-      height: 16px;
-      border: 2px solid #1a1a1a;
-      border-left: 0;
-      border-radius: 0 14px 14px 0;
-    }
-
-    .volume-button.muted .wave1,
-    .volume-button.muted .wave2 {
-      opacity: 0;
-    }
-
-    .volume-icon .mute-line {
+    .volume-button .icon-muted {
       display: none;
-      left: 3px;
-      top: 10px;
-      width: 18px;
-      height: 2.5px;
-      background: #1a1a1a;
-      transform: rotate(-45deg);
-      border-radius: 999px;
     }
 
-    .volume-button.muted .mute-line {
+    .volume-button.muted .icon-on {
+      display: none;
+    }
+
+    .volume-button.muted .icon-muted {
       display: block;
     }
 
@@ -880,13 +819,16 @@
           <div class="volume-wrap">
             <div id="volumeControl" class="volume-control">
               <button id="volumeBtn" class="volume-button" type="button" aria-label="Volume">
-                <span class="volume-icon" aria-hidden="true">
-                  <span class="speaker-body"></span>
-                  <span class="speaker-cone"></span>
-                  <span class="wave1"></span>
-                  <span class="wave2"></span>
-                  <span class="mute-line"></span>
-                </span>
+                <svg class="icon-on" viewBox="0 0 24 24" aria-hidden="true">
+                  <path fill="#1a1a1a" d="M3 10.5h4.2L12 6.5v11L7.2 13.5H3z"></path>
+                  <path fill="none" stroke="#1a1a1a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M15.2 9.2c1 .7 1.8 1.8 1.8 2.8s-.8 2.1-1.8 2.8"></path>
+                  <path fill="none" stroke="#1a1a1a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M17.8 6.8c1.8 1.3 3.2 3.1 3.2 5.2s-1.4 3.9-3.2 5.2"></path>
+                </svg>
+                <svg class="icon-muted" viewBox="0 0 24 24" aria-hidden="true">
+                  <path fill="#1a1a1a" d="M3 10.5h4.2L12 6.5v11L7.2 13.5H3z"></path>
+                  <path fill="none" stroke="#1a1a1a" stroke-width="2.2" stroke-linecap="round" d="M16 8l5 8"></path>
+                  <path fill="none" stroke="#1a1a1a" stroke-width="2.2" stroke-linecap="round" d="M21 8l-5 8"></path>
+                </svg>
               </button>
 
               <div class="volume-slider-inline">
@@ -1247,8 +1189,11 @@
           return;
         }
 
+        listenerIdentity = null;
         clearLoginFields();
         await refreshAuthDependentUI();
+        await registerListener();
+        await updateListeners();
       } catch (err) {
         console.error("handleLogin error:", err);
         setAuthMessage("Login failed. Try again.", true);
@@ -1305,8 +1250,11 @@
           return;
         }
 
+        listenerIdentity = null;
         clearLoginFields();
         await refreshAuthDependentUI();
+        await registerListener();
+        await updateListeners();
       } catch (err) {
         console.error("handleLogout error:", err);
         setAuthMessage("Logout failed. Try again.", true);
@@ -1481,6 +1429,8 @@
 
     async function registerListener() {
       try {
+        if (!liveBooted) return;
+
         if (!listenerIdentity) {
           listenerIdentity = await getListenerIdentity();
         }
@@ -1492,9 +1442,7 @@
               user_id: listenerIdentity,
               last_seen: new Date().toISOString()
             }],
-            {
-              onConflict: "user_id"
-            }
+            { onConflict: "user_id" }
           );
 
         if (error) {
@@ -1516,9 +1464,11 @@
 
         if (!error && count !== null) {
           listenersCountEl.textContent = `${count.toLocaleString()} Listeners`;
+        } else if (error) {
+          console.error("updateListeners error:", error);
         }
       } catch (err) {
-        console.error("updateListeners error:", err);
+        console.error("updateListeners crash:", err);
       }
     }
 
@@ -1539,6 +1489,7 @@
       nextTrack(randomLiveOffset, false);
       liveBooted = true;
 
+      await registerListener();
       await updateListeners();
     }
 
@@ -1610,18 +1561,12 @@
     volume.addEventListener("input", (e) => {
       const v = Number(e.target.value);
       audio.volume = v;
-
-      if (isLiveActivated) {
-        audio.muted = v === 0;
-      } else {
-        audio.muted = true;
-      }
-
+      audio.muted = v === 0 || !isLiveActivated;
       updateVolumeButtonState();
     });
 
     document.addEventListener("visibilitychange", () => {
-      if (!document.hidden && isLiveActivated) {
+      if (!document.hidden && liveBooted) {
         registerListener().catch(() => {});
         updateListeners().catch(() => {});
       }
@@ -1629,7 +1574,7 @@
     });
 
     window.addEventListener("focus", () => {
-      if (isLiveActivated) {
+      if (liveBooted) {
         registerListener().catch(() => {});
         updateListeners().catch(() => {});
       }
@@ -1637,7 +1582,7 @@
     });
 
     setInterval(() => {
-      if (isLiveActivated) {
+      if (liveBooted && !document.hidden) {
         registerListener();
       }
     }, 15000);
