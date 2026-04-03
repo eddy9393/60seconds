@@ -65,11 +65,11 @@
       top: 0;
       z-index: 40;
       display: grid;
-      grid-template-columns: 56px 1fr 56px;
+      grid-template-columns: 45px 1fr 45px;
       align-items: center;
-      gap: 12px;
-      min-height: 92px;
-      padding: 10px 8px 6px;
+      gap: 10px;
+      min-height: 74px;
+      padding: 8px 6px 4px;
       background: linear-gradient(180deg, rgba(0,0,0,0.74), rgba(0,0,0,0.42) 70%, rgba(0,0,0,0));
       backdrop-filter: blur(6px);
     }
@@ -103,7 +103,7 @@
 
     .header-logo {
       display: block;
-      width: min(360px, 56vw);
+      width: min(288px, 45vw);
       height: auto;
       filter:
         drop-shadow(0 8px 18px rgba(0, 0, 0, 0.35))
@@ -111,8 +111,8 @@
     }
 
     .header-icon-btn {
-      width: 52px;
-      height: 52px;
+      width: 42px;
+      height: 42px;
       border-radius: 999px;
       border: 1px solid rgba(255,255,255,0.14);
       background:
@@ -140,28 +140,28 @@
 
     .menu-icon {
       position: relative;
-      width: 24px;
-      height: 18px;
+      width: 20px;
+      height: 16px;
     }
 
     .menu-icon span {
       position: absolute;
       left: 0;
-      width: 24px;
-      height: 4px;
+      width: 20px;
+      height: 3px;
       border-radius: 999px;
       background: #f5f5f5;
       box-shadow: 0 1px 8px rgba(0,0,0,0.26);
     }
 
     .menu-icon span:nth-child(1) { top: 0; }
-    .menu-icon span:nth-child(2) { top: 7px; }
-    .menu-icon span:nth-child(3) { top: 14px; }
+    .menu-icon span:nth-child(2) { top: 6px; }
+    .menu-icon span:nth-child(3) { top: 12px; }
 
     .person-icon {
       position: relative;
-      width: 26px;
-      height: 26px;
+      width: 22px;
+      height: 22px;
     }
 
     .person-icon::before,
@@ -170,29 +170,29 @@
       position: absolute;
       left: 50%;
       transform: translateX(-50%);
-      border: 2.5px solid #f5f5f5;
+      border: 2.2px solid #f5f5f5;
       box-sizing: border-box;
     }
 
     .person-icon::before {
       top: 0;
-      width: 14px;
-      height: 14px;
+      width: 12px;
+      height: 12px;
       border-radius: 50%;
     }
 
     .person-icon::after {
       bottom: -1px;
-      width: 24px;
-      height: 13px;
+      width: 21px;
+      height: 11px;
       border-top-left-radius: 16px;
       border-top-right-radius: 16px;
       border-bottom: 0;
     }
 
     .header-avatar-btn {
-      width: 52px;
-      height: 52px;
+      width: 42px;
+      height: 42px;
       border-radius: 50%;
       padding: 0;
       overflow: hidden;
@@ -220,13 +220,13 @@
       background: linear-gradient(180deg, #3a2d0d, #a98325);
       color: #fff;
       font-weight: 700;
-      font-size: 18px;
+      font-size: 15px;
       font-family: 'Space Grotesk', sans-serif;
     }
 
     .account-menu {
       position: absolute;
-      top: 62px;
+      top: 52px;
       right: 0;
       min-width: 170px;
       padding: 8px;
@@ -688,17 +688,23 @@
       }
 
       .header-bar {
-        grid-template-columns: 52px 1fr 52px;
-        min-height: 84px;
-        padding: 8px 2px 4px;
+        grid-template-columns: 42px 1fr 42px;
+        min-height: 68px;
+        padding: 6px 2px 2px;
       }
 
       .header-logo {
-        width: min(250px, 46vw);
+        width: min(200px, 40vw);
+      }
+
+      .header-icon-btn,
+      .header-avatar-btn {
+        width: 38px;
+        height: 38px;
       }
 
       .account-menu {
-        top: 58px;
+        top: 48px;
         right: 0;
         min-width: 150px;
       }
@@ -1204,8 +1210,6 @@
         listenerIdentity = null;
         clearLoginFields();
         await refreshAuthDependentUI();
-        await registerListener();
-        await updateListeners();
       } catch (err) {
         console.error("handleLogin error:", err);
         setAuthMessage("Login failed. Try again.", true);
@@ -1265,8 +1269,6 @@
         listenerIdentity = null;
         clearLoginFields();
         await refreshAuthDependentUI();
-        await registerListener();
-        await updateListeners();
       } catch (err) {
         console.error("handleLogout error:", err);
         setAuthMessage("Logout failed. Try again.", true);
@@ -1441,7 +1443,7 @@
 
     async function registerListener() {
       try {
-        if (!liveBooted) return;
+        if (!isLiveActivated) return;
 
         if (!listenerIdentity) {
           listenerIdentity = await getListenerIdentity();
@@ -1490,6 +1492,7 @@
       if (!tracks.length) {
         titleEl.textContent = "No live tracks yet";
         artistWrapEl.innerHTML = `<span>Check back soon</span>`;
+        await updateListeners();
         return;
       }
 
@@ -1501,7 +1504,6 @@
       nextTrack(randomLiveOffset, false);
       liveBooted = true;
 
-      await registerListener();
       await updateListeners();
     }
 
@@ -1517,6 +1519,7 @@
 
     startBtn.onclick = async () => {
       isLiveActivated = true;
+      listenerIdentity = null;
 
       await registerListener();
       await updateListeners();
@@ -1578,23 +1581,23 @@
     });
 
     document.addEventListener("visibilitychange", () => {
-      if (!document.hidden && liveBooted) {
+      if (!document.hidden && isLiveActivated) {
         registerListener().catch(() => {});
-        updateListeners().catch(() => {});
       }
+      updateListeners().catch(() => {});
       ensureBackgroundPlayback();
     });
 
     window.addEventListener("focus", () => {
-      if (liveBooted) {
+      if (isLiveActivated) {
         registerListener().catch(() => {});
-        updateListeners().catch(() => {});
       }
+      updateListeners().catch(() => {});
       ensureBackgroundPlayback();
     });
 
     setInterval(() => {
-      if (liveBooted && !document.hidden) {
+      if (isLiveActivated && !document.hidden) {
         registerListener();
       }
     }, 15000);
