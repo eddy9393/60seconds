@@ -261,8 +261,8 @@
       position: absolute;
       top: 52px;
       right: 0;
-      min-width: 170px;
-      padding: 8px;
+      min-width: 210px;
+      padding: 10px;
       border-radius: 18px;
       background:
         linear-gradient(180deg, rgba(20,20,20,0.96), rgba(10,10,10,0.98));
@@ -271,10 +271,19 @@
         0 18px 40px rgba(0,0,0,0.38),
         inset 0 1px 0 rgba(255,255,255,0.04);
       backdrop-filter: blur(8px);
+      z-index: 90;
     }
 
+    .account-menu-actions {
+      display: grid;
+      gap: 8px;
+    }
+
+    .account-menu-link,
     .account-menu button {
       width: 100%;
+      text-decoration: none;
+      text-align: center;
     }
 
     .auth-box.compact-auth {
@@ -742,6 +751,61 @@
       margin-bottom: 10px;
     }
 
+    .track-meta-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      margin-bottom: 18px;
+      min-height: 82px;
+    }
+
+    .now-playing-avatar-link {
+      width: 74px;
+      height: 74px;
+      border-radius: 50%;
+      overflow: hidden;
+      flex: 0 0 74px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+      border: 2px solid rgba(212,175,55,0.42);
+      background: rgba(255,255,255,0.03);
+      box-shadow:
+        0 14px 30px rgba(0,0,0,0.28),
+        0 0 0 4px rgba(212,175,55,0.06);
+    }
+
+    .now-playing-avatar-link:hover {
+      transform: translateY(-1px);
+      filter: brightness(1.03);
+    }
+
+    .now-playing-avatar-image,
+    .now-playing-avatar-fallback {
+      width: 100%;
+      height: 100%;
+      display: block;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+
+    .now-playing-avatar-fallback {
+      display: flex !important;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(180deg, #3a2d0d, #a98325);
+      color: #fff;
+      font-weight: 700;
+      font-size: 24px;
+      font-family: 'Space Grotesk', sans-serif;
+    }
+
+    .track-meta-text {
+      min-width: 0;
+    }
+
     .track-title {
       font-family: 'Space Grotesk', sans-serif;
       font-size: var(--fs-track-title);
@@ -752,7 +816,7 @@
     }
 
     .artist-wrap {
-      margin: 0 0 18px;
+      margin: 0;
       font-size: var(--fs-artist);
       font-family: 'Manrope', sans-serif;
       font-weight: 400;
@@ -1001,6 +1065,21 @@
         padding: 20px;
       }
 
+      .track-meta-row {
+        gap: 12px;
+        align-items: flex-start;
+      }
+
+      .now-playing-avatar-link {
+        width: 60px;
+        height: 60px;
+        flex-basis: 60px;
+      }
+
+      .now-playing-avatar-fallback {
+        font-size: 20px;
+      }
+
       .auth-row .metal-btn,
       .submit-link {
         width: 100%;
@@ -1150,7 +1229,10 @@
         </div>
 
         <div id="accountMenu" class="account-menu hidden">
-          <button id="logout" class="metal-btn" type="button"><span class="icon">⎋</span>Log out</button>
+          <div class="account-menu-actions">
+            <a id="accountProfileLink" class="metal-btn account-menu-link hidden" href="javascript:void(0)">My Profile</a>
+            <button id="logout" class="metal-btn" type="button"><span class="icon">⎋</span>Log out</button>
+          </div>
         </div>
       </div>
     </header>
@@ -1175,8 +1257,18 @@
       <div id="radioShell" class="radio-shell pre-live">
         <div id="player">
           <div class="now-playing">Now Playing</div>
-          <h2 id="title" class="track-title">Loading...</h2>
-          <p id="artistWrap" class="artist-wrap"><span id="artist">—</span></p>
+
+          <div class="track-meta-row">
+            <a id="nowPlayingArtistLink" class="now-playing-avatar-link hidden" href="#">
+              <img id="nowPlayingArtistImage" class="now-playing-avatar-image hidden" src="" alt="Artist photo" />
+              <div id="nowPlayingArtistFallback" class="now-playing-avatar-fallback hidden">A</div>
+            </a>
+
+            <div class="track-meta-text">
+              <h2 id="title" class="track-title">Loading...</h2>
+              <p id="artistWrap" class="artist-wrap"><span id="artist">—</span></p>
+            </div>
+          </div>
 
           <div class="time-row">
             <span id="elapsedTime">0:00</span>
@@ -1259,6 +1351,7 @@
     const headerAvatarImage = document.getElementById("headerAvatarImage");
     const headerAvatarFallback = document.getElementById("headerAvatarFallback");
     const accountMenu = document.getElementById("accountMenu");
+    const accountProfileLink = document.getElementById("accountProfileLink");
 
     const menuBtn = document.getElementById("menuBtn");
     const sideMenu = document.getElementById("sideMenu");
@@ -1300,6 +1393,9 @@
     const radioShell = document.getElementById("radioShell");
     const titleEl = document.getElementById("title");
     const artistWrapEl = document.getElementById("artistWrap");
+    const nowPlayingArtistLink = document.getElementById("nowPlayingArtistLink");
+    const nowPlayingArtistImage = document.getElementById("nowPlayingArtistImage");
+    const nowPlayingArtistFallback = document.getElementById("nowPlayingArtistFallback");
     const likeBtn = document.getElementById("likeBtn");
     const skipBtn = document.getElementById("skip");
     const volume = document.getElementById("volume");
@@ -1323,6 +1419,8 @@
     let currentProfileData = null;
     let currentTrackData = null;
     let currentMenuAuthMode = "login";
+    let currentTrackProfileRequestId = 0;
+    const artistProfileCache = new Map();
 
     function setAuthMessage(msg, error = false, target = authMessageEl) {
       if (msg === "Auth session missing!") msg = "";
@@ -1415,11 +1513,14 @@
       userAvatarFallback.classList.add("hidden");
       userAvatar.src = "";
       profileLink.href = "#";
+      profileLink.classList.add("hidden");
       showLoginBtn.classList.remove("hidden");
       headerAvatarBtn.classList.add("hidden");
       headerAvatarImage.classList.add("hidden");
       headerAvatarFallback.classList.add("hidden");
       headerAvatarImage.src = "";
+      accountProfileLink.classList.add("hidden");
+      accountProfileLink.href = "javascript:void(0)";
       currentProfileData = null;
       currentTrackData = null;
       applyMenuState(null, null, null);
@@ -1447,6 +1548,16 @@
       }
     }
 
+    function setAccountMenuProfile(profile) {
+      if (profile?.user_id) {
+        accountProfileLink.href = `artist.html?user_id=${encodeURIComponent(profile.user_id)}`;
+        accountProfileLink.classList.remove("hidden");
+      } else {
+        accountProfileLink.href = "javascript:void(0)";
+        accountProfileLink.classList.add("hidden");
+      }
+    }
+
     async function loadMyProfile(userId) {
       const { data, error } = await supabaseClient
         .from("profiles")
@@ -1460,7 +1571,9 @@
         userAvatarFallback.classList.remove("hidden");
         userAvatarFallback.textContent = "•";
         profileLink.href = "#";
+        profileLink.classList.add("hidden");
         setHeaderAvatar("", "•");
+        setAccountMenuProfile(null);
         return null;
       }
 
@@ -1478,6 +1591,8 @@
 
       setHeaderAvatar(data.photo_url, data.artist_name);
       profileLink.href = `artist.html?user_id=${encodeURIComponent(data.user_id)}`;
+      profileLink.classList.remove("hidden");
+      setAccountMenuProfile(data);
       return data;
     }
 
@@ -1619,6 +1734,10 @@
       closeSideMenu();
       volumeControl.classList.remove("open");
       accountMenu.classList.toggle("hidden");
+    };
+
+    accountProfileLink.onclick = () => {
+      accountMenu.classList.add("hidden");
     };
 
     menuBtn.onclick = () => {
@@ -1916,6 +2035,69 @@
       }
     }
 
+    function clearNowPlayingArtistPhoto(track) {
+      nowPlayingArtistImage.src = "";
+      nowPlayingArtistImage.classList.add("hidden");
+      nowPlayingArtistFallback.classList.add("hidden");
+
+      if (track?.user_id) {
+        nowPlayingArtistLink.href = `artist.html?user_id=${encodeURIComponent(track.user_id)}`;
+        nowPlayingArtistLink.classList.remove("hidden");
+        nowPlayingArtistFallback.classList.remove("hidden");
+        nowPlayingArtistFallback.textContent = (track.artist || "A").charAt(0).toUpperCase();
+      } else {
+        nowPlayingArtistLink.href = "#";
+        nowPlayingArtistLink.classList.add("hidden");
+      }
+    }
+
+    async function fetchArtistProfile(userId) {
+      if (!userId) return null;
+      if (artistProfileCache.has(userId)) return artistProfileCache.get(userId);
+
+      const { data, error } = await supabaseClient
+        .from("profiles")
+        .select("user_id, artist_name, photo_url")
+        .eq("user_id", userId)
+        .maybeSingle();
+
+      if (error) {
+        console.error("fetchArtistProfile error:", error);
+        return null;
+      }
+
+      if (data) {
+        artistProfileCache.set(userId, data);
+      }
+
+      return data || null;
+    }
+
+    async function renderNowPlayingArtistPhoto(track) {
+      const requestId = ++currentTrackProfileRequestId;
+      clearNowPlayingArtistPhoto(track);
+
+      if (!track?.user_id) return;
+
+      const profile = await fetchArtistProfile(track.user_id);
+
+      if (requestId !== currentTrackProfileRequestId) return;
+      if (!profile) return;
+
+      nowPlayingArtistLink.href = `artist.html?user_id=${encodeURIComponent(track.user_id)}`;
+      nowPlayingArtistLink.classList.remove("hidden");
+
+      if (profile.photo_url) {
+        nowPlayingArtistImage.src = profile.photo_url;
+        nowPlayingArtistImage.classList.remove("hidden");
+        nowPlayingArtistFallback.classList.add("hidden");
+      } else {
+        nowPlayingArtistImage.classList.add("hidden");
+        nowPlayingArtistFallback.classList.remove("hidden");
+        nowPlayingArtistFallback.textContent = (profile.artist_name || track.artist || "A").charAt(0).toUpperCase();
+      }
+    }
+
     function resetLike() {
       liked = false;
       likeBtn.innerHTML = `<span class="icon">♥</span>Like`;
@@ -1925,6 +2107,7 @@
     function setTrackUI(track) {
       titleEl.textContent = track.title || "Untitled";
       renderArtist(track);
+      renderNowPlayingArtistPhoto(track).catch(err => console.error("renderNowPlayingArtistPhoto error:", err));
       resetLike();
     }
 
@@ -1991,6 +2174,7 @@
       if (!tracks.length) {
         titleEl.textContent = "No live tracks yet";
         artistWrapEl.innerHTML = `<span>Check back soon</span>`;
+        clearNowPlayingArtistPhoto(null);
         progressFill.style.width = "0%";
         elapsedTimeEl.textContent = "0:00";
         return;
@@ -2071,6 +2255,7 @@
       if (!tracks.length) {
         titleEl.textContent = "No live tracks yet";
         artistWrapEl.innerHTML = `<span>Check back soon</span>`;
+        clearNowPlayingArtistPhoto(null);
         await updateListeners();
         return;
       }
