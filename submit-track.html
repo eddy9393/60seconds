@@ -1,0 +1,1327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Submit Track - 60 Seconds FM</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Manrope:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --gold: #d4af37;
+      --gold-2: #f4d77a;
+      --gold-dark: #8f6b13;
+      --text: #f5f5f5;
+      --muted: #a8a8a8;
+      --border: rgba(255,255,255,0.08);
+      --border-gold: rgba(212,175,55,0.18);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background:
+        linear-gradient(180deg, rgba(7, 7, 7, 0.48) 0%, rgba(7, 7, 7, 0.72) 45%, rgba(7, 7, 7, 0.82) 100%),
+        radial-gradient(circle at top, rgba(212, 175, 55, 0.14), transparent 30%),
+        url("bg-mobile-final-1080x1920.webp");
+      background-size: cover, auto, cover;
+      background-position: center top, center top, center center;
+      background-repeat: no-repeat, no-repeat, no-repeat;
+      background-attachment: fixed, scroll, fixed;
+      color: var(--text);
+      font-family: 'Manrope', sans-serif;
+      padding: 0 18px 44px;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    h1, h2, h3 {
+      font-family: 'Space Grotesk', sans-serif;
+      margin: 0;
+    }
+
+    a {
+      color: inherit;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .site-shell {
+      max-width: 1180px;
+      margin: 0 auto;
+    }
+
+    .header-bar {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      display: grid;
+      grid-template-columns: 45px 1fr 45px;
+      align-items: center;
+      gap: 10px;
+      min-height: 74px;
+      padding: 8px 6px 4px;
+      background: linear-gradient(180deg, rgba(0,0,0,0.74), rgba(0,0,0,0.42) 70%, rgba(0,0,0,0));
+      backdrop-filter: blur(6px);
+    }
+
+    .header-left,
+    .header-center,
+    .header-right {
+      display: flex;
+      align-items: center;
+    }
+
+    .header-left {
+      justify-content: flex-start;
+    }
+
+    .header-center {
+      justify-content: center;
+    }
+
+    .header-right {
+      justify-content: flex-end;
+      position: relative;
+    }
+
+    .header-logo-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+    }
+
+    .header-logo {
+      display: block;
+      width: min(288px, 45vw);
+      height: auto;
+      filter:
+        drop-shadow(0 8px 18px rgba(0, 0, 0, 0.35))
+        drop-shadow(0 0 20px rgba(212, 175, 55, 0.08));
+    }
+
+    .header-icon-btn {
+      width: 42px;
+      height: 42px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.14);
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.12), rgba(255,255,255,0.04)),
+        linear-gradient(180deg, rgba(10,10,10,0.86), rgba(10,10,10,0.92));
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.08),
+        0 10px 22px rgba(0,0,0,0.24);
+      backdrop-filter: blur(4px);
+      transition: transform 0.14s ease, box-shadow 0.14s ease, filter 0.14s ease;
+      padding: 0;
+    }
+
+    .header-icon-btn:hover {
+      transform: translateY(-1px);
+      filter: brightness(1.03);
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.10),
+        0 14px 24px rgba(0,0,0,0.28);
+    }
+
+    .menu-icon {
+      position: relative;
+      width: 20px;
+      height: 16px;
+    }
+
+    .menu-icon span {
+      position: absolute;
+      left: 0;
+      width: 20px;
+      height: 3px;
+      border-radius: 999px;
+      background: #f5f5f5;
+      box-shadow: 0 1px 8px rgba(0,0,0,0.26);
+    }
+
+    .menu-icon span:nth-child(1) { top: 0; }
+    .menu-icon span:nth-child(2) { top: 6px; }
+    .menu-icon span:nth-child(3) { top: 12px; }
+
+    .person-icon {
+      position: relative;
+      width: 22px;
+      height: 22px;
+    }
+
+    .person-icon::before,
+    .person-icon::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      border: 2.2px solid #f5f5f5;
+      box-sizing: border-box;
+    }
+
+    .person-icon::before {
+      top: 0;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+    }
+
+    .person-icon::after {
+      bottom: -1px;
+      width: 21px;
+      height: 11px;
+      border-top-left-radius: 16px;
+      border-top-right-radius: 16px;
+      border-bottom: 0;
+    }
+
+    .header-avatar-btn {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      padding: 0;
+      overflow: hidden;
+      border: 2px solid rgba(212,175,55,0.55);
+      background: #111;
+      box-shadow:
+        0 10px 22px rgba(0,0,0,0.24),
+        0 0 0 3px rgba(212,175,55,0.08);
+      cursor: pointer;
+    }
+
+    .header-avatar-btn img,
+    .header-avatar-btn .header-avatar-fallback {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      display: block;
+      object-fit: cover;
+    }
+
+    .header-avatar-fallback {
+      display: flex !important;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(180deg, #3a2d0d, #a98325);
+      color: #fff;
+      font-weight: 700;
+      font-size: 15px;
+      font-family: 'Space Grotesk', sans-serif;
+    }
+
+    .account-menu {
+      position: absolute;
+      top: 52px;
+      right: 0;
+      min-width: 170px;
+      padding: 8px;
+      border-radius: 18px;
+      background:
+        linear-gradient(180deg, rgba(20,20,20,0.96), rgba(10,10,10,0.98));
+      border: 1px solid rgba(255,255,255,0.08);
+      box-shadow:
+        0 18px 40px rgba(0,0,0,0.38),
+        inset 0 1px 0 rgba(255,255,255,0.04);
+      backdrop-filter: blur(8px);
+    }
+
+    .account-menu button {
+      width: 100%;
+    }
+
+    .auth-panel-wrap {
+      max-width: 720px;
+      margin: 0 auto 0;
+    }
+
+    .auth-box {
+      width: min(720px, 100%);
+      text-align: left;
+      margin: 0 auto;
+      padding: 8px 0 0;
+    }
+
+    .auth-box h3 {
+      margin: 0 0 10px;
+      color: var(--gold);
+      font-size: 15px;
+      font-weight: 700;
+      text-align: center;
+      text-shadow: 0 1px 10px rgba(0,0,0,0.28);
+      font-family: 'Space Grotesk', sans-serif;
+    }
+
+    .auth-inputs {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .auth-box input {
+      width: 100%;
+      padding: 12px 12px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: linear-gradient(180deg, rgba(16,16,16,0.92) 0%, rgba(12,12,12,0.96) 100%);
+      color: white;
+      font-size: 14px;
+      outline: none;
+      min-height: 46px;
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.04),
+        0 6px 16px rgba(0,0,0,0.18);
+      backdrop-filter: blur(4px);
+      font-family: 'Manrope', sans-serif;
+    }
+
+    .auth-box input:focus {
+      border-color: rgba(212,175,55,0.38);
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.04),
+        0 0 0 3px rgba(212,175,55,0.08);
+    }
+
+    .auth-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .auth-message {
+      min-height: 18px;
+      margin-top: 8px;
+      font-size: 12px;
+      color: #cfcfcf;
+      text-align: center;
+      text-shadow: 0 1px 8px rgba(0,0,0,0.28);
+      font-family: 'Manrope', sans-serif;
+    }
+
+    .metal-btn {
+      border: 1px solid rgba(255,255,255,0.16);
+      background:
+        linear-gradient(180deg, #fbfbfb 0%, #d6d6d6 16%, #b6b6b6 35%, #8b8b8b 52%, #d2d2d2 72%, #f4f4f4 100%);
+      color: #151515;
+      padding: 13px 18px;
+      border-radius: 999px;
+      cursor: pointer;
+      font-weight: 500;
+      font-size: 14px;
+      text-shadow: 0 1px 0 rgba(255,255,255,0.45);
+      box-shadow:
+        inset 0 2px 0 rgba(255,255,255,0.72),
+        inset 0 -2px 3px rgba(0,0,0,0.18),
+        0 10px 22px rgba(0,0,0,0.25);
+      transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
+      backdrop-filter: blur(2px);
+      font-family: 'Manrope', sans-serif;
+    }
+
+    .metal-btn:hover {
+      transform: translateY(-1px);
+      filter: brightness(1.02);
+    }
+
+    .metal-btn:disabled {
+      opacity: 0.7;
+      cursor: default;
+      transform: none;
+    }
+
+    .metal-btn .icon {
+      color: #6a560c;
+      margin-right: 7px;
+      font-size: 15px;
+    }
+
+    .submit-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 52px;
+      padding: 0 28px;
+      border-radius: 999px;
+      text-decoration: none;
+      color: #231700;
+      font-weight: 600;
+      font-size: 15px;
+      letter-spacing: 0.2px;
+      background:
+        linear-gradient(180deg, #fff5c9 0%, #f4d77a 20%, #d4af37 52%, #b98816 75%, #7c5a11 100%);
+      border: 1px solid rgba(255, 230, 150, 0.38);
+      box-shadow:
+        inset 0 2px 0 rgba(255,255,255,0.45),
+        inset 0 -2px 4px rgba(90,50,0,0.28),
+        0 12px 26px rgba(212,175,55,0.22),
+        0 0 0 1px rgba(212,175,55,0.08);
+      transition: transform 0.16s ease, box-shadow 0.16s ease, filter 0.16s ease;
+      white-space: nowrap;
+      text-shadow: 0 1px 0 rgba(255,255,255,0.22);
+      backdrop-filter: blur(2px);
+      font-family: 'Manrope', sans-serif;
+      border: none;
+      cursor: pointer;
+    }
+
+    .submit-link:hover {
+      transform: translateY(-1px);
+      filter: brightness(1.03);
+    }
+
+    .page-wrap {
+      max-width: 760px;
+      margin: 10px auto 0;
+    }
+
+    .hero-card {
+      position: relative;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.015)),
+        radial-gradient(circle at top, rgba(212,175,55,0.12), transparent 55%),
+        linear-gradient(180deg, rgba(24,24,24,0.88) 0%, rgba(17,17,17,0.94) 100%);
+      border: 1px solid var(--border-gold);
+      border-radius: 30px;
+      padding: 30px 28px;
+      box-shadow:
+        0 30px 80px rgba(0,0,0,0.42),
+        0 0 35px rgba(212,175,55,0.10),
+        inset 0 1px 0 rgba(255,255,255,0.05);
+      backdrop-filter: blur(6px);
+      text-align: center;
+    }
+
+    .section-kicker {
+      font-family: 'Space Grotesk', sans-serif;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      font-size: 12px;
+      color: var(--muted);
+      opacity: 0.82;
+      margin-bottom: 10px;
+    }
+
+    .page-title {
+      font-size: clamp(30px, 5vw, 46px);
+      margin-bottom: 12px;
+      text-shadow: 0 2px 14px rgba(0,0,0,0.3);
+    }
+
+    .page-note {
+      max-width: 620px;
+      margin: 0 auto;
+      color: #ddd;
+      font-size: 15px;
+      line-height: 1.7;
+    }
+
+    .panel-card {
+      margin-top: 18px;
+      background: linear-gradient(180deg, rgba(22,22,22,0.86) 0%, rgba(16,16,16,0.92) 100%);
+      border-radius: 26px;
+      padding: 24px;
+      border: 1px solid rgba(255,255,255,0.06);
+      box-shadow:
+        0 12px 30px rgba(0,0,0,0.22),
+        inset 0 1px 0 rgba(255,255,255,0.03);
+      backdrop-filter: blur(6px);
+    }
+
+    .form-grid {
+      display: grid;
+      gap: 14px;
+    }
+
+    .field-group {
+      text-align: left;
+    }
+
+    .field-label {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--muted);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      font-family: 'Space Grotesk', sans-serif;
+      opacity: 0.82;
+    }
+
+    .field-input,
+    .field-file {
+      width: 100%;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: linear-gradient(180deg, rgba(16,16,16,0.92) 0%, rgba(12,12,12,0.96) 100%);
+      color: white;
+      font-size: 15px;
+      outline: none;
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.04),
+        0 6px 16px rgba(0,0,0,0.18);
+      backdrop-filter: blur(4px);
+      font-family: 'Manrope', sans-serif;
+    }
+
+    .field-input,
+    .field-file {
+      min-height: 52px;
+      padding: 0 14px;
+    }
+
+    .field-input:focus,
+    .field-file:focus {
+      border-color: rgba(212,175,55,0.38);
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.04),
+        0 0 0 3px rgba(212,175,55,0.08);
+    }
+
+    .field-file {
+      padding: 12px 14px;
+      color: #ddd;
+      cursor: pointer;
+    }
+
+    .form-meta {
+      margin-top: 8px;
+      color: #9f9f9f;
+      font-size: 13px;
+      line-height: 1.6;
+      text-align: left;
+    }
+
+    .action-row {
+      margin-top: 22px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .status-box {
+      margin-top: 18px;
+      min-height: 22px;
+      color: #cfcfcf;
+      text-align: center;
+      font-size: 14px;
+      line-height: 1.5;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .sub-link-row {
+      margin-top: 18px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .ghost-link {
+      color: var(--gold);
+      text-decoration: none;
+      border-bottom: 1px solid rgba(212,175,55,0.32);
+      font-weight: 500;
+    }
+
+    .ghost-link:hover {
+      opacity: 0.88;
+    }
+
+    .notice-box {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 18px;
+      padding: 16px 18px;
+      text-align: center;
+      color: #ddd;
+      line-height: 1.6;
+      margin-bottom: 18px;
+    }
+
+    .track-status-grid {
+      display: grid;
+      gap: 14px;
+      text-align: left;
+    }
+
+    .track-status-card {
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 20px;
+      padding: 18px;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.015)),
+        rgba(255,255,255,0.02);
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.03),
+        0 12px 24px rgba(0,0,0,0.16);
+    }
+
+    .track-status-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 16px;
+      margin-bottom: 12px;
+    }
+
+    .track-status-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(20px, 2.2vw, 28px);
+      color: #fff;
+      margin-bottom: 6px;
+      word-break: break-word;
+    }
+
+    .track-status-sub {
+      color: var(--gold);
+      font-size: 15px;
+      font-weight: 500;
+      word-break: break-word;
+    }
+
+    .status-pill {
+      flex: 0 0 auto;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 999px;
+      padding: 8px 12px;
+      font-size: 12px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      font-family: 'Space Grotesk', sans-serif;
+      color: #231700;
+      background:
+        linear-gradient(180deg, #fff5c9 0%, #f4d77a 20%, #d4af37 52%, #b98816 75%, #7c5a11 100%);
+      border: 1px solid rgba(255, 230, 150, 0.38);
+      box-shadow:
+        inset 0 2px 0 rgba(255,255,255,0.45),
+        inset 0 -2px 4px rgba(90,50,0,0.28),
+        0 12px 26px rgba(212,175,55,0.12);
+      text-shadow: 0 1px 0 rgba(255,255,255,0.22);
+    }
+
+    .status-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .status-meta-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.06);
+      color: #ddd;
+      font-size: 13px;
+    }
+
+    .status-meta-item .dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--gold);
+      box-shadow: 0 0 8px rgba(212,175,55,0.45);
+    }
+
+    @media (max-width: 760px) {
+      body {
+        padding: 0 14px 40px;
+        background:
+          linear-gradient(180deg, rgba(7, 7, 7, 0.50) 0%, rgba(7, 7, 7, 0.76) 42%, rgba(7, 7, 7, 0.86) 100%),
+          radial-gradient(circle at top, rgba(212, 175, 55, 0.12), transparent 26%),
+          url("bg-desktop-correct.webp");
+        background-size: cover, auto, cover;
+        background-position: center top, center top, center center;
+        background-repeat: no-repeat, no-repeat, no-repeat;
+        background-attachment: scroll, scroll, scroll;
+      }
+
+      .header-bar {
+        grid-template-columns: 42px 1fr 42px;
+        min-height: 68px;
+        padding: 6px 2px 2px;
+      }
+
+      .header-logo {
+        width: min(200px, 40vw);
+      }
+
+      .header-icon-btn,
+      .header-avatar-btn {
+        width: 38px;
+        height: 38px;
+      }
+
+      .account-menu {
+        top: 48px;
+        min-width: 150px;
+      }
+
+      .auth-box {
+        width: min(420px, 100%);
+      }
+
+      .auth-inputs {
+        grid-template-columns: 1fr;
+      }
+
+      .auth-row {
+        flex-direction: column;
+      }
+
+      .auth-row .metal-btn,
+      .submit-link {
+        width: 100%;
+      }
+
+      .hero-card,
+      .panel-card {
+        padding: 20px;
+      }
+
+      .track-status-top {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="site-shell">
+    <header class="header-bar">
+      <div class="header-left">
+        <button id="menuBtn" class="header-icon-btn" type="button" aria-label="Open menu">
+          <span class="menu-icon" aria-hidden="true">
+            <span></span>
+            <span></span>
+            <span></span>
+          </span>
+        </button>
+      </div>
+
+      <div class="header-center">
+        <a href="/" class="header-logo-link" aria-label="60 Seconds FM home">
+          <img src="logo.png" alt="60 Seconds FM" class="header-logo" />
+        </a>
+      </div>
+
+      <div class="header-right">
+        <button id="showLoginBtn" class="header-icon-btn" type="button" aria-label="Log in">
+          <span class="person-icon" aria-hidden="true"></span>
+        </button>
+
+        <button id="headerAvatarBtn" class="header-avatar-btn hidden" type="button" aria-label="Open account menu">
+          <img id="headerAvatarImage" class="hidden" src="" alt="Profile photo" />
+          <div id="headerAvatarFallback" class="header-avatar-fallback hidden">A</div>
+        </button>
+
+        <div id="accountMenu" class="account-menu hidden">
+          <button id="logout" class="metal-btn" type="button"><span class="icon">⎋</span>Log out</button>
+        </div>
+      </div>
+    </header>
+
+    <div class="auth-panel-wrap">
+      <div id="authBox" class="auth-box hidden">
+        <h3>Log in</h3>
+
+        <div class="auth-inputs">
+          <input id="email" type="email" placeholder="Email" autocomplete="email" />
+          <input id="password" type="password" placeholder="Password" autocomplete="current-password" />
+        </div>
+
+        <div class="auth-row">
+          <button id="signup" class="metal-btn" type="button"><span class="icon">✦</span>Sign up</button>
+          <button id="login" class="metal-btn" type="button"><span class="icon">↳</span>Log in</button>
+        </div>
+      </div>
+
+      <div id="userBox" class="hidden">
+        <a id="profileLink" href="#" title="Open artist page" class="hidden"></a>
+      </div>
+
+      <div id="authMessage" class="auth-message"></div>
+    </div>
+
+    <main class="page-wrap">
+      <section class="hero-card">
+        <div class="section-kicker">Track Submission</div>
+        <h1 class="page-title">Submit Your Track</h1>
+        <p class="page-note">
+          Upload your one track for radio approval. Your submission will be reviewed before it can go live on 60 Seconds FM.
+        </p>
+      </section>
+
+      <section class="panel-card">
+        <div id="loginRequiredBox" class="notice-box hidden">
+          You need to be logged in before submitting a track.
+        </div>
+
+        <div id="profileRequiredBox" class="notice-box hidden">
+          You need to create your artist profile first before submitting a track.
+          <div style="margin-top: 10px;">
+            <a class="ghost-link" href="join.html">Create your artist profile</a>
+          </div>
+        </div>
+
+        <div id="trackExistsBox" class="hidden">
+          <div class="track-status-grid">
+            <div class="track-status-card">
+              <div class="track-status-top">
+                <div>
+                  <div id="existingTrackTitle" class="track-status-title">Your submitted track</div>
+                  <div id="existingTrackArtist" class="track-status-sub">Artist</div>
+                </div>
+                <div id="existingTrackStatus" class="status-pill">Pending</div>
+              </div>
+
+              <div class="status-meta">
+                <div class="status-meta-item">
+                  <span class="dot"></span>
+                  <span>Only one track allowed</span>
+                </div>
+                <div class="status-meta-item">
+                  <span class="dot"></span>
+                  <span id="existingTrackDate">Recently submitted</span>
+                </div>
+                <div class="status-meta-item">
+                  <span class="dot"></span>
+                  <span id="existingTrackPlays">0 plays</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div id="trackExistsMessage" class="status-box">
+            You already submitted a track. Right now, each artist can have only one track on the platform.
+          </div>
+        </div>
+
+        <div id="submitFormWrap" class="hidden">
+          <div class="form-grid">
+            <div class="field-group">
+              <label class="field-label" for="title">Track Title</label>
+              <input id="title" class="field-input" type="text" placeholder="Enter your track title" />
+            </div>
+
+            <div class="field-group">
+              <label class="field-label" for="trackFile">Track File</label>
+              <input id="trackFile" class="field-file" type="file" accept=".mp3,audio/mpeg,audio/mp3" />
+              <div class="form-meta">Accepted: MP3 only.</div>
+            </div>
+          </div>
+
+          <div class="action-row">
+            <button id="submitTrackBtn" class="submit-link" type="button">Submit Track</button>
+          </div>
+        </div>
+
+        <div id="status" class="status-box"></div>
+
+        <div class="sub-link-row">
+          <a class="ghost-link" href="index.html">Back to homepage</a>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <script>
+    const supabaseClient = window.supabase.createClient(
+      "https://rgoutegbcpjytplqcwze.supabase.co",
+      "sb_publishable_255qyDKS77nMU0pbedfa_A_3hdgtEHh"
+    );
+
+    const showLoginBtn = document.getElementById("showLoginBtn");
+    const headerAvatarBtn = document.getElementById("headerAvatarBtn");
+    const headerAvatarImage = document.getElementById("headerAvatarImage");
+    const headerAvatarFallback = document.getElementById("headerAvatarFallback");
+    const accountMenu = document.getElementById("accountMenu");
+    const menuBtn = document.getElementById("menuBtn");
+    const email = document.getElementById("email");
+    const password = document.getElementById("password");
+    const signupBtn = document.getElementById("signup");
+    const loginBtn = document.getElementById("login");
+    const logoutBtn = document.getElementById("logout");
+    const authBox = document.getElementById("authBox");
+    const userBox = document.getElementById("userBox");
+    const authMessageEl = document.getElementById("authMessage");
+    const profileLink = document.getElementById("profileLink");
+
+    const loginRequiredBox = document.getElementById("loginRequiredBox");
+    const profileRequiredBox = document.getElementById("profileRequiredBox");
+    const trackExistsBox = document.getElementById("trackExistsBox");
+    const submitFormWrap = document.getElementById("submitFormWrap");
+    const titleInput = document.getElementById("title");
+    const trackFileInput = document.getElementById("trackFile");
+    const submitTrackBtn = document.getElementById("submitTrackBtn");
+    const statusEl = document.getElementById("status");
+
+    const existingTrackTitleEl = document.getElementById("existingTrackTitle");
+    const existingTrackArtistEl = document.getElementById("existingTrackArtist");
+    const existingTrackStatusEl = document.getElementById("existingTrackStatus");
+    const existingTrackDateEl = document.getElementById("existingTrackDate");
+    const existingTrackPlaysEl = document.getElementById("existingTrackPlays");
+
+    let currentProfile = null;
+    let currentTrack = null;
+
+    function setAuthMessage(msg, error = false) {
+      if (msg === "Auth session missing!") msg = "";
+      authMessageEl.textContent = msg || "";
+      authMessageEl.style.color = error ? "#ff8a8a" : "#cfcfcf";
+    }
+
+    function setStatus(message, isError = false) {
+      statusEl.textContent = message || "";
+      statusEl.style.color = isError ? "#ff8a8a" : "#cfcfcf";
+    }
+
+    function clearLoginFields() {
+      email.value = "";
+      password.value = "";
+    }
+
+    function closeMenus() {
+      authBox.classList.add("hidden");
+      accountMenu.classList.add("hidden");
+    }
+
+    function setHeaderAvatar(photoUrl, artistName) {
+      if (photoUrl) {
+        headerAvatarImage.src = photoUrl;
+        headerAvatarImage.classList.remove("hidden");
+        headerAvatarFallback.classList.add("hidden");
+      } else {
+        headerAvatarImage.classList.add("hidden");
+        headerAvatarFallback.classList.remove("hidden");
+        headerAvatarFallback.textContent = (artistName || "A").charAt(0).toUpperCase();
+      }
+    }
+
+    function resetPageState() {
+      loginRequiredBox.classList.add("hidden");
+      profileRequiredBox.classList.add("hidden");
+      trackExistsBox.classList.add("hidden");
+      submitFormWrap.classList.add("hidden");
+    }
+
+    function setLoggedOutView() {
+      closeMenus();
+      userBox.classList.add("hidden");
+      showLoginBtn.classList.remove("hidden");
+      headerAvatarBtn.classList.add("hidden");
+      headerAvatarImage.classList.add("hidden");
+      headerAvatarFallback.classList.add("hidden");
+      headerAvatarImage.src = "";
+      resetPageState();
+      loginRequiredBox.classList.remove("hidden");
+    }
+
+    function setLoggedInView() {
+      authBox.classList.add("hidden");
+      userBox.classList.remove("hidden");
+      showLoginBtn.classList.add("hidden");
+      headerAvatarBtn.classList.remove("hidden");
+    }
+
+    function formatDate(dateString) {
+      if (!dateString) return "Recently submitted";
+      const date = new Date(dateString);
+      if (Number.isNaN(date.getTime())) return "Recently submitted";
+
+      return date.toLocaleDateString("en-GB", {
+        day: "2-digit",
+        month: "short",
+        year: "numeric"
+      });
+    }
+
+    function normalizeStatusLabel(status) {
+      const value = String(status || "pending").toLowerCase();
+      if (value === "approved") return "Approved";
+      if (value === "pending") return "Pending";
+      if (value === "rejected") return "Rejected";
+      return value.charAt(0).toUpperCase() + value.slice(1);
+    }
+
+    function renderExistingTrack(track) {
+      existingTrackTitleEl.textContent = track.title || "Untitled";
+      existingTrackArtistEl.textContent = track.artist || "Unknown Artist";
+      existingTrackStatusEl.textContent = normalizeStatusLabel(track.status);
+      existingTrackDateEl.textContent = formatDate(track.created_at);
+      existingTrackPlaysEl.textContent = `${Number(track.play_count || 0).toLocaleString()} plays`;
+    }
+
+    async function loadMyProfile(userId) {
+      const { data, error } = await supabaseClient
+        .from("profiles")
+        .select("artist_name, photo_url, user_id")
+        .eq("user_id", userId)
+        .maybeSingle();
+
+      if (error || !data) {
+        currentProfile = null;
+        profileLink.href = "#";
+        setHeaderAvatar("", "•");
+        return null;
+      }
+
+      currentProfile = data;
+      setHeaderAvatar(data.photo_url, data.artist_name);
+      profileLink.href = `artist.html?user_id=${encodeURIComponent(data.user_id)}`;
+      return data;
+    }
+
+    async function loadMyTrack(userId) {
+      const { data, error } = await supabaseClient
+        .from("tracks")
+        .select("id, title, artist, file_url, status, play_count, created_at, user_id")
+        .eq("user_id", userId)
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+
+      if (error) {
+        console.error("loadMyTrack error:", error);
+        currentTrack = null;
+        return null;
+      }
+
+      currentTrack = data || null;
+      return currentTrack;
+    }
+
+    async function refreshAuthUI() {
+      try {
+        const { data, error } = await supabaseClient.auth.getSession();
+
+        if (error) {
+          setLoggedOutView();
+          return null;
+        }
+
+        const user = data?.session?.user || null;
+
+        if (user) {
+          setLoggedInView();
+          await loadMyProfile(user.id);
+          return user;
+        } else {
+          setLoggedOutView();
+          return null;
+        }
+      } catch (err) {
+        console.error("refreshAuthUI error:", err);
+        setLoggedOutView();
+        return null;
+      }
+    }
+
+    async function refreshSubmissionState() {
+      resetPageState();
+      setStatus("");
+
+      const { data, error } = await supabaseClient.auth.getSession();
+      const user = error ? null : data?.session?.user || null;
+
+      if (!user) {
+        loginRequiredBox.classList.remove("hidden");
+        return;
+      }
+
+      const profile = currentProfile || await loadMyProfile(user.id);
+
+      if (!profile) {
+        profileRequiredBox.classList.remove("hidden");
+        return;
+      }
+
+      const track = await loadMyTrack(user.id);
+
+      if (track) {
+        renderExistingTrack(track);
+        trackExistsBox.classList.remove("hidden");
+        return;
+      }
+
+      submitFormWrap.classList.remove("hidden");
+    }
+
+    async function handleLogin() {
+      const emailValue = email.value.trim();
+      const passwordValue = password.value.trim();
+
+      if (!emailValue || !passwordValue) {
+        setAuthMessage("Please enter email and password.", true);
+        return;
+      }
+
+      loginBtn.disabled = true;
+      signupBtn.disabled = true;
+      setAuthMessage("");
+
+      try {
+        const { error } = await supabaseClient.auth.signInWithPassword({
+          email: emailValue,
+          password: passwordValue
+        });
+
+        if (error) {
+          setAuthMessage(error.message, true);
+          return;
+        }
+
+        clearLoginFields();
+        await refreshAuthUI();
+        await refreshSubmissionState();
+      } catch (err) {
+        console.error("handleLogin error:", err);
+        setAuthMessage("Login failed. Try again.", true);
+      } finally {
+        loginBtn.disabled = false;
+        signupBtn.disabled = false;
+      }
+    }
+
+    async function handleSignup() {
+      const emailValue = email.value.trim();
+      const passwordValue = password.value.trim();
+
+      if (!emailValue || !passwordValue) {
+        setAuthMessage("Please enter email and password.", true);
+        return;
+      }
+
+      loginBtn.disabled = true;
+      signupBtn.disabled = true;
+      setAuthMessage("");
+
+      try {
+        const { error } = await supabaseClient.auth.signUp({
+          email: emailValue,
+          password: passwordValue
+        });
+
+        if (error) {
+          setAuthMessage(error.message, true);
+          return;
+        }
+
+        setAuthMessage("Account created. Check your email.");
+        await refreshAuthUI();
+        await refreshSubmissionState();
+      } catch (err) {
+        console.error("handleSignup error:", err);
+        setAuthMessage("Sign up failed. Try again.", true);
+      } finally {
+        loginBtn.disabled = false;
+        signupBtn.disabled = false;
+      }
+    }
+
+    async function handleLogout() {
+      logoutBtn.disabled = true;
+      setAuthMessage("");
+
+      try {
+        const { error } = await supabaseClient.auth.signOut();
+
+        if (error) {
+          setAuthMessage(error.message, true);
+          return;
+        }
+
+        clearLoginFields();
+        currentProfile = null;
+        currentTrack = null;
+        await refreshAuthUI();
+        await refreshSubmissionState();
+      } catch (err) {
+        console.error("handleLogout error:", err);
+        setAuthMessage("Logout failed. Try again.", true);
+      } finally {
+        logoutBtn.disabled = false;
+      }
+    }
+
+    async function handleTrackSubmit() {
+      const title = titleInput.value.trim();
+      const trackFile = trackFileInput.files[0];
+
+      if (!title || !trackFile) {
+        setStatus("Please enter a track title and choose your MP3 file.", true);
+        return;
+      }
+
+      submitTrackBtn.disabled = true;
+      setStatus("Checking account...");
+
+      try {
+        const { data: userData, error: userError } = await supabaseClient.auth.getUser();
+
+        if (userError) {
+          setStatus("Could not check current user: " + userError.message, true);
+          return;
+        }
+
+        if (!userData.user) {
+          setStatus("You must be logged in before submitting a track.", true);
+          return;
+        }
+
+        const userId = userData.user.id;
+
+        const profile = currentProfile || await loadMyProfile(userId);
+        if (!profile) {
+          setStatus("Please create your artist profile first.", true);
+          await refreshSubmissionState();
+          return;
+        }
+
+        const existingTrack = await loadMyTrack(userId);
+        if (existingTrack) {
+          setStatus("You already submitted a track.", true);
+          await refreshSubmissionState();
+          return;
+        }
+
+        setStatus("Uploading track...");
+
+        const trackPath = `${userId}/${Date.now()}-${trackFile.name.replace(/\s+/g, "-")}`;
+
+        const { error: trackUploadError } = await supabaseClient
+          .storage
+          .from("tracks")
+          .upload(trackPath, trackFile, {
+            cacheControl: "3600",
+            upsert: false
+          });
+
+        if (trackUploadError) {
+          setStatus("Track upload failed: " + trackUploadError.message, true);
+          return;
+        }
+
+        const { data: trackUrlData } = supabaseClient
+          .storage
+          .from("tracks")
+          .getPublicUrl(trackPath);
+
+        const trackUrl = trackUrlData.publicUrl;
+
+        setStatus("Saving track...");
+
+        const { error: trackInsertError } = await supabaseClient
+          .from("tracks")
+          .insert([
+            {
+              title: title,
+              artist: profile.artist_name || "Unknown Artist",
+              file_url: trackUrl,
+              user_id: userId,
+              status: "pending",
+              play_count: 0
+            }
+          ]);
+
+        if (trackInsertError) {
+          setStatus("Saving track failed: " + trackInsertError.message, true);
+          return;
+        }
+
+        titleInput.value = "";
+        trackFileInput.value = "";
+        setStatus("Track submitted successfully.");
+
+        await refreshSubmissionState();
+      } catch (err) {
+        console.error("track submit error:", err);
+        setStatus("Something went wrong while submitting your track.", true);
+      } finally {
+        submitTrackBtn.disabled = false;
+      }
+    }
+
+    showLoginBtn.onclick = () => {
+      accountMenu.classList.add("hidden");
+      authBox.classList.toggle("hidden");
+      setAuthMessage("");
+      if (!authBox.classList.contains("hidden")) {
+        setTimeout(() => email.focus(), 0);
+      }
+    };
+
+    headerAvatarBtn.onclick = () => {
+      authBox.classList.add("hidden");
+      accountMenu.classList.toggle("hidden");
+    };
+
+    menuBtn.onclick = () => {
+      setAuthMessage("");
+      authBox.classList.add("hidden");
+      accountMenu.classList.add("hidden");
+    };
+
+    document.addEventListener("click", (e) => {
+      const insideHeaderRight = e.target.closest(".header-right");
+      const insideAuthBox = e.target.closest("#authBox");
+      const isLoginButton = e.target.closest("#showLoginBtn");
+      const isAvatarButton = e.target.closest("#headerAvatarBtn");
+
+      if (!insideHeaderRight && !insideAuthBox && !isLoginButton && !isAvatarButton) {
+        authBox.classList.add("hidden");
+        accountMenu.classList.add("hidden");
+      }
+    });
+
+    loginBtn.onclick = handleLogin;
+    signupBtn.onclick = handleSignup;
+    logoutBtn.onclick = handleLogout;
+    submitTrackBtn.onclick = handleTrackSubmit;
+
+    email.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") handleLogin();
+    });
+
+    password.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") handleLogin();
+    });
+
+    supabaseClient.auth.onAuthStateChange(() => {
+      refreshAuthUI()
+        .then(() => refreshSubmissionState())
+        .catch(err => console.error(err));
+    });
+
+    async function initPage() {
+      setLoggedOutView();
+      setStatus("");
+      await refreshAuthUI();
+      await refreshSubmissionState();
+    }
+
+    initPage().catch(err => {
+      console.error("initPage error:", err);
+    });
+  </script>
+</body>
+</html>
