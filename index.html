@@ -748,42 +748,50 @@
 
     .now-playing {
       color: var(--muted);
-      margin-bottom: 14px;
+      margin-bottom: 18px;
     }
 
+    /* --- STYLISH NOW PLAYING BLOCK --- */
     .track-meta-row {
-      display: inline-flex;
+      display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 14px;
-      margin: 0 auto 18px;
+      gap: 18px;
+      margin: 0 auto 22px;
       max-width: 100%;
     }
 
     .now-playing-avatar-link {
-      width: 56px;
-      height: 56px;
-      border-radius: 14px;
+      width: 132px;
+      height: 132px;
+      border-radius: 50%;
       overflow: hidden;
-      flex: 0 0 56px;
+      flex: 0 0 132px;
       display: inline-flex;
       align-items: center;
       justify-content: center;
       text-decoration: none;
       line-height: 0;
-      padding: 0;
-      border: 1px solid rgba(212,175,55,0.18);
-      background: #111;
+      padding: 4px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.12), rgba(255,255,255,0.03)),
+        linear-gradient(145deg, rgba(244,215,122,0.95), rgba(143,107,19,0.95));
       box-shadow:
-        0 10px 24px rgba(0,0,0,0.24),
-        0 0 0 1px rgba(212,175,55,0.04);
-      transition: transform 0.14s ease, filter 0.14s ease, border-color 0.14s ease;
+        0 16px 34px rgba(0,0,0,0.34),
+        0 0 24px rgba(212,175,55,0.16),
+        inset 0 1px 0 rgba(255,255,255,0.28);
+      transition: transform 0.16s ease, filter 0.16s ease, box-shadow 0.16s ease;
     }
 
     .now-playing-avatar-link:hover {
-      transform: translateY(-1px);
+      transform: translateY(-2px) scale(1.01);
       filter: brightness(1.03);
-      border-color: rgba(212,175,55,0.42);
+      box-shadow:
+        0 20px 40px rgba(0,0,0,0.38),
+        0 0 28px rgba(212,175,55,0.2),
+        inset 0 1px 0 rgba(255,255,255,0.32);
     }
 
     .now-playing-avatar-image,
@@ -791,13 +799,14 @@
       width: 100%;
       height: 100%;
       display: block;
+      border-radius: 50%;
       object-fit: cover;
-      object-position: center;
+      object-position: center 20%;
+      background: #111;
     }
-    
+
     .now-playing-avatar-image {
-      transform: scale(1.20);
-      transform-origin: center;
+      transform: none;
     }
 
     .now-playing-avatar-fallback {
@@ -807,45 +816,52 @@
       background: linear-gradient(180deg, #3a2d0d, #a98325);
       color: #fff;
       font-weight: 700;
-      font-size: 20px;
+      font-size: 38px;
       font-family: 'Space Grotesk', sans-serif;
     }
 
     .track-meta-text {
       min-width: 0;
-      text-align: left;
-      max-width: min(520px, 70vw);
+      text-align: center;
+      max-width: min(680px, 90vw);
     }
 
     .track-title {
       font-family: 'Space Grotesk', sans-serif;
-      font-size: clamp(24px, 4vw, 38px);
-      line-height: 1.08;
-      margin: 0 0 6px;
-      font-weight: 600;
-      letter-spacing: 0.2px;
-      text-shadow: 0 2px 14px rgba(0,0,0,0.3);
+      font-size: clamp(28px, 5.4vw, 52px);
+      line-height: 1.04;
+      margin: 0 0 10px;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      text-shadow:
+        0 2px 18px rgba(0,0,0,0.32),
+        0 0 18px rgba(212,175,55,0.06);
       word-break: break-word;
+      text-wrap: balance;
     }
 
     .artist-wrap {
       margin: 0;
-      font-size: 17px;
-      line-height: 1.25;
+      font-size: clamp(16px, 2.2vw, 20px);
+      line-height: 1.35;
       font-family: 'Manrope', sans-serif;
-      font-weight: 400;
-      color: #d7d7d7;
+      font-weight: 500;
+      color: #d9d1ba;
       word-break: break-word;
+      opacity: 0.96;
     }
 
     .artist-link {
-      color: var(--gold);
+      color: var(--gold-2);
       text-decoration: none;
-      border-bottom: 1px solid rgba(212,175,55,0.32);
+      border-bottom: 1px solid rgba(212,175,55,0.28);
+      padding-bottom: 1px;
+      transition: opacity 0.14s ease, border-color 0.14s ease;
     }
 
     .artist-link:hover {
       opacity: 0.88;
+      border-color: rgba(244,215,122,0.56);
     }
 
     .time-row {
@@ -1082,23 +1098,19 @@
       }
 
       .track-meta-row {
-        display: flex;
-        align-items: center;
-        justify-content: flex-start;
-        gap: 12px;
-        width: 100%;
+        gap: 14px;
         margin: 0 0 18px;
       }
 
       .now-playing-avatar-link {
-        width: 50px;
-        height: 50px;
-        flex-basis: 50px;
-        border-radius: 12px;
+        width: 96px;
+        height: 96px;
+        flex-basis: 96px;
+        padding: 3px;
       }
 
       .now-playing-avatar-fallback {
-        font-size: 18px;
+        font-size: 28px;
       }
 
       .track-meta-text {
@@ -1107,8 +1119,8 @@
       }
 
       .track-title {
-        font-size: clamp(21px, 6vw, 30px);
-        margin-bottom: 5px;
+        font-size: clamp(22px, 7vw, 34px);
+        margin-bottom: 6px;
       }
 
       .artist-wrap {
