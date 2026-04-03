@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>60 Seconds FM</title>
 
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Manrope:wght@300;400;500;600&display=swap" rel="stylesheet">
+
   <style>
     :root {
       --gold: #d4af37;
@@ -33,9 +35,15 @@
       background-repeat: no-repeat, no-repeat, no-repeat;
       background-attachment: fixed, scroll, fixed;
       color: var(--text);
-      font-family: Arial, sans-serif;
+      font-family: 'Manrope', sans-serif;
       text-align: center;
       padding: 0 18px 44px;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    h1, h2, h3 {
+      font-family: 'Space Grotesk', sans-serif;
     }
 
     .hidden {
@@ -210,6 +218,7 @@
       color: #fff;
       font-weight: 700;
       font-size: 18px;
+      font-family: 'Space Grotesk', sans-serif;
     }
 
     .account-menu {
@@ -252,6 +261,7 @@
       font-weight: 700;
       text-align: center;
       text-shadow: 0 1px 10px rgba(0,0,0,0.28);
+      font-family: 'Space Grotesk', sans-serif;
     }
 
     .auth-inputs {
@@ -275,6 +285,7 @@
         inset 0 1px 0 rgba(255,255,255,0.04),
         0 6px 16px rgba(0,0,0,0.18);
       backdrop-filter: blur(4px);
+      font-family: 'Manrope', sans-serif;
     }
 
     .auth-box input:focus {
@@ -298,6 +309,7 @@
       color: #cfcfcf;
       text-align: center;
       text-shadow: 0 1px 8px rgba(0,0,0,0.28);
+      font-family: 'Manrope', sans-serif;
     }
 
     /* BUTTONS */
@@ -310,9 +322,9 @@
       border-radius: 999px;
       text-decoration: none;
       color: #231700;
-      font-weight: 900;
+      font-weight: 600;
       font-size: 15px;
-      letter-spacing: 0.4px;
+      letter-spacing: 0.2px;
       background:
         linear-gradient(180deg, #fff5c9 0%, #f4d77a 20%, #d4af37 52%, #b98816 75%, #7c5a11 100%);
       border: 1px solid rgba(255, 230, 150, 0.38);
@@ -325,6 +337,7 @@
       white-space: nowrap;
       text-shadow: 0 1px 0 rgba(255,255,255,0.22);
       backdrop-filter: blur(2px);
+      font-family: 'Manrope', sans-serif;
     }
 
     .submit-link:hover {
@@ -345,7 +358,7 @@
       padding: 13px 18px;
       border-radius: 999px;
       cursor: pointer;
-      font-weight: 800;
+      font-weight: 500;
       font-size: 14px;
       text-shadow: 0 1px 0 rgba(255,255,255,0.45);
       box-shadow:
@@ -355,6 +368,7 @@
         0 0 0 1px rgba(255,255,255,0.04);
       transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
       backdrop-filter: blur(2px);
+      font-family: 'Manrope', sans-serif;
     }
 
     .metal-btn:hover {
@@ -437,11 +451,17 @@
       padding: 24px;
     }
 
+    .overlay-label,
+    .now-playing {
+      font-family: 'Space Grotesk', sans-serif;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      font-size: 12px;
+      opacity: 0.78;
+    }
+
     .overlay-label {
       color: rgba(255,255,255,0.88);
-      font-size: 13px;
-      letter-spacing: 2px;
-      text-transform: uppercase;
       margin-bottom: 16px;
       text-shadow: 0 1px 8px rgba(0,0,0,0.4);
     }
@@ -452,22 +472,23 @@
 
     .now-playing {
       color: var(--muted);
-      font-size: 12px;
-      text-transform: uppercase;
-      letter-spacing: 2px;
       margin-bottom: 10px;
     }
 
     .track-title {
+      font-family: 'Space Grotesk', sans-serif;
       font-size: clamp(28px, 5vw, 46px);
       margin: 0 0 8px;
-      font-weight: 700;
+      font-weight: 600;
+      letter-spacing: 0.5px;
       text-shadow: 0 2px 14px rgba(0,0,0,0.3);
     }
 
     .artist-wrap {
       margin: 0 0 18px;
       font-size: 18px;
+      font-family: 'Manrope', sans-serif;
+      font-weight: 400;
     }
 
     .artist-link {
@@ -487,6 +508,7 @@
       color: var(--muted);
       font-size: 14px;
       margin-bottom: 8px;
+      font-family: 'Manrope', sans-serif;
     }
 
     .progress {
@@ -525,6 +547,7 @@
       font-size: 14px;
       box-shadow: inset 0 1px 0 rgba(255,255,255,0.03);
       backdrop-filter: blur(3px);
+      font-family: 'Manrope', sans-serif;
     }
 
     .listeners-dot {
@@ -565,8 +588,10 @@
       color: var(--muted);
       font-size: 12px;
       text-transform: uppercase;
-      letter-spacing: 1px;
+      letter-spacing: 2px;
       margin-bottom: 8px;
+      font-family: 'Space Grotesk', sans-serif;
+      opacity: 0.78;
     }
 
     .stat-value {
@@ -574,11 +599,13 @@
       font-size: clamp(26px, 4vw, 34px);
       font-weight: 700;
       text-shadow: 0 1px 10px rgba(0,0,0,0.25);
+      font-family: 'Space Grotesk', sans-serif;
     }
 
     .volume-wrap {
       margin-top: 18px;
       text-align: left;
+      font-family: 'Manrope', sans-serif;
     }
 
     .volume-wrap label {
