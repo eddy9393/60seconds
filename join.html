@@ -548,7 +548,7 @@
     }
 
     .login-required {
-      margin-top: 18px;
+      margin-bottom: 18px;
       background: rgba(255,255,255,0.04);
       border: 1px solid rgba(255,255,255,0.06);
       border-radius: 18px;
@@ -675,16 +675,16 @@
 
     <main class="page-wrap">
       <section class="join-hero">
-        <div class="section-kicker">Submit Your Track</div>
+        <div class="section-kicker">Artist Setup</div>
         <h1 class="page-title">Join 60 Seconds FM</h1>
         <p class="page-note">
-          Upload your artist profile and one track. Your track will be saved as <strong>pending</strong> until it gets approved for the radio.
+          Create your artist profile first. After that, you’ll be ready to submit your one track separately.
         </p>
       </section>
 
       <section class="join-card">
         <div id="loginRequiredBox" class="login-required hidden">
-          You need to be logged in to upload your artist profile and track.
+          You need to be logged in before creating your artist profile.
         </div>
 
         <div class="form-grid">
@@ -706,23 +706,12 @@
           <div class="field-group">
             <label class="field-label" for="photoFile">Artist Photo</label>
             <input id="photoFile" class="field-file" type="file" accept="image/jpeg,image/png,image/webp" />
-            <div class="form-meta">Accepted: JPG, PNG or WebP.</div>
-          </div>
-
-          <div class="field-group">
-            <label class="field-label" for="title">Track Title</label>
-            <input id="title" class="field-input" type="text" placeholder="Track title" />
-          </div>
-
-          <div class="field-group">
-            <label class="field-label" for="trackFile">Track File</label>
-            <input id="trackFile" class="field-file" type="file" accept=".mp3,audio/mpeg,audio/mp3" />
-            <div class="form-meta">Accepted: MP3 only.</div>
+            <div class="form-meta">Accepted: JPG, PNG or WebP. Leave empty to keep your current photo when editing.</div>
           </div>
         </div>
 
         <div class="action-row">
-          <button id="submit" class="submit-link" type="button">Save Profile + Upload Track</button>
+          <button id="submit" class="submit-link" type="button">Create Profile</button>
         </div>
 
         <div id="status" class="status-box"></div>
@@ -762,11 +751,11 @@
     const bioInput = document.getElementById("bio");
     const socialLinkInput = document.getElementById("socialLink");
     const photoFileInput = document.getElementById("photoFile");
-    const titleInput = document.getElementById("title");
-    const trackFileInput = document.getElementById("trackFile");
     const submitBtn = document.getElementById("submit");
     const statusEl = document.getElementById("status");
     const loginRequiredBox = document.getElementById("loginRequiredBox");
+
+    let currentProfile = null;
 
     function setAuthMessage(msg, error = false) {
       if (msg === "Auth session missing!") msg = "";
@@ -782,15 +771,6 @@
     function clearLoginFields() {
       email.value = "";
       password.value = "";
-    }
-
-    function clearFormFields() {
-      artistNameInput.value = "";
-      bioInput.value = "";
-      socialLinkInput.value = "";
-      photoFileInput.value = "";
-      titleInput.value = "";
-      trackFileInput.value = "";
     }
 
     function closeMenus() {
@@ -829,21 +809,42 @@
       }
     }
 
+    function fillProfileForm(profile) {
+      artistNameInput.value = profile?.artist_name || "";
+      bioInput.value = profile?.bio || "";
+      socialLinkInput.value = profile?.social_link || "";
+      submitBtn.textContent = profile ? "Save Profile" : "Create Profile";
+    }
+
     async function loadMyProfile(userId) {
       const { data, error } = await supabaseClient
         .from("profiles")
-        .select("artist_name, photo_url, user_id")
+        .select("artist_name, bio, social_link, photo_url, user_id")
         .eq("user_id", userId)
         .maybeSingle();
 
-      if (error || !data) {
+      if (error) {
+        console.error("loadMyProfile error:", error);
+        currentProfile = null;
         profileLink.href = "#";
         setHeaderAvatar("", "•");
-        return;
+        fillProfileForm(null);
+        return null;
+      }
+
+      currentProfile = data || null;
+
+      if (!data) {
+        profileLink.href = "#";
+        setHeaderAvatar("", "A");
+        fillProfileForm(null);
+        return null;
       }
 
       setHeaderAvatar(data.photo_url, data.artist_name);
       profileLink.href = `artist.html?user_id=${encodeURIComponent(data.user_id)}`;
+      fillProfileForm(data);
+      return data;
     }
 
     async function refreshAuthUI() {
@@ -852,6 +853,8 @@
 
         if (error) {
           setLoggedOutView();
+          fillProfileForm(null);
+          currentProfile = null;
           return null;
         }
 
@@ -863,11 +866,15 @@
           return user;
         } else {
           setLoggedOutView();
+          fillProfileForm(null);
+          currentProfile = null;
           return null;
         }
       } catch (err) {
         console.error("refreshAuthUI error:", err);
         setLoggedOutView();
+        fillProfileForm(null);
+        currentProfile = null;
         return null;
       }
     }
@@ -966,16 +973,41 @@
       }
     }
 
+    async function uploadPhotoIfNeeded(userId, photoFile) {
+      if (!photoFile) {
+        return currentProfile?.photo_url || "";
+      }
+
+      const photoPath = `${userId}/${Date.now()}-${photoFile.name.replace(/\s+/g, "-")}`;
+
+      const { error: photoUploadError } = await supabaseClient
+        .storage
+        .from("artist-photos")
+        .upload(photoPath, photoFile, {
+          cacheControl: "3600",
+          upsert: true
+        });
+
+      if (photoUploadError) {
+        throw new Error("Photo upload failed: " + photoUploadError.message);
+      }
+
+      const { data: photoUrlData } = supabaseClient
+        .storage
+        .from("artist-photos")
+        .getPublicUrl(photoPath);
+
+      return photoUrlData.publicUrl;
+    }
+
     async function handleSubmit() {
       const artistName = artistNameInput.value.trim();
       const bio = bioInput.value.trim();
       const socialLink = socialLinkInput.value.trim();
       const photoFile = photoFileInput.files[0];
-      const title = titleInput.value.trim();
-      const trackFile = trackFileInput.files[0];
 
-      if (!artistName || !title || !photoFile || !trackFile) {
-        setStatus("Please fill in artist name, track title, photo and track file.", true);
+      if (!artistName) {
+        setStatus("Please enter your artist name.", true);
         return;
       }
 
@@ -991,37 +1023,15 @@
         }
 
         if (!userData.user) {
-          setStatus("You must be logged in before uploading.", true);
+          setStatus("You must be logged in before creating your profile.", true);
           return;
         }
 
         const userId = userData.user.id;
 
-        setStatus("Uploading artist photo...");
-
-        const photoPath = `${userId}/${Date.now()}-${photoFile.name.replace(/\s+/g, "-")}`;
-
-        const { error: photoUploadError } = await supabaseClient
-          .storage
-          .from("artist-photos")
-          .upload(photoPath, photoFile, {
-            cacheControl: "3600",
-            upsert: true
-          });
-
-        if (photoUploadError) {
-          setStatus("Photo upload failed: " + photoUploadError.message, true);
-          return;
-        }
-
-        const { data: photoUrlData } = supabaseClient
-          .storage
-          .from("artist-photos")
-          .getPublicUrl(photoPath);
-
-        const photoUrl = photoUrlData.publicUrl;
-
         setStatus("Saving artist profile...");
+
+        const photoUrl = await uploadPhotoIfNeeded(userId, photoFile);
 
         const { error: profileError } = await supabaseClient
           .from("profiles")
@@ -1040,55 +1050,15 @@
           return;
         }
 
-        setStatus("Uploading track...");
+        photoFileInput.value = "";
+        setStatus("Profile saved successfully.");
 
-        const trackPath = `${userId}/${Date.now()}-${trackFile.name.replace(/\s+/g, "-")}`;
+        await loadMyProfile(userId);
 
-        const { error: trackUploadError } = await supabaseClient
-          .storage
-          .from("tracks")
-          .upload(trackPath, trackFile, {
-            cacheControl: "3600",
-            upsert: false
-          });
-
-        if (trackUploadError) {
-          setStatus("Track upload failed: " + trackUploadError.message, true);
-          return;
-        }
-
-        const { data: trackUrlData } = supabaseClient
-          .storage
-          .from("tracks")
-          .getPublicUrl(trackPath);
-
-        const trackUrl = trackUrlData.publicUrl;
-
-        setStatus("Saving track...");
-
-        const { error: trackInsertError } = await supabaseClient
-          .from("tracks")
-          .insert([
-            {
-              title: title,
-              artist: artistName,
-              file_url: trackUrl,
-              user_id: userId,
-              status: "pending"
-            }
-          ]);
-
-        if (trackInsertError) {
-          setStatus("Saving track failed: " + trackInsertError.message, true);
-          return;
-        }
-
-        clearFormFields();
-        setStatus("Profile and track uploaded successfully.");
-        await refreshAuthUI();
+        window.location.href = `artist.html?user_id=${encodeURIComponent(userId)}`;
       } catch (err) {
-        console.error("submit error:", err);
-        setStatus("Something went wrong during upload. Please try again.", true);
+        console.error("profile submit error:", err);
+        setStatus(err.message || "Something went wrong while saving your profile.", true);
       } finally {
         submitBtn.disabled = false;
       }
@@ -1145,6 +1115,7 @@
 
     async function initPage() {
       setLoggedOutView();
+      fillProfileForm(null);
       setStatus("");
       await refreshAuthUI();
     }
