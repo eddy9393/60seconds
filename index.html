@@ -507,6 +507,7 @@
       font-size: 14px;
       font-weight: 700;
       flex: 0 0 auto;
+      color: #111;
     }
 
     .menu-link-icon svg {
@@ -2185,4 +2186,20 @@
     }, 10000);
 
     setInterval(async () => {
-      await loadT
+      await loadTracksFromSupabase();
+      await ensureBackgroundPlayback();
+    }, 30000);
+
+    async function initPage() {
+      setLoggedOutView();
+      updateVolumeButtonState();
+      await refreshAuthDependentUI();
+      await bootstrapLiveRadio();
+    }
+
+    initPage().catch(err => {
+      console.error("initPage error:", err);
+    });
+  </script>
+</body>
+</html>
