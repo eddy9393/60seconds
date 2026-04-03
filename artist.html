@@ -1481,7 +1481,7 @@
 
       const profilePromise = supabaseClient
         .from("profiles")
-        .select("user_id, artist_name, photo_url, bio, nationality, date_of_birth, social_link")
+        .select("user_id, artist_name, photo_url, bio, nationality, social_link")
         .eq("user_id", user.id)
         .maybeSingle();
 
@@ -1549,7 +1549,7 @@
       currentTimeLabel = null;
     }
 
-    function renderArtistProfile(profile, isOwnPage, hasOwnTrack) {
+    function renderArtistProfile(profile, isOwnPage, hasOwnTrack, memberSince) {
       const displayName = profile?.artist_name || "Unknown Artist";
       artistNameEl.textContent = displayName;
 
@@ -1570,8 +1570,8 @@
         metaItems.push(profile.nationality);
       }
 
-      if (profile?.date_of_birth) {
-        metaItems.push(`Born ${formatDate(profile.date_of_birth)}`);
+      if (memberSince) {
+        metaItems.push(`Member since ${memberSince}`);
       }
 
       if (metaItems.length) {
@@ -1620,6 +1620,12 @@
       const createdAtLabel = formatDate(track.created_at);
       const previewStart = Math.max(0, Number(track.preview_start_seconds || 0));
       const previewDuration = Math.max(1, Math.min(60, Number(track.preview_duration_seconds || 60)));
+      const genrePills = [];
+
+      if (track.genre_primary) genrePills.push(track.genre_primary);
+      if (track.genre_secondary) genrePills.push(track.genre_secondary);
+
+      const feelingTags = Array.isArray(track.feeling_tags) ? track.feeling_tags : [];
 
       card.innerHTML = `
         <div class="track-top">
@@ -1642,6 +1648,8 @@
           <div class="track-meta-row">
             <div class="mini-pill">Preview: ${formatTime(previewStart)} - ${formatTime(previewStart + previewDuration)}</div>
             ${createdAtLabel ? `<div class="mini-pill">Submitted: ${escapeHtml(createdAtLabel)}</div>` : ""}
+            ${genrePills.map(genre => `<div class="mini-pill">Genre: ${escapeHtml(genre)}</div>`).join("")}
+            ${feelingTags.map(tag => `<div class="mini-pill">#${escapeHtml(tag)}</div>`).join("")}
           </div>
         </div>
       `;
@@ -1729,7 +1737,7 @@
 
       const { data: profile, error: profileError } = await supabaseClient
         .from("profiles")
-        .select("user_id, artist_name, photo_url, bio, social_link, nationality, date_of_birth")
+        .select("user_id, artist_name, photo_url, bio, social_link, nationality")
         .eq("user_id", viewedArtistUserId)
         .maybeSingle();
 
@@ -1745,13 +1753,23 @@
         return;
       }
 
+      const { data: allTracksForMemberSince } = await supabaseClient
+        .from("tracks")
+        .select("created_at")
+        .eq("user_id", viewedArtistUserId)
+        .order("created_at", { ascending: true })
+        .limit(1)
+        .maybeSingle();
+
+      const memberSince = formatDate(allTracksForMemberSince?.created_at || "");
+
       const isOwnPage = Boolean(currentUserId && currentUserId === viewedArtistUserId);
       const hasOwnTrack = Boolean(currentTrackData);
-      renderArtistProfile(profile, isOwnPage, hasOwnTrack);
+      renderArtistProfile(profile, isOwnPage, hasOwnTrack, memberSince);
 
       const { data: approvedTracks, error: tracksError } = await supabaseClient
         .from("tracks")
-        .select("id, title, artist, file_url, created_at, status, user_id, preview_start_seconds, preview_duration_seconds")
+        .select("id, title, artist, file_url, created_at, status, user_id, preview_start_seconds, preview_duration_seconds, genre_primary, genre_secondary, feeling_tags")
         .eq("user_id", viewedArtistUserId)
         .eq("status", "approved")
         .order("created_at", { ascending: false });
