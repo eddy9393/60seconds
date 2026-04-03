@@ -47,6 +47,10 @@
       -moz-osx-font-smoothing: grayscale;
     }
 
+    body.menu-open {
+      overflow: hidden;
+    }
+
     h1, h2, h3 {
       font-family: 'Space Grotesk', sans-serif;
     }
@@ -142,6 +146,7 @@
       position: relative;
       width: 20px;
       height: 16px;
+      transition: transform 0.2s ease;
     }
 
     .menu-icon span {
@@ -152,11 +157,26 @@
       border-radius: 999px;
       background: #f5f5f5;
       box-shadow: 0 1px 8px rgba(0,0,0,0.26);
+      transition: transform 0.18s ease, opacity 0.18s ease, top 0.18s ease;
     }
 
     .menu-icon span:nth-child(1) { top: 0; }
     .menu-icon span:nth-child(2) { top: 6px; }
     .menu-icon span:nth-child(3) { top: 12px; }
+
+    .header-icon-btn.active .menu-icon span:nth-child(1) {
+      top: 6px;
+      transform: rotate(45deg);
+    }
+
+    .header-icon-btn.active .menu-icon span:nth-child(2) {
+      opacity: 0;
+    }
+
+    .header-icon-btn.active .menu-icon span:nth-child(3) {
+      top: 6px;
+      transform: rotate(-45deg);
+    }
 
     .person-icon {
       position: relative;
@@ -242,6 +262,164 @@
 
     .account-menu button {
       width: 100%;
+    }
+
+    .side-menu-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      backdrop-filter: blur(2px);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.22s ease;
+      z-index: 55;
+    }
+
+    .side-menu-overlay.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .side-menu {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: min(360px, 86vw);
+      height: 100vh;
+      padding: 22px 18px 24px;
+      background:
+        linear-gradient(180deg, rgba(20,20,20,0.98), rgba(10,10,10,0.98));
+      border-right: 1px solid rgba(255,255,255,0.08);
+      box-shadow:
+        20px 0 50px rgba(0,0,0,0.45),
+        inset 0 1px 0 rgba(255,255,255,0.04);
+      backdrop-filter: blur(12px);
+      transform: translateX(-104%);
+      transition: transform 0.24s ease;
+      z-index: 60;
+      text-align: left;
+      overflow-y: auto;
+    }
+
+    .side-menu.open {
+      transform: translateX(0);
+    }
+
+    .side-menu-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      margin-bottom: 18px;
+    }
+
+    .side-menu-brand {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .side-menu-kicker {
+      font-family: 'Space Grotesk', sans-serif;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      font-size: 11px;
+      color: var(--muted);
+      opacity: 0.8;
+    }
+
+    .side-menu-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 22px;
+      color: #fff;
+    }
+
+    .side-menu-close {
+      width: 42px;
+      height: 42px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.14);
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.12), rgba(255,255,255,0.04)),
+        linear-gradient(180deg, rgba(10,10,10,0.86), rgba(10,10,10,0.92));
+      color: #fff;
+      cursor: pointer;
+      font-size: 20px;
+      line-height: 1;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.08),
+        0 10px 22px rgba(0,0,0,0.24);
+    }
+
+    .side-menu-links {
+      display: grid;
+      gap: 10px;
+    }
+
+    .menu-link,
+    .menu-action-btn {
+      width: 100%;
+      text-align: left;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-height: 54px;
+      padding: 0 16px;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,0.06);
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.015)),
+        rgba(255,255,255,0.02);
+      color: #f4f4f4;
+      text-decoration: none;
+      font-size: 15px;
+      font-weight: 500;
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.03),
+        0 10px 20px rgba(0,0,0,0.14);
+      transition: transform 0.14s ease, border-color 0.14s ease, background 0.14s ease;
+      font-family: 'Manrope', sans-serif;
+    }
+
+    .menu-action-btn {
+      cursor: pointer;
+    }
+
+    .menu-link:hover,
+    .menu-action-btn:hover {
+      transform: translateX(2px);
+      border-color: rgba(212,175,55,0.22);
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.018)),
+        rgba(255,255,255,0.03);
+    }
+
+    .menu-link-icon {
+      width: 30px;
+      height: 30px;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: #231700;
+      background:
+        linear-gradient(180deg, #fff5c9 0%, #f4d77a 20%, #d4af37 52%, #b98816 75%, #7c5a11 100%);
+      box-shadow:
+        inset 0 2px 0 rgba(255,255,255,0.45),
+        inset 0 -2px 4px rgba(90,50,0,0.28),
+        0 8px 18px rgba(212,175,55,0.14);
+      font-size: 14px;
+      font-weight: 700;
+      flex: 0 0 auto;
+    }
+
+    .side-menu-divider {
+      height: 1px;
+      margin: 8px 0 6px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
     }
 
     .auth-panel-wrap {
@@ -742,14 +920,70 @@
       .volume-slider-inline input[type="range"] {
         width: 120px;
       }
+
+      .side-menu {
+        width: min(340px, 88vw);
+        padding: 18px 16px 22px;
+      }
     }
   </style>
 </head>
 <body>
+  <div id="sideMenuOverlay" class="side-menu-overlay"></div>
+
+  <aside id="sideMenu" class="side-menu" aria-hidden="true">
+    <div class="side-menu-top">
+      <div class="side-menu-brand">
+        <div class="side-menu-kicker">Navigation</div>
+        <div class="side-menu-title">60 Seconds FM</div>
+      </div>
+      <button id="closeMenuBtn" class="side-menu-close" type="button" aria-label="Close menu">×</button>
+    </div>
+
+    <nav class="side-menu-links">
+      <a class="menu-link" href="index.html">
+        <span class="menu-link-icon">⌂</span>
+        <span>Home</span>
+      </a>
+
+      <a class="menu-link" href="join.html">
+        <span class="menu-link-icon">＋</span>
+        <span>Create Artist Profile</span>
+      </a>
+
+      <a id="menuEditProfileLink" class="menu-link hidden" href="edit-profile.html">
+        <span class="menu-link-icon">✎</span>
+        <span>Edit Profile</span>
+      </a>
+
+      <a id="menuSubmitTrackLink" class="menu-link hidden" href="submit-track.html">
+        <span class="menu-link-icon">♫</span>
+        <span>Submit Your Track</span>
+      </a>
+
+      <a id="menuArtistPageLink" class="menu-link hidden" href="#">
+        <span class="menu-link-icon">★</span>
+        <span>My Artist Page</span>
+      </a>
+
+      <div class="side-menu-divider"></div>
+
+      <button id="menuLoginBtn" class="menu-action-btn" type="button">
+        <span class="menu-link-icon">↳</span>
+        <span>Log in</span>
+      </button>
+
+      <button id="menuLogoutBtn" class="menu-action-btn hidden" type="button">
+        <span class="menu-link-icon">⎋</span>
+        <span>Log out</span>
+      </button>
+    </nav>
+  </aside>
+
   <div class="site-shell">
     <header class="header-bar">
       <div class="header-left">
-        <button id="menuBtn" class="header-icon-btn" type="button" aria-label="Open menu">
+        <button id="menuBtn" class="header-icon-btn" type="button" aria-label="Open menu" aria-expanded="false">
           <span class="menu-icon" aria-hidden="true">
             <span></span>
             <span></span>
@@ -864,7 +1098,7 @@
     </div>
 
     <div class="submit-under-radio">
-      <a id="submitTrackBtn" class="submit-link hidden" href="join.html">Submit your track</a>
+      <a id="submitTrackBtn" class="submit-link hidden" href="submit-track.html">Submit your track</a>
     </div>
 
     <div class="stats-row">
@@ -901,6 +1135,15 @@
     const headerAvatarFallback = document.getElementById("headerAvatarFallback");
     const accountMenu = document.getElementById("accountMenu");
     const menuBtn = document.getElementById("menuBtn");
+    const sideMenu = document.getElementById("sideMenu");
+    const sideMenuOverlay = document.getElementById("sideMenuOverlay");
+    const closeMenuBtn = document.getElementById("closeMenuBtn");
+    const menuLoginBtn = document.getElementById("menuLoginBtn");
+    const menuLogoutBtn = document.getElementById("menuLogoutBtn");
+    const menuEditProfileLink = document.getElementById("menuEditProfileLink");
+    const menuSubmitTrackLink = document.getElementById("menuSubmitTrackLink");
+    const menuArtistPageLink = document.getElementById("menuArtistPageLink");
+
     const email = document.getElementById("email");
     const password = document.getElementById("password");
     const signupBtn = document.getElementById("signup");
@@ -940,6 +1183,7 @@
     let listenerIdentity = null;
     let isLiveActivated = false;
     let liveBooted = false;
+    let currentProfileData = null;
 
     function setAuthMessage(msg, error = false) {
       if (msg === "Auth session missing!") msg = "";
@@ -965,14 +1209,48 @@
       volumeBtn.setAttribute("aria-label", isMuted ? "Volume muted" : "Volume");
     }
 
+    function openSideMenu() {
+      sideMenu.classList.add("open");
+      sideMenuOverlay.classList.add("open");
+      menuBtn.classList.add("active");
+      menuBtn.setAttribute("aria-expanded", "true");
+      sideMenu.setAttribute("aria-hidden", "false");
+      document.body.classList.add("menu-open");
+    }
+
+    function closeSideMenu() {
+      sideMenu.classList.remove("open");
+      sideMenuOverlay.classList.remove("open");
+      menuBtn.classList.remove("active");
+      menuBtn.setAttribute("aria-expanded", "false");
+      sideMenu.setAttribute("aria-hidden", "true");
+      document.body.classList.remove("menu-open");
+    }
+
     function closeMenus() {
       authBox.classList.add("hidden");
       accountMenu.classList.add("hidden");
       volumeControl.classList.remove("open");
+      closeSideMenu();
+    }
+
+    function updateMenuAuthState(user) {
+      const isLoggedIn = Boolean(user);
+
+      menuLoginBtn.classList.toggle("hidden", isLoggedIn);
+      menuLogoutBtn.classList.toggle("hidden", !isLoggedIn);
+      menuEditProfileLink.classList.toggle("hidden", !isLoggedIn);
+      menuSubmitTrackLink.classList.toggle("hidden", !isLoggedIn);
+      menuArtistPageLink.classList.toggle("hidden", !isLoggedIn);
+
+      if (!isLoggedIn) {
+        menuArtistPageLink.href = "#";
+      }
     }
 
     function setLoggedOutView() {
-      closeMenus();
+      authBox.classList.add("hidden");
+      accountMenu.classList.add("hidden");
       userBox.classList.add("hidden");
       submitTrackBtn.classList.add("hidden");
       userAvatar.classList.add("hidden");
@@ -984,6 +1262,8 @@
       headerAvatarImage.classList.add("hidden");
       headerAvatarFallback.classList.add("hidden");
       headerAvatarImage.src = "";
+      currentProfileData = null;
+      updateMenuAuthState(null);
       hideUserStats();
     }
 
@@ -993,6 +1273,7 @@
       submitTrackBtn.classList.remove("hidden");
       showLoginBtn.classList.add("hidden");
       headerAvatarBtn.classList.remove("hidden");
+      updateMenuAuthState(true);
     }
 
     function setHeaderAvatar(photoUrl, artistName) {
@@ -1015,13 +1296,17 @@
         .maybeSingle();
 
       if (error || !data) {
+        currentProfileData = null;
         userAvatar.classList.add("hidden");
         userAvatarFallback.classList.remove("hidden");
         userAvatarFallback.textContent = "•";
         profileLink.href = "#";
+        menuArtistPageLink.href = "#";
         setHeaderAvatar("", "•");
         return;
       }
+
+      currentProfileData = data;
 
       if (data.photo_url) {
         userAvatar.src = data.photo_url;
@@ -1035,6 +1320,7 @@
 
       setHeaderAvatar(data.photo_url, data.artist_name);
       profileLink.href = `artist.html?user_id=${encodeURIComponent(data.user_id)}`;
+      menuArtistPageLink.href = `artist.html?user_id=${encodeURIComponent(data.user_id)}`;
     }
 
     async function refreshAuthUI() {
@@ -1051,6 +1337,7 @@
         if (user) {
           setLoggedInView();
           await loadMyProfile(user.id);
+          updateMenuAuthState(user);
           return user;
         } else {
           setLoggedOutView();
@@ -1139,6 +1426,7 @@
 
     showLoginBtn.onclick = () => {
       accountMenu.classList.add("hidden");
+      closeSideMenu();
       volumeControl.classList.remove("open");
       authBox.classList.toggle("hidden");
       setAuthMessage("");
@@ -1149,20 +1437,43 @@
 
     headerAvatarBtn.onclick = () => {
       authBox.classList.add("hidden");
+      closeSideMenu();
       volumeControl.classList.remove("open");
       accountMenu.classList.toggle("hidden");
     };
 
     menuBtn.onclick = () => {
-      setAuthMessage("");
       authBox.classList.add("hidden");
       accountMenu.classList.add("hidden");
       volumeControl.classList.remove("open");
+      if (sideMenu.classList.contains("open")) {
+        closeSideMenu();
+      } else {
+        openSideMenu();
+      }
+    };
+
+    closeMenuBtn.onclick = closeSideMenu;
+    sideMenuOverlay.onclick = closeSideMenu;
+
+    menuLoginBtn.onclick = () => {
+      closeSideMenu();
+      accountMenu.classList.add("hidden");
+      volumeControl.classList.remove("open");
+      authBox.classList.remove("hidden");
+      setAuthMessage("");
+      setTimeout(() => email.focus(), 0);
+    };
+
+    menuLogoutBtn.onclick = async () => {
+      closeSideMenu();
+      await handleLogout();
     };
 
     volumeBtn.onclick = () => {
       authBox.classList.add("hidden");
       accountMenu.classList.add("hidden");
+      closeSideMenu();
       volumeControl.classList.toggle("open");
     };
 
@@ -1170,8 +1481,10 @@
       const insideHeaderRight = e.target.closest(".header-right");
       const insideAuthBox = e.target.closest("#authBox");
       const insideVolumeWrap = e.target.closest(".volume-wrap");
+      const insideSideMenu = e.target.closest("#sideMenu");
       const isLoginButton = e.target.closest("#showLoginBtn");
       const isAvatarButton = e.target.closest("#headerAvatarBtn");
+      const isMenuButton = e.target.closest("#menuBtn");
 
       if (!insideHeaderRight && !insideAuthBox && !isLoginButton && !isAvatarButton) {
         authBox.classList.add("hidden");
@@ -1180,6 +1493,19 @@
 
       if (!insideVolumeWrap) {
         volumeControl.classList.remove("open");
+      }
+
+      if (!insideSideMenu && !isMenuButton) {
+        closeSideMenu();
+      }
+    });
+
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") {
+        authBox.classList.add("hidden");
+        accountMenu.classList.add("hidden");
+        volumeControl.classList.remove("open");
+        closeSideMenu();
       }
     });
 
@@ -1209,6 +1535,7 @@
 
         listenerIdentity = null;
         clearLoginFields();
+        authBox.classList.add("hidden");
         await refreshAuthDependentUI();
       } catch (err) {
         console.error("handleLogin error:", err);
@@ -1256,6 +1583,7 @@
 
     async function handleLogout() {
       logoutBtn.disabled = true;
+      menuLogoutBtn.disabled = true;
       setAuthMessage("");
 
       try {
@@ -1274,6 +1602,7 @@
         setAuthMessage("Logout failed. Try again.", true);
       } finally {
         logoutBtn.disabled = false;
+        menuLogoutBtn.disabled = false;
       }
     }
 
