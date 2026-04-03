@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Submit Track - 60 Seconds FM</title>
+  <title>Enter The Radio - 60 Seconds FM</title>
 
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Manrope:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
@@ -1221,9 +1221,9 @@
     <main class="page-wrap">
       <section class="hero-card">
         <div class="section-kicker">Track Submission</div>
-        <h1 id="pageTitle" class="page-title">Submit Your Track</h1>
+        <h1 id="pageTitle" class="page-title">Enter The Radio</h1>
         <p id="pageNote" class="page-note">
-          Upload your track for review and choose which exact 60 seconds should be used as the radio preview.
+          Submit your 60 second preview and join the next wave.
         </p>
       </section>
 
@@ -1660,10 +1660,11 @@
 
     function setPageMode(track) {
       const isEdit = Boolean(track);
-      pageTitle.textContent = isEdit ? "Edit Your Track" : "Submit Your Track";
+      pageTitle.textContent = "Enter The Radio";
       pageNote.textContent = isEdit
-        ? "Update your track information and choose the exact 60 second clip used as your radio preview."
-        : "Upload your track for review and choose which exact 60 seconds should be used as the radio preview.";
+        ? "Update your 60 second preview and stay ready for the next wave."
+        : "Submit your 60 second preview and join the next wave.";
+
       saveTrackBtn.textContent = isEdit ? "Save Track Changes" : "Submit Your Track";
       menuSubmitTrackLabel.textContent = isEdit ? "Edit Your Track" : "Submit Your Track";
     }
@@ -2121,7 +2122,10 @@
 
         trackFileInput.value = "";
         setStatus("Track saved successfully.");
-        await refreshPageState();
+
+        const artistUrl = `artist.html?user_id=${encodeURIComponent(currentUser.id)}`;
+        window.location.href = artistUrl;
+        return;
       } catch (err) {
         console.error(err);
         setStatus(err.message || "Something went wrong while saving your track.", true);
