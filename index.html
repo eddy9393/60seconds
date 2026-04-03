@@ -953,7 +953,7 @@
         background:
           linear-gradient(180deg, rgba(7, 7, 7, 0.50) 0%, rgba(7, 7, 7, 0.76) 42%, rgba(7, 7, 7, 0.86) 100%),
           radial-gradient(circle at top, rgba(212, 175, 55, 0.12), transparent 26%),
-          url("bg-desktop-correct.webp");
+          url("bg-mobile-final-1080x1920.webp");
         background-size: cover, auto, cover;
         background-position: center top, center top, center center;
         background-repeat: no-repeat, no-repeat, no-repeat;
@@ -1029,11 +1029,11 @@
 
     <nav class="side-menu-links">
       <a class="menu-link" href="index.html">
-        <span class="menu-link-icon">⌂</span>
-        <span>Home</span>
+        <span class="menu-link-icon">📻</span>
+        <span>Go back to Radio</span>
       </a>
 
-      <a class="menu-link" href="join.html">
+      <a id="menuCreateProfileLink" class="menu-link hidden" href="join.html">
         <span class="menu-link-icon">＋</span>
         <span>Create Artist Profile</span>
       </a>
@@ -1060,8 +1060,13 @@
         <span>Log in</span>
       </button>
 
+      <button id="menuSignupBtn" class="menu-action-btn" type="button">
+        <span class="menu-link-icon">✦</span>
+        <span>Sign up</span>
+      </button>
+
       <div id="menuAuthPanel" class="menu-auth-panel hidden">
-        <div class="menu-auth-title">Log in</div>
+        <div id="menuAuthTitle" class="menu-auth-title">Log in</div>
 
         <div class="menu-auth-inputs">
           <input id="menuEmail" type="email" placeholder="Email" autocomplete="email" />
@@ -1243,11 +1248,14 @@
     const sideMenuOverlay = document.getElementById("sideMenuOverlay");
     const closeMenuBtn = document.getElementById("closeMenuBtn");
     const menuLoginBtn = document.getElementById("menuLoginBtn");
+    const menuSignupBtn = document.getElementById("menuSignupBtn");
     const menuLogoutBtn = document.getElementById("menuLogoutBtn");
+    const menuCreateProfileLink = document.getElementById("menuCreateProfileLink");
     const menuEditProfileLink = document.getElementById("menuEditProfileLink");
     const menuSubmitTrackLink = document.getElementById("menuSubmitTrackLink");
     const menuArtistPageLink = document.getElementById("menuArtistPageLink");
     const menuAuthPanel = document.getElementById("menuAuthPanel");
+    const menuAuthTitle = document.getElementById("menuAuthTitle");
     const menuEmail = document.getElementById("menuEmail");
     const menuPassword = document.getElementById("menuPassword");
     const menuSignupSubmitBtn = document.getElementById("menuSignupSubmitBtn");
@@ -1295,6 +1303,7 @@
     let isLiveActivated = false;
     let liveBooted = false;
     let currentProfileData = null;
+    let currentMenuAuthMode = "login";
 
     function setAuthMessage(msg, error = false, target = authMessageEl) {
       if (msg === "Auth session missing!") msg = "";
@@ -1342,6 +1351,14 @@
       setAuthMessage("", false, menuAuthMessage);
     }
 
+    function openMenuAuthPanel(mode = "login") {
+      currentMenuAuthMode = mode;
+      menuAuthPanel.classList.remove("hidden");
+      menuAuthTitle.textContent = mode === "signup" ? "Sign up" : "Log in";
+      setAuthMessage("", false, menuAuthMessage);
+      setTimeout(() => menuEmail.focus(), 0);
+    }
+
     function closeHeaderPanels() {
       authBox.classList.add("hidden");
       accountMenu.classList.add("hidden");
@@ -1352,7 +1369,10 @@
       const isLoggedIn = Boolean(user);
 
       menuLoginBtn.classList.toggle("hidden", isLoggedIn);
+      menuSignupBtn.classList.toggle("hidden", isLoggedIn);
       menuLogoutBtn.classList.toggle("hidden", !isLoggedIn);
+
+      menuCreateProfileLink.classList.toggle("hidden", !isLoggedIn);
       menuEditProfileLink.classList.toggle("hidden", !isLoggedIn);
       menuSubmitTrackLink.classList.toggle("hidden", !isLoggedIn);
       menuArtistPageLink.classList.toggle("hidden", !isLoggedIn);
@@ -1384,7 +1404,7 @@
       authBox.classList.add("hidden");
       menuAuthPanel.classList.add("hidden");
       userBox.classList.remove("hidden");
-      submitTrackBtn.classList.remove("hidden");
+      submitTrackBtn.classList.add("hidden");
       showLoginBtn.classList.add("hidden");
       headerAvatarBtn.classList.remove("hidden");
       updateMenuAuthState(true);
@@ -1574,11 +1594,14 @@
       authBox.classList.add("hidden");
       accountMenu.classList.add("hidden");
       volumeControl.classList.remove("open");
-      menuAuthPanel.classList.toggle("hidden");
-      setAuthMessage("", false, menuAuthMessage);
-      if (!menuAuthPanel.classList.contains("hidden")) {
-        setTimeout(() => menuEmail.focus(), 0);
-      }
+      openMenuAuthPanel("login");
+    };
+
+    menuSignupBtn.onclick = () => {
+      authBox.classList.add("hidden");
+      accountMenu.classList.add("hidden");
+      volumeControl.classList.remove("open");
+      openMenuAuthPanel("signup");
     };
 
     menuLogoutBtn.onclick = async () => {
@@ -1601,7 +1624,6 @@
       const isLoginButton = e.target.closest("#showLoginBtn");
       const isAvatarButton = e.target.closest("#headerAvatarBtn");
       const isMenuButton = e.target.closest("#menuBtn");
-      const isMenuLoginButton = e.target.closest("#menuLoginBtn");
 
       if (!insideHeaderRight && !insideAuthBox && !isLoginButton && !isAvatarButton) {
         authBox.classList.add("hidden");
@@ -1614,10 +1636,6 @@
 
       if (!insideSideMenu && !isMenuButton) {
         closeSideMenu();
-      }
-
-      if (!insideSideMenu && !isMenuLoginButton) {
-        menuAuthPanel.classList.add("hidden");
       }
     });
 
@@ -1786,11 +1804,23 @@
     });
 
     menuEmail.addEventListener("keydown", (e) => {
-      if (e.key === "Enter") handleMenuLogin();
+      if (e.key === "Enter") {
+        if (currentMenuAuthMode === "signup") {
+          handleMenuSignup();
+        } else {
+          handleMenuLogin();
+        }
+      }
     });
 
     menuPassword.addEventListener("keydown", (e) => {
-      if (e.key === "Enter") handleMenuLogin();
+      if (e.key === "Enter") {
+        if (currentMenuAuthMode === "signup") {
+          handleMenuSignup();
+        } else {
+          handleMenuLogin();
+        }
+      }
     });
 
     supabaseClient.auth.onAuthStateChange(() => {
