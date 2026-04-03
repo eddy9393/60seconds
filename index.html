@@ -1266,8 +1266,6 @@
   </div>
 
   <div class="site-shell">
-
-
     <div class="radio-stage">
       <div id="startOverlay" class="start-overlay">
         <div class="overlay-content">
@@ -1403,10 +1401,6 @@
     const authBox = document.getElementById("authBox");
     const authMessageEl = document.getElementById("authMessage");
 
-    const userBox = document.getElementById("userBox");
-    const userAvatar = document.getElementById("userAvatar");
-    const userAvatarFallback = document.getElementById("userAvatarFallback");
-    const profileLink = document.getElementById("profileLink");
     const submitTrackBtn = document.getElementById("submitTrackBtn");
 
     const audio = document.getElementById("audio");
@@ -1529,13 +1523,7 @@
 
     function setLoggedOutView() {
       closeHeaderPanels();
-      userBox.classList.add("hidden");
       submitTrackBtn.classList.add("hidden");
-      userAvatar.classList.add("hidden");
-      userAvatarFallback.classList.add("hidden");
-      userAvatar.src = "";
-      profileLink.href = "#";
-      profileLink.classList.add("hidden");
       showLoginBtn.classList.remove("hidden");
       headerAvatarBtn.classList.add("hidden");
       headerAvatarImage.classList.add("hidden");
@@ -1552,7 +1540,6 @@
     function setLoggedInView() {
       authBox.classList.add("hidden");
       menuAuthPanel.classList.add("hidden");
-      userBox.classList.add("hidden");
       submitTrackBtn.classList.add("hidden");
       showLoginBtn.classList.add("hidden");
       headerAvatarBtn.classList.remove("hidden");
@@ -1589,31 +1576,13 @@
 
       if (error || !data) {
         currentProfileData = null;
-        userAvatar.classList.add("hidden");
-        userAvatarFallback.classList.remove("hidden");
-        userAvatarFallback.textContent = "•";
-        profileLink.href = "#";
-        profileLink.classList.add("hidden");
         setHeaderAvatar("", "•");
         setAccountMenuProfile(null);
         return null;
       }
 
       currentProfileData = data;
-
-      if (data.photo_url) {
-        userAvatar.src = data.photo_url;
-        userAvatar.classList.remove("hidden");
-        userAvatarFallback.classList.add("hidden");
-      } else {
-        userAvatar.classList.add("hidden");
-        userAvatarFallback.classList.remove("hidden");
-        userAvatarFallback.textContent = (data.artist_name || "A").charAt(0).toUpperCase();
-      }
-
       setHeaderAvatar(data.photo_url, data.artist_name);
-      profileLink.href = `artist.html?user_id=${encodeURIComponent(data.user_id)}`;
-      profileLink.classList.remove("hidden");
       setAccountMenuProfile(data);
       return data;
     }
