@@ -1481,7 +1481,7 @@
 
       const profilePromise = supabaseClient
         .from("profiles")
-        .select("user_id, artist_name, photo_url, bio, nationality, social_link")
+        .select("user_id, artist_name, photo_url, bio, nationality, social_link, created_at")
         .eq("user_id", user.id)
         .maybeSingle();
 
@@ -1549,7 +1549,7 @@
       currentTimeLabel = null;
     }
 
-    function renderArtistProfile(profile, isOwnPage, hasOwnTrack, memberSince) {
+    function renderArtistProfile(profile, isOwnPage, hasOwnTrack) {
       const displayName = profile?.artist_name || "Unknown Artist";
       artistNameEl.textContent = displayName;
 
@@ -1570,8 +1570,8 @@
         metaItems.push(profile.nationality);
       }
 
-      if (memberSince) {
-        metaItems.push(`Member since ${memberSince}`);
+      if (profile?.created_at) {
+        metaItems.push(`Member since ${formatDate(profile.created_at)}`);
       }
 
       if (metaItems.length) {
@@ -1737,7 +1737,7 @@
 
       const { data: profile, error: profileError } = await supabaseClient
         .from("profiles")
-        .select("user_id, artist_name, photo_url, bio, social_link, nationality")
+        .select("user_id, artist_name, photo_url, bio, social_link, nationality, created_at")
         .eq("user_id", viewedArtistUserId)
         .maybeSingle();
 
@@ -1753,19 +1753,9 @@
         return;
       }
 
-      const { data: allTracksForMemberSince } = await supabaseClient
-        .from("tracks")
-        .select("created_at")
-        .eq("user_id", viewedArtistUserId)
-        .order("created_at", { ascending: true })
-        .limit(1)
-        .maybeSingle();
-
-      const memberSince = formatDate(allTracksForMemberSince?.created_at || "");
-
       const isOwnPage = Boolean(currentUserId && currentUserId === viewedArtistUserId);
       const hasOwnTrack = Boolean(currentTrackData);
-      renderArtistProfile(profile, isOwnPage, hasOwnTrack, memberSince);
+      renderArtistProfile(profile, isOwnPage, hasOwnTrack);
 
       const { data: approvedTracks, error: tracksError } = await supabaseClient
         .from("tracks")
