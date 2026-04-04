@@ -535,6 +535,51 @@
       color: #111;
     }
 
+    .player-actions .metal-btn,
+    .volume-button {
+      min-height: 52px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,230,150,0.28);
+      background:
+        linear-gradient(180deg, rgba(255,248,220,0.96) 0%, rgba(244,215,122,0.92) 22%, rgba(212,175,55,0.92) 56%, rgba(143,107,19,0.96) 100%);
+      color: #181203;
+      box-shadow:
+        inset 0 2px 0 rgba(255,255,255,0.42),
+        inset 0 -2px 5px rgba(90,50,0,0.24),
+        0 12px 24px rgba(0,0,0,0.24),
+        0 0 18px rgba(212,175,55,0.10);
+      text-shadow: 0 1px 0 rgba(255,255,255,0.18);
+      transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
+    }
+
+    .player-actions .metal-btn:hover,
+    .volume-button:hover {
+      transform: translateY(-1px);
+      filter: brightness(1.03);
+      box-shadow:
+        inset 0 2px 0 rgba(255,255,255,0.48),
+        inset 0 -2px 5px rgba(90,50,0,0.22),
+        0 14px 26px rgba(0,0,0,0.28),
+        0 0 20px rgba(212,175,55,0.14);
+    }
+
+    .player-actions .metal-btn .icon {
+      color: #4f3a08;
+      margin-right: 8px;
+    }
+
+    #likeBtn.liked {
+      background:
+        linear-gradient(180deg, #fff7cf 0%, #f7df87 22%, #e3bd49 56%, #a77410 100%);
+      color: #181203;
+      border-color: rgba(255,232,166,0.38);
+      box-shadow:
+        inset 0 2px 0 rgba(255,255,255,0.5),
+        inset 0 -2px 5px rgba(90,50,0,0.22),
+        0 14px 28px rgba(0,0,0,0.26),
+        0 0 22px rgba(244,215,122,0.18);
+    }
+
     .radio-stage {
       position: relative;
       max-width: 880px;
@@ -676,12 +721,6 @@
         0 0 40px rgba(212,175,55,0.24);
     }
 
-    .start-btn .icon {
-      margin-right: 10px;
-      color: #5b4309;
-      font-size: 16px;
-    }
-
     .radio-shell-content {
       display: grid;
       gap: 18px;
@@ -694,55 +733,37 @@
 
     .waveform-wrap {
       width: 100%;
+      max-width: 620px;
       display: flex;
       justify-content: center;
-      margin: 0 0 8px;
+      margin: 0 auto 12px;
     }
 
     .waveform {
-      height: 44px;
+      width: 100%;
+      height: 58px;
       display: flex;
       align-items: flex-end;
-      justify-content: center;
+      justify-content: space-between;
       gap: 4px;
-      padding: 0 10px;
-      opacity: 0.9;
+      padding: 0;
+      opacity: 0.98;
     }
 
     .waveform-bar {
-      width: 4px;
+      flex: 1 1 0;
+      min-width: 4px;
+      height: 16px;
       border-radius: 999px;
-      background: linear-gradient(180deg, var(--gold-2), var(--gold), var(--gold-dark));
-      box-shadow: 0 0 10px rgba(212,175,55,0.18);
+      background:
+        linear-gradient(180deg, rgba(255,245,201,0.96) 0%, rgba(244,215,122,0.95) 18%, rgba(212,175,55,0.95) 56%, rgba(143,107,19,0.98) 100%);
+      box-shadow:
+        0 0 10px rgba(212,175,55,0.18),
+        0 0 24px rgba(212,175,55,0.08);
       transform-origin: bottom center;
-      animation: waveformPulse 1.2s ease-in-out infinite;
-    }
-
-    .waveform-bar:nth-child(1) { height: 14px; animation-delay: 0s; }
-    .waveform-bar:nth-child(2) { height: 28px; animation-delay: 0.08s; }
-    .waveform-bar:nth-child(3) { height: 18px; animation-delay: 0.16s; }
-    .waveform-bar:nth-child(4) { height: 34px; animation-delay: 0.24s; }
-    .waveform-bar:nth-child(5) { height: 22px; animation-delay: 0.32s; }
-    .waveform-bar:nth-child(6) { height: 38px; animation-delay: 0.40s; }
-    .waveform-bar:nth-child(7) { height: 20px; animation-delay: 0.48s; }
-    .waveform-bar:nth-child(8) { height: 30px; animation-delay: 0.56s; }
-    .waveform-bar:nth-child(9) { height: 16px; animation-delay: 0.64s; }
-    .waveform-bar:nth-child(10) { height: 26px; animation-delay: 0.72s; }
-    .waveform-bar:nth-child(11) { height: 18px; animation-delay: 0.80s; }
-    .waveform-bar:nth-child(12) { height: 32px; animation-delay: 0.88s; }
-    .waveform-bar:nth-child(13) { height: 20px; animation-delay: 0.96s; }
-    .waveform-bar:nth-child(14) { height: 28px; animation-delay: 1.04s; }
-    .waveform-bar:nth-child(15) { height: 14px; animation-delay: 1.12s; }
-
-    @keyframes waveformPulse {
-      0%, 100% {
-        transform: scaleY(0.65);
-        opacity: 0.72;
-      }
-      50% {
-        transform: scaleY(1.15);
-        opacity: 1;
-      }
+      transform: scaleY(1);
+      transition: height 0.08s linear, transform 0.08s linear, opacity 0.12s ease;
+      opacity: 0.9;
     }
 
     .track-title {
@@ -786,26 +807,29 @@
 
     .progress {
       position: relative;
-      height: 10px;
+      width: 100%;
       max-width: 620px;
+      height: 14px;
       margin: 0 auto;
       background:
-        linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.03)),
-        linear-gradient(90deg, rgba(32,32,32,0.92), rgba(18,18,18,0.98));
-      border: 1px solid rgba(255,255,255,0.08);
+        linear-gradient(180deg, rgba(255,255,255,0.07), rgba(255,255,255,0.02)),
+        linear-gradient(90deg, rgba(20,20,20,0.96), rgba(10,10,10,0.98));
+      border: 1px solid rgba(244,215,122,0.22);
       border-radius: 999px;
       overflow: hidden;
       box-shadow:
-        inset 0 1px 2px rgba(255,255,255,0.04),
-        inset 0 -2px 4px rgba(0,0,0,0.45),
-        0 0 0 1px rgba(212,175,55,0.03);
+        inset 0 1px 2px rgba(255,255,255,0.05),
+        inset 0 -3px 6px rgba(0,0,0,0.48),
+        0 0 0 1px rgba(212,175,55,0.05),
+        0 0 20px rgba(212,175,55,0.06);
     }
 
-    .progress::after {
+    .progress::before {
       content: "";
       position: absolute;
-      inset: 0;
-      background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.06) 50%, transparent 100%);
+      inset: 1px;
+      border-radius: inherit;
+      background: linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0.06), rgba(255,255,255,0.02));
       pointer-events: none;
       opacity: 0.55;
     }
@@ -816,43 +840,57 @@
       width: 0%;
       border-radius: inherit;
       background:
-        linear-gradient(90deg, #7d5a10 0%, #b98714 18%, #d4af37 48%, #f4d77a 78%, #fff0b3 100%);
+        linear-gradient(90deg, #6e4f0e 0%, #a97812 16%, #d4af37 46%, #f4d77a 78%, #fff1b8 100%);
       box-shadow:
-        0 0 12px rgba(212,175,55,0.24),
-        0 0 24px rgba(212,175,55,0.14);
+        0 0 16px rgba(212,175,55,0.28),
+        0 0 28px rgba(212,175,55,0.16);
+    }
+
+    .fill::before {
+      content: "";
+      position: absolute;
+      inset: 1px auto 1px 1px;
+      width: calc(100% - 2px);
+      border-radius: inherit;
+      background: linear-gradient(180deg, rgba(255,255,255,0.34), rgba(255,255,255,0.04) 52%, rgba(255,255,255,0));
+      pointer-events: none;
     }
 
     .fill::after {
       content: "";
       position: absolute;
-      top: 1px;
-      left: 0;
+      top: 50%;
       right: 0;
-      height: 40%;
-      border-radius: inherit;
-      background: linear-gradient(180deg, rgba(255,255,255,0.34), rgba(255,255,255,0));
+      width: 18px;
+      height: 18px;
+      transform: translate(35%, -50%);
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255,247,207,0.98) 0%, rgba(244,215,122,0.95) 42%, rgba(212,175,55,0.72) 70%, rgba(212,175,55,0) 100%);
+      box-shadow:
+        0 0 14px rgba(244,215,122,0.45),
+        0 0 26px rgba(212,175,55,0.30);
       pointer-events: none;
     }
 
     .player-actions {
-      margin-top: 18px;
+      margin-top: 22px;
       display: flex;
       justify-content: center;
-      gap: 12px;
+      gap: 14px;
       flex-wrap: wrap;
     }
 
     .volume-wrap {
-      margin-top: 12px;
+      margin-top: 16px;
       display: flex;
       justify-content: center;
-      min-height: 50px;
+      min-height: 56px;
     }
 
     .volume-control {
       display: inline-flex;
       align-items: center;
-      gap: 10px;
+      gap: 12px;
     }
 
     .volume-slider-inline {
@@ -864,46 +902,26 @@
     }
 
     .volume-control.open .volume-slider-inline {
-      width: 156px;
+      width: 168px;
       opacity: 1;
-      margin-left: 4px;
+      margin-left: 6px;
     }
 
     .volume-slider-inline input[type="range"] {
-      width: 156px;
+      width: 168px;
       margin: 0;
       accent-color: var(--gold);
     }
 
     .volume-button {
-      width: 50px;
-      height: 50px;
-      border-radius: 999px;
-      border: 1px solid rgba(255,255,255,0.16);
-      background:
-        linear-gradient(180deg, #fbfbfb 0%, #d6d6d6 16%, #b6b6b6 35%, #8b8b8b 52%, #d2d2d2 72%, #f4f4f4 100%);
-      color: #151515;
+      width: 52px;
+      height: 52px;
       cursor: pointer;
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      box-shadow:
-        inset 0 2px 0 rgba(255,255,255,0.72),
-        inset 0 -2px 3px rgba(0,0,0,0.18),
-        0 10px 22px rgba(0,0,0,0.25);
       flex: 0 0 auto;
       padding: 0;
-      transition: transform 0.14s ease, box-shadow 0.18s ease, filter 0.18s ease;
-    }
-
-    .volume-button:hover {
-      transform: translateY(-1px);
-      filter: brightness(1.02);
-      box-shadow:
-        inset 0 2px 0 rgba(255,255,255,0.78),
-        inset 0 -2px 3px rgba(0,0,0,0.18),
-        0 12px 24px rgba(0,0,0,0.28),
-        0 0 14px rgba(212,175,55,0.16);
     }
 
     .volume-button:active {
@@ -1136,13 +1154,19 @@
         margin-top: 24px;
       }
 
+      .waveform-wrap,
+      .time-row,
+      .progress {
+        max-width: 100%;
+      }
+
       .waveform {
-        height: 38px;
+        height: 44px;
         gap: 3px;
       }
 
       .waveform-bar {
-        width: 3px;
+        min-width: 2px;
       }
 
       .track-title {
@@ -1167,13 +1191,13 @@
         width: 120px;
       }
 
-      .time-row,
       .progress {
-        max-width: 100%;
+        height: 12px;
       }
 
-      .progress {
-        height: 9px;
+      .fill::after {
+        width: 14px;
+        height: 14px;
       }
     }
   </style>
@@ -1308,7 +1332,7 @@
             You're just a minute away from discovering your next favorite artist
           </p>
           <div class="start-btn-wrap">
-            <button id="start" class="start-btn" type="button"><span class="icon">▶</span>Start Radio</button>
+            <button id="start" class="start-btn" type="button">Start Radio</button>
           </div>
         </div>
       </div>
@@ -1318,23 +1342,7 @@
           <div class="now-playing">Now Playing</div>
 
           <div class="waveform-wrap" aria-hidden="true">
-            <div class="waveform">
-              <span class="waveform-bar"></span>
-              <span class="waveform-bar"></span>
-              <span class="waveform-bar"></span>
-              <span class="waveform-bar"></span>
-              <span class="waveform-bar"></span>
-              <span class="waveform-bar"></span>
-              <span class="waveform-bar"></span>
-              <span class="waveform-bar"></span>
-              <span class="waveform-bar"></span>
-              <span class="waveform-bar"></span>
-              <span class="waveform-bar"></span>
-              <span class="waveform-bar"></span>
-              <span class="waveform-bar"></span>
-              <span class="waveform-bar"></span>
-              <span class="waveform-bar"></span>
-            </div>
+            <div class="waveform" id="waveformBars"></div>
           </div>
 
           <h2 id="title" class="track-title">Loading...</h2>
@@ -1405,7 +1413,7 @@
       </div>
     </div>
 
-    <audio id="audio" autoplay playsinline></audio>
+    <audio id="audio" autoplay playsinline crossorigin="anonymous"></audio>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -1458,6 +1466,7 @@
     const playsCardEl = document.getElementById("playsCard");
     const myPlaysCardEl = document.getElementById("myPlaysCard");
     const myTotalPlaysEl = document.getElementById("myTotalPlays");
+    const waveformBarsEl = document.getElementById("waveformBars");
 
     let tracks = [];
     let current = -1;
@@ -1469,6 +1478,13 @@
     let currentTrackData = null;
     let currentPreviewStart = 0;
     let currentPreviewDuration = 60;
+
+    let audioContext = null;
+    let analyser = null;
+    let sourceNode = null;
+    let frequencyData = null;
+    let waveformAnimationFrame = null;
+    let waveformBarElements = [];
 
     function hideUserStats() {
       playsCardEl.classList.add("hidden");
@@ -1992,6 +2008,113 @@
       }
     }
 
+    function buildWaveformBars() {
+      if (!waveformBarsEl) return;
+
+      waveformBarsEl.innerHTML = "";
+      waveformBarElements = [];
+
+      const totalBars = window.innerWidth <= 760 ? 32 : 44;
+
+      for (let i = 0; i < totalBars; i += 1) {
+        const bar = document.createElement("span");
+        bar.className = "waveform-bar";
+        bar.style.height = "12px";
+        waveformBarsEl.appendChild(bar);
+        waveformBarElements.push(bar);
+      }
+    }
+
+    function resetWaveformBars() {
+      waveformBarElements.forEach((bar, index) => {
+        const baseHeights = [10, 14, 18, 22, 16, 12];
+        bar.style.height = `${baseHeights[index % baseHeights.length]}px`;
+        bar.style.opacity = "0.68";
+        bar.style.transform = "scaleY(1)";
+      });
+    }
+
+    function setupAudioAnalysis() {
+      try {
+        if (!window.AudioContext && !window.webkitAudioContext) return;
+        if (audioContext) return;
+
+        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+        audioContext = new AudioContextClass();
+        analyser = audioContext.createAnalyser();
+        analyser.fftSize = 128;
+        analyser.smoothingTimeConstant = 0.82;
+        frequencyData = new Uint8Array(analyser.frequencyBinCount);
+
+        sourceNode = audioContext.createMediaElementSource(audio);
+        sourceNode.connect(analyser);
+        analyser.connect(audioContext.destination);
+      } catch (error) {
+        console.error("setupAudioAnalysis error:", error);
+      }
+    }
+
+    function startWaveformAnimation() {
+      if (!analyser || !frequencyData || !waveformBarElements.length) {
+        resetWaveformBars();
+        return;
+      }
+
+      if (waveformAnimationFrame) {
+        cancelAnimationFrame(waveformAnimationFrame);
+      }
+
+      const animate = () => {
+        if (!analyser || !frequencyData || !waveformBarElements.length) {
+          return;
+        }
+
+        analyser.getByteFrequencyData(frequencyData);
+
+        const binCount = frequencyData.length;
+        const barsCount = waveformBarElements.length;
+
+        for (let i = 0; i < barsCount; i += 1) {
+          const start = Math.floor((i / barsCount) * binCount);
+          const end = Math.floor(((i + 1) / barsCount) * binCount);
+          let total = 0;
+          let samples = 0;
+
+          for (let j = start; j < end; j += 1) {
+            total += frequencyData[j];
+            samples += 1;
+          }
+
+          const avg = samples ? total / samples : 0;
+          const normalized = avg / 255;
+          const height = 10 + normalized * 48;
+          const opacity = 0.58 + normalized * 0.42;
+
+          waveformBarElements[i].style.height = `${height}px`;
+          waveformBarElements[i].style.opacity = `${opacity}`;
+          waveformBarElements[i].style.transform = `scaleY(${0.92 + normalized * 0.22})`;
+        }
+
+        waveformAnimationFrame = requestAnimationFrame(animate);
+      };
+
+      animate();
+    }
+
+    async function activateAudioVisualization() {
+      setupAudioAnalysis();
+
+      if (audioContext && audioContext.state === "suspended") {
+        try {
+          await audioContext.resume();
+        } catch (error) {
+          console.error("audioContext resume error:", error);
+        }
+      }
+
+      startWaveformAnimation();
+    }
+
     async function bootstrapLiveRadio() {
       await loadTracksFromSupabase();
 
@@ -2031,6 +2154,7 @@
       isLiveActivated = true;
       listenerIdentity = null;
 
+      await activateAudioVisualization();
       await registerListener();
       await updateListeners();
       await loadTrackStats();
@@ -2110,6 +2234,14 @@
       ensureBackgroundPlayback();
     });
 
+    window.addEventListener("resize", () => {
+      buildWaveformBars();
+      resetWaveformBars();
+      if (isLiveActivated) {
+        startWaveformAnimation();
+      }
+    });
+
     setInterval(() => {
       if (isLiveActivated && !document.hidden) {
         registerListener();
@@ -2126,6 +2258,8 @@
     }, 30000);
 
     async function initPage() {
+      buildWaveformBars();
+      resetWaveformBars();
       setLoggedOutView();
       updateVolumeButtonState();
       await refreshAuthDependentUI();
