@@ -1455,8 +1455,7 @@
 
       artistMeta.innerHTML = "";
 
-      const memberSinceRaw = profile?.created_at || profile?.joined_at || profile?.updated_at || "";
-      const memberSince = formatMemberSince(memberSinceRaw);
+      const memberSince = formatMemberSince(profile?.created_at);
 
       if (profile?.nationality || memberSince) {
         artistMeta.classList.remove("hidden");
@@ -1629,7 +1628,7 @@
 
       const { data: profile, error: profileError } = await supabaseClient
         .from("profiles")
-        .select("user_id, artist_name, photo_url, bio, social_link, nationality, created_at, updated_at")
+        .select("user_id, artist_name, photo_url, bio, social_link, nationality, created_at")
         .eq("user_id", viewedArtistUserId)
         .maybeSingle();
 
