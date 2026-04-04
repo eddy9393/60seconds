@@ -534,12 +534,12 @@
 
     .artist-hero {
       display: grid;
-      grid-template-columns: 300px minmax(0, 1fr);
+      grid-template-columns: 280px minmax(0, 1fr);
       gap: 22px;
-      align-items: stretch;
+      align-items: start;
     }
 
-    .hero-card,
+    .hero-info-card,
     .panel-card,
     .track-card {
       background:
@@ -555,26 +555,28 @@
     }
 
     .hero-photo-card {
-      padding: 26px;
+      position: relative;
+      padding: 0;
+      background: transparent;
+      border: 0;
+      box-shadow: none;
+      min-height: 280px;
       display: flex;
       align-items: center;
       justify-content: center;
-      min-height: 100%;
-      position: relative;
-      overflow: hidden;
     }
 
     .hero-photo-card::before {
       content: "";
       position: absolute;
-      inset: auto;
       width: 240px;
       height: 240px;
-      border-radius: 50%;
+      border-radius: 34px;
       background:
-        radial-gradient(circle, rgba(212,175,55,0.22) 0%, rgba(212,175,55,0.10) 35%, rgba(212,175,55,0.02) 62%, transparent 75%);
-      filter: blur(16px);
+        radial-gradient(circle at center, rgba(212,175,55,0.18) 0%, rgba(212,175,55,0.08) 40%, rgba(212,175,55,0.02) 68%, transparent 78%);
+      filter: blur(18px);
       pointer-events: none;
+      z-index: 0;
     }
 
     .photo-stage {
@@ -596,8 +598,8 @@
       display: block;
       background: #101010;
       box-shadow:
-        0 28px 50px rgba(0,0,0,0.38),
-        0 0 30px rgba(212,175,55,0.08);
+        0 28px 50px rgba(0,0,0,0.42),
+        0 0 28px rgba(212,175,55,0.08);
     }
 
     .artist-photo-fallback {
@@ -615,8 +617,8 @@
       font-size: 76px;
       font-weight: 700;
       box-shadow:
-        0 28px 50px rgba(0,0,0,0.38),
-        0 0 30px rgba(212,175,55,0.08);
+        0 28px 50px rgba(0,0,0,0.42),
+        0 0 28px rgba(212,175,55,0.08);
     }
 
     .hero-info-card {
@@ -867,8 +869,9 @@
       }
 
       .hero-photo-card {
-        max-width: 400px;
+        max-width: 360px;
         margin: 0 auto;
+        min-height: auto;
       }
     }
 
@@ -971,14 +974,6 @@
         padding: 20px;
       }
 
-      .hero-photo-card {
-        padding: 22px;
-      }
-
-      .photo-stage {
-        max-width: 220px;
-      }
-
       .artist-name {
         font-size: 34px;
       }
@@ -1006,6 +1001,10 @@
       .metal-btn,
       .ghost-btn {
         width: 100%;
+      }
+
+      .photo-stage {
+        max-width: 220px;
       }
     }
   </style>
@@ -1134,14 +1133,14 @@
   <div class="site-shell">
     <main class="page-wrap">
       <section class="artist-hero">
-        <div class="hero-card hero-photo-card">
+        <div class="hero-photo-card">
           <div class="photo-stage">
             <img id="artistPhoto" class="artist-photo hidden" src="" alt="Artist photo" />
             <div id="artistPhotoFallback" class="artist-photo-fallback">A</div>
           </div>
         </div>
 
-        <div class="hero-card hero-info-card">
+        <div class="hero-info-card">
           <div class="section-kicker">Artist Page</div>
           <h1 id="artistName" class="artist-name">Loading artist...</h1>
 
@@ -1391,11 +1390,18 @@
       if (!dateString) return "";
       const date = new Date(dateString);
       if (Number.isNaN(date.getTime())) return "";
-      return date.toLocaleDateString("en-GB", {
+
+      const month = date.toLocaleDateString("en-GB", {
         month: "short",
+        timeZone: "UTC"
+      });
+
+      const year = date.toLocaleDateString("en-GB", {
         year: "numeric",
         timeZone: "UTC"
       });
+
+      return `${month} ${year}`;
     }
 
     function formatTime(seconds) {
@@ -1448,31 +1454,26 @@
       }
 
       artistMeta.innerHTML = "";
-      const metaItems = [];
 
-      if (profile?.nationality) {
-        metaItems.push({
-          text: profile.nationality,
-          className: ""
-        });
-      }
+      const memberSinceRaw = profile?.created_at || profile?.joined_at || profile?.updated_at || "";
+      const memberSince = formatMemberSince(memberSinceRaw);
 
-      const memberSince = formatMemberSince(profile?.created_at);
-      if (memberSince) {
-        metaItems.push({
-          text: `Member since ${memberSince}`,
-          className: "member-since-pill"
-        });
-      }
-
-      if (metaItems.length) {
+      if (profile?.nationality || memberSince) {
         artistMeta.classList.remove("hidden");
-        metaItems.forEach(item => {
-          const pill = document.createElement("div");
-          pill.className = `meta-pill ${item.className || ""}`.trim();
-          pill.textContent = item.text;
-          artistMeta.appendChild(pill);
-        });
+
+        if (profile?.nationality) {
+          const nationalityPill = document.createElement("div");
+          nationalityPill.className = "meta-pill";
+          nationalityPill.textContent = profile.nationality;
+          artistMeta.appendChild(nationalityPill);
+        }
+
+        if (memberSince) {
+          const memberSincePill = document.createElement("div");
+          memberSincePill.className = "meta-pill member-since-pill";
+          memberSincePill.textContent = `Member since ${memberSince}`;
+          artistMeta.appendChild(memberSincePill);
+        }
       } else {
         artistMeta.classList.add("hidden");
       }
@@ -1628,7 +1629,7 @@
 
       const { data: profile, error: profileError } = await supabaseClient
         .from("profiles")
-        .select("user_id, artist_name, photo_url, bio, social_link, nationality, created_at")
+        .select("user_id, artist_name, photo_url, bio, social_link, nationality, created_at, updated_at")
         .eq("user_id", viewedArtistUserId)
         .maybeSingle();
 
