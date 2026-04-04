@@ -535,51 +535,6 @@
       color: #111;
     }
 
-    .player-actions .metal-btn,
-    .volume-button {
-      min-height: 52px;
-      border-radius: 999px;
-      border: 1px solid rgba(255,230,150,0.28);
-      background:
-        linear-gradient(180deg, rgba(255,248,220,0.96) 0%, rgba(244,215,122,0.92) 22%, rgba(212,175,55,0.92) 56%, rgba(143,107,19,0.96) 100%);
-      color: #181203;
-      box-shadow:
-        inset 0 2px 0 rgba(255,255,255,0.42),
-        inset 0 -2px 5px rgba(90,50,0,0.24),
-        0 12px 24px rgba(0,0,0,0.24),
-        0 0 18px rgba(212,175,55,0.10);
-      text-shadow: 0 1px 0 rgba(255,255,255,0.18);
-      transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
-    }
-
-    .player-actions .metal-btn:hover,
-    .volume-button:hover {
-      transform: translateY(-1px);
-      filter: brightness(1.03);
-      box-shadow:
-        inset 0 2px 0 rgba(255,255,255,0.48),
-        inset 0 -2px 5px rgba(90,50,0,0.22),
-        0 14px 26px rgba(0,0,0,0.28),
-        0 0 20px rgba(212,175,55,0.14);
-    }
-
-    .player-actions .metal-btn .icon {
-      color: #4f3a08;
-      margin-right: 8px;
-    }
-
-    #likeBtn.liked {
-      background:
-        linear-gradient(180deg, #fff7cf 0%, #f7df87 22%, #e3bd49 56%, #a77410 100%);
-      color: #181203;
-      border-color: rgba(255,232,166,0.38);
-      box-shadow:
-        inset 0 2px 0 rgba(255,255,255,0.5),
-        inset 0 -2px 5px rgba(90,50,0,0.22),
-        0 14px 28px rgba(0,0,0,0.26),
-        0 0 22px rgba(244,215,122,0.18);
-    }
-
     .radio-stage {
       position: relative;
       max-width: 880px;
@@ -736,34 +691,56 @@
       max-width: 620px;
       display: flex;
       justify-content: center;
-      margin: 0 auto 12px;
+      margin: 0 auto 8px;
     }
 
     .waveform {
       width: 100%;
-      height: 58px;
+      height: 44px;
       display: flex;
       align-items: flex-end;
-      justify-content: space-between;
+      justify-content: center;
       gap: 4px;
       padding: 0;
-      opacity: 0.98;
+      opacity: 0.9;
     }
 
     .waveform-bar {
       flex: 1 1 0;
       min-width: 4px;
-      height: 16px;
+      max-width: 14px;
       border-radius: 999px;
-      background:
-        linear-gradient(180deg, rgba(255,245,201,0.96) 0%, rgba(244,215,122,0.95) 18%, rgba(212,175,55,0.95) 56%, rgba(143,107,19,0.98) 100%);
-      box-shadow:
-        0 0 10px rgba(212,175,55,0.18),
-        0 0 24px rgba(212,175,55,0.08);
+      background: linear-gradient(180deg, var(--gold-2), var(--gold), var(--gold-dark));
+      box-shadow: 0 0 10px rgba(212,175,55,0.18);
       transform-origin: bottom center;
-      transform: scaleY(1);
-      transition: height 0.08s linear, transform 0.08s linear, opacity 0.12s ease;
-      opacity: 0.9;
+      animation: waveformPulse 1.2s ease-in-out infinite;
+    }
+
+    .waveform-bar:nth-child(1) { height: 14px; animation-delay: 0s; }
+    .waveform-bar:nth-child(2) { height: 28px; animation-delay: 0.08s; }
+    .waveform-bar:nth-child(3) { height: 18px; animation-delay: 0.16s; }
+    .waveform-bar:nth-child(4) { height: 34px; animation-delay: 0.24s; }
+    .waveform-bar:nth-child(5) { height: 22px; animation-delay: 0.32s; }
+    .waveform-bar:nth-child(6) { height: 38px; animation-delay: 0.40s; }
+    .waveform-bar:nth-child(7) { height: 20px; animation-delay: 0.48s; }
+    .waveform-bar:nth-child(8) { height: 30px; animation-delay: 0.56s; }
+    .waveform-bar:nth-child(9) { height: 16px; animation-delay: 0.64s; }
+    .waveform-bar:nth-child(10) { height: 26px; animation-delay: 0.72s; }
+    .waveform-bar:nth-child(11) { height: 18px; animation-delay: 0.80s; }
+    .waveform-bar:nth-child(12) { height: 32px; animation-delay: 0.88s; }
+    .waveform-bar:nth-child(13) { height: 20px; animation-delay: 0.96s; }
+    .waveform-bar:nth-child(14) { height: 28px; animation-delay: 1.04s; }
+    .waveform-bar:nth-child(15) { height: 14px; animation-delay: 1.12s; }
+
+    @keyframes waveformPulse {
+      0%, 100% {
+        transform: scaleY(0.65);
+        opacity: 0.72;
+      }
+      50% {
+        transform: scaleY(1.15);
+        opacity: 1;
+      }
     }
 
     .track-title {
@@ -873,24 +850,24 @@
     }
 
     .player-actions {
-      margin-top: 22px;
+      margin-top: 18px;
       display: flex;
       justify-content: center;
-      gap: 14px;
+      gap: 12px;
       flex-wrap: wrap;
     }
 
     .volume-wrap {
-      margin-top: 16px;
+      margin-top: 12px;
       display: flex;
       justify-content: center;
-      min-height: 56px;
+      min-height: 50px;
     }
 
     .volume-control {
       display: inline-flex;
       align-items: center;
-      gap: 12px;
+      gap: 10px;
     }
 
     .volume-slider-inline {
@@ -902,26 +879,46 @@
     }
 
     .volume-control.open .volume-slider-inline {
-      width: 168px;
+      width: 156px;
       opacity: 1;
-      margin-left: 6px;
+      margin-left: 4px;
     }
 
     .volume-slider-inline input[type="range"] {
-      width: 168px;
+      width: 156px;
       margin: 0;
       accent-color: var(--gold);
     }
 
     .volume-button {
-      width: 52px;
-      height: 52px;
+      width: 50px;
+      height: 50px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.16);
+      background:
+        linear-gradient(180deg, #fbfbfb 0%, #d6d6d6 16%, #b6b6b6 35%, #8b8b8b 52%, #d2d2d2 72%, #f4f4f4 100%);
+      color: #151515;
       cursor: pointer;
       display: inline-flex;
       align-items: center;
       justify-content: center;
+      box-shadow:
+        inset 0 2px 0 rgba(255,255,255,0.72),
+        inset 0 -2px 3px rgba(0,0,0,0.18),
+        0 10px 22px rgba(0,0,0,0.25);
       flex: 0 0 auto;
       padding: 0;
+      transition: transform 0.14s ease, box-shadow 0.18s ease, filter 0.18s ease;
+    }
+
+    .volume-button:hover {
+      transform: translateY(-1px);
+      filter: brightness(1.02);
+      box-shadow:
+        inset 0 2px 0 rgba(255,255,255,0.78),
+        inset 0 -2px 3px rgba(0,0,0,0.18),
+        0 12px 24px rgba(0,0,0,0.28),
+        0 0 14px rgba(212,175,55,0.16);
     }
 
     .volume-button:active {
@@ -1161,12 +1158,12 @@
       }
 
       .waveform {
-        height: 44px;
+        height: 38px;
         gap: 3px;
       }
 
       .waveform-bar {
-        min-width: 2px;
+        min-width: 3px;
       }
 
       .track-title {
@@ -1342,7 +1339,23 @@
           <div class="now-playing">Now Playing</div>
 
           <div class="waveform-wrap" aria-hidden="true">
-            <div class="waveform" id="waveformBars"></div>
+            <div class="waveform">
+              <span class="waveform-bar"></span>
+              <span class="waveform-bar"></span>
+              <span class="waveform-bar"></span>
+              <span class="waveform-bar"></span>
+              <span class="waveform-bar"></span>
+              <span class="waveform-bar"></span>
+              <span class="waveform-bar"></span>
+              <span class="waveform-bar"></span>
+              <span class="waveform-bar"></span>
+              <span class="waveform-bar"></span>
+              <span class="waveform-bar"></span>
+              <span class="waveform-bar"></span>
+              <span class="waveform-bar"></span>
+              <span class="waveform-bar"></span>
+              <span class="waveform-bar"></span>
+            </div>
           </div>
 
           <h2 id="title" class="track-title">Loading...</h2>
@@ -1466,7 +1479,6 @@
     const playsCardEl = document.getElementById("playsCard");
     const myPlaysCardEl = document.getElementById("myPlaysCard");
     const myTotalPlaysEl = document.getElementById("myTotalPlays");
-    const waveformBarsEl = document.getElementById("waveformBars");
 
     let tracks = [];
     let current = -1;
@@ -1478,13 +1490,6 @@
     let currentTrackData = null;
     let currentPreviewStart = 0;
     let currentPreviewDuration = 60;
-
-    let audioContext = null;
-    let analyser = null;
-    let sourceNode = null;
-    let frequencyData = null;
-    let waveformAnimationFrame = null;
-    let waveformBarElements = [];
 
     function hideUserStats() {
       playsCardEl.classList.add("hidden");
@@ -2008,113 +2013,6 @@
       }
     }
 
-    function buildWaveformBars() {
-      if (!waveformBarsEl) return;
-
-      waveformBarsEl.innerHTML = "";
-      waveformBarElements = [];
-
-      const totalBars = window.innerWidth <= 760 ? 32 : 44;
-
-      for (let i = 0; i < totalBars; i += 1) {
-        const bar = document.createElement("span");
-        bar.className = "waveform-bar";
-        bar.style.height = "12px";
-        waveformBarsEl.appendChild(bar);
-        waveformBarElements.push(bar);
-      }
-    }
-
-    function resetWaveformBars() {
-      waveformBarElements.forEach((bar, index) => {
-        const baseHeights = [10, 14, 18, 22, 16, 12];
-        bar.style.height = `${baseHeights[index % baseHeights.length]}px`;
-        bar.style.opacity = "0.68";
-        bar.style.transform = "scaleY(1)";
-      });
-    }
-
-    function setupAudioAnalysis() {
-      try {
-        if (!window.AudioContext && !window.webkitAudioContext) return;
-        if (audioContext) return;
-
-        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
-        audioContext = new AudioContextClass();
-        analyser = audioContext.createAnalyser();
-        analyser.fftSize = 128;
-        analyser.smoothingTimeConstant = 0.82;
-        frequencyData = new Uint8Array(analyser.frequencyBinCount);
-
-        sourceNode = audioContext.createMediaElementSource(audio);
-        sourceNode.connect(analyser);
-        analyser.connect(audioContext.destination);
-      } catch (error) {
-        console.error("setupAudioAnalysis error:", error);
-      }
-    }
-
-    function startWaveformAnimation() {
-      if (!analyser || !frequencyData || !waveformBarElements.length) {
-        resetWaveformBars();
-        return;
-      }
-
-      if (waveformAnimationFrame) {
-        cancelAnimationFrame(waveformAnimationFrame);
-      }
-
-      const animate = () => {
-        if (!analyser || !frequencyData || !waveformBarElements.length) {
-          return;
-        }
-
-        analyser.getByteFrequencyData(frequencyData);
-
-        const binCount = frequencyData.length;
-        const barsCount = waveformBarElements.length;
-
-        for (let i = 0; i < barsCount; i += 1) {
-          const start = Math.floor((i / barsCount) * binCount);
-          const end = Math.floor(((i + 1) / barsCount) * binCount);
-          let total = 0;
-          let samples = 0;
-
-          for (let j = start; j < end; j += 1) {
-            total += frequencyData[j];
-            samples += 1;
-          }
-
-          const avg = samples ? total / samples : 0;
-          const normalized = avg / 255;
-          const height = 10 + normalized * 48;
-          const opacity = 0.58 + normalized * 0.42;
-
-          waveformBarElements[i].style.height = `${height}px`;
-          waveformBarElements[i].style.opacity = `${opacity}`;
-          waveformBarElements[i].style.transform = `scaleY(${0.92 + normalized * 0.22})`;
-        }
-
-        waveformAnimationFrame = requestAnimationFrame(animate);
-      };
-
-      animate();
-    }
-
-    async function activateAudioVisualization() {
-      setupAudioAnalysis();
-
-      if (audioContext && audioContext.state === "suspended") {
-        try {
-          await audioContext.resume();
-        } catch (error) {
-          console.error("audioContext resume error:", error);
-        }
-      }
-
-      startWaveformAnimation();
-    }
-
     async function bootstrapLiveRadio() {
       await loadTracksFromSupabase();
 
@@ -2154,7 +2052,6 @@
       isLiveActivated = true;
       listenerIdentity = null;
 
-      await activateAudioVisualization();
       await registerListener();
       await updateListeners();
       await loadTrackStats();
@@ -2234,14 +2131,6 @@
       ensureBackgroundPlayback();
     });
 
-    window.addEventListener("resize", () => {
-      buildWaveformBars();
-      resetWaveformBars();
-      if (isLiveActivated) {
-        startWaveformAnimation();
-      }
-    });
-
     setInterval(() => {
       if (isLiveActivated && !document.hidden) {
         registerListener();
@@ -2258,8 +2147,6 @@
     }, 30000);
 
     async function initPage() {
-      buildWaveformBars();
-      resetWaveformBars();
       setLoggedOutView();
       updateVolumeButtonState();
       await refreshAuthDependentUI();
