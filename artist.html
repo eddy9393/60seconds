@@ -1386,22 +1386,52 @@
       });
     }
 
-    function formatMemberSince(dateString) {
-      if (!dateString) return "";
-      const date = new Date(dateString);
-      if (Number.isNaN(date.getTime())) return "";
+    function getMemberSinceDisplay(rawValue) {
+      if (!rawValue) return "—";
 
-      const month = date.toLocaleDateString("en-GB", {
-        month: "short",
-        timeZone: "UTC"
-      });
+      const parsed = new Date(rawValue);
 
-      const year = date.toLocaleDateString("en-GB", {
-        year: "numeric",
-        timeZone: "UTC"
-      });
+      if (!Number.isNaN(parsed.getTime())) {
+        const month = parsed.toLocaleDateString("en-GB", {
+          month: "short",
+          timeZone: "UTC"
+        });
 
-      return `${month} ${year}`;
+        const year = parsed.toLocaleDateString("en-GB", {
+          year: "numeric",
+          timeZone: "UTC"
+        });
+
+        return `${month} ${year}`;
+      }
+
+      const raw = String(rawValue).trim();
+
+      if (raw.length >= 7) {
+        const year = raw.slice(0, 4);
+        const monthNum = raw.slice(5, 7);
+
+        const monthMap = {
+          "01": "Jan",
+          "02": "Feb",
+          "03": "Mar",
+          "04": "Apr",
+          "05": "May",
+          "06": "Jun",
+          "07": "Jul",
+          "08": "Aug",
+          "09": "Sep",
+          "10": "Oct",
+          "11": "Nov",
+          "12": "Dec"
+        };
+
+        if (monthMap[monthNum] && /^\d{4}$/.test(year)) {
+          return `${monthMap[monthNum]} ${year}`;
+        }
+      }
+
+      return raw;
     }
 
     function formatTime(seconds) {
@@ -1454,27 +1484,22 @@
       }
 
       artistMeta.innerHTML = "";
+      artistMeta.classList.remove("hidden");
 
-      const memberSince = formatMemberSince(profile?.created_at);
+      if (profile?.nationality) {
+        const nationalityPill = document.createElement("div");
+        nationalityPill.className = "meta-pill";
+        nationalityPill.textContent = profile.nationality;
+        artistMeta.appendChild(nationalityPill);
+      }
 
-      if (profile?.nationality || memberSince) {
+      const memberSincePill = document.createElement("div");
+      memberSincePill.className = "meta-pill member-since-pill";
+      memberSincePill.textContent = `Member since ${getMemberSinceDisplay(profile?.created_at)}`;
+      artistMeta.appendChild(memberSincePill);
+
+      if (!profile?.nationality && !profile?.created_at) {
         artistMeta.classList.remove("hidden");
-
-        if (profile?.nationality) {
-          const nationalityPill = document.createElement("div");
-          nationalityPill.className = "meta-pill";
-          nationalityPill.textContent = profile.nationality;
-          artistMeta.appendChild(nationalityPill);
-        }
-
-        if (memberSince) {
-          const memberSincePill = document.createElement("div");
-          memberSincePill.className = "meta-pill member-since-pill";
-          memberSincePill.textContent = `Member since ${memberSince}`;
-          artistMeta.appendChild(memberSincePill);
-        }
-      } else {
-        artistMeta.classList.add("hidden");
       }
 
       if (profile?.bio) {
@@ -1502,6 +1527,9 @@
       } else {
         submitTrackBtn.classList.add("hidden");
       }
+
+      console.log("Artist profile created_at:", profile?.created_at);
+      console.log("Artist profile member since display:", getMemberSinceDisplay(profile?.created_at));
     }
 
     function buildTrackCard(track) {
