@@ -11,16 +11,46 @@
     :root {
       --gold: #d4af37;
       --gold-2: #f4d77a;
+      --gold-3: #ffd76a;
       --gold-dark: #8f6b13;
       --text: #f5f5f5;
       --muted: #a8a8a8;
       --border-gold: rgba(212,175,55,0.18);
       --danger: #ff8a8a;
       --success: #cfcfcf;
+
+      --desktop-rail-width: 86px;
+      --desktop-rail-expanded: 320px;
+      --mobile-bottom-nav-height: 86px;
+      --mobile-nav-bg: rgba(10, 10, 10, 0.94);
+
+      --icon-gold-filter:
+        brightness(0)
+        saturate(100%)
+        invert(74%)
+        sepia(56%)
+        saturate(820%)
+        hue-rotate(3deg)
+        brightness(99%)
+        contrast(94%);
+
+      --icon-gold-active-filter:
+        brightness(0)
+        saturate(100%)
+        invert(86%)
+        sepia(56%)
+        saturate(530%)
+        hue-rotate(358deg)
+        brightness(103%)
+        contrast(96%);
     }
 
     * {
       box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
     }
 
     body {
@@ -36,13 +66,9 @@
       background-attachment: fixed, scroll, fixed;
       color: var(--text);
       font-family: 'Manrope', sans-serif;
-      padding: 0 18px 44px;
+      padding: 0 18px 44px calc(var(--desktop-rail-width) + 28px);
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
-    }
-
-    body.menu-open {
-      overflow: hidden;
     }
 
     h1, h2, h3 {
@@ -77,8 +103,8 @@
       top: 0;
       z-index: 80;
       width: 100%;
-      background: linear-gradient(180deg, rgba(0,0,0,0.74), rgba(0,0,0,0.42) 70%, rgba(0,0,0,0));
-      backdrop-filter: blur(6px);
+      background: linear-gradient(180deg, rgba(0,0,0,0.78), rgba(0,0,0,0.42) 70%, rgba(0,0,0,0));
+      backdrop-filter: blur(8px);
     }
 
     .header-bar {
@@ -122,6 +148,7 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
+      text-decoration: none;
     }
 
     .header-logo {
@@ -151,45 +178,15 @@
       backdrop-filter: blur(4px);
       transition: transform 0.14s ease, box-shadow 0.14s ease, filter 0.14s ease;
       padding: 0;
+      text-decoration: none;
     }
 
     .header-icon-btn:hover {
       transform: translateY(-1px);
       filter: brightness(1.03);
-    }
-
-    .menu-icon {
-      position: relative;
-      width: 20px;
-      height: 16px;
-    }
-
-    .menu-icon span {
-      position: absolute;
-      left: 0;
-      width: 20px;
-      height: 3px;
-      border-radius: 999px;
-      background: #f5f5f5;
-      transition: transform 0.18s ease, opacity 0.18s ease, top 0.18s ease;
-    }
-
-    .menu-icon span:nth-child(1) { top: 0; }
-    .menu-icon span:nth-child(2) { top: 6px; }
-    .menu-icon span:nth-child(3) { top: 12px; }
-
-    .header-icon-btn.active .menu-icon span:nth-child(1) {
-      top: 6px;
-      transform: rotate(45deg);
-    }
-
-    .header-icon-btn.active .menu-icon span:nth-child(2) {
-      opacity: 0;
-    }
-
-    .header-icon-btn.active .menu-icon span:nth-child(3) {
-      top: 6px;
-      transform: rotate(-45deg);
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.10),
+        0 14px 24px rgba(0,0,0,0.28);
     }
 
     .person-icon {
@@ -262,29 +259,7 @@
       position: absolute;
       top: 52px;
       right: 0;
-      min-width: 170px;
-      padding: 8px;
-      border-radius: 18px;
-      background:
-        linear-gradient(180deg, rgba(20,20,20,0.96), rgba(10,10,10,0.98));
-      border: 1px solid rgba(255,255,255,0.08);
-      box-shadow:
-        0 18px 40px rgba(0,0,0,0.38),
-        inset 0 1px 0 rgba(255,255,255,0.04);
-      backdrop-filter: blur(8px);
-    }
-
-    .account-menu button {
-      width: 100%;
-    }
-
-    .auth-box.compact-auth {
-      position: absolute;
-      top: 52px;
-      right: 0;
-      width: 250px;
-      text-align: left;
-      margin: 0;
+      min-width: 210px;
       padding: 10px;
       border-radius: 18px;
       background:
@@ -297,277 +272,200 @@
       z-index: 90;
     }
 
-    .compact-auth h3 {
-      margin: 0 0 10px;
-      color: var(--gold);
-      font-size: 13px;
-      font-weight: 700;
-      text-align: center;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-    }
-
-    .compact-auth .auth-inputs {
+    .account-menu-actions {
       display: grid;
-      grid-template-columns: 1fr;
-      gap: 8px;
-      margin-bottom: 8px;
-    }
-
-    .compact-auth input,
-    .menu-auth-inputs input,
-    .field-input,
-    .field-textarea,
-    .field-file,
-    .field-select {
-      width: 100%;
-      border-radius: 14px;
-      border: 1px solid rgba(255,255,255,0.08);
-      background: linear-gradient(180deg, rgba(16,16,16,0.92) 0%, rgba(12,12,12,0.96) 100%);
-      color: white;
-      font-size: 15px;
-      outline: none;
-      box-shadow:
-        inset 0 1px 0 rgba(255,255,255,0.04),
-        0 6px 16px rgba(0,0,0,0.18);
-      font-family: 'Manrope', sans-serif;
-    }
-
-    .compact-auth input,
-    .menu-auth-inputs input {
-      min-height: 40px;
-      padding: 10px 11px;
-      font-size: 13px;
-      border-radius: 12px;
-    }
-
-    .field-input,
-    .field-file,
-    .field-select {
-      min-height: 52px;
-      padding: 0 14px;
-    }
-
-    .field-textarea {
-      min-height: 120px;
-      padding: 14px;
-      resize: vertical;
-    }
-
-    .compact-auth input:focus,
-    .menu-auth-inputs input:focus,
-    .field-input:focus,
-    .field-textarea:focus,
-    .field-file:focus,
-    .field-select:focus {
-      border-color: rgba(212,175,55,0.38);
-      box-shadow:
-        inset 0 1px 0 rgba(255,255,255,0.04),
-        0 0 0 3px rgba(212,175,55,0.08);
-    }
-
-    .compact-auth .auth-row,
-    .menu-auth-actions {
-      display: grid;
-      grid-template-columns: 1fr;
       gap: 8px;
     }
 
-    .compact-auth .metal-btn,
-    .menu-auth-actions .metal-btn {
+    .account-menu-link,
+    .account-menu button {
       width: 100%;
-      padding: 11px 14px;
-      font-size: 13px;
-    }
-
-    .compact-auth .auth-message,
-    .menu-auth-message {
-      min-height: 16px;
-      margin-top: 8px;
-      font-size: 11px;
-      color: #cfcfcf;
+      text-decoration: none;
       text-align: center;
     }
 
-    .side-menu-overlay {
+    /* DESKTOP SIDEBAR */
+    .desktop-side-nav {
       position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.5);
-      backdrop-filter: blur(2px);
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.22s ease;
-      z-index: 55;
-    }
-
-    .side-menu-overlay.open {
-      opacity: 1;
-      pointer-events: auto;
-    }
-
-    .side-menu {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: min(360px, 86vw);
-      height: 100vh;
-      padding: 22px 18px 24px;
-      background:
-        linear-gradient(180deg, rgba(20,20,20,0.98), rgba(10,10,10,0.98));
-      border-right: 1px solid rgba(255,255,255,0.08);
-      box-shadow:
-        20px 0 50px rgba(0,0,0,0.45),
-        inset 0 1px 0 rgba(255,255,255,0.04);
-      backdrop-filter: blur(12px);
-      transform: translateX(-104%);
-      transition: transform 0.24s ease;
-      z-index: 60;
-      text-align: left;
-      overflow-y: auto;
-    }
-
-    .side-menu.open {
-      transform: translateX(0);
-    }
-
-    .side-menu-top {
+      top: 50%;
+      left: 18px;
+      transform: translateY(-50%);
+      width: var(--desktop-rail-width);
+      height: min(84vh, 780px);
+      z-index: 120;
       display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 14px;
-      margin-bottom: 18px;
+      align-items: stretch;
+      overflow: visible;
+      transition: width 0.34s cubic-bezier(.22,.61,.36,1);
     }
 
-    .side-menu-brand {
+    .desktop-side-nav:hover {
+      width: var(--desktop-rail-expanded);
+    }
+
+    .desktop-side-nav-panel {
+      width: 100%;
+      height: 100%;
+      transition: width 0.34s cubic-bezier(.22,.61,.36,1);
       display: flex;
       flex-direction: column;
-      gap: 4px;
+      padding: 18px 0 16px;
+      overflow: visible;
+      background: transparent;
+      border: none;
+      box-shadow: none;
+      backdrop-filter: none;
     }
 
-    .side-menu-kicker {
-      font-family: 'Space Grotesk', sans-serif;
-      text-transform: uppercase;
-      letter-spacing: 2px;
-      font-size: 11px;
-      color: var(--muted);
-      opacity: 0.8;
-    }
-
-    .side-menu-title {
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: 22px;
-      color: #fff;
-    }
-
-    .side-menu-close {
-      width: 42px;
-      height: 42px;
-      border-radius: 999px;
-      border: 1px solid rgba(255,255,255,0.14);
-      background:
-        linear-gradient(180deg, rgba(255,255,255,0.12), rgba(255,255,255,0.04)),
-        linear-gradient(180deg, rgba(10,10,10,0.86), rgba(10,10,10,0.92));
-      color: #fff;
-      cursor: pointer;
-      font-size: 20px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .side-menu-links {
+    .desktop-side-links,
+    .desktop-side-bottom {
+      position: relative;
       display: grid;
-      gap: 10px;
+      gap: 14px;
+      align-content: start;
+      justify-items: stretch;
     }
 
-    .menu-link,
-    .menu-action-btn {
+    .desktop-side-links {
+      flex: 1;
+      padding-top: 2px;
+    }
+
+    .desktop-side-bottom {
+      margin-top: auto;
+      padding-top: 24px;
+    }
+
+    .desktop-nav-link,
+    .desktop-nav-button {
       width: 100%;
-      text-align: left;
+      min-height: 60px;
       display: flex;
       align-items: center;
-      gap: 12px;
-      min-height: 54px;
-      padding: 0 16px;
-      border-radius: 16px;
-      border: 1px solid rgba(255,255,255,0.06);
-      background:
-        linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.015)),
-        rgba(255,255,255,0.02);
-      color: #f4f4f4;
-      font-size: 15px;
-      font-weight: 500;
-      font-family: 'Manrope', sans-serif;
+      justify-content: flex-start;
+      gap: 18px;
+      padding: 0 18px;
+      color: rgba(245,245,245,0.96);
+      text-decoration: none;
+      background: transparent;
+      border: 0;
       cursor: pointer;
-      transition: transform 0.15s ease, border-color 0.15s ease;
+      overflow: hidden;
+      white-space: nowrap;
+      font-family: 'Manrope', sans-serif;
+      transition: transform 0.18s ease, opacity 0.18s ease, color 0.18s ease, background 0.18s ease;
+      text-align: left;
+      position: relative;
+      border-radius: 18px;
     }
 
-    .menu-link:hover,
-    .menu-action-btn:hover {
+    .desktop-side-nav:hover .desktop-nav-link,
+    .desktop-side-nav:hover .desktop-nav-button {
+      width: 100%;
+    }
+
+    .desktop-nav-link:hover,
+    .desktop-nav-button:hover {
       transform: translateX(2px);
-      border-color: rgba(212,175,55,0.22);
+      background:
+        linear-gradient(90deg, rgba(212,175,55,0.16), rgba(212,175,55,0.05) 58%, transparent);
     }
 
-    .menu-link-icon {
-      width: 30px;
-      height: 30px;
+    .desktop-nav-link.active,
+    .desktop-nav-button.active {
+      color: #fff5d2;
+      background:
+        linear-gradient(90deg, rgba(212,175,55,0.18), rgba(212,175,55,0.06) 58%, transparent);
+    }
+
+    .desktop-nav-link.active::after,
+    .desktop-nav-button.active::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 9px;
+      bottom: 9px;
+      width: 3px;
       border-radius: 999px;
+      background: linear-gradient(180deg, #ffe08d, #d4af37 52%, #8f6b13);
+      box-shadow: 0 0 14px rgba(212,175,55,0.30);
+    }
+
+    .desktop-nav-icon,
+    .mobile-nav-icon {
+      position: relative;
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      background: rgba(212,175,55,0.08);
-      border: 1px solid rgba(212,175,55,0.18);
-      color: var(--gold);
-      box-shadow:
-        inset 0 1px 0 rgba(255,255,255,0.1),
-        0 4px 12px rgba(0,0,0,0.25);
-      transition: all 0.2s ease;
       flex: 0 0 auto;
     }
 
-    .menu-link:hover .menu-link-icon,
-    .menu-action-btn:hover .menu-link-icon {
-      background: rgba(212,175,55,0.18);
-      border-color: rgba(212,175,55,0.35);
+    .desktop-nav-icon {
+      width: 30px;
+      height: 30px;
     }
 
-    .menu-link-icon svg {
-      width: 16px;
-      height: 16px;
-      display: block;
+    .mobile-nav-icon {
+      width: 24px;
+      height: 24px;
     }
 
-    .side-menu-divider {
-      height: 1px;
-      margin: 8px 0 6px;
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+    .desktop-nav-icon img,
+    .mobile-nav-icon img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      filter: var(--icon-gold-filter)
+        drop-shadow(0 2px 10px rgba(212,175,55,0.18));
+      opacity: 0.98;
+      transition: transform 0.18s ease, filter 0.18s ease, opacity 0.18s ease;
+      pointer-events: none;
+      user-select: none;
+      -webkit-user-drag: none;
     }
 
-    .menu-auth-panel {
-      margin-top: 8px;
-      padding: 12px;
-      border-radius: 18px;
-      border: 1px solid rgba(255,255,255,0.08);
-      background:
-        linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.015)),
-        rgba(255,255,255,0.02);
+    .desktop-nav-link:hover .desktop-nav-icon img,
+    .desktop-nav-button:hover .desktop-nav-icon img,
+    .mobile-nav-link:hover .mobile-nav-icon img {
+      transform: scale(1.04);
+      opacity: 1;
+      filter: var(--icon-gold-active-filter)
+        drop-shadow(0 2px 11px rgba(212,175,55,0.22));
     }
 
-    .menu-auth-title {
-      margin: 0 0 10px;
-      color: var(--gold);
-      font-size: 12px;
-      font-weight: 700;
-      text-align: center;
-      font-family: 'Space Grotesk', sans-serif;
-      text-transform: uppercase;
-      letter-spacing: 1.6px;
+    .desktop-nav-link.active .desktop-nav-icon img,
+    .desktop-nav-button.active .desktop-nav-icon img,
+    .mobile-nav-link.active .mobile-nav-icon img {
+      filter: var(--icon-gold-active-filter)
+        drop-shadow(0 2px 12px rgba(212,175,55,0.24))
+        drop-shadow(0 0 15px rgba(212,175,55,0.20));
     }
 
-    .menu-auth-inputs {
-      display: grid;
-      gap: 8px;
-      margin-bottom: 8px;
+    .desktop-nav-label {
+      font-size: 16px;
+      font-weight: 500;
+      letter-spacing: 0.1px;
+      font-family: 'Manrope', sans-serif;
+      opacity: 0;
+      transform: translateX(-10px);
+      transition:
+        opacity 0.26s ease,
+        transform 0.34s cubic-bezier(.22,.61,.36,1);
+      pointer-events: none;
+      min-width: 170px;
+      max-width: 200px;
+      overflow: visible;
+      text-overflow: clip;
+      text-align: left;
+    }
+
+    .desktop-side-nav:hover .desktop-nav-label {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    .mobile-bottom-nav-wrap {
+      display: none;
     }
 
     .page-wrap {
@@ -704,6 +602,46 @@
       line-height: 1.6;
     }
 
+    .field-input,
+    .field-textarea,
+    .field-file,
+    .field-select {
+      width: 100%;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: linear-gradient(180deg, rgba(16,16,16,0.92) 0%, rgba(12,12,12,0.96) 100%);
+      color: white;
+      font-size: 15px;
+      outline: none;
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.04),
+        0 6px 16px rgba(0,0,0,0.18);
+      font-family: 'Manrope', sans-serif;
+    }
+
+    .field-input,
+    .field-file,
+    .field-select {
+      min-height: 52px;
+      padding: 0 14px;
+    }
+
+    .field-textarea {
+      min-height: 120px;
+      padding: 14px;
+      resize: vertical;
+    }
+
+    .field-input:focus,
+    .field-textarea:focus,
+    .field-file:focus,
+    .field-select:focus {
+      border-color: rgba(212,175,55,0.38);
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.04),
+        0 0 0 3px rgba(212,175,55,0.08);
+    }
+
     .option-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
@@ -818,6 +756,12 @@
         0 0 0 1px rgba(212,175,55,0.08);
       font-family: 'Manrope', sans-serif;
       cursor: pointer;
+      transition: transform 0.16s ease, box-shadow 0.16s ease, filter 0.16s ease;
+    }
+
+    .submit-link:hover {
+      transform: translateY(-1px);
+      filter: brightness(1.03);
     }
 
     .metal-btn {
@@ -836,6 +780,19 @@
         inset 0 -2px 3px rgba(0,0,0,0.18),
         0 10px 22px rgba(0,0,0,0.25);
       font-family: 'Manrope', sans-serif;
+      transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
+      backdrop-filter: blur(2px);
+    }
+
+    .metal-btn:hover {
+      transform: translateY(-1px);
+      filter: brightness(1.02);
+    }
+
+    .metal-btn:disabled {
+      opacity: 0.7;
+      cursor: default;
+      transform: none;
     }
 
     .pill-counter {
@@ -1057,7 +1014,7 @@
 
     @media (max-width: 760px) {
       body {
-        padding: 0 14px 40px;
+        padding: 0 14px calc(var(--mobile-bottom-nav-height) + 18px);
         background:
           linear-gradient(180deg, rgba(7, 7, 7, 0.50) 0%, rgba(7, 7, 7, 0.76) 42%, rgba(7, 7, 7, 0.86) 100%),
           radial-gradient(circle at top, rgba(212, 175, 55, 0.12), transparent 26%),
@@ -1066,6 +1023,65 @@
         background-position: center top, center top, center center;
         background-repeat: no-repeat, no-repeat, no-repeat;
         background-attachment: scroll, scroll, scroll;
+      }
+
+      .desktop-side-nav {
+        display: none;
+      }
+
+      .mobile-bottom-nav-wrap {
+        display: block;
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        height: var(--mobile-bottom-nav-height);
+        background: var(--mobile-nav-bg);
+        backdrop-filter: blur(18px);
+        border-top: 1px solid rgba(212,175,55,0.08);
+        box-shadow: 0 -8px 28px rgba(0,0,0,0.28);
+        z-index: 130;
+      }
+
+      .mobile-bottom-nav {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-around;
+        gap: 2px;
+        padding: 8px 8px 10px;
+      }
+
+      .mobile-nav-link {
+        flex: 1;
+        min-width: 0;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 7px;
+        text-decoration: none;
+        color: #f4f4f4;
+        font-size: 10px;
+        font-weight: 600;
+        letter-spacing: 0.2px;
+        font-family: 'Manrope', sans-serif;
+        padding: 6px 2px;
+        background: transparent;
+      }
+
+      .mobile-nav-link.hidden {
+        display: none !important;
+      }
+
+      .mobile-nav-link.active {
+        color: #fff5d2;
+      }
+
+      .mobile-nav-label {
+        line-height: 1;
       }
 
       .header-bar {
@@ -1084,24 +1100,14 @@
         height: 38px;
       }
 
-      .account-menu,
-      .auth-box.compact-auth {
+      .account-menu {
         top: 48px;
         right: 0;
-      }
-
-      .auth-box.compact-auth {
-        width: min(240px, calc(100vw - 24px));
       }
 
       .hero-card,
       .panel-card {
         padding: 20px;
-      }
-
-      .side-menu {
-        width: min(340px, 88vw);
-        padding: 18px 16px 22px;
       }
 
       .clip-controls {
@@ -1115,103 +1121,107 @@
       .clip-progress {
         min-width: 100%;
       }
+
+      .submit-link {
+        width: 100%;
+        max-width: 320px;
+      }
     }
   </style>
 </head>
 <body>
-  <div id="sideMenuOverlay" class="side-menu-overlay"></div>
+  <aside class="desktop-side-nav" aria-label="Desktop navigation">
+    <div class="desktop-side-nav-panel">
+      <nav class="desktop-side-links">
+        <a class="desktop-nav-link" href="index.html" aria-label="Radio">
+          <span class="desktop-nav-icon" aria-hidden="true">
+            <img src="/icons/radio.png" alt="" />
+          </span>
+          <span class="desktop-nav-label">Radio</span>
+        </a>
 
-  <aside id="sideMenu" class="side-menu" aria-hidden="true">
-    <div class="side-menu-top">
-      <div class="side-menu-brand">
-        <div class="side-menu-kicker">Navigation</div>
-        <div class="side-menu-title">60 Seconds FM</div>
+        <a id="desktopProfileLink" class="desktop-nav-link hidden" href="join.html" aria-label="Profile">
+          <span class="desktop-nav-icon" aria-hidden="true">
+            <img src="/icons/profile.png" alt="" />
+          </span>
+          <span class="desktop-nav-label">Profile</span>
+        </a>
+
+        <a id="desktopNotificationsLink" class="desktop-nav-link hidden" href="notifications.html" aria-label="Notifications">
+          <span class="desktop-nav-icon" aria-hidden="true">
+            <img src="/icons/notifications.png" alt="" />
+          </span>
+          <span class="desktop-nav-label">Notifications</span>
+        </a>
+
+        <a id="desktopTrackLink" class="desktop-nav-link active hidden" href="submit-track.html" aria-label="Track">
+          <span class="desktop-nav-icon" aria-hidden="true">
+            <img src="/icons/track.png" alt="" />
+          </span>
+          <span class="desktop-nav-label">Track</span>
+        </a>
+      </nav>
+
+      <div class="desktop-side-bottom">
+        <a id="desktopLoginLink" class="desktop-nav-link" href="login.html" aria-label="Login">
+          <span class="desktop-nav-icon" aria-hidden="true">
+            <img src="/icons/login.png" alt="" />
+          </span>
+          <span class="desktop-nav-label">Login</span>
+        </a>
+
+        <button id="desktopLogoutBtn" class="desktop-nav-button hidden" type="button" aria-label="Logout">
+          <span class="desktop-nav-icon" aria-hidden="true">
+            <img src="/icons/logout.png" alt="" />
+          </span>
+          <span class="desktop-nav-label">Logout</span>
+        </button>
       </div>
-      <button id="closeMenuBtn" class="side-menu-close" type="button" aria-label="Close menu">×</button>
     </div>
-
-    <nav class="side-menu-links">
-      <a class="menu-link" href="index.html">
-        <span class="menu-link-icon" aria-hidden="true">
-          <svg viewBox="0 0 24 24" fill="none">
-            <path d="M12 3V8" stroke="#111" stroke-width="2.2" stroke-linecap="round"/>
-            <path d="M8 21H16" stroke="#111" stroke-width="2.2" stroke-linecap="round"/>
-            <path d="M9.5 21V15.5" stroke="#111" stroke-width="2.2" stroke-linecap="round"/>
-            <path d="M14.5 21V15.5" stroke="#111" stroke-width="2.2" stroke-linecap="round"/>
-            <path d="M7.5 10.5H16.5V15.5H7.5Z" stroke="#111" stroke-width="2.2" stroke-linejoin="round"/>
-            <path d="M5 12C5 8.8 8 6.5 12 6.5C16 6.5 19 8.8 19 12" stroke="#111" stroke-width="2.2" stroke-linecap="round"/>
-            <path d="M3.5 9.5C5.8 6.5 8.6 5 12 5C15.4 5 18.2 6.5 20.5 9.5" stroke="#111" stroke-width="2.2" stroke-linecap="round"/>
-          </svg>
-        </span>
-        <span>Listen To Radio</span>
-      </a>
-
-      <a id="menuArtistPageLink" class="menu-link hidden" href="#">
-        <span class="menu-link-icon">★</span>
-        <span>My Artist Page</span>
-      </a>
-
-      <a id="menuCreateProfileLink" class="menu-link hidden" href="join.html">
-        <span class="menu-link-icon">＋</span>
-        <span>Create Artist Profile</span>
-      </a>
-
-      <a id="menuEditProfileLink" class="menu-link hidden" href="edit-profile.html">
-        <span class="menu-link-icon">✎</span>
-        <span>Edit Profile</span>
-      </a>
-
-      <a id="menuSubmitTrackLink" class="menu-link hidden" href="submit-track.html">
-        <span class="menu-link-icon">♫</span>
-        <span id="menuSubmitTrackLabel">Submit Your Track</span>
-      </a>
-
-      <div class="side-menu-divider"></div>
-
-      <button id="menuLoginBtn" class="menu-action-btn" type="button">
-        <span class="menu-link-icon">↳</span>
-        <span>Log in</span>
-      </button>
-
-      <button id="menuSignupBtn" class="menu-action-btn" type="button">
-        <span class="menu-link-icon">✦</span>
-        <span>Sign up</span>
-      </button>
-
-      <div id="menuAuthPanel" class="menu-auth-panel hidden">
-        <div id="menuAuthTitle" class="menu-auth-title">Log in</div>
-
-        <div class="menu-auth-inputs">
-          <input id="menuEmail" type="email" placeholder="Email" autocomplete="email" />
-          <input id="menuPassword" type="password" placeholder="Password" autocomplete="current-password" />
-        </div>
-
-        <div class="menu-auth-actions">
-          <button id="menuSignupSubmitBtn" class="metal-btn" type="button">Sign up</button>
-          <button id="menuLoginSubmitBtn" class="metal-btn" type="button">Log in</button>
-        </div>
-
-        <div id="menuAuthMessage" class="menu-auth-message"></div>
-      </div>
-
-      <button id="menuLogoutBtn" class="menu-action-btn hidden" type="button">
-        <span class="menu-link-icon">⎋</span>
-        <span>Log out</span>
-      </button>
-    </nav>
   </aside>
+
+  <div class="mobile-bottom-nav-wrap">
+    <nav class="mobile-bottom-nav" aria-label="Mobile navigation">
+      <a class="mobile-nav-link" href="index.html" aria-label="Radio">
+        <span class="mobile-nav-icon" aria-hidden="true">
+          <img src="/icons/radio.png" alt="" />
+        </span>
+        <span class="mobile-nav-label">Radio</span>
+      </a>
+
+      <a id="mobileProfileLink" class="mobile-nav-link hidden" href="join.html" aria-label="Profile">
+        <span class="mobile-nav-icon" aria-hidden="true">
+          <img src="/icons/profile.png" alt="" />
+        </span>
+        <span class="mobile-nav-label">Profile</span>
+      </a>
+
+      <a id="mobileNotificationsLink" class="mobile-nav-link hidden" href="notifications.html" aria-label="Notifications">
+        <span class="mobile-nav-icon" aria-hidden="true">
+          <img src="/icons/notifications.png" alt="" />
+        </span>
+        <span class="mobile-nav-label">Notifications</span>
+      </a>
+
+      <a id="mobileTrackLink" class="mobile-nav-link active hidden" href="submit-track.html" aria-label="Track">
+        <span class="mobile-nav-icon" aria-hidden="true">
+          <img src="/icons/track.png" alt="" />
+        </span>
+        <span class="mobile-nav-label">Track</span>
+      </a>
+
+      <a id="mobileLoginLink" class="mobile-nav-link" href="login.html" aria-label="Login">
+        <span class="mobile-nav-icon" aria-hidden="true">
+          <img src="/icons/login.png" alt="" />
+        </span>
+        <span class="mobile-nav-label">Login</span>
+      </a>
+    </nav>
+  </div>
 
   <div class="header-wrap">
     <header class="header-bar">
-      <div class="header-left">
-        <button id="menuBtn" class="header-icon-btn" type="button" aria-label="Open menu" aria-expanded="false">
-          <span class="menu-icon" aria-hidden="true">
-            <span></span>
-            <span></span>
-            <span></span>
-          </span>
-        </button>
-      </div>
+      <div class="header-left"></div>
 
       <div class="header-center">
         <a href="index.html" class="header-logo-link" aria-label="60 Seconds FM home">
@@ -1220,33 +1230,21 @@
       </div>
 
       <div class="header-right">
-        <button id="showLoginBtn" class="header-icon-btn" type="button" aria-label="Log in">
+        <a id="showLoginBtn" class="header-icon-btn" href="login.html" aria-label="Login">
           <span class="person-icon" aria-hidden="true"></span>
-        </button>
+        </a>
 
         <button id="headerAvatarBtn" class="header-avatar-btn hidden" type="button" aria-label="Open account menu">
           <img id="headerAvatarImage" class="hidden" src="" alt="Profile photo" />
           <div id="headerAvatarFallback" class="header-avatar-fallback hidden">A</div>
         </button>
 
-        <div id="authBox" class="auth-box compact-auth hidden">
-          <h3>Log in</h3>
-
-          <div class="auth-inputs">
-            <input id="email" type="email" placeholder="Email" autocomplete="email" />
-            <input id="password" type="password" placeholder="Password" autocomplete="current-password" />
-          </div>
-
-          <div class="auth-row">
-            <button id="signup" class="metal-btn" type="button">Sign up</button>
-            <button id="login" class="metal-btn" type="button">Log in</button>
-          </div>
-
-          <div id="authMessage" class="auth-message"></div>
-        </div>
-
         <div id="accountMenu" class="account-menu hidden">
-          <button id="logout" class="metal-btn" type="button">Log out</button>
+          <div class="account-menu-actions">
+            <a id="accountProfileLink" class="metal-btn account-menu-link hidden" href="javascript:void(0)">Profile</a>
+            <a id="accountNotificationsLink" class="metal-btn account-menu-link" href="notifications.html">Notifications</a>
+            <button id="logout" class="metal-btn" type="button">Logout</button>
+          </div>
         </div>
       </div>
     </header>
@@ -1265,6 +1263,9 @@
       <section class="panel-card">
         <div id="loginRequiredBox" class="notice-box hidden">
           You need to be logged in before submitting a track.
+          <div class="sub-link-row" style="margin-top: 12px;">
+            <a class="ghost-link" href="login.html">Log in</a>
+          </div>
         </div>
 
         <div id="profileRequiredBox" class="notice-box hidden">
@@ -1435,34 +1436,21 @@
     const headerAvatarImage = document.getElementById("headerAvatarImage");
     const headerAvatarFallback = document.getElementById("headerAvatarFallback");
     const accountMenu = document.getElementById("accountMenu");
+    const accountProfileLink = document.getElementById("accountProfileLink");
+    const accountNotificationsLink = document.getElementById("accountNotificationsLink");
 
-    const menuBtn = document.getElementById("menuBtn");
-    const sideMenu = document.getElementById("sideMenu");
-    const sideMenuOverlay = document.getElementById("sideMenuOverlay");
-    const closeMenuBtn = document.getElementById("closeMenuBtn");
-    const menuLoginBtn = document.getElementById("menuLoginBtn");
-    const menuSignupBtn = document.getElementById("menuSignupBtn");
-    const menuLogoutBtn = document.getElementById("menuLogoutBtn");
-    const menuCreateProfileLink = document.getElementById("menuCreateProfileLink");
-    const menuEditProfileLink = document.getElementById("menuEditProfileLink");
-    const menuSubmitTrackLink = document.getElementById("menuSubmitTrackLink");
-    const menuSubmitTrackLabel = document.getElementById("menuSubmitTrackLabel");
-    const menuArtistPageLink = document.getElementById("menuArtistPageLink");
-    const menuAuthPanel = document.getElementById("menuAuthPanel");
-    const menuAuthTitle = document.getElementById("menuAuthTitle");
-    const menuEmail = document.getElementById("menuEmail");
-    const menuPassword = document.getElementById("menuPassword");
-    const menuSignupSubmitBtn = document.getElementById("menuSignupSubmitBtn");
-    const menuLoginSubmitBtn = document.getElementById("menuLoginSubmitBtn");
-    const menuAuthMessage = document.getElementById("menuAuthMessage");
+    const desktopLoginLink = document.getElementById("desktopLoginLink");
+    const desktopLogoutBtn = document.getElementById("desktopLogoutBtn");
+    const desktopProfileLink = document.getElementById("desktopProfileLink");
+    const desktopNotificationsLink = document.getElementById("desktopNotificationsLink");
+    const desktopTrackLink = document.getElementById("desktopTrackLink");
 
-    const email = document.getElementById("email");
-    const password = document.getElementById("password");
-    const signupBtn = document.getElementById("signup");
-    const loginBtn = document.getElementById("login");
+    const mobileLoginLink = document.getElementById("mobileLoginLink");
+    const mobileProfileLink = document.getElementById("mobileProfileLink");
+    const mobileNotificationsLink = document.getElementById("mobileNotificationsLink");
+    const mobileTrackLink = document.getElementById("mobileTrackLink");
+
     const logoutBtn = document.getElementById("logout");
-    const authBox = document.getElementById("authBox");
-    const authMessageEl = document.getElementById("authMessage");
 
     const pageTitle = document.getElementById("pageTitle");
     const pageNote = document.getElementById("pageNote");
@@ -1500,62 +1488,19 @@
     let currentProfileData = null;
     let currentTrackData = null;
     let currentUser = null;
-    let currentMenuAuthMode = "login";
 
     let previewObjectUrl = null;
     let previewTrackDuration = 0;
     let previewStartSeconds = 0;
     let previewPlayTimer = null;
 
-    function setAuthMessage(msg, error = false, target = authMessageEl) {
-      if (msg === "Auth session missing!") msg = "";
-      target.textContent = msg || "";
-      target.style.color = error ? "#ff8a8a" : "#cfcfcf";
+    function closeHeaderPanels() {
+      accountMenu.classList.add("hidden");
     }
 
     function setStatus(message, isError = false) {
       statusEl.textContent = message || "";
       statusEl.style.color = isError ? "#ff8a8a" : "#cfcfcf";
-    }
-
-    function clearLoginFields() {
-      email.value = "";
-      password.value = "";
-      menuEmail.value = "";
-      menuPassword.value = "";
-    }
-
-    function openSideMenu() {
-      sideMenu.classList.add("open");
-      sideMenuOverlay.classList.add("open");
-      menuBtn.classList.add("active");
-      menuBtn.setAttribute("aria-expanded", "true");
-      sideMenu.setAttribute("aria-hidden", "false");
-      document.body.classList.add("menu-open");
-    }
-
-    function closeSideMenu() {
-      sideMenu.classList.remove("open");
-      sideMenuOverlay.classList.remove("open");
-      menuBtn.classList.remove("active");
-      menuBtn.setAttribute("aria-expanded", "false");
-      sideMenu.setAttribute("aria-hidden", "true");
-      document.body.classList.remove("menu-open");
-      menuAuthPanel.classList.add("hidden");
-      setAuthMessage("", false, menuAuthMessage);
-    }
-
-    function openMenuAuthPanel(mode = "login") {
-      currentMenuAuthMode = mode;
-      menuAuthPanel.classList.remove("hidden");
-      menuAuthTitle.textContent = mode === "signup" ? "Sign up" : "Log in";
-      setAuthMessage("", false, menuAuthMessage);
-      setTimeout(() => menuEmail.focus(), 0);
-    }
-
-    function closeHeaderPanels() {
-      authBox.classList.add("hidden");
-      accountMenu.classList.add("hidden");
     }
 
     function populateGenreSelects() {
@@ -1634,6 +1579,14 @@
         .replace(/'/g, "&#39;");
     }
 
+    function getProfileHref(profile) {
+      if (!profile) return "join.html";
+      if (profile?.user_id) {
+        return `artist.html?user_id=${encodeURIComponent(profile.user_id)}`;
+      }
+      return "join.html";
+    }
+
     function setHeaderAvatar(photoUrl, artistName) {
       if (photoUrl) {
         headerAvatarImage.src = photoUrl;
@@ -1651,27 +1604,38 @@
       const hasProfile = Boolean(profile);
       const hasTrack = Boolean(track);
 
-      menuLoginBtn.classList.toggle("hidden", isLoggedIn);
-      menuSignupBtn.classList.toggle("hidden", isLoggedIn);
-      menuLogoutBtn.classList.toggle("hidden", !isLoggedIn);
+      desktopLoginLink.classList.toggle("hidden", isLoggedIn);
+      mobileLoginLink.classList.toggle("hidden", isLoggedIn);
+      desktopLogoutBtn.classList.toggle("hidden", !isLoggedIn);
 
-      menuCreateProfileLink.classList.toggle("hidden", !isLoggedIn || hasProfile);
-      menuEditProfileLink.classList.toggle("hidden", !isLoggedIn || !hasProfile);
-      menuArtistPageLink.classList.toggle("hidden", !isLoggedIn || !hasProfile);
-      menuSubmitTrackLink.classList.toggle("hidden", !isLoggedIn || !hasProfile);
+      desktopProfileLink.classList.toggle("hidden", !isLoggedIn);
+      mobileProfileLink.classList.toggle("hidden", !isLoggedIn);
+
+      desktopNotificationsLink.classList.toggle("hidden", !isLoggedIn);
+      mobileNotificationsLink.classList.toggle("hidden", !isLoggedIn);
+
+      desktopTrackLink.classList.toggle("hidden", !isLoggedIn || !hasProfile);
+      mobileTrackLink.classList.toggle("hidden", !isLoggedIn || !hasProfile);
+
+      const profileHref = getProfileHref(profile);
+
+      desktopProfileLink.href = profileHref;
+      mobileProfileLink.href = profileHref;
+      accountProfileLink.href = profileHref;
+
+      accountProfileLink.classList.toggle("hidden", !isLoggedIn);
+
+      desktopTrackLink.setAttribute("data-track-mode", hasTrack ? "edit" : "submit");
+      mobileTrackLink.setAttribute("data-track-mode", hasTrack ? "edit" : "submit");
 
       if (hasProfile && profile?.user_id) {
         const artistUrl = `artist.html?user_id=${encodeURIComponent(profile.user_id)}`;
-        menuArtistPageLink.href = artistUrl;
         backToArtistPageLink.href = artistUrl;
         backToArtistPageLink.classList.remove("hidden");
       } else {
-        menuArtistPageLink.href = "#";
         backToArtistPageLink.href = "#";
         backToArtistPageLink.classList.add("hidden");
       }
-
-      menuSubmitTrackLabel.textContent = hasTrack ? "Edit Your Track" : "Submit Your Track";
     }
 
     function setLoggedOutView() {
@@ -1681,6 +1645,8 @@
       headerAvatarImage.classList.add("hidden");
       headerAvatarFallback.classList.add("hidden");
       headerAvatarImage.src = "";
+      accountProfileLink.classList.add("hidden");
+      accountProfileLink.href = "javascript:void(0)";
 
       loginRequiredBox.classList.remove("hidden");
       profileRequiredBox.classList.add("hidden");
@@ -1694,8 +1660,6 @@
     }
 
     function setLoggedInHeader() {
-      authBox.classList.add("hidden");
-      menuAuthPanel.classList.add("hidden");
       showLoginBtn.classList.add("hidden");
       headerAvatarBtn.classList.remove("hidden");
     }
@@ -1708,7 +1672,6 @@
         : "Submit your 60 second preview and join the next wave.";
 
       saveTrackBtn.textContent = isEdit ? "Save Track Changes" : "Submit Your Track";
-      menuSubmitTrackLabel.textContent = isEdit ? "Edit Your Track" : "Submit Your Track";
     }
 
     function renderTrackStatus(track) {
@@ -1875,137 +1838,24 @@
       return data;
     }
 
-    async function loginWithCredentials(emailValue, passwordValue, messageTarget) {
-      if (!emailValue || !passwordValue) {
-        setAuthMessage("Please enter email and password.", true, messageTarget);
-        return false;
-      }
-
-      setAuthMessage("", false, messageTarget);
-
-      const { error } = await supabaseClient.auth.signInWithPassword({
-        email: emailValue,
-        password: passwordValue
-      });
-
-      if (error) {
-        setAuthMessage(error.message, true, messageTarget);
-        return false;
-      }
-
-      clearLoginFields();
-      return true;
-    }
-
-    async function signupWithCredentials(emailValue, passwordValue, messageTarget) {
-      if (!emailValue || !passwordValue) {
-        setAuthMessage("Please enter email and password.", true, messageTarget);
-        return false;
-      }
-
-      setAuthMessage("", false, messageTarget);
-
-      const { error } = await supabaseClient.auth.signUp({
-        email: emailValue,
-        password: passwordValue
-      });
-
-      if (error) {
-        setAuthMessage(error.message, true, messageTarget);
-        return false;
-      }
-
-      setAuthMessage("Account created. Check your email.", false, messageTarget);
-      return true;
-    }
-
-    async function handleLogin() {
-      loginBtn.disabled = true;
-      signupBtn.disabled = true;
-
-      try {
-        const ok = await loginWithCredentials(email.value.trim(), password.value.trim(), authMessageEl);
-        if (!ok) return;
-        authBox.classList.add("hidden");
-        await refreshPageState();
-      } catch (err) {
-        console.error(err);
-        setAuthMessage("Login failed. Try again.", true, authMessageEl);
-      } finally {
-        loginBtn.disabled = false;
-        signupBtn.disabled = false;
-      }
-    }
-
-    async function handleSignup() {
-      loginBtn.disabled = true;
-      signupBtn.disabled = true;
-
-      try {
-        await signupWithCredentials(email.value.trim(), password.value.trim(), authMessageEl);
-        await refreshPageState();
-      } catch (err) {
-        console.error(err);
-        setAuthMessage("Sign up failed. Try again.", true, authMessageEl);
-      } finally {
-        loginBtn.disabled = false;
-        signupBtn.disabled = false;
-      }
-    }
-
-    async function handleMenuLogin() {
-      menuLoginSubmitBtn.disabled = true;
-      menuSignupSubmitBtn.disabled = true;
-
-      try {
-        const ok = await loginWithCredentials(menuEmail.value.trim(), menuPassword.value.trim(), menuAuthMessage);
-        if (!ok) return;
-        closeSideMenu();
-        await refreshPageState();
-      } catch (err) {
-        console.error(err);
-        setAuthMessage("Login failed. Try again.", true, menuAuthMessage);
-      } finally {
-        menuLoginSubmitBtn.disabled = false;
-        menuSignupSubmitBtn.disabled = false;
-      }
-    }
-
-    async function handleMenuSignup() {
-      menuLoginSubmitBtn.disabled = true;
-      menuSignupSubmitBtn.disabled = true;
-
-      try {
-        await signupWithCredentials(menuEmail.value.trim(), menuPassword.value.trim(), menuAuthMessage);
-        await refreshPageState();
-      } catch (err) {
-        console.error(err);
-        setAuthMessage("Sign up failed. Try again.", true, menuAuthMessage);
-      } finally {
-        menuLoginSubmitBtn.disabled = false;
-        menuSignupSubmitBtn.disabled = false;
-      }
-    }
-
     async function handleLogout() {
       logoutBtn.disabled = true;
-      menuLogoutBtn.disabled = true;
+      desktopLogoutBtn.disabled = true;
 
       try {
         const { error } = await supabaseClient.auth.signOut();
         if (error) {
-          setAuthMessage(error.message, true, authMessageEl);
+          setStatus(error.message, true);
           return;
         }
 
-        clearLoginFields();
         await refreshPageState();
       } catch (err) {
         console.error(err);
-        setAuthMessage("Logout failed. Try again.", true, authMessageEl);
+        setStatus("Logout failed. Try again.", true);
       } finally {
         logoutBtn.disabled = false;
-        menuLogoutBtn.disabled = false;
+        desktopLogoutBtn.disabled = false;
       }
     }
 
@@ -2210,7 +2060,6 @@
         setTimeout(() => {
           window.location.href = artistUrl;
         }, 500);
-        return;
       } catch (err) {
         console.error(err);
         setStatus(err.message || "Something went wrong while saving your track.", true);
@@ -2220,85 +2069,24 @@
     }
 
     showLoginBtn.onclick = () => {
-      accountMenu.classList.add("hidden");
-      closeSideMenu();
-      authBox.classList.toggle("hidden");
-      setAuthMessage("");
-      if (!authBox.classList.contains("hidden")) {
-        setTimeout(() => email.focus(), 0);
-      }
+      closeHeaderPanels();
     };
 
     headerAvatarBtn.onclick = () => {
-      authBox.classList.add("hidden");
-      closeSideMenu();
       accountMenu.classList.toggle("hidden");
     };
 
-    menuBtn.onclick = () => {
-      authBox.classList.add("hidden");
+    accountProfileLink.onclick = () => {
       accountMenu.classList.add("hidden");
-      if (sideMenu.classList.contains("open")) {
-        closeSideMenu();
-      } else {
-        openSideMenu();
-      }
     };
 
-    closeMenuBtn.onclick = closeSideMenu;
-    sideMenuOverlay.onclick = closeSideMenu;
-
-    menuLoginBtn.onclick = () => {
-      authBox.classList.add("hidden");
+    accountNotificationsLink.onclick = () => {
       accountMenu.classList.add("hidden");
-      openMenuAuthPanel("login");
     };
 
-    menuSignupBtn.onclick = () => {
-      authBox.classList.add("hidden");
-      accountMenu.classList.add("hidden");
-      openMenuAuthPanel("signup");
-    };
-
-    menuLogoutBtn.onclick = async () => {
-      closeSideMenu();
-      await handleLogout();
-    };
-
-    loginBtn.onclick = handleLogin;
-    signupBtn.onclick = handleSignup;
     logoutBtn.onclick = handleLogout;
-    menuLoginSubmitBtn.onclick = handleMenuLogin;
-    menuSignupSubmitBtn.onclick = handleMenuSignup;
+    desktopLogoutBtn.onclick = handleLogout;
     saveTrackBtn.onclick = handleSaveTrack;
-
-    email.addEventListener("keydown", (e) => {
-      if (e.key === "Enter") handleLogin();
-    });
-
-    password.addEventListener("keydown", (e) => {
-      if (e.key === "Enter") handleLogin();
-    });
-
-    menuEmail.addEventListener("keydown", (e) => {
-      if (e.key === "Enter") {
-        if (currentMenuAuthMode === "signup") {
-          handleMenuSignup();
-        } else {
-          handleMenuLogin();
-        }
-      }
-    });
-
-    menuPassword.addEventListener("keydown", (e) => {
-      if (e.key === "Enter") {
-        if (currentMenuAuthMode === "signup") {
-          handleMenuSignup();
-        } else {
-          handleMenuLogin();
-        }
-      }
-    });
 
     document.querySelectorAll('input[name="aiUsage"]').forEach(input => {
       input.addEventListener("change", updateAiDetailsVisibility);
@@ -2374,27 +2162,16 @@
 
     document.addEventListener("click", (e) => {
       const insideHeaderRight = e.target.closest(".header-right");
-      const insideAuthBox = e.target.closest("#authBox");
-      const insideSideMenu = e.target.closest("#sideMenu");
-      const isLoginButton = e.target.closest("#showLoginBtn");
       const isAvatarButton = e.target.closest("#headerAvatarBtn");
-      const isMenuButton = e.target.closest("#menuBtn");
 
-      if (!insideHeaderRight && !insideAuthBox && !isLoginButton && !isAvatarButton) {
-        authBox.classList.add("hidden");
+      if (!insideHeaderRight && !isAvatarButton) {
         accountMenu.classList.add("hidden");
-      }
-
-      if (!insideSideMenu && !isMenuButton) {
-        closeSideMenu();
       }
     });
 
     document.addEventListener("keydown", (e) => {
       if (e.key === "Escape") {
-        authBox.classList.add("hidden");
         accountMenu.classList.add("hidden");
-        closeSideMenu();
       }
     });
 
