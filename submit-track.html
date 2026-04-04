@@ -470,22 +470,16 @@
 
     .page-wrap {
       max-width: 860px;
-      margin: 10px auto 0;
+      margin: 18px auto 0;
     }
 
     .hero-card {
-      background:
-        linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.015)),
-        radial-gradient(circle at top, rgba(212,175,55,0.12), transparent 55%),
-        linear-gradient(180deg, rgba(24,24,24,0.88) 0%, rgba(17,17,17,0.94) 100%);
-      border: 1px solid var(--border-gold);
-      border-radius: 30px;
-      padding: 30px 28px;
-      box-shadow:
-        0 30px 80px rgba(0,0,0,0.42),
-        0 0 35px rgba(212,175,55,0.10),
-        inset 0 1px 0 rgba(255,255,255,0.05);
+      padding: 14px 4px 8px;
       text-align: center;
+      background: transparent;
+      border: none;
+      border-radius: 0;
+      box-shadow: none;
     }
 
     .section-kicker {
@@ -513,20 +507,18 @@
     }
 
     .panel-card {
-      margin-top: 18px;
-      background: rgba(20,20,20,0.75);
-      border-radius: 26px;
-      padding: 24px;
-      border: 1px solid rgba(255,255,255,0.04);
-      backdrop-filter: blur(12px);
-      box-shadow:
-        0 20px 60px rgba(0,0,0,0.35),
-        inset 0 1px 0 rgba(255,255,255,0.03);
+      margin-top: 20px;
+      background: transparent;
+      border-radius: 0;
+      padding: 0;
+      border: none;
+      backdrop-filter: none;
+      box-shadow: none;
     }
 
     .form-grid {
       display: grid;
-      gap: 14px;
+      gap: 22px;
     }
 
     .field-group {
@@ -553,25 +545,28 @@
 
     .subtle-note {
       margin-top: 10px;
-      padding: 12px 14px;
-      border-radius: 16px;
-      background: rgba(212,175,55,0.06);
-      border: 1px solid rgba(212,175,55,0.12);
-      color: #ddd;
+      padding: 0;
+      border-radius: 0;
+      background: transparent;
+      border: none;
+      color: #bdbdbd;
       font-size: 13px;
-      line-height: 1.6;
+      line-height: 1.7;
       text-align: left;
     }
 
     .notice-box {
-      background: rgba(255,255,255,0.04);
+      background: transparent;
       border: 1px solid rgba(255,255,255,0.06);
+      border-left: 1px solid rgba(212,175,55,0.26);
       border-radius: 18px;
       padding: 16px 18px;
       text-align: center;
       color: #ddd;
       line-height: 1.6;
       margin-bottom: 18px;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.02);
+      backdrop-filter: blur(6px);
     }
 
     .track-status-box {
@@ -697,7 +692,7 @@
     }
 
     .action-row {
-      margin-top: 22px;
+      margin-top: 10px;
       display: flex;
       justify-content: center;
       flex-wrap: wrap;
@@ -803,15 +798,11 @@
     }
 
     .clip-tool {
-      padding: 18px;
-      border-radius: 22px;
-      border: 1px solid rgba(212,175,55,0.14);
-      background:
-        radial-gradient(circle at top, rgba(212,175,55,0.08), transparent 60%),
-        linear-gradient(180deg, rgba(19,19,19,0.96), rgba(11,11,11,0.98));
-      box-shadow:
-        inset 0 1px 0 rgba(255,255,255,0.04),
-        0 14px 30px rgba(0,0,0,0.22);
+      padding: 18px 0 4px;
+      border-radius: 0;
+      border: none;
+      background: transparent;
+      box-shadow: none;
     }
 
     .clip-tool-top {
@@ -878,33 +869,17 @@
       left: 0;
       width: 20%;
       background:
-        linear-gradient(180deg, rgba(244,215,122,0.12), rgba(212,175,55,0.18));
-      border-left: 1px solid rgba(244,215,122,0.85);
-      border-right: 1px solid rgba(244,215,122,0.85);
+        linear-gradient(180deg, rgba(244,215,122,0.10), rgba(212,175,55,0.15));
+      border-left: 1px solid rgba(244,215,122,0.82);
+      border-right: 1px solid rgba(244,215,122,0.82);
       box-shadow:
-        0 0 0 1px rgba(212,175,55,0.10),
-        0 0 22px rgba(212,175,55,0.10);
+        0 0 0 1px rgba(212,175,55,0.08),
+        0 0 18px rgba(212,175,55,0.08);
     }
 
     .clip-selection::before,
     .clip-selection::after {
-      content: "";
-      position: absolute;
-      top: 50%;
-      width: 8px;
-      height: 28px;
-      transform: translateY(-50%);
-      border-radius: 999px;
-      background: linear-gradient(180deg, #fff5c9, #d4af37);
-      box-shadow: 0 0 12px rgba(212,175,55,0.18);
-    }
-
-    .clip-selection::before {
-      left: 6px;
-    }
-
-    .clip-selection::after {
-      right: 6px;
+      display: none;
     }
 
     .clip-slider-row {
@@ -1107,7 +1082,8 @@
 
       .hero-card,
       .panel-card {
-        padding: 20px;
+        padding-left: 0;
+        padding-right: 0;
       }
 
       .clip-controls {
@@ -1668,7 +1644,7 @@
       const isEdit = Boolean(track);
       pageTitle.textContent = "Enter The Radio";
       pageNote.textContent = isEdit
-        ? "Update your 60 second preview and stay ready for the next wave."
+        ? "This is your minute of fame, let's make make it memorable!"
         : "Submit your 60 second preview and join the next wave.";
 
       saveTrackBtn.textContent = isEdit ? "Save Track Changes" : "Submit Your Track";
