@@ -653,6 +653,20 @@
         0 0 18px rgba(212,175,55,0.06);
     }
 
+    .birthday-pill {
+      gap: 8px;
+      font-weight: 600;
+    }
+
+    .birthday-icon {
+      font-size: 14px;
+      line-height: 1;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transform: translateY(-0.5px);
+    }
+
     .artist-bio {
       max-width: 740px;
       color: #ddd;
@@ -1150,7 +1164,7 @@
 
           <section class="submission-section">
             <div class="submission-header">
-              <h2 id="submissionTitle" class="submission-title">Artist Submission</h2>
+              <h2 id="submissionTitle" class="submission-title">Track</h2>
             </div>
 
             <div id="artistStatus" class="status-box hidden"></div>
@@ -1515,7 +1529,7 @@
     function renderArtistProfile(profile, isOwnPage, hasOwnTrack) {
       const displayName = profile?.artist_name || "Unknown Artist";
       artistNameEl.textContent = displayName;
-      submissionTitle.textContent = `${displayName}'s submission`;
+      submissionTitle.textContent = "Track";
 
       if (profile?.photo_url) {
         artistPhoto.src = profile.photo_url;
@@ -1546,7 +1560,7 @@
       if (birthdayDisplay) {
         const birthdayPill = document.createElement("div");
         birthdayPill.className = "meta-pill birthday-pill";
-        birthdayPill.textContent = `Birthday ${birthdayDisplay}`;
+        birthdayPill.innerHTML = `<span class="birthday-icon" aria-hidden="true">🎂</span><span>${escapeHtml(birthdayDisplay)}</span>`;
         artistMeta.appendChild(birthdayPill);
       }
 
@@ -1683,7 +1697,7 @@
 
       if (!viewedArtistUserId) {
         artistNameEl.textContent = "Artist not found";
-        submissionTitle.textContent = "Artist submission";
+        submissionTitle.textContent = "Track";
         noTracksBox.classList.add("hidden");
         tracksWrap.classList.add("hidden");
         setArtistStatus("No artist user_id was provided in the URL.", true);
@@ -1703,14 +1717,14 @@
 
       if (profileError) {
         artistNameEl.textContent = "Artist not found";
-        submissionTitle.textContent = "Artist submission";
+        submissionTitle.textContent = "Track";
         setArtistStatus("Could not load artist profile: " + profileError.message, true);
         return;
       }
 
       if (!profile) {
         artistNameEl.textContent = "Artist not found";
-        submissionTitle.textContent = "Artist submission";
+        submissionTitle.textContent = "Track";
         setArtistStatus("This artist profile does not exist.", true);
         return;
       }
