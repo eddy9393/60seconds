@@ -537,31 +537,34 @@
 
     .radio-stage {
       position: relative;
-      max-width: 760px;
-      margin: 8px auto 0;
+      max-width: 880px;
+      margin: 32px auto 0;
+      min-height: 52vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
     .radio-shell {
       position: relative;
-      background:
-        linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.015)),
-        radial-gradient(circle at top, rgba(212,175,55,0.12), transparent 55%),
-        linear-gradient(180deg, rgba(24,24,24,0.88) 0%, rgba(17,17,17,0.94) 100%);
-      border: 1px solid rgba(212,175,55,0.16);
-      border-radius: 32px;
-      padding: 28px;
-      box-shadow:
-        0 30px 80px rgba(0,0,0,0.42),
-        0 0 35px rgba(212,175,55,0.08),
-        inset 0 1px 0 rgba(255,255,255,0.05);
-      backdrop-filter: blur(7px);
-      transition: opacity 0.35s ease, filter 0.35s ease, transform 0.35s ease;
+      width: 100%;
+      max-width: 780px;
+      margin: 0 auto;
+      padding: 0;
+      background: transparent;
+      border: none;
+      box-shadow: none;
+      backdrop-filter: none;
+      transition: opacity 0.45s ease, transform 0.45s ease, filter 0.45s ease;
     }
 
     .radio-shell.pre-live {
-      opacity: 0.42;
-      filter: blur(0.2px) saturate(0.86);
-      transform: scale(0.992);
+      opacity: 0;
+      transform: translateY(18px) scale(0.985);
+      pointer-events: none;
+      visibility: hidden;
+      max-height: 0;
+      overflow: hidden;
     }
 
     .start-overlay {
@@ -577,6 +580,11 @@
     .overlay-content {
       text-align: center;
       padding: 24px;
+      max-width: 640px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 18px;
     }
 
     .overlay-label,
@@ -590,24 +598,114 @@
 
     .overlay-label {
       color: rgba(255,255,255,0.88);
-      margin-bottom: 16px;
       text-shadow: 0 1px 8px rgba(0,0,0,0.4);
     }
 
+    .overlay-kicker {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 11px;
+      letter-spacing: 0.32em;
+      text-transform: uppercase;
+      color: rgba(244,215,122,0.86);
+      text-shadow: 0 0 18px rgba(212,175,55,0.16);
+    }
+
+    .overlay-title {
+      margin: 0;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(34px, 7vw, 74px);
+      line-height: 0.95;
+      letter-spacing: -0.04em;
+      font-weight: 600;
+      color: #fff7d7;
+      text-shadow:
+        0 2px 20px rgba(0,0,0,0.45),
+        0 0 28px rgba(212,175,55,0.10);
+      max-width: 10ch;
+    }
+
+    .overlay-subcopy {
+      max-width: 560px;
+      margin: 0;
+      color: rgba(255,255,255,0.72);
+      font-size: 15px;
+      line-height: 1.7;
+      letter-spacing: 0.01em;
+    }
+
+    .start-btn-wrap {
+      position: relative;
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      margin-top: 10px;
+    }
+
+    .start-btn-wrap::before {
+      content: "";
+      position: absolute;
+      inset: -18px -22px;
+      border-radius: 999px;
+      background: radial-gradient(circle, rgba(212,175,55,0.18) 0%, rgba(212,175,55,0.06) 45%, transparent 72%);
+      filter: blur(12px);
+      pointer-events: none;
+    }
+
     .start-btn {
-      min-width: 190px;
+      min-width: 250px;
+      min-height: 68px;
+      padding: 0 34px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,232,166,0.42);
+      background:
+        linear-gradient(180deg, #fff8dc 0%, #f8e4a1 18%, #e7c45d 40%, #d4af37 58%, #b78312 82%, #7f5c11 100%);
+      color: #181203;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      text-shadow: 0 1px 0 rgba(255,255,255,0.35);
+      box-shadow:
+        inset 0 2px 0 rgba(255,255,255,0.6),
+        inset 0 -3px 8px rgba(90,50,0,0.24),
+        0 18px 36px rgba(0,0,0,0.34),
+        0 0 34px rgba(212,175,55,0.20);
+      backdrop-filter: blur(2px);
+      transition: transform 0.16s ease, filter 0.16s ease, box-shadow 0.16s ease;
+    }
+
+    .start-btn:hover {
+      transform: translateY(-2px) scale(1.01);
+      filter: brightness(1.03);
+      box-shadow:
+        inset 0 2px 0 rgba(255,255,255,0.62),
+        inset 0 -3px 8px rgba(90,50,0,0.24),
+        0 22px 44px rgba(0,0,0,0.36),
+        0 0 40px rgba(212,175,55,0.24);
+    }
+
+    .start-btn .icon {
+      margin-right: 10px;
+      color: #5b4309;
+      font-size: 16px;
+    }
+
+    .radio-shell-content {
+      display: grid;
+      gap: 18px;
     }
 
     .now-playing {
       color: var(--muted);
-      margin-bottom: 14px;
+      margin-bottom: 2px;
     }
 
     .waveform-wrap {
       width: 100%;
       display: flex;
       justify-content: center;
-      margin: 0 0 16px;
+      margin: 0 0 8px;
     }
 
     .waveform {
@@ -659,14 +757,14 @@
     .track-title {
       font-family: 'Space Grotesk', sans-serif;
       font-size: var(--fs-track-title);
-      margin: 0 0 8px;
+      margin: 0;
       font-weight: 600;
       letter-spacing: 0.5px;
       text-shadow: 0 2px 14px rgba(0,0,0,0.3);
     }
 
     .artist-wrap {
-      margin: 0 0 18px;
+      margin: 0;
       font-size: var(--fs-artist);
       font-family: 'Manrope', sans-serif;
       font-weight: 400;
@@ -688,16 +786,20 @@
       align-items: center;
       color: var(--muted);
       font-size: var(--fs-body);
-      margin-bottom: 8px;
+      margin: 0 auto 2px;
+      width: 100%;
+      max-width: 620px;
       font-family: 'Manrope', sans-serif;
     }
 
     .progress {
-      height: 10px;
-      background: rgba(42,42,42,0.88);
+      height: 3px;
+      max-width: 620px;
+      margin: 0 auto;
+      background: linear-gradient(90deg, rgba(255,255,255,0.10), rgba(255,255,255,0.04));
       border-radius: 999px;
       overflow: hidden;
-      box-shadow: inset 0 1px 3px rgba(0,0,0,0.35);
+      box-shadow: none;
     }
 
     .fill {
@@ -716,7 +818,7 @@
     }
 
     .volume-wrap {
-      margin-top: 18px;
+      margin-top: 12px;
       display: flex;
       justify-content: center;
       min-height: 50px;
@@ -802,19 +904,20 @@
     }
 
     .listeners-pill {
-      margin: 18px auto 0;
+      margin: 10px auto 0;
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      padding: 10px 16px;
+      padding: 0;
       border-radius: 999px;
-      background: rgba(255,255,255,0.04);
-      border: 1px solid rgba(255,255,255,0.06);
-      color: #f0f0f0;
+      background: transparent;
+      border: none;
+      color: #d9d9d9;
       font-size: var(--fs-body);
-      box-shadow: inset 0 1px 0 rgba(255,255,255,0.03);
-      backdrop-filter: blur(3px);
+      box-shadow: none;
+      backdrop-filter: none;
       font-family: 'Manrope', sans-serif;
+      opacity: 0.88;
     }
 
     .listeners-dot {
@@ -832,22 +935,34 @@
     }
 
     .stats-row {
-      max-width: 760px;
-      margin: 18px auto 0;
+      max-width: 900px;
+      margin: 30px auto 0;
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 14px;
+      gap: 30px;
+      align-items: start;
     }
 
     .stat-card {
-      background: linear-gradient(180deg, rgba(22,22,22,0.86) 0%, rgba(16,16,16,0.92) 100%);
-      border-radius: 22px;
-      padding: 18px;
-      border: 1px solid rgba(255,255,255,0.06);
-      box-shadow:
-        0 12px 30px rgba(0,0,0,0.22),
-        inset 0 1px 0 rgba(255,255,255,0.03);
-      backdrop-filter: blur(6px);
+      background: transparent;
+      border-radius: 0;
+      padding: 18px 8px 10px;
+      border: none;
+      box-shadow: none;
+      backdrop-filter: none;
+      position: relative;
+    }
+
+    .stat-card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 50%;
+      width: 72px;
+      height: 1px;
+      transform: translateX(-50%);
+      background: linear-gradient(90deg, transparent, rgba(212,175,55,0.85), transparent);
+      opacity: 0.8;
     }
 
     .stat-label {
@@ -855,7 +970,7 @@
       font-size: var(--fs-stat-label);
       text-transform: uppercase;
       letter-spacing: 2px;
-      margin-bottom: 8px;
+      margin-bottom: 10px;
       font-family: 'Space Grotesk', sans-serif;
       opacity: 0.78;
     }
@@ -864,7 +979,9 @@
       color: var(--gold);
       font-size: var(--fs-stat-value);
       font-weight: 700;
-      text-shadow: 0 1px 10px rgba(0,0,0,0.25);
+      text-shadow:
+        0 1px 10px rgba(0,0,0,0.25),
+        0 0 18px rgba(212,175,55,0.08);
       font-family: 'Space Grotesk', sans-serif;
     }
 
@@ -961,12 +1078,37 @@
         right: 0;
       }
 
-      .stats-row {
-        grid-template-columns: 1fr;
+      .radio-stage {
+        min-height: 48vh;
+        margin-top: 18px;
       }
 
-      .radio-shell {
-        padding: 20px;
+      .overlay-content {
+        padding: 12px;
+        gap: 14px;
+      }
+
+      .overlay-title {
+        font-size: clamp(28px, 10vw, 46px);
+        max-width: 11ch;
+      }
+
+      .overlay-subcopy {
+        font-size: 14px;
+        line-height: 1.6;
+      }
+
+      .start-btn {
+        min-width: 220px;
+        min-height: 62px;
+        font-size: 15px;
+        padding: 0 28px;
+      }
+
+      .stats-row {
+        grid-template-columns: 1fr;
+        gap: 10px;
+        margin-top: 24px;
       }
 
       .waveform {
@@ -980,7 +1122,7 @@
 
       .track-title {
         font-size: clamp(21px, 6vw, 30px);
-        margin-bottom: 5px;
+        margin-bottom: 3px;
       }
 
       .artist-wrap {
@@ -998,6 +1140,11 @@
 
       .volume-slider-inline input[type="range"] {
         width: 120px;
+      }
+
+      .time-row,
+      .progress {
+        max-width: 100%;
       }
     }
   </style>
@@ -1127,13 +1274,19 @@
     <div class="radio-stage">
       <div id="startOverlay" class="start-overlay">
         <div class="overlay-content">
-          <div class="overlay-label">Live radio is on</div>
-          <button id="start" class="metal-btn start-btn" type="button"><span class="icon">▶</span>Start Radio</button>
+          <div class="overlay-kicker">60 Seconds FM</div>
+          <h1 class="overlay-title">Start the live radio.</h1>
+          <p class="overlay-subcopy">
+            Discover approved artist submissions in a cinematic 60-second live radio flow.
+          </p>
+          <div class="start-btn-wrap">
+            <button id="start" class="start-btn" type="button"><span class="icon">▶</span>Start Radio</button>
+          </div>
         </div>
       </div>
 
       <div id="radioShell" class="radio-shell pre-live">
-        <div id="player">
+        <div id="player" class="radio-shell-content">
           <div class="now-playing">Now Playing</div>
 
           <div class="waveform-wrap" aria-hidden="true">
