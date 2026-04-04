@@ -1345,7 +1345,7 @@
 
       const profilePromise = supabaseClient
         .from("profiles")
-        .select("user_id, artist_name, photo_url, bio, nationality, social_link, created_at, birthday")
+        .select("user_id, artist_name, photo_url, bio, nationality, social_link, created_at, date_of_birth")
         .eq("user_id", user.id)
         .maybeSingle();
 
@@ -1465,7 +1465,7 @@
         }
       }
 
-      return raw;
+      return "";
     }
 
     function formatTime(seconds) {
@@ -1542,7 +1542,7 @@
       memberSincePill.textContent = `Member since ${getMemberSinceDisplay(profile?.created_at)}`;
       artistMeta.appendChild(memberSincePill);
 
-      const birthdayDisplay = getBirthdayDisplay(profile?.birthday);
+      const birthdayDisplay = getBirthdayDisplay(profile?.date_of_birth);
       if (birthdayDisplay) {
         const birthdayPill = document.createElement("div");
         birthdayPill.className = "meta-pill birthday-pill";
@@ -1697,7 +1697,7 @@
 
       const { data: profile, error: profileError } = await supabaseClient
         .from("profiles")
-        .select("user_id, artist_name, photo_url, bio, social_link, nationality, created_at, birthday")
+        .select("user_id, artist_name, photo_url, bio, social_link, nationality, created_at, date_of_birth")
         .eq("user_id", viewedArtistUserId)
         .maybeSingle();
 
