@@ -23,9 +23,9 @@
       --fs-stat-value: clamp(26px, 4vw, 34px);
       --fs-track-title: clamp(30px, 5vw, 48px);
 
-      --desktop-rail-width: 84px;
-      --desktop-rail-expanded: 264px;
-      --mobile-bottom-nav-height: 78px;
+      --desktop-rail-width: 72px;
+      --desktop-rail-expanded: 216px;
+      --mobile-bottom-nav-height: 74px;
     }
 
     * {
@@ -253,129 +253,86 @@
 
     .desktop-side-nav {
       position: fixed;
-      top: 18px;
+      top: 22px;
       left: 18px;
-      bottom: 18px;
+      bottom: 22px;
       width: var(--desktop-rail-width);
       z-index: 120;
       display: flex;
-      justify-content: flex-start;
       align-items: stretch;
-      pointer-events: auto;
     }
 
     .desktop-side-nav-panel {
       width: var(--desktop-rail-width);
-      border-radius: 28px;
-      overflow: hidden;
-      background:
-        linear-gradient(180deg, rgba(20,20,20,0.96), rgba(10,10,10,0.98));
-      border: 1px solid rgba(255,255,255,0.08);
-      box-shadow:
-        20px 0 50px rgba(0,0,0,0.28),
-        inset 0 1px 0 rgba(255,255,255,0.04);
-      backdrop-filter: blur(12px);
-      transition: width 0.24s ease, box-shadow 0.24s ease;
+      transition: width 0.34s cubic-bezier(.22,.61,.36,1);
       display: flex;
       flex-direction: column;
-      padding: 14px 10px;
+      padding: 8px 0;
+      overflow: hidden;
     }
 
     .desktop-side-nav:hover .desktop-side-nav-panel {
       width: var(--desktop-rail-expanded);
-      box-shadow:
-        24px 0 60px rgba(0,0,0,0.34),
-        0 0 28px rgba(212,175,55,0.08),
-        inset 0 1px 0 rgba(255,255,255,0.04);
     }
 
-    .desktop-side-top {
-      display: flex;
-      justify-content: center;
-      margin-bottom: 14px;
-      min-height: 42px;
-    }
-
-    .desktop-side-mark {
-      width: 42px;
-      height: 42px;
-      border-radius: 16px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      color: #111;
-      background:
-        linear-gradient(180deg, #fff5c9 0%, #f4d77a 20%, #d4af37 52%, #b98816 75%, #7c5a11 100%);
-      box-shadow:
-        inset 0 2px 0 rgba(255,255,255,0.45),
-        inset 0 -2px 4px rgba(90,50,0,0.28),
-        0 8px 18px rgba(212,175,55,0.14);
-      font-family: 'Space Grotesk', sans-serif;
-      font-weight: 700;
-      font-size: 14px;
-      flex: 0 0 auto;
-    }
-
-    .desktop-side-links {
+    .desktop-side-links,
+    .desktop-side-bottom {
       display: grid;
-      gap: 10px;
-      flex: 1;
+      gap: 12px;
       align-content: start;
     }
 
-    .desktop-nav-link {
+    .desktop-side-links {
+      flex: 1;
+    }
+
+    .desktop-side-bottom {
+      margin-top: auto;
+      padding-top: 12px;
+    }
+
+    .desktop-nav-link,
+    .desktop-nav-button {
       width: 100%;
-      min-height: 56px;
+      min-height: 46px;
       display: flex;
       align-items: center;
       justify-content: flex-start;
       gap: 14px;
-      padding: 0 14px;
-      border-radius: 18px;
-      border: 1px solid rgba(255,255,255,0.06);
-      background:
-        linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.015)),
-        rgba(255,255,255,0.02);
+      padding: 0 8px 0 10px;
       color: #f4f4f4;
       text-decoration: none;
-      box-shadow:
-        inset 0 1px 0 rgba(255,255,255,0.03),
-        0 10px 20px rgba(0,0,0,0.14);
-      transition: transform 0.14s ease, border-color 0.14s ease, background 0.14s ease;
+      background: transparent;
+      border: 0;
+      cursor: pointer;
       overflow: hidden;
       white-space: nowrap;
+      font-family: 'Manrope', sans-serif;
+      transition: transform 0.18s ease, opacity 0.18s ease;
     }
 
-    .desktop-nav-link:hover {
+    .desktop-nav-link:hover,
+    .desktop-nav-button:hover {
       transform: translateX(2px);
-      border-color: rgba(212,175,55,0.22);
-      background:
-        linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.018)),
-        rgba(255,255,255,0.03);
     }
 
     .desktop-nav-icon {
-      width: 34px;
-      height: 34px;
-      border-radius: 999px;
+      width: 26px;
+      height: 26px;
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      color: #111;
-      background:
-        linear-gradient(180deg, #fff5c9 0%, #f4d77a 20%, #d4af37 52%, #b98816 75%, #7c5a11 100%);
-      box-shadow:
-        inset 0 2px 0 rgba(255,255,255,0.45),
-        inset 0 -2px 4px rgba(90,50,0,0.28),
-        0 8px 18px rgba(212,175,55,0.14);
-      flex: 0 0 auto;
+      color: var(--gold);
+      flex: 0 0 26px;
+      filter: drop-shadow(0 2px 10px rgba(212,175,55,0.18));
     }
 
     .desktop-nav-icon svg,
     .mobile-nav-icon svg {
-      width: 18px;
-      height: 18px;
+      width: 24px;
+      height: 24px;
       display: block;
+      stroke: currentColor;
     }
 
     .desktop-nav-label {
@@ -383,57 +340,16 @@
       font-weight: 500;
       font-family: 'Manrope', sans-serif;
       opacity: 0;
-      transform: translateX(-6px);
-      transition: opacity 0.16s ease, transform 0.16s ease;
+      transform: translateX(-14px);
+      transition:
+        opacity 0.28s ease,
+        transform 0.34s cubic-bezier(.22,.61,.36,1);
       pointer-events: none;
     }
 
     .desktop-side-nav:hover .desktop-nav-label {
       opacity: 1;
       transform: translateX(0);
-    }
-
-    .desktop-side-bottom {
-      display: grid;
-      gap: 10px;
-      margin-top: auto;
-      padding-top: 10px;
-      border-top: 1px solid rgba(255,255,255,0.06);
-    }
-
-    .desktop-nav-button {
-      width: 100%;
-      min-height: 56px;
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      padding: 0 14px;
-      border-radius: 18px;
-      border: 1px solid rgba(255,255,255,0.06);
-      background:
-        linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.015)),
-        rgba(255,255,255,0.02);
-      color: #f4f4f4;
-      cursor: pointer;
-      box-shadow:
-        inset 0 1px 0 rgba(255,255,255,0.03),
-        0 10px 20px rgba(0,0,0,0.14);
-      transition: transform 0.14s ease, border-color 0.14s ease, background 0.14s ease;
-      overflow: hidden;
-      white-space: nowrap;
-      font-family: 'Manrope', sans-serif;
-    }
-
-    .desktop-nav-button:hover {
-      transform: translateX(2px);
-      border-color: rgba(212,175,55,0.22);
-      background:
-        linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.018)),
-        rgba(255,255,255,0.03);
-    }
-
-    .desktop-nav-button .desktop-nav-label {
-      text-align: left;
     }
 
     .mobile-bottom-nav {
@@ -855,7 +771,7 @@
 
     @media (max-width: 760px) {
       body {
-        padding: 0 14px calc(var(--mobile-bottom-nav-height) + 24px);
+        padding: 0 14px calc(var(--mobile-bottom-nav-height) + 22px);
         background:
           linear-gradient(180deg, rgba(7, 7, 7, 0.50) 0%, rgba(7, 7, 7, 0.76) 42%, rgba(7, 7, 7, 0.86) 100%),
           radial-gradient(circle at top, rgba(212, 175, 55, 0.12), transparent 26%),
@@ -881,15 +797,8 @@
         align-items: center;
         justify-content: space-around;
         gap: 6px;
-        padding: 8px 10px;
-        border-radius: 24px;
-        background:
-          linear-gradient(180deg, rgba(20,20,20,0.96), rgba(10,10,10,0.98));
-        border: 1px solid rgba(255,255,255,0.08);
-        box-shadow:
-          0 18px 40px rgba(0,0,0,0.38),
-          inset 0 1px 0 rgba(255,255,255,0.04);
-        backdrop-filter: blur(12px);
+        padding: 6px 4px;
+        background: transparent;
       }
 
       .mobile-nav-link {
@@ -900,8 +809,7 @@
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        gap: 5px;
-        border-radius: 16px;
+        gap: 6px;
         text-decoration: none;
         color: #f4f4f4;
         font-size: 10px;
@@ -909,6 +817,7 @@
         letter-spacing: 0.2px;
         font-family: 'Manrope', sans-serif;
         padding: 6px 4px;
+        background: transparent;
       }
 
       .mobile-nav-link.hidden {
@@ -916,20 +825,13 @@
       }
 
       .mobile-nav-icon {
-        width: 32px;
-        height: 32px;
-        border-radius: 999px;
+        width: 24px;
+        height: 24px;
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        color: #111;
-        background:
-          linear-gradient(180deg, #fff5c9 0%, #f4d77a 20%, #d4af37 52%, #b98816 75%, #7c5a11 100%);
-        box-shadow:
-          inset 0 2px 0 rgba(255,255,255,0.45),
-          inset 0 -2px 4px rgba(90,50,0,0.28),
-          0 8px 18px rgba(212,175,55,0.14);
-        flex: 0 0 auto;
+        color: var(--gold);
+        filter: drop-shadow(0 2px 10px rgba(212,175,55,0.18));
       }
 
       .header-bar {
@@ -997,21 +899,13 @@
 <body>
   <aside class="desktop-side-nav" aria-label="Desktop navigation">
     <div class="desktop-side-nav-panel">
-      <div class="desktop-side-top">
-        <div class="desktop-side-mark">60</div>
-      </div>
-
       <nav class="desktop-side-links">
         <a class="desktop-nav-link" href="index.html">
           <span class="desktop-nav-icon" aria-hidden="true">
             <svg viewBox="0 0 24 24" fill="none">
-              <path d="M12 3V8" stroke="#111" stroke-width="2.2" stroke-linecap="round"/>
-              <path d="M8 21H16" stroke="#111" stroke-width="2.2" stroke-linecap="round"/>
-              <path d="M9.5 21V15.5" stroke="#111" stroke-width="2.2" stroke-linecap="round"/>
-              <path d="M14.5 21V15.5" stroke="#111" stroke-width="2.2" stroke-linecap="round"/>
-              <path d="M7.5 10.5H16.5V15.5H7.5Z" stroke="#111" stroke-width="2.2" stroke-linejoin="round"/>
-              <path d="M5 12C5 8.8 8 6.5 12 6.5C16 6.5 19 8.8 19 12" stroke="#111" stroke-width="2.2" stroke-linecap="round"/>
-              <path d="M3.5 9.5C5.8 6.5 8.6 5 12 5C15.4 5 18.2 6.5 20.5 9.5" stroke="#111" stroke-width="2.2" stroke-linecap="round"/>
+              <path d="M4 12C6.5 9 9 7.5 12 7.5C15 7.5 17.5 9 20 12" stroke-width="2.2" stroke-linecap="round"/>
+              <path d="M7.5 14.5H16.5" stroke-width="2.2" stroke-linecap="round"/>
+              <path d="M9 17H15" stroke-width="2.2" stroke-linecap="round"/>
             </svg>
           </span>
           <span class="desktop-nav-label">Radio</span>
@@ -1020,8 +914,8 @@
         <a id="desktopProfileLink" class="desktop-nav-link hidden" href="join.html">
           <span class="desktop-nav-icon" aria-hidden="true">
             <svg viewBox="0 0 24 24" fill="none">
-              <path d="M12 12a4 4 0 1 0 0-8a4 4 0 0 0 0 8Z" stroke="#111" stroke-width="2.2"/>
-              <path d="M5 20c1.6-3 4.1-4.5 7-4.5S17.4 17 19 20" stroke="#111" stroke-width="2.2" stroke-linecap="round"/>
+              <path d="M12 12a3.8 3.8 0 1 0 0-7.6a3.8 3.8 0 0 0 0 7.6Z" stroke-width="2.2"/>
+              <path d="M5.5 19c1.7-2.8 4-4.2 6.5-4.2s4.8 1.4 6.5 4.2" stroke-width="2.2" stroke-linecap="round"/>
             </svg>
           </span>
           <span class="desktop-nav-label">Profile</span>
@@ -1030,8 +924,8 @@
         <a id="desktopNotificationsLink" class="desktop-nav-link hidden" href="notifications.html">
           <span class="desktop-nav-icon" aria-hidden="true">
             <svg viewBox="0 0 24 24" fill="none">
-              <path d="M12 4a4 4 0 0 1 4 4v2.5c0 1 .3 2 .9 2.8L18 15H6l1.1-1.7c.6-.8.9-1.8.9-2.8V8a4 4 0 0 1 4-4Z" stroke="#111" stroke-width="2.2" stroke-linejoin="round"/>
-              <path d="M10 18a2 2 0 0 0 4 0" stroke="#111" stroke-width="2.2" stroke-linecap="round"/>
+              <path d="M12 5.5a3.5 3.5 0 0 1 3.5 3.5v2.3c0 .9.3 1.7.8 2.4L17.5 15H6.5l1.2-1.3c.5-.7.8-1.5.8-2.4V9A3.5 3.5 0 0 1 12 5.5Z" stroke-width="2.2" stroke-linejoin="round"/>
+              <path d="M10.2 18c.4.9 1 1.3 1.8 1.3s1.4-.4 1.8-1.3" stroke-width="2.2" stroke-linecap="round"/>
             </svg>
           </span>
           <span class="desktop-nav-label">Meldingen</span>
@@ -1040,7 +934,7 @@
         <a id="desktopTrackLink" class="desktop-nav-link hidden" href="submit-track.html">
           <span class="desktop-nav-icon" aria-hidden="true">
             <svg viewBox="0 0 24 24" fill="none">
-              <path d="M14 5v10.3a2.7 2.7 0 1 1-2-2.6V7.2l8-1.7v8.8a2.7 2.7 0 1 1-2-2.6V4L14 5Z" stroke="#111" stroke-width="2.2" stroke-linejoin="round"/>
+              <path d="M14 6v9.3a2.4 2.4 0 1 1-1.7-2.3V8.2l6-1.3v7.4a2.4 2.4 0 1 1-1.7-2.3V5.6L14 6Z" stroke-width="2.2" stroke-linejoin="round"/>
             </svg>
           </span>
           <span class="desktop-nav-label">Track</span>
@@ -1051,9 +945,9 @@
         <a id="desktopLoginLink" class="desktop-nav-link" href="login.html">
           <span class="desktop-nav-icon" aria-hidden="true">
             <svg viewBox="0 0 24 24" fill="none">
-              <path d="M10 17l-5-5 5-5" stroke="#111" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
-              <path d="M5 12h10" stroke="#111" stroke-width="2.2" stroke-linecap="round"/>
-              <path d="M14 5h3a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-3" stroke="#111" stroke-width="2.2" stroke-linecap="round"/>
+              <path d="M10 17l-4.5-5L10 7" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M6 12h10" stroke-width="2.2" stroke-linecap="round"/>
+              <path d="M15 5.5h2a1.8 1.8 0 0 1 1.8 1.8v9.4A1.8 1.8 0 0 1 17 18.5h-2" stroke-width="2.2" stroke-linecap="round"/>
             </svg>
           </span>
           <span class="desktop-nav-label">Login</span>
@@ -1062,9 +956,9 @@
         <button id="desktopLogoutBtn" class="desktop-nav-button hidden" type="button">
           <span class="desktop-nav-icon" aria-hidden="true">
             <svg viewBox="0 0 24 24" fill="none">
-              <path d="M14 17l5-5-5-5" stroke="#111" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
-              <path d="M19 12H9" stroke="#111" stroke-width="2.2" stroke-linecap="round"/>
-              <path d="M10 5H7a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h3" stroke="#111" stroke-width="2.2" stroke-linecap="round"/>
+              <path d="M14 17l4.5-5L14 7" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M18 12H8" stroke-width="2.2" stroke-linecap="round"/>
+              <path d="M9 5.5H7a1.8 1.8 0 0 0-1.8 1.8v9.4A1.8 1.8 0 0 0 7 18.5h2" stroke-width="2.2" stroke-linecap="round"/>
             </svg>
           </span>
           <span class="desktop-nav-label">Logout</span>
@@ -1077,13 +971,9 @@
     <a class="mobile-nav-link" href="index.html">
       <span class="mobile-nav-icon" aria-hidden="true">
         <svg viewBox="0 0 24 24" fill="none">
-          <path d="M12 3V8" stroke="#111" stroke-width="2.2" stroke-linecap="round"/>
-          <path d="M8 21H16" stroke="#111" stroke-width="2.2" stroke-linecap="round"/>
-          <path d="M9.5 21V15.5" stroke="#111" stroke-width="2.2" stroke-linecap="round"/>
-          <path d="M14.5 21V15.5" stroke="#111" stroke-width="2.2" stroke-linecap="round"/>
-          <path d="M7.5 10.5H16.5V15.5H7.5Z" stroke="#111" stroke-width="2.2" stroke-linejoin="round"/>
-          <path d="M5 12C5 8.8 8 6.5 12 6.5C16 6.5 19 8.8 19 12" stroke="#111" stroke-width="2.2" stroke-linecap="round"/>
-          <path d="M3.5 9.5C5.8 6.5 8.6 5 12 5C15.4 5 18.2 6.5 20.5 9.5" stroke="#111" stroke-width="2.2" stroke-linecap="round"/>
+          <path d="M4 12C6.5 9 9 7.5 12 7.5C15 7.5 17.5 9 20 12" stroke-width="2.2" stroke-linecap="round"/>
+          <path d="M7.5 14.5H16.5" stroke-width="2.2" stroke-linecap="round"/>
+          <path d="M9 17H15" stroke-width="2.2" stroke-linecap="round"/>
         </svg>
       </span>
       <span>Radio</span>
@@ -1092,8 +982,8 @@
     <a id="mobileProfileLink" class="mobile-nav-link hidden" href="join.html">
       <span class="mobile-nav-icon" aria-hidden="true">
         <svg viewBox="0 0 24 24" fill="none">
-          <path d="M12 12a4 4 0 1 0 0-8a4 4 0 0 0 0 8Z" stroke="#111" stroke-width="2.2"/>
-          <path d="M5 20c1.6-3 4.1-4.5 7-4.5S17.4 17 19 20" stroke="#111" stroke-width="2.2" stroke-linecap="round"/>
+          <path d="M12 12a3.8 3.8 0 1 0 0-7.6a3.8 3.8 0 0 0 0 7.6Z" stroke-width="2.2"/>
+          <path d="M5.5 19c1.7-2.8 4-4.2 6.5-4.2s4.8 1.4 6.5 4.2" stroke-width="2.2" stroke-linecap="round"/>
         </svg>
       </span>
       <span>Profile</span>
@@ -1102,8 +992,8 @@
     <a id="mobileNotificationsLink" class="mobile-nav-link hidden" href="notifications.html">
       <span class="mobile-nav-icon" aria-hidden="true">
         <svg viewBox="0 0 24 24" fill="none">
-          <path d="M12 4a4 4 0 0 1 4 4v2.5c0 1 .3 2 .9 2.8L18 15H6l1.1-1.7c.6-.8.9-1.8.9-2.8V8a4 4 0 0 1 4-4Z" stroke="#111" stroke-width="2.2" stroke-linejoin="round"/>
-          <path d="M10 18a2 2 0 0 0 4 0" stroke="#111" stroke-width="2.2" stroke-linecap="round"/>
+          <path d="M12 5.5a3.5 3.5 0 0 1 3.5 3.5v2.3c0 .9.3 1.7.8 2.4L17.5 15H6.5l1.2-1.3c.5-.7.8-1.5.8-2.4V9A3.5 3.5 0 0 1 12 5.5Z" stroke-width="2.2" stroke-linejoin="round"/>
+          <path d="M10.2 18c.4.9 1 1.3 1.8 1.3s1.4-.4 1.8-1.3" stroke-width="2.2" stroke-linecap="round"/>
         </svg>
       </span>
       <span>Meldingen</span>
@@ -1112,7 +1002,7 @@
     <a id="mobileTrackLink" class="mobile-nav-link hidden" href="submit-track.html">
       <span class="mobile-nav-icon" aria-hidden="true">
         <svg viewBox="0 0 24 24" fill="none">
-          <path d="M14 5v10.3a2.7 2.7 0 1 1-2-2.6V7.2l8-1.7v8.8a2.7 2.7 0 1 1-2-2.6V4L14 5Z" stroke="#111" stroke-width="2.2" stroke-linejoin="round"/>
+          <path d="M14 6v9.3a2.4 2.4 0 1 1-1.7-2.3V8.2l6-1.3v7.4a2.4 2.4 0 1 1-1.7-2.3V5.6L14 6Z" stroke-width="2.2" stroke-linejoin="round"/>
         </svg>
       </span>
       <span>Track</span>
@@ -1121,9 +1011,9 @@
     <a id="mobileLoginLink" class="mobile-nav-link" href="login.html">
       <span class="mobile-nav-icon" aria-hidden="true">
         <svg viewBox="0 0 24 24" fill="none">
-          <path d="M10 17l-5-5 5-5" stroke="#111" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
-          <path d="M5 12h10" stroke="#111" stroke-width="2.2" stroke-linecap="round"/>
-          <path d="M14 5h3a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-3" stroke="#111" stroke-width="2.2" stroke-linecap="round"/>
+          <path d="M10 17l-4.5-5L10 7" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M6 12h10" stroke-width="2.2" stroke-linecap="round"/>
+          <path d="M15 5.5h2a1.8 1.8 0 0 1 1.8 1.8v9.4A1.8 1.8 0 0 1 17 18.5h-2" stroke-width="2.2" stroke-linecap="round"/>
         </svg>
       </span>
       <span>Login</span>
