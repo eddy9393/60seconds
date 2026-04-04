@@ -1315,7 +1315,7 @@
     async function loginWithCredentials(emailValue, passwordValue, messageTarget) {
       if (!emailValue || !passwordValue) {
         setAuthMessage("Please enter email and password.", true, messageTarget);
-        return false;
+        return { ok: false };
       }
 
       setAuthMessage("", false, messageTarget);
@@ -1327,33 +1327,58 @@
 
       if (error) {
         setAuthMessage(error.message, true, messageTarget);
-        return false;
+        return { ok: false };
       }
 
       clearLoginFields();
-      return true;
+      return { ok: true };
     }
 
     async function signupWithCredentials(emailValue, passwordValue, messageTarget) {
       if (!emailValue || !passwordValue) {
         setAuthMessage("Please enter email and password.", true, messageTarget);
-        return false;
+        return { ok: false, requiresEmailConfirmation: false, hasSession: false };
+      }
+
+      if (passwordValue.length < 6) {
+        setAuthMessage("Password must be at least 6 characters.", true, messageTarget);
+        return { ok: false, requiresEmailConfirmation: false, hasSession: false };
       }
 
       setAuthMessage("", false, messageTarget);
 
-      const { error } = await supabaseClient.auth.signUp({
+      const emailRedirectTo = new URL("join.html", window.location.href).href;
+
+      const { data, error } = await supabaseClient.auth.signUp({
         email: emailValue,
-        password: passwordValue
+        password: passwordValue,
+        options: {
+          emailRedirectTo
+        }
       });
 
       if (error) {
         setAuthMessage(error.message, true, messageTarget);
-        return false;
+        return { ok: false, requiresEmailConfirmation: false, hasSession: false };
       }
 
-      setAuthMessage("Account created. Check your email.", false, messageTarget);
-      return true;
+      const hasSession = Boolean(data?.session);
+      const hasUser = Boolean(data?.user);
+
+      clearLoginFields();
+
+      if (hasSession) {
+        setAuthMessage("Account created. You are now logged in.", false, messageTarget);
+        return { ok: true, requiresEmailConfirmation: false, hasSession: true };
+      }
+
+      if (hasUser) {
+        setAuthMessage("Account created. Check your email for the confirmation link.", false, messageTarget);
+        return { ok: true, requiresEmailConfirmation: true, hasSession: false };
+      }
+
+      setAuthMessage("Signup completed, but the auth response was incomplete. Please try logging in.", false, messageTarget);
+      return { ok: true, requiresEmailConfirmation: false, hasSession: false };
     }
 
     async function handleLogin() {
@@ -1361,8 +1386,8 @@
       signupBtn.disabled = true;
 
       try {
-        const ok = await loginWithCredentials(email.value.trim(), password.value.trim(), authMessageEl);
-        if (!ok) return;
+        const result = await loginWithCredentials(email.value.trim(), password.value, authMessageEl);
+        if (!result.ok) return;
 
         authBox.classList.add("hidden");
         await refreshPageState();
@@ -1380,8 +1405,13 @@
       signupBtn.disabled = true;
 
       try {
-        await signupWithCredentials(email.value.trim(), password.value.trim(), authMessageEl);
-        await refreshPageState();
+        const result = await signupWithCredentials(email.value.trim(), password.value, authMessageEl);
+        if (!result.ok) return;
+
+        if (result.hasSession) {
+          authBox.classList.add("hidden");
+          await refreshPageState();
+        }
       } catch (err) {
         console.error(err);
         setAuthMessage("Sign up failed. Try again.", true, authMessageEl);
@@ -1396,8 +1426,8 @@
       menuSignupSubmitBtn.disabled = true;
 
       try {
-        const ok = await loginWithCredentials(menuEmail.value.trim(), menuPassword.value.trim(), menuAuthMessage);
-        if (!ok) return;
+        const result = await loginWithCredentials(menuEmail.value.trim(), menuPassword.value, menuAuthMessage);
+        if (!result.ok) return;
 
         closeSideMenu();
         await refreshPageState();
@@ -1415,8 +1445,13 @@
       menuSignupSubmitBtn.disabled = true;
 
       try {
-        await signupWithCredentials(menuEmail.value.trim(), menuPassword.value.trim(), menuAuthMessage);
-        await refreshPageState();
+        const result = await signupWithCredentials(menuEmail.value.trim(), menuPassword.value, menuAuthMessage);
+        if (!result.ok) return;
+
+        if (result.hasSession) {
+          closeSideMenu();
+          await refreshPageState();
+        }
       } catch (err) {
         console.error(err);
         setAuthMessage("Sign up failed. Try again.", true, menuAuthMessage);
