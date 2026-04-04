@@ -23,14 +23,36 @@
       --fs-stat-value: clamp(26px, 4vw, 34px);
       --fs-track-title: clamp(30px, 5vw, 48px);
 
-      --desktop-rail-width: 72px;
-      --desktop-rail-expanded: 292px;
+      --desktop-rail-width: 76px;
+      --desktop-rail-expanded: 286px;
       --mobile-bottom-nav-height: 86px;
-      --mobile-nav-bg: #0d0d0d;
+      --mobile-nav-bg: rgba(10, 10, 10, 0.96);
+      --icon-gold-filter:
+        brightness(0)
+        saturate(100%)
+        invert(76%)
+        sepia(45%)
+        saturate(742%)
+        hue-rotate(3deg)
+        brightness(94%)
+        contrast(91%);
+      --icon-gold-active-filter:
+        brightness(0)
+        saturate(100%)
+        invert(90%)
+        sepia(38%)
+        saturate(662%)
+        hue-rotate(359deg)
+        brightness(101%)
+        contrast(94%);
     }
 
     * {
       box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
     }
 
     body {
@@ -47,13 +69,18 @@
       color: var(--text);
       font-family: 'Manrope', sans-serif;
       text-align: center;
-      padding: 0 18px 44px calc(var(--desktop-rail-width) + 28px);
+      padding: 0 18px 44px calc(var(--desktop-rail-width) + 34px);
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
     }
 
     h1, h2, h3 {
       font-family: 'Space Grotesk', sans-serif;
+    }
+
+    img {
+      max-width: 100%;
+      display: block;
     }
 
     .hidden {
@@ -271,7 +298,7 @@
       display: flex;
       flex-direction: column;
       padding: 14px 0 10px;
-      overflow: visible;
+      overflow: hidden;
     }
 
     .desktop-side-nav:hover .desktop-side-nav-panel {
@@ -281,12 +308,13 @@
     .desktop-side-links,
     .desktop-side-bottom {
       display: grid;
-      gap: 18px;
+      gap: 12px;
       align-content: start;
     }
 
     .desktop-side-links {
       flex: 1;
+      padding-top: 2px;
     }
 
     .desktop-side-bottom {
@@ -297,12 +325,12 @@
     .desktop-nav-link,
     .desktop-nav-button {
       width: 100%;
-      min-height: 48px;
+      min-height: 52px;
       display: flex;
       align-items: center;
       justify-content: flex-start;
-      gap: 18px;
-      padding: 0 8px 0 10px;
+      gap: 16px;
+      padding: 0 14px 0 16px;
       color: #f4f4f4;
       text-decoration: none;
       background: transparent;
@@ -314,24 +342,18 @@
       transition: transform 0.18s ease, opacity 0.18s ease, color 0.18s ease;
       text-align: left;
       position: relative;
+      border-radius: 16px;
     }
 
     .desktop-nav-link:hover,
     .desktop-nav-button:hover {
       transform: translateX(2px);
+      background: linear-gradient(90deg, rgba(212,175,55,0.08), rgba(212,175,55,0.02), transparent);
     }
 
     .desktop-nav-link.active,
     .desktop-nav-button.active {
       color: #fff8dc;
-    }
-
-    .desktop-nav-link.active .desktop-nav-icon,
-    .desktop-nav-button.active .desktop-nav-icon {
-      color: var(--gold-2);
-      filter:
-        drop-shadow(0 2px 10px rgba(212,175,55,0.18))
-        drop-shadow(0 0 12px rgba(212,175,55,0.18));
     }
 
     .desktop-nav-link.active::after,
@@ -347,24 +369,52 @@
       box-shadow: 0 0 10px rgba(212,175,55,0.25);
     }
 
-    .desktop-nav-icon {
-      width: 26px;
-      height: 26px;
+    .desktop-nav-icon,
+    .mobile-nav-icon {
+      position: relative;
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      color: var(--gold);
-      flex: 0 0 26px;
-      filter: drop-shadow(0 2px 10px rgba(212,175,55,0.18));
-      transition: color 0.18s ease, filter 0.18s ease;
+      flex: 0 0 auto;
     }
 
-    .desktop-nav-icon svg,
-    .mobile-nav-icon svg {
+    .desktop-nav-icon {
+      width: 28px;
+      height: 28px;
+    }
+
+    .mobile-nav-icon {
       width: 24px;
       height: 24px;
-      display: block;
-      stroke: currentColor;
+    }
+
+    .desktop-nav-icon img,
+    .mobile-nav-icon img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      filter: var(--icon-gold-filter)
+        drop-shadow(0 2px 10px rgba(212,175,55,0.18));
+      opacity: 0.96;
+      transition: transform 0.18s ease, filter 0.18s ease, opacity 0.18s ease;
+      pointer-events: none;
+      user-select: none;
+      -webkit-user-drag: none;
+    }
+
+    .desktop-nav-link:hover .desktop-nav-icon img,
+    .desktop-nav-button:hover .desktop-nav-icon img,
+    .mobile-nav-link:hover .mobile-nav-icon img {
+      transform: scale(1.03);
+      opacity: 1;
+    }
+
+    .desktop-nav-link.active .desktop-nav-icon img,
+    .desktop-nav-button.active .desktop-nav-icon img,
+    .mobile-nav-link.active .mobile-nav-icon img {
+      filter: var(--icon-gold-active-filter)
+        drop-shadow(0 2px 10px rgba(212,175,55,0.22))
+        drop-shadow(0 0 14px rgba(212,175,55,0.22));
     }
 
     .desktop-nav-label {
@@ -378,7 +428,6 @@
         transform 0.34s cubic-bezier(.22,.61,.36,1);
       pointer-events: none;
       min-width: 0;
-      overflow: visible;
     }
 
     .desktop-side-nav:hover .desktop-nav-label {
@@ -828,6 +877,7 @@
         bottom: 0;
         height: var(--mobile-bottom-nav-height);
         background: var(--mobile-nav-bg);
+        backdrop-filter: blur(16px);
         z-index: 130;
       }
 
@@ -837,7 +887,7 @@
         display: flex;
         align-items: center;
         justify-content: space-around;
-        gap: 4px;
+        gap: 2px;
         padding: 8px 8px 10px;
       }
 
@@ -849,7 +899,7 @@
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        gap: 6px;
+        gap: 7px;
         text-decoration: none;
         color: #f4f4f4;
         font-size: 10px;
@@ -858,6 +908,7 @@
         font-family: 'Manrope', sans-serif;
         padding: 6px 2px;
         background: transparent;
+        border-radius: 0;
       }
 
       .mobile-nav-link.hidden {
@@ -868,22 +919,8 @@
         color: #fff8dc;
       }
 
-      .mobile-nav-link.active .mobile-nav-icon {
-        color: var(--gold-2);
-        filter:
-          drop-shadow(0 2px 10px rgba(212,175,55,0.18))
-          drop-shadow(0 0 12px rgba(212,175,55,0.18));
-      }
-
-      .mobile-nav-icon {
-        width: 24px;
-        height: 24px;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        color: var(--gold);
-        filter: drop-shadow(0 2px 10px rgba(212,175,55,0.18));
-        transition: color 0.18s ease, filter 0.18s ease;
+      .mobile-nav-label {
+        line-height: 1;
       }
 
       .header-bar {
@@ -952,66 +989,46 @@
   <aside class="desktop-side-nav" aria-label="Desktop navigation">
     <div class="desktop-side-nav-panel">
       <nav class="desktop-side-links">
-        <a class="desktop-nav-link active" href="index.html">
+        <a class="desktop-nav-link active" href="index.html" aria-label="Radio">
           <span class="desktop-nav-icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none">
-              <path d="M4 12C6.5 9 9 7.5 12 7.5C15 7.5 17.5 9 20 12" stroke-width="2.2" stroke-linecap="round"/>
-              <path d="M7.5 14.5H16.5" stroke-width="2.2" stroke-linecap="round"/>
-              <path d="M9 17H15" stroke-width="2.2" stroke-linecap="round"/>
-            </svg>
+            <img src="/icons/radio.png" alt="" />
           </span>
           <span class="desktop-nav-label">Radio</span>
         </a>
 
-        <a id="desktopProfileLink" class="desktop-nav-link hidden" href="join.html">
+        <a id="desktopProfileLink" class="desktop-nav-link hidden" href="join.html" aria-label="Profile">
           <span class="desktop-nav-icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none">
-              <path d="M12 12a3.8 3.8 0 1 0 0-7.6a3.8 3.8 0 0 0 0 7.6Z" stroke-width="2.2"/>
-              <path d="M5.5 19c1.7-2.8 4-4.2 6.5-4.2s4.8 1.4 6.5 4.2" stroke-width="2.2" stroke-linecap="round"/>
-            </svg>
+            <img src="/icons/profile.png" alt="" />
           </span>
           <span class="desktop-nav-label">Profile</span>
         </a>
 
-        <a id="desktopNotificationsLink" class="desktop-nav-link hidden" href="notifications.html">
+        <a id="desktopNotificationsLink" class="desktop-nav-link hidden" href="notifications.html" aria-label="Notifications">
           <span class="desktop-nav-icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none">
-              <path d="M12 5.5a3.5 3.5 0 0 1 3.5 3.5v2.3c0 .9.3 1.7.8 2.4L17.5 15H6.5l1.2-1.3c.5-.7.8-1.5.8-2.4V9A3.5 3.5 0 0 1 12 5.5Z" stroke-width="2.2" stroke-linejoin="round"/>
-              <path d="M10.2 18c.4.9 1 1.3 1.8 1.3s1.4-.4 1.8-1.3" stroke-width="2.2" stroke-linecap="round"/>
-            </svg>
+            <img src="/icons/notifications.png" alt="" />
           </span>
-          <span class="desktop-nav-label">Meldingen</span>
+          <span class="desktop-nav-label">Notifications</span>
         </a>
 
-        <a id="desktopTrackLink" class="desktop-nav-link hidden" href="submit-track.html">
+        <a id="desktopTrackLink" class="desktop-nav-link hidden" href="submit-track.html" aria-label="Track">
           <span class="desktop-nav-icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none">
-              <path d="M14 6v9.3a2.4 2.4 0 1 1-1.7-2.3V8.2l6-1.3v7.4a2.4 2.4 0 1 1-1.7-2.3V5.6L14 6Z" stroke-width="2.2" stroke-linejoin="round"/>
-            </svg>
+            <img src="/icons/track.png" alt="" />
           </span>
           <span class="desktop-nav-label">Track</span>
         </a>
       </nav>
 
       <div class="desktop-side-bottom">
-        <a id="desktopLoginLink" class="desktop-nav-link" href="login.html">
+        <a id="desktopLoginLink" class="desktop-nav-link" href="login.html" aria-label="Login">
           <span class="desktop-nav-icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none">
-              <path d="M10 17l-4.5-5L10 7" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
-              <path d="M6 12h10" stroke-width="2.2" stroke-linecap="round"/>
-              <path d="M15 5.5h2a1.8 1.8 0 0 1 1.8 1.8v9.4A1.8 1.8 0 0 1 17 18.5h-2" stroke-width="2.2" stroke-linecap="round"/>
-            </svg>
+            <img src="/icons/login.png" alt="" />
           </span>
           <span class="desktop-nav-label">Login</span>
         </a>
 
-        <button id="desktopLogoutBtn" class="desktop-nav-button hidden" type="button">
+        <button id="desktopLogoutBtn" class="desktop-nav-button hidden" type="button" aria-label="Logout">
           <span class="desktop-nav-icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none">
-              <path d="M14 17l4.5-5L14 7" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
-              <path d="M18 12H8" stroke-width="2.2" stroke-linecap="round"/>
-              <path d="M9 5.5H7a1.8 1.8 0 0 0-1.8 1.8v9.4A1.8 1.8 0 0 0 7 18.5h2" stroke-width="2.2" stroke-linecap="round"/>
-            </svg>
+            <img src="/icons/logout.png" alt="" />
           </span>
           <span class="desktop-nav-label">Logout</span>
         </button>
@@ -1021,55 +1038,39 @@
 
   <div class="mobile-bottom-nav-wrap">
     <nav class="mobile-bottom-nav" aria-label="Mobile navigation">
-      <a class="mobile-nav-link active" href="index.html">
+      <a class="mobile-nav-link active" href="index.html" aria-label="Radio">
         <span class="mobile-nav-icon" aria-hidden="true">
-          <svg viewBox="0 0 24 24" fill="none">
-            <path d="M4 12C6.5 9 9 7.5 12 7.5C15 7.5 17.5 9 20 12" stroke-width="2.2" stroke-linecap="round"/>
-            <path d="M7.5 14.5H16.5" stroke-width="2.2" stroke-linecap="round"/>
-            <path d="M9 17H15" stroke-width="2.2" stroke-linecap="round"/>
-          </svg>
+          <img src="/icons/radio.png" alt="" />
         </span>
-        <span>Radio</span>
+        <span class="mobile-nav-label">Radio</span>
       </a>
 
-      <a id="mobileProfileLink" class="mobile-nav-link hidden" href="join.html">
+      <a id="mobileProfileLink" class="mobile-nav-link hidden" href="join.html" aria-label="Profile">
         <span class="mobile-nav-icon" aria-hidden="true">
-          <svg viewBox="0 0 24 24" fill="none">
-            <path d="M12 12a3.8 3.8 0 1 0 0-7.6a3.8 3.8 0 0 0 0 7.6Z" stroke-width="2.2"/>
-            <path d="M5.5 19c1.7-2.8 4-4.2 6.5-4.2s4.8 1.4 6.5 4.2" stroke-width="2.2" stroke-linecap="round"/>
-          </svg>
+          <img src="/icons/profile.png" alt="" />
         </span>
-        <span>Profile</span>
+        <span class="mobile-nav-label">Profile</span>
       </a>
 
-      <a id="mobileNotificationsLink" class="mobile-nav-link hidden" href="notifications.html">
+      <a id="mobileNotificationsLink" class="mobile-nav-link hidden" href="notifications.html" aria-label="Notifications">
         <span class="mobile-nav-icon" aria-hidden="true">
-          <svg viewBox="0 0 24 24" fill="none">
-            <path d="M12 5.5a3.5 3.5 0 0 1 3.5 3.5v2.3c0 .9.3 1.7.8 2.4L17.5 15H6.5l1.2-1.3c.5-.7.8-1.5.8-2.4V9A3.5 3.5 0 0 1 12 5.5Z" stroke-width="2.2" stroke-linejoin="round"/>
-            <path d="M10.2 18c.4.9 1 1.3 1.8 1.3s1.4-.4 1.8-1.3" stroke-width="2.2" stroke-linecap="round"/>
-          </svg>
+          <img src="/icons/notifications.png" alt="" />
         </span>
-        <span>Meldingen</span>
+        <span class="mobile-nav-label">Notifications</span>
       </a>
 
-      <a id="mobileTrackLink" class="mobile-nav-link hidden" href="submit-track.html">
+      <a id="mobileTrackLink" class="mobile-nav-link hidden" href="submit-track.html" aria-label="Track">
         <span class="mobile-nav-icon" aria-hidden="true">
-          <svg viewBox="0 0 24 24" fill="none">
-            <path d="M14 6v9.3a2.4 2.4 0 1 1-1.7-2.3V8.2l6-1.3v7.4a2.4 2.4 0 1 1-1.7-2.3V5.6L14 6Z" stroke-width="2.2" stroke-linejoin="round"/>
-          </svg>
+          <img src="/icons/track.png" alt="" />
         </span>
-        <span>Track</span>
+        <span class="mobile-nav-label">Track</span>
       </a>
 
-      <a id="mobileLoginLink" class="mobile-nav-link" href="login.html">
+      <a id="mobileLoginLink" class="mobile-nav-link" href="login.html" aria-label="Login">
         <span class="mobile-nav-icon" aria-hidden="true">
-          <svg viewBox="0 0 24 24" fill="none">
-            <path d="M10 17l-4.5-5L10 7" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
-            <path d="M6 12h10" stroke-width="2.2" stroke-linecap="round"/>
-            <path d="M15 5.5h2a1.8 1.8 0 0 1 1.8 1.8v9.4A1.8 1.8 0 0 1 17 18.5h-2" stroke-width="2.2" stroke-linecap="round"/>
-          </svg>
+          <img src="/icons/login.png" alt="" />
         </span>
-        <span>Login</span>
+        <span class="mobile-nav-label">Login</span>
       </a>
     </nav>
   </div>
@@ -1097,7 +1098,7 @@
         <div id="accountMenu" class="account-menu hidden">
           <div class="account-menu-actions">
             <a id="accountProfileLink" class="metal-btn account-menu-link hidden" href="javascript:void(0)">Profile</a>
-            <a id="accountNotificationsLink" class="metal-btn account-menu-link" href="notifications.html">Meldingen</a>
+            <a id="accountNotificationsLink" class="metal-btn account-menu-link" href="notifications.html">Notifications</a>
             <button id="logout" class="metal-btn" type="button"><span class="icon">⎋</span>Logout</button>
           </div>
         </div>
