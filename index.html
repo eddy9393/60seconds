@@ -23,8 +23,8 @@
       --fs-stat-value: clamp(26px, 4vw, 34px);
       --fs-track-title: clamp(30px, 5vw, 48px);
 
-      --desktop-rail-width: 76px;
-      --desktop-rail-expanded: 286px;
+      --desktop-rail-width: 92px;
+      --desktop-rail-expanded: 420px;
       --mobile-bottom-nav-height: 86px;
       --mobile-nav-bg: rgba(10, 10, 10, 0.96);
       --icon-gold-filter:
@@ -285,24 +285,38 @@
       left: 18px;
       transform: translateY(-50%);
       width: var(--desktop-rail-width);
-      height: min(78vh, 720px);
+      height: min(84vh, 780px);
       z-index: 120;
       display: flex;
       align-items: stretch;
     }
 
     .desktop-side-nav-panel {
+      position: relative;
       width: var(--desktop-rail-width);
       height: 100%;
-      transition: width 0.34s cubic-bezier(.22,.61,.36,1);
+      transition: width 0.36s cubic-bezier(.22,.61,.36,1), box-shadow 0.26s ease, border-color 0.26s ease;
       display: flex;
       flex-direction: column;
-      padding: 14px 0 10px;
+      padding: 18px 12px 16px;
       overflow: hidden;
+      border-radius: 28px;
+      background:
+        linear-gradient(180deg, rgba(20,20,20,0.78), rgba(8,8,8,0.62));
+      border: 1px solid rgba(212,175,55,0.10);
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.04),
+        0 18px 42px rgba(0,0,0,0.28);
+      backdrop-filter: blur(12px);
     }
 
     .desktop-side-nav:hover .desktop-side-nav-panel {
       width: var(--desktop-rail-expanded);
+      border-color: rgba(212,175,55,0.18);
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.05),
+        0 28px 64px rgba(0,0,0,0.38),
+        0 0 34px rgba(212,175,55,0.10);
     }
 
     .desktop-side-links,
@@ -325,13 +339,13 @@
     .desktop-nav-link,
     .desktop-nav-button {
       width: 100%;
-      min-height: 52px;
+      min-height: 60px;
       display: flex;
       align-items: center;
       justify-content: flex-start;
-      gap: 16px;
-      padding: 0 14px 0 16px;
-      color: #f4f4f4;
+      gap: 20px;
+      padding: 0 20px;
+      color: rgba(245,245,245,0.96);
       text-decoration: none;
       background: transparent;
       border: 0;
@@ -339,10 +353,10 @@
       overflow: hidden;
       white-space: nowrap;
       font-family: 'Manrope', sans-serif;
-      transition: transform 0.18s ease, opacity 0.18s ease, color 0.18s ease;
+      transition: transform 0.18s ease, opacity 0.18s ease, color 0.18s ease, background 0.18s ease;
       text-align: left;
       position: relative;
-      border-radius: 16px;
+      border-radius: 18px;
     }
 
     .desktop-nav-link:hover,
@@ -418,21 +432,34 @@
     }
 
     .desktop-nav-label {
-      font-size: 15px;
+      font-size: 16px;
       font-weight: 500;
+      letter-spacing: 0.1px;
       font-family: 'Manrope', sans-serif;
       opacity: 0;
       transform: translateX(-14px);
       transition:
-        opacity 0.28s ease,
-        transform 0.34s cubic-bezier(.22,.61,.36,1);
+        opacity 0.30s ease,
+        transform 0.36s cubic-bezier(.22,.61,.36,1);
       pointer-events: none;
-      min-width: 0;
+      min-width: 180px;
+      overflow: visible;
+      text-overflow: clip;
     }
 
     .desktop-side-nav:hover .desktop-nav-label {
       opacity: 1;
       transform: translateX(0);
+    }
+
+    .desktop-side-links,
+    .desktop-side-bottom {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      gap: 14px;
+      align-content: start;
+      justify-items: stretch;
     }
 
     .mobile-bottom-nav-wrap {
