@@ -489,6 +489,11 @@
       color: #e7d69c;
       text-decoration: none;
       font-size: 14px;
+      background: none;
+      border: 0;
+      padding: 0;
+      cursor: pointer;
+      font-family: inherit;
     }
 
     .auth-link:hover {
@@ -694,9 +699,9 @@
   <div class="site-shell">
     <main class="auth-page">
       <section class="auth-card" aria-labelledby="loginTitle">
-        <div class="auth-kicker">Member Access</div>
+        <div class="auth-kicker" id="authKicker">Member Access</div>
         <h1 id="loginTitle" class="auth-title">Login</h1>
-        <p class="auth-subtitle">
+        <p id="authSubtitle" class="auth-subtitle">
           Sign in to manage your profile, upload your track, and access your 60 Seconds FM account.
         </p>
 
@@ -736,8 +741,8 @@
         </form>
 
         <div class="auth-links">
-          <div class="auth-secondary">No account yet?</div>
-          <a class="auth-link" href="join.html">Create your profile</a>
+          <div id="authSecondaryText" class="auth-secondary">No account yet?</div>
+          <button id="authModeToggle" class="auth-link" type="button">Sign up</button>
           <a class="auth-link" href="index.html">Back to Radio</a>
         </div>
       </section>
@@ -757,6 +762,13 @@
     const passwordInput = document.getElementById("password");
     const loginButton = document.getElementById("loginButton");
     const feedbackEl = document.getElementById("feedback");
+    const authModeToggle = document.getElementById("authModeToggle");
+    const authSecondaryText = document.getElementById("authSecondaryText");
+    const authSubtitle = document.getElementById("authSubtitle");
+    const authTitle = document.getElementById("loginTitle");
+    const authKicker = document.getElementById("authKicker");
+
+    let authMode = "login";
 
     function setFeedback(message = "", type = "") {
       feedbackEl.textContent = message;
@@ -768,7 +780,34 @@
 
     function setLoadingState(isLoading) {
       loginButton.disabled = isLoading;
-      loginButton.textContent = isLoading ? "Signing in..." : "Login";
+
+      if (authMode === "signup") {
+        loginButton.textContent = isLoading ? "Creating account..." : "Sign Up";
+      } else {
+        loginButton.textContent = isLoading ? "Signing in..." : "Login";
+      }
+    }
+
+    function renderAuthMode() {
+      setFeedback("");
+
+      if (authMode === "signup") {
+        document.title = "Sign Up — 60 Seconds FM";
+        authKicker.textContent = "New Artist Access";
+        authTitle.textContent = "Sign Up";
+        authSubtitle.textContent = "Create your account to join 60 Seconds FM. After that, you can create your artist profile and submit your track.";
+        loginButton.textContent = "Sign Up";
+        authSecondaryText.textContent = "Already have an account?";
+        authModeToggle.textContent = "Back to login";
+      } else {
+        document.title = "Login — 60 Seconds FM";
+        authKicker.textContent = "Member Access";
+        authTitle.textContent = "Login";
+        authSubtitle.textContent = "Sign in to manage your profile, upload your track, and access your 60 Seconds FM account.";
+        loginButton.textContent = "Login";
+        authSecondaryText.textContent = "No account yet?";
+        authModeToggle.textContent = "Sign up";
+      }
     }
 
     async function redirectIfAlreadyLoggedIn() {
@@ -788,6 +827,11 @@
       }
     }
 
+    authModeToggle.addEventListener("click", () => {
+      authMode = authMode === "login" ? "signup" : "login";
+      renderAuthMode();
+    });
+
     loginForm.addEventListener("submit", async (event) => {
       event.preventDefault();
       setFeedback("");
@@ -800,9 +844,39 @@
         return;
       }
 
+      if (password.length < 6) {
+        setFeedback("Password must be at least 6 characters.", "error");
+        return;
+      }
+
       setLoadingState(true);
 
       try {
+        if (authMode === "signup") {
+          const { data, error } = await supabaseClient.auth.signUp({
+            email,
+            password
+          });
+
+          if (error) {
+            setFeedback(error.message || "Sign up failed. Please try again.", "error");
+            return;
+          }
+
+          const session = data?.session || null;
+
+          if (session?.user) {
+            setFeedback("Account created. Redirecting to profile setup...", "success");
+            setTimeout(() => {
+              window.location.href = "join.html";
+            }, 500);
+          } else {
+            setFeedback("Account created. Check your email to confirm your sign up.", "success");
+          }
+
+          return;
+        }
+
         const { error } = await supabaseClient.auth.signInWithPassword({
           email,
           password
@@ -819,13 +893,14 @@
           window.location.href = "index.html";
         }, 500);
       } catch (err) {
-        console.error("login error:", err);
+        console.error("auth error:", err);
         setFeedback("Something went wrong. Please try again.", "error");
       } finally {
         setLoadingState(false);
       }
     });
 
+    renderAuthMode();
     redirectIfAlreadyLoggedIn();
   </script>
 </body>
