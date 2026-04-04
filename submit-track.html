@@ -515,14 +515,20 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      background:
-        linear-gradient(180deg, #fff5c9 0%, #f4d77a 20%, #d4af37 52%, #b98816 75%, #7c5a11 100%);
-      flex: 0 0 auto;
-      color: #111;
+      background: rgba(212,175,55,0.08);
+      border: 1px solid rgba(212,175,55,0.18);
+      color: var(--gold);
       box-shadow:
-        inset 0 2px 0 rgba(255,255,255,0.45),
-        inset 0 -2px 4px rgba(90,50,0,0.28),
-        0 8px 18px rgba(212,175,55,0.14);
+        inset 0 1px 0 rgba(255,255,255,0.1),
+        0 4px 12px rgba(0,0,0,0.25);
+      transition: all 0.2s ease;
+      flex: 0 0 auto;
+    }
+
+    .menu-link:hover .menu-link-icon,
+    .menu-action-btn:hover .menu-link-icon {
+      background: rgba(212,175,55,0.18);
+      border-color: rgba(212,175,55,0.35);
     }
 
     .menu-link-icon svg {
@@ -610,12 +616,13 @@
 
     .panel-card {
       margin-top: 18px;
-      background: linear-gradient(180deg, rgba(22,22,22,0.86) 0%, rgba(16,16,16,0.92) 100%);
+      background: rgba(20,20,20,0.75);
       border-radius: 26px;
       padding: 24px;
-      border: 1px solid rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.04);
+      backdrop-filter: blur(12px);
       box-shadow:
-        0 12px 30px rgba(0,0,0,0.22),
+        0 20px 60px rgba(0,0,0,0.35),
         inset 0 1px 0 rgba(255,255,255,0.03);
     }
 
@@ -667,6 +674,34 @@
       color: #ddd;
       line-height: 1.6;
       margin-bottom: 18px;
+    }
+
+    .track-status-box {
+      text-align: left;
+    }
+
+    .track-status-title {
+      font-weight: 700;
+      margin-bottom: 6px;
+      font-size: 15px;
+    }
+
+    .track-status-title.pending {
+      color: #f4d77a;
+    }
+
+    .track-status-title.approved {
+      color: #9fe3a6;
+    }
+
+    .track-status-title.rejected {
+      color: #ff8a8a;
+    }
+
+    .track-status-copy {
+      color: #cfcfcf;
+      font-size: 13px;
+      line-height: 1.6;
     }
 
     .option-grid {
@@ -1239,6 +1274,8 @@
           </div>
         </div>
 
+        <div id="trackStatusBox" class="notice-box track-status-box hidden"></div>
+
         <div id="formWrap" class="form-grid hidden">
           <div class="field-group">
             <label class="field-label" for="trackTitle">Track Title</label>
@@ -1250,6 +1287,9 @@
             <input id="trackFile" class="field-file" type="file" accept="audio/*" />
             <div class="field-help">
               Upload the full track file. On edit, you can leave this empty to keep your current uploaded file.
+            </div>
+            <div class="subtle-note">
+              If you upload a new audio file, your track will go back into review and must be approved again before it can go live on the radio.
             </div>
           </div>
 
@@ -1428,6 +1468,7 @@
     const pageNote = document.getElementById("pageNote");
     const loginRequiredBox = document.getElementById("loginRequiredBox");
     const profileRequiredBox = document.getElementById("profileRequiredBox");
+    const trackStatusBox = document.getElementById("trackStatusBox");
     const formWrap = document.getElementById("formWrap");
     const statusEl = document.getElementById("status");
     const backToArtistPageLink = document.getElementById("backToArtistPageLink");
@@ -1643,6 +1684,7 @@
 
       loginRequiredBox.classList.remove("hidden");
       profileRequiredBox.classList.add("hidden");
+      trackStatusBox.classList.add("hidden");
       formWrap.classList.add("hidden");
 
       currentProfileData = null;
@@ -1667,6 +1709,39 @@
 
       saveTrackBtn.textContent = isEdit ? "Save Track Changes" : "Submit Your Track";
       menuSubmitTrackLabel.textContent = isEdit ? "Edit Your Track" : "Submit Your Track";
+    }
+
+    function renderTrackStatus(track) {
+      if (!track) {
+        trackStatusBox.classList.add("hidden");
+        trackStatusBox.innerHTML = "";
+        return;
+      }
+
+      trackStatusBox.classList.remove("hidden");
+
+      let title = "Track status";
+      let titleClass = "";
+      let copy = "Your track is saved.";
+
+      if (track.status === "pending") {
+        title = "⏳ Your track is under review";
+        titleClass = "pending";
+        copy = "Your submission is waiting for admin approval. If you upload a new file later, it will go back into review before it can go live again.";
+      } else if (track.status === "approved") {
+        title = "✅ Your track is live";
+        titleClass = "approved";
+        copy = "Your track is approved and can play on the radio. If you upload a new file later, it will require a new admin approval before going live again.";
+      } else if (track.status === "rejected") {
+        title = "❌ Your track was not approved";
+        titleClass = "rejected";
+        copy = "You can update your submission and try again. Uploading a new file will send it back for review.";
+      }
+
+      trackStatusBox.innerHTML = `
+        <div class="track-status-title ${titleClass}">${title}</div>
+        <div class="track-status-copy">${copy}</div>
+      `;
     }
 
     function stopPreviewPlayback() {
@@ -1970,6 +2045,7 @@
         setLoggedOutView();
         fillTrackForm(null);
         setPageMode(null);
+        setStatus("");
         return;
       }
 
@@ -1981,6 +2057,7 @@
 
       applyMenuState(user, profile, track);
       setPageMode(track);
+      renderTrackStatus(track);
 
       if (!profile) {
         loginRequiredBox.classList.add("hidden");
@@ -2052,7 +2129,7 @@
       }
 
       if (!previewAudio.src) {
-        setStatus("Please load a track and choose your 60 second preview.", true);
+        setStatus("Please load a track and choose your 60 second radio preview.", true);
         return;
       }
 
@@ -2075,9 +2152,8 @@
         const effectivePreviewDuration = Math.min(60, Math.max(1, Math.floor(previewTrackDuration)));
         const safePreviewStart = Math.max(0, Math.floor(previewStartSeconds || 0));
 
-        const shouldResetStatus =
-          Boolean(file) ||
-          Number(currentTrackData?.preview_start_seconds || 0) !== safePreviewStart;
+        const isNewFile = Boolean(file);
+        const shouldResetStatus = isNewFile;
 
         const nextStatus = currentTrackData
           ? (shouldResetStatus ? "pending" : (currentTrackData.status || "pending"))
@@ -2121,10 +2197,19 @@
         }
 
         trackFileInput.value = "";
-        setStatus("Track saved successfully.");
+
+        if (isNewFile) {
+          setStatus("Track updated successfully. Because you uploaded a new file, it is now pending admin approval again.");
+        } else {
+          setStatus("Track saved successfully.");
+        }
+
+        await refreshPageState();
 
         const artistUrl = `artist.html?user_id=${encodeURIComponent(currentUser.id)}`;
-        window.location.href = artistUrl;
+        setTimeout(() => {
+          window.location.href = artistUrl;
+        }, 500);
         return;
       } catch (err) {
         console.error(err);
