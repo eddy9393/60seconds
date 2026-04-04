@@ -25,26 +25,6 @@
       --desktop-rail-expanded: 320px;
       --mobile-bottom-nav-height: 86px;
       --mobile-nav-bg: rgba(10, 10, 10, 0.94);
-
-      --icon-gold-filter:
-        brightness(0)
-        saturate(100%)
-        invert(74%)
-        sepia(56%)
-        saturate(820%)
-        hue-rotate(3deg)
-        brightness(99%)
-        contrast(94%);
-
-      --icon-gold-active-filter:
-        brightness(0)
-        saturate(100%)
-        invert(86%)
-        sepia(56%)
-        saturate(530%)
-        hue-rotate(358deg)
-        brightness(103%)
-        contrast(96%);
     }
 
     * {
@@ -88,6 +68,11 @@
     textarea,
     select {
       font: inherit;
+    }
+
+    img {
+      max-width: 100%;
+      display: block;
     }
 
     .hidden {
@@ -286,7 +271,6 @@
       text-align: center;
     }
 
-    /* DESKTOP SIDEBAR */
     .desktop-side-nav {
       position: fixed;
       top: 50%;
@@ -412,33 +396,43 @@
       height: 24px;
     }
 
-    .desktop-nav-icon img,
-    .mobile-nav-icon img {
+    .nav-icon-mask {
       width: 100%;
       height: 100%;
-      object-fit: contain;
-      filter: var(--icon-gold-filter)
-        drop-shadow(0 2px 10px rgba(212,175,55,0.18));
+      display: block;
+      background:
+        linear-gradient(180deg, #fff3b6 0%, #f4d77a 20%, #d4af37 52%, #b98714 76%, #7d5a10 100%);
+      -webkit-mask-image: var(--icon-url);
+      mask-image: var(--icon-url);
+      -webkit-mask-repeat: no-repeat;
+      mask-repeat: no-repeat;
+      -webkit-mask-position: center;
+      mask-position: center;
+      -webkit-mask-size: contain;
+      mask-size: contain;
+      filter: drop-shadow(0 2px 10px rgba(212,175,55,0.18));
       opacity: 0.98;
-      transition: transform 0.18s ease, filter 0.18s ease, opacity 0.18s ease;
+      transition: transform 0.18s ease, filter 0.18s ease, opacity 0.18s ease, background 0.18s ease;
       pointer-events: none;
       user-select: none;
-      -webkit-user-drag: none;
     }
 
-    .desktop-nav-link:hover .desktop-nav-icon img,
-    .desktop-nav-button:hover .desktop-nav-icon img,
-    .mobile-nav-link:hover .mobile-nav-icon img {
+    .desktop-nav-link:hover .nav-icon-mask,
+    .desktop-nav-button:hover .nav-icon-mask,
+    .mobile-nav-link:hover .nav-icon-mask {
       transform: scale(1.04);
       opacity: 1;
-      filter: var(--icon-gold-active-filter)
-        drop-shadow(0 2px 11px rgba(212,175,55,0.22));
+      background:
+        linear-gradient(180deg, #fff7cf 0%, #ffe08d 18%, #f4d77a 36%, #d4af37 58%, #b98714 80%, #7d5a10 100%);
+      filter: drop-shadow(0 2px 11px rgba(212,175,55,0.22));
     }
 
-    .desktop-nav-link.active .desktop-nav-icon img,
-    .desktop-nav-button.active .desktop-nav-icon img,
-    .mobile-nav-link.active .mobile-nav-icon img {
-      filter: var(--icon-gold-active-filter)
+    .desktop-nav-link.active .nav-icon-mask,
+    .desktop-nav-button.active .nav-icon-mask,
+    .mobile-nav-link.active .nav-icon-mask {
+      background:
+        linear-gradient(180deg, #fff9da 0%, #ffe9a7 18%, #f7dd82 36%, #d4af37 58%, #ba8a18 80%, #7d5a10 100%);
+      filter:
         drop-shadow(0 2px 12px rgba(212,175,55,0.24))
         drop-shadow(0 0 15px rgba(212,175,55,0.20));
     }
@@ -470,136 +464,6 @@
       display: none;
     }
 
-    .page-wrap {
-      max-width: 1100px;
-      margin: 12px auto 0;
-    }
-
-    .artist-hero {
-      display: grid;
-      grid-template-columns: 280px minmax(0, 1fr);
-      gap: 22px;
-      align-items: stretch;
-    }
-
-    .hero-card,
-    .panel-card,
-    .track-card {
-      background:
-        linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.015)),
-        radial-gradient(circle at top, rgba(212,175,55,0.09), transparent 60%),
-        linear-gradient(180deg, rgba(24,24,24,0.88) 0%, rgba(17,17,17,0.94) 100%);
-      border: 1px solid var(--border-gold);
-      border-radius: 30px;
-      box-shadow:
-        0 30px 80px rgba(0,0,0,0.42),
-        0 0 35px rgba(212,175,55,0.07),
-        inset 0 1px 0 rgba(255,255,255,0.05);
-    }
-
-    .hero-photo-card {
-      padding: 18px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      min-height: 100%;
-    }
-
-    .artist-photo {
-      width: 100%;
-      aspect-ratio: 1 / 1;
-      border-radius: 26px;
-      object-fit: cover;
-      display: block;
-      background: #101010;
-      border: 1px solid rgba(255,255,255,0.08);
-      box-shadow:
-        0 20px 35px rgba(0,0,0,0.28),
-        0 0 0 1px rgba(212,175,55,0.08);
-    }
-
-    .artist-photo-fallback {
-      width: 100%;
-      aspect-ratio: 1 / 1;
-      border-radius: 26px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background:
-        radial-gradient(circle at 30% 20%, rgba(255,255,255,0.12), transparent 30%),
-        linear-gradient(180deg, #2a210d 0%, #a98325 100%);
-      color: #fff;
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: 76px;
-      font-weight: 700;
-      border: 1px solid rgba(255,255,255,0.08);
-      box-shadow:
-        0 20px 35px rgba(0,0,0,0.28),
-        0 0 0 1px rgba(212,175,55,0.08);
-    }
-
-    .hero-info-card {
-      padding: 28px;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-    }
-
-    .section-kicker {
-      font-family: 'Space Grotesk', sans-serif;
-      text-transform: uppercase;
-      letter-spacing: 2px;
-      font-size: 12px;
-      color: var(--muted);
-      opacity: 0.82;
-      margin-bottom: 10px;
-    }
-
-    .artist-name {
-      font-size: clamp(34px, 5vw, 54px);
-      line-height: 1;
-      margin-bottom: 12px;
-      text-shadow: 0 2px 14px rgba(0,0,0,0.3);
-      word-break: break-word;
-    }
-
-    .artist-meta {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-bottom: 18px;
-    }
-
-    .meta-pill {
-      display: inline-flex;
-      align-items: center;
-      min-height: 38px;
-      padding: 0 14px;
-      border-radius: 999px;
-      border: 1px solid rgba(255,255,255,0.08);
-      background:
-        linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02)),
-        rgba(255,255,255,0.02);
-      color: #e7e7e7;
-      font-size: 13px;
-      letter-spacing: 0.2px;
-    }
-
-    .artist-bio {
-      color: #ddd;
-      font-size: 15px;
-      line-height: 1.8;
-      white-space: pre-wrap;
-      word-break: break-word;
-      margin-bottom: 18px;
-    }
-
-    .hero-actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-    }
-
     .gold-btn,
     .metal-btn,
     .ghost-btn {
@@ -612,6 +476,7 @@
       cursor: pointer;
       text-decoration: none;
       transition: transform 0.14s ease, filter 0.14s ease;
+      font-family: 'Manrope', sans-serif;
     }
 
     .gold-btn:hover,
@@ -660,6 +525,172 @@
       box-shadow:
         inset 0 1px 0 rgba(255,255,255,0.04),
         0 10px 24px rgba(0,0,0,0.2);
+    }
+
+    .page-wrap {
+      max-width: 1100px;
+      margin: 12px auto 0;
+    }
+
+    .artist-hero {
+      display: grid;
+      grid-template-columns: 300px minmax(0, 1fr);
+      gap: 22px;
+      align-items: stretch;
+    }
+
+    .hero-card,
+    .panel-card,
+    .track-card {
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.015)),
+        radial-gradient(circle at top, rgba(212,175,55,0.09), transparent 60%),
+        linear-gradient(180deg, rgba(24,24,24,0.88) 0%, rgba(17,17,17,0.94) 100%);
+      border: 1px solid var(--border-gold);
+      border-radius: 30px;
+      box-shadow:
+        0 30px 80px rgba(0,0,0,0.42),
+        0 0 35px rgba(212,175,55,0.07),
+        inset 0 1px 0 rgba(255,255,255,0.05);
+    }
+
+    .hero-photo-card {
+      padding: 26px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100%;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-photo-card::before {
+      content: "";
+      position: absolute;
+      inset: auto;
+      width: 240px;
+      height: 240px;
+      border-radius: 50%;
+      background:
+        radial-gradient(circle, rgba(212,175,55,0.22) 0%, rgba(212,175,55,0.10) 35%, rgba(212,175,55,0.02) 62%, transparent 75%);
+      filter: blur(16px);
+      pointer-events: none;
+    }
+
+    .photo-stage {
+      position: relative;
+      width: 100%;
+      max-width: 248px;
+      aspect-ratio: 1 / 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1;
+    }
+
+    .artist-photo {
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      border-radius: 28px;
+      object-fit: cover;
+      display: block;
+      background: #101010;
+      box-shadow:
+        0 28px 50px rgba(0,0,0,0.38),
+        0 0 30px rgba(212,175,55,0.08);
+    }
+
+    .artist-photo-fallback {
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      border-radius: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background:
+        radial-gradient(circle at 30% 20%, rgba(255,255,255,0.14), transparent 30%),
+        linear-gradient(180deg, #2a210d 0%, #a98325 100%);
+      color: #fff;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 76px;
+      font-weight: 700;
+      box-shadow:
+        0 28px 50px rgba(0,0,0,0.38),
+        0 0 30px rgba(212,175,55,0.08);
+    }
+
+    .hero-info-card {
+      padding: 28px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .section-kicker {
+      font-family: 'Space Grotesk', sans-serif;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      font-size: 12px;
+      color: var(--muted);
+      opacity: 0.82;
+      margin-bottom: 10px;
+    }
+
+    .artist-name {
+      font-size: clamp(34px, 5vw, 54px);
+      line-height: 1;
+      margin-bottom: 14px;
+      text-shadow: 0 2px 14px rgba(0,0,0,0.3);
+      word-break: break-word;
+    }
+
+    .artist-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+
+    .meta-pill {
+      display: inline-flex;
+      align-items: center;
+      min-height: 38px;
+      padding: 0 14px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02)),
+        rgba(255,255,255,0.02);
+      color: #e7e7e7;
+      font-size: 13px;
+      letter-spacing: 0.2px;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.03);
+    }
+
+    .meta-pill.member-since-pill {
+      background:
+        linear-gradient(180deg, rgba(255,244,203,0.10), rgba(212,175,55,0.08)),
+        rgba(255,255,255,0.02);
+      color: #f7e6ac;
+      border-color: rgba(212,175,55,0.20);
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.05),
+        0 0 18px rgba(212,175,55,0.06);
+    }
+
+    .artist-bio {
+      color: #ddd;
+      font-size: 15px;
+      line-height: 1.8;
+      white-space: pre-wrap;
+      word-break: break-word;
+      margin-bottom: 18px;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
     }
 
     .stack {
@@ -771,6 +802,15 @@
         inset 0 1px 0 rgba(255,255,255,0.08),
         0 10px 22px rgba(0,0,0,0.24);
       flex: 0 0 auto;
+      transition: transform 0.14s ease, filter 0.14s ease, box-shadow 0.14s ease;
+    }
+
+    .player-btn:hover {
+      transform: translateY(-1px);
+      filter: brightness(1.03);
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.10),
+        0 14px 24px rgba(0,0,0,0.28);
     }
 
     .player-time {
@@ -827,7 +867,7 @@
       }
 
       .hero-photo-card {
-        max-width: 360px;
+        max-width: 400px;
         margin: 0 auto;
       }
     }
@@ -931,6 +971,14 @@
         padding: 20px;
       }
 
+      .hero-photo-card {
+        padding: 22px;
+      }
+
+      .photo-stage {
+        max-width: 220px;
+      }
+
       .artist-name {
         font-size: 34px;
       }
@@ -948,6 +996,17 @@
         min-width: 46px;
         font-size: 12px;
       }
+
+      .hero-actions {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .gold-btn,
+      .metal-btn,
+      .ghost-btn {
+        width: 100%;
+      }
     }
   </style>
 </head>
@@ -957,28 +1016,28 @@
       <nav class="desktop-side-links">
         <a class="desktop-nav-link" href="index.html" aria-label="Radio">
           <span class="desktop-nav-icon" aria-hidden="true">
-            <img src="/icons/radio.png" alt="" />
+            <span class="nav-icon-mask" style="--icon-url: url('/icons/radio.png');"></span>
           </span>
           <span class="desktop-nav-label">Radio</span>
         </a>
 
-        <a id="desktopProfileLink" class="desktop-nav-link hidden" href="join.html" aria-label="Profile">
+        <a id="desktopProfileLink" class="desktop-nav-link active hidden" href="join.html" aria-label="Profile">
           <span class="desktop-nav-icon" aria-hidden="true">
-            <img src="/icons/profile.png" alt="" />
+            <span class="nav-icon-mask" style="--icon-url: url('/icons/profile.png');"></span>
           </span>
           <span class="desktop-nav-label">Profile</span>
         </a>
 
         <a id="desktopNotificationsLink" class="desktop-nav-link hidden" href="notifications.html" aria-label="Notifications">
           <span class="desktop-nav-icon" aria-hidden="true">
-            <img src="/icons/notifications.png" alt="" />
+            <span class="nav-icon-mask" style="--icon-url: url('/icons/notifications.png');"></span>
           </span>
           <span class="desktop-nav-label">Notifications</span>
         </a>
 
         <a id="desktopTrackLink" class="desktop-nav-link hidden" href="submit-track.html" aria-label="Track">
           <span class="desktop-nav-icon" aria-hidden="true">
-            <img src="/icons/track.png" alt="" />
+            <span class="nav-icon-mask" style="--icon-url: url('/icons/track.png');"></span>
           </span>
           <span class="desktop-nav-label">Track</span>
         </a>
@@ -987,14 +1046,14 @@
       <div class="desktop-side-bottom">
         <a id="desktopLoginLink" class="desktop-nav-link" href="login.html" aria-label="Login">
           <span class="desktop-nav-icon" aria-hidden="true">
-            <img src="/icons/login.png" alt="" />
+            <span class="nav-icon-mask" style="--icon-url: url('/icons/login.png');"></span>
           </span>
           <span class="desktop-nav-label">Login</span>
         </a>
 
         <button id="desktopLogoutBtn" class="desktop-nav-button hidden" type="button" aria-label="Logout">
           <span class="desktop-nav-icon" aria-hidden="true">
-            <img src="/icons/logout.png" alt="" />
+            <span class="nav-icon-mask" style="--icon-url: url('/icons/logout.png');"></span>
           </span>
           <span class="desktop-nav-label">Logout</span>
         </button>
@@ -1006,35 +1065,35 @@
     <nav class="mobile-bottom-nav" aria-label="Mobile navigation">
       <a class="mobile-nav-link" href="index.html" aria-label="Radio">
         <span class="mobile-nav-icon" aria-hidden="true">
-          <img src="/icons/radio.png" alt="" />
+          <span class="nav-icon-mask" style="--icon-url: url('/icons/radio.png');"></span>
         </span>
         <span class="mobile-nav-label">Radio</span>
       </a>
 
-      <a id="mobileProfileLink" class="mobile-nav-link hidden" href="join.html" aria-label="Profile">
+      <a id="mobileProfileLink" class="mobile-nav-link active hidden" href="join.html" aria-label="Profile">
         <span class="mobile-nav-icon" aria-hidden="true">
-          <img src="/icons/profile.png" alt="" />
+          <span class="nav-icon-mask" style="--icon-url: url('/icons/profile.png');"></span>
         </span>
         <span class="mobile-nav-label">Profile</span>
       </a>
 
       <a id="mobileNotificationsLink" class="mobile-nav-link hidden" href="notifications.html" aria-label="Notifications">
         <span class="mobile-nav-icon" aria-hidden="true">
-          <img src="/icons/notifications.png" alt="" />
+          <span class="nav-icon-mask" style="--icon-url: url('/icons/notifications.png');"></span>
         </span>
         <span class="mobile-nav-label">Notifications</span>
       </a>
 
       <a id="mobileTrackLink" class="mobile-nav-link hidden" href="submit-track.html" aria-label="Track">
         <span class="mobile-nav-icon" aria-hidden="true">
-          <img src="/icons/track.png" alt="" />
+          <span class="nav-icon-mask" style="--icon-url: url('/icons/track.png');"></span>
         </span>
         <span class="mobile-nav-label">Track</span>
       </a>
 
       <a id="mobileLoginLink" class="mobile-nav-link" href="login.html" aria-label="Login">
         <span class="mobile-nav-icon" aria-hidden="true">
-          <img src="/icons/login.png" alt="" />
+          <span class="nav-icon-mask" style="--icon-url: url('/icons/login.png');"></span>
         </span>
         <span class="mobile-nav-label">Login</span>
       </a>
@@ -1076,8 +1135,10 @@
     <main class="page-wrap">
       <section class="artist-hero">
         <div class="hero-card hero-photo-card">
-          <img id="artistPhoto" class="artist-photo hidden" src="" alt="Artist photo" />
-          <div id="artistPhotoFallback" class="artist-photo-fallback">A</div>
+          <div class="photo-stage">
+            <img id="artistPhoto" class="artist-photo hidden" src="" alt="Artist photo" />
+            <div id="artistPhotoFallback" class="artist-photo-fallback">A</div>
+          </div>
         </div>
 
         <div class="hero-card hero-info-card">
@@ -1321,7 +1382,19 @@
       return date.toLocaleDateString("en-GB", {
         day: "2-digit",
         month: "short",
-        year: "numeric"
+        year: "numeric",
+        timeZone: "UTC"
+      });
+    }
+
+    function formatMemberSince(dateString) {
+      if (!dateString) return "";
+      const date = new Date(dateString);
+      if (Number.isNaN(date.getTime())) return "";
+      return date.toLocaleDateString("en-GB", {
+        month: "short",
+        year: "numeric",
+        timeZone: "UTC"
       });
     }
 
@@ -1378,19 +1451,26 @@
       const metaItems = [];
 
       if (profile?.nationality) {
-        metaItems.push(profile.nationality);
+        metaItems.push({
+          text: profile.nationality,
+          className: ""
+        });
       }
 
-      if (profile?.created_at) {
-        metaItems.push(`Member since ${formatDate(profile.created_at)}`);
+      const memberSince = formatMemberSince(profile?.created_at);
+      if (memberSince) {
+        metaItems.push({
+          text: `Member since ${memberSince}`,
+          className: "member-since-pill"
+        });
       }
 
       if (metaItems.length) {
         artistMeta.classList.remove("hidden");
-        metaItems.forEach(text => {
+        metaItems.forEach(item => {
           const pill = document.createElement("div");
-          pill.className = "meta-pill";
-          pill.textContent = text;
+          pill.className = `meta-pill ${item.className || ""}`.trim();
+          pill.textContent = item.text;
           artistMeta.appendChild(pill);
         });
       } else {
