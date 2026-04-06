@@ -502,7 +502,7 @@
         inset 0 2px 0 rgba(255,255,255,0.72),
         inset 0 -2px 3px rgba(0,0,0,0.18),
         0 10px 22px rgba(0,0,0,0.25);
-      transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
+      transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease, opacity 0.15s ease;
       backdrop-filter: blur(2px);
       font-family: 'Manrope', sans-serif;
     }
@@ -513,9 +513,14 @@
     }
 
     .metal-btn:disabled {
-      opacity: 0.7;
-      cursor: default;
+      opacity: 0.45;
+      cursor: not-allowed;
       transform: none;
+      filter: grayscale(0.25);
+      box-shadow:
+        inset 0 2px 0 rgba(255,255,255,0.32),
+        inset 0 -2px 3px rgba(0,0,0,0.12),
+        0 4px 12px rgba(0,0,0,0.18);
     }
 
     .metal-btn .icon {
@@ -664,6 +669,11 @@
         0 0 34px rgba(212,175,55,0.20);
       backdrop-filter: blur(2px);
       transition: transform 0.16s ease, filter 0.16s ease, box-shadow 0.16s ease;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
     }
 
     .start-btn:hover {
@@ -857,6 +867,13 @@
       flex-wrap: wrap;
     }
 
+    .feature-note {
+      margin-top: 10px;
+      font-size: 12px;
+      color: rgba(255,255,255,0.6);
+      line-height: 1.5;
+    }
+
     .volume-wrap {
       margin-top: 12px;
       display: flex;
@@ -968,8 +985,61 @@
       box-shadow: 0 0 8px rgba(212,175,55,0.5);
     }
 
-    .submit-under-radio {
-      margin: 18px auto 0;
+    .concept-section {
+      max-width: 780px;
+      margin: 34px auto 0;
+      padding: 0 12px;
+    }
+
+    .concept-card {
+      position: relative;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.015)),
+        radial-gradient(circle at top, rgba(212,175,55,0.10), transparent 55%),
+        linear-gradient(180deg, rgba(20,20,20,0.82) 0%, rgba(12,12,12,0.90) 100%);
+      border: 1px solid rgba(212,175,55,0.14);
+      border-radius: 28px;
+      padding: 30px 26px;
+      box-shadow:
+        0 18px 48px rgba(0,0,0,0.28),
+        0 0 28px rgba(212,175,55,0.06),
+        inset 0 1px 0 rgba(255,255,255,0.04);
+      backdrop-filter: blur(6px);
+    }
+
+    .concept-kicker {
+      font-family: 'Space Grotesk', sans-serif;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      font-size: 12px;
+      color: var(--muted);
+      opacity: 0.82;
+      margin-bottom: 12px;
+    }
+
+    .concept-title {
+      margin: 0 0 14px;
+      font-size: clamp(26px, 4vw, 36px);
+      text-shadow: 0 2px 14px rgba(0,0,0,0.3);
+    }
+
+    .concept-copy {
+      max-width: 650px;
+      margin: 0 auto;
+      color: rgba(255,255,255,0.78);
+      font-size: 15px;
+      line-height: 1.8;
+    }
+
+    .join-prompt {
+      margin-top: 28px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(18px, 3vw, 24px);
+      color: #fff1c0;
+    }
+
+    .join-cta-wrap {
+      margin-top: 18px;
       display: flex;
       justify-content: center;
     }
@@ -1196,6 +1266,16 @@
         width: 14px;
         height: 14px;
       }
+
+      .concept-card {
+        padding: 24px 18px;
+        border-radius: 24px;
+      }
+
+      .concept-copy {
+        font-size: 14px;
+        line-height: 1.7;
+      }
     }
   </style>
 </head>
@@ -1224,11 +1304,11 @@
           <span class="desktop-nav-label">Notifications</span>
         </a>
 
-        <a id="desktopTrackLink" class="desktop-nav-link hidden" href="submit-track.html" aria-label="Track">
+        <a id="desktopTrackLink" class="desktop-nav-link hidden" href="submit-track.html" aria-label="Tune">
           <span class="desktop-nav-icon" aria-hidden="true">
             <span class="nav-icon-mask" style="--icon-url: url('/icons/track.png');"></span>
           </span>
-          <span class="desktop-nav-label">Track</span>
+          <span class="desktop-nav-label">Tune</span>
         </a>
       </nav>
 
@@ -1273,11 +1353,11 @@
         <span class="mobile-nav-label">Notifications</span>
       </a>
 
-      <a id="mobileTrackLink" class="mobile-nav-link hidden" href="submit-track.html" aria-label="Track">
+      <a id="mobileTrackLink" class="mobile-nav-link hidden" href="submit-track.html" aria-label="Tune">
         <span class="mobile-nav-icon" aria-hidden="true">
           <span class="nav-icon-mask" style="--icon-url: url('/icons/track.png');"></span>
         </span>
-        <span class="mobile-nav-label">Track</span>
+        <span class="mobile-nav-label">Tune</span>
       </a>
 
       <a id="mobileLoginLink" class="mobile-nav-link" href="login.html" aria-label="Login">
@@ -1375,6 +1455,10 @@
             <button id="skip" class="metal-btn" type="button"><span class="icon">⏭</span>Skip</button>
           </div>
 
+          <div id="featureNote" class="feature-note hidden">
+            These features are only available with an account.
+          </div>
+
           <div class="volume-wrap">
             <div id="volumeControl" class="volume-control">
               <button id="volumeBtn" class="volume-button" type="button" aria-label="Volume">
@@ -1405,13 +1489,29 @@
       </div>
     </div>
 
+    <section class="concept-section">
+      <div class="concept-card">
+        <div class="concept-kicker">The Concept</div>
+        <h2 class="concept-title">60 seconds. One real chance.</h2>
+        <p class="concept-copy">
+          60 Seconds FM is a discovery platform built around short-form listening. Every artist gets a focused one-minute preview, so listeners can quickly discover new music, connect with fresh talent, and decide what they want to hear more of. It is fast, fair, and designed to put emerging artists and producers in front of real ears.
+        </p>
+
+        <div class="join-prompt">Are you an artist or music producer?</div>
+
+        <div class="join-cta-wrap">
+          <a class="start-btn" href="join.html">Join 60 Seconds now</a>
+        </div>
+      </div>
+    </section>
+
     <div class="submit-under-radio">
-      <a id="submitTrackBtn" class="submit-link hidden" href="submit-track.html">Track</a>
+      <a id="submitTrackBtn" class="submit-link hidden" href="submit-track.html">Tune</a>
     </div>
 
     <div class="stats-row">
-      <div class="stat-card">
-        <div class="stat-label">Submitted Tracks</div>
+      <div class="stat-card" id="submittedCard">
+        <div class="stat-label">Submitted Tunes</div>
         <div class="stat-value" id="submittedCount">0</div>
       </div>
 
@@ -1467,6 +1567,7 @@
     const artistWrapEl = document.getElementById("artistWrap");
     const likeBtn = document.getElementById("likeBtn");
     const skipBtn = document.getElementById("skip");
+    const featureNoteEl = document.getElementById("featureNote");
     const volume = document.getElementById("volume");
     const volumeBtn = document.getElementById("volumeBtn");
     const volumeControl = document.getElementById("volumeControl");
@@ -1475,6 +1576,7 @@
     const durationTimeEl = document.getElementById("durationTime");
     const listenersCountEl = document.getElementById("listenersCount");
     const submittedCountEl = document.getElementById("submittedCount");
+    const submittedCardEl = document.getElementById("submittedCard");
     const playsPerDayEl = document.getElementById("playsPerDay");
     const playsCardEl = document.getElementById("playsCard");
     const myPlaysCardEl = document.getElementById("myPlaysCard");
@@ -1490,10 +1592,13 @@
     let currentTrackData = null;
     let currentPreviewStart = 0;
     let currentPreviewDuration = 60;
+    let currentUser = null;
 
     function hideUserStats() {
+      submittedCardEl.classList.add("hidden");
       playsCardEl.classList.add("hidden");
       myPlaysCardEl.classList.add("hidden");
+      submittedCountEl.textContent = "0";
       playsPerDayEl.textContent = "0";
       myTotalPlaysEl.textContent = "0";
     }
@@ -1515,6 +1620,20 @@
         return `artist.html?user_id=${encodeURIComponent(profile.user_id)}`;
       }
       return "join.html";
+    }
+
+    function updateInteractiveControls() {
+      const isLoggedIn = Boolean(currentUser);
+
+      likeBtn.disabled = !isLoggedIn;
+      skipBtn.disabled = !isLoggedIn;
+      featureNoteEl.classList.toggle("hidden", isLoggedIn);
+
+      if (!isLoggedIn) {
+        liked = false;
+        likeBtn.innerHTML = `<span class="icon">♥</span>Like`;
+        likeBtn.classList.remove("liked");
+      }
     }
 
     function applyMenuState(user, profile, track) {
@@ -1545,7 +1664,7 @@
 
       desktopTrackLink.setAttribute("data-track-mode", hasTrack ? "edit" : "submit");
       mobileTrackLink.setAttribute("data-track-mode", hasTrack ? "edit" : "submit");
-      submitTrackBtn.textContent = "Track";
+      submitTrackBtn.textContent = "Tune";
     }
 
     function setLoggedOutView() {
@@ -1560,8 +1679,10 @@
       accountProfileLink.href = "javascript:void(0)";
       currentProfileData = null;
       currentTrackData = null;
+      currentUser = null;
       applyMenuState(null, null, null);
       hideUserStats();
+      updateInteractiveControls();
     }
 
     function setLoggedInView() {
@@ -1600,7 +1721,7 @@
       return data;
     }
 
-    async function loadMyTrack(userId) {
+    async function loadMyTune(userId) {
       const { data, error } = await supabaseClient
         .from("tracks")
         .select("id, user_id, title, status, created_at")
@@ -1628,14 +1749,16 @@
         }
 
         const user = data?.session?.user || null;
+        currentUser = user;
 
         if (user) {
           setLoggedInView();
 
           const profile = await loadMyProfile(user.id);
-          const track = await loadMyTrack(user.id);
+          const tune = await loadMyTune(user.id);
 
-          applyMenuState(user, profile, track);
+          applyMenuState(user, profile, tune);
+          updateInteractiveControls();
           return user;
         } else {
           setLoggedOutView();
@@ -1649,6 +1772,15 @@
     }
 
     async function loadTrackStats() {
+      const { data } = await supabaseClient.auth.getSession();
+      const user = data?.session?.user || null;
+
+      if (!user) {
+        submittedCardEl.classList.add("hidden");
+        playsCardEl.classList.add("hidden");
+        return;
+      }
+
       const { count: submittedCount } = await supabaseClient
         .from("tracks")
         .select("*", { count: "exact", head: true });
@@ -1658,15 +1790,8 @@
         .select("*", { count: "exact", head: true })
         .eq("status", "approved");
 
+      submittedCardEl.classList.remove("hidden");
       submittedCountEl.textContent = (submittedCount || 0).toLocaleString();
-
-      const { data } = await supabaseClient.auth.getSession();
-      const user = data?.session?.user || null;
-
-      if (!user) {
-        playsCardEl.classList.add("hidden");
-        return;
-      }
 
       const { count: myApproved } = await supabaseClient
         .from("tracks")
@@ -1936,7 +2061,7 @@
 
     function nextTrack(previewOffset = 0, countPlay = true) {
       if (!tracks.length) {
-        titleEl.textContent = "No live tracks yet";
+        titleEl.textContent = "No live tunes yet";
         artistWrapEl.innerHTML = `<span>Check back soon</span>`;
         progressFill.style.width = "0%";
         elapsedTimeEl.textContent = "0:00";
@@ -2017,7 +2142,7 @@
       await loadTracksFromSupabase();
 
       if (!tracks.length) {
-        titleEl.textContent = "No live tracks yet";
+        titleEl.textContent = "No live tunes yet";
         artistWrapEl.innerHTML = `<span>Check back soon</span>`;
         await updateListeners();
         return;
@@ -2078,9 +2203,14 @@
       });
     };
 
-    skipBtn.onclick = () => nextTrack(0, true);
+    skipBtn.onclick = () => {
+      if (!currentUser) return;
+      nextTrack(0, true);
+    };
 
     likeBtn.onclick = () => {
+      if (!currentUser) return;
+
       liked = !liked;
 
       if (liked) {
