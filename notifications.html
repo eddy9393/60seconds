@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Notifications — 60 Seconds FM</title>
 
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Manrope:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -10,36 +10,11 @@
   <style>
     :root {
       --gold: #d4af37;
-      --gold-2: #f4d77a;
-      --gold-3: #ffd76a;
-      --gold-dark: #8f6b13;
       --text: #f5f5f5;
       --muted: #aaaaaa;
-
       --desktop-rail-width: 86px;
-      --desktop-rail-expanded: 320px;
       --mobile-bottom-nav-height: 86px;
       --mobile-nav-bg: rgba(10, 10, 10, 0.94);
-
-      --icon-gold-filter:
-        brightness(0)
-        saturate(100%)
-        invert(74%)
-        sepia(56%)
-        saturate(820%)
-        hue-rotate(3deg)
-        brightness(99%)
-        contrast(94%);
-
-      --icon-gold-active-filter:
-        brightness(0)
-        saturate(100%)
-        invert(86%)
-        sepia(56%)
-        saturate(530%)
-        hue-rotate(358deg)
-        brightness(103%)
-        contrast(96%);
     }
 
     * { box-sizing: border-box; }
@@ -48,19 +23,27 @@
       margin: 0;
       min-height: 100vh;
       background:
-        linear-gradient(180deg, rgba(7, 7, 7, 0.46) 0%, rgba(7, 7, 7, 0.72) 45%, rgba(7, 7, 7, 0.84) 100%),
-        radial-gradient(circle at top, rgba(212, 175, 55, 0.14), transparent 30%),
+        linear-gradient(180deg, rgba(7, 7, 7, 0.46), rgba(7, 7, 7, 0.84)),
         url("bg-mobile-final-1080x1920.webp");
-      background-size: cover, auto, cover;
-      background-position: center;
       color: var(--text);
       font-family: 'Manrope', sans-serif;
       padding: 0 18px 44px calc(var(--desktop-rail-width) + 28px);
     }
 
-    h1, h2 { font-family: 'Space Grotesk', sans-serif; }
-
     .hidden { display: none !important; }
+
+    /* HEADER */
+    .header-wrap {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      padding: 10px;
+      text-align: center;
+    }
+
+    .header-logo {
+      width: 180px;
+    }
 
     /* SIDEBAR */
     .desktop-side-nav {
@@ -69,12 +52,6 @@
       left: 18px;
       transform: translateY(-50%);
       width: var(--desktop-rail-width);
-      height: 80vh;
-      transition: width .3s ease;
-    }
-
-    .desktop-side-nav:hover {
-      width: var(--desktop-rail-expanded);
     }
 
     .desktop-nav-link {
@@ -82,27 +59,12 @@
       align-items: center;
       gap: 18px;
       padding: 16px;
-      border-radius: 16px;
       text-decoration: none;
       color: white;
     }
 
-    .desktop-nav-icon img {
-      width: 26px;
-      filter: var(--icon-gold-filter);
-    }
-
-    .desktop-nav-label {
-      opacity: 0;
-      transition: .3s;
-    }
-
-    .desktop-side-nav:hover .desktop-nav-label {
-      opacity: 1;
-    }
-
-    .desktop-nav-link.active img {
-      filter: var(--icon-gold-active-filter);
+    .desktop-nav-link.active {
+      color: var(--gold);
     }
 
     /* MAIN */
@@ -127,34 +89,14 @@
       border-radius: 28px;
       background: rgba(20,20,20,0.8);
       border: 1px solid rgba(212,175,55,0.15);
-      backdrop-filter: blur(6px);
-    }
-
-    .empty-icon {
-      font-size: 40px;
-      margin-bottom: 20px;
-    }
-
-    .empty-title {
-      font-size: 22px;
-      margin-bottom: 10px;
-    }
-
-    .empty-text {
-      color: var(--muted);
-      margin-bottom: 20px;
     }
 
     .back-link {
-      color: var(--gold-2);
+      color: var(--gold);
       text-decoration: none;
     }
 
-    .back-link:hover {
-      opacity: 0.8;
-    }
-
-    /* MOBILE */
+    /* MOBILE NAV */
     @media (max-width: 760px) {
       body {
         padding: 0 14px calc(var(--mobile-bottom-nav-height) + 18px);
@@ -177,38 +119,29 @@
         flex: 1;
         text-align: center;
         font-size: 10px;
-      }
-
-      .mobile-nav-icon img {
-        width: 22px;
-        filter: var(--icon-gold-filter);
+        color: white;
+        text-decoration: none;
       }
     }
   </style>
 </head>
 <body>
 
+  <!-- HEADER -->
+  <div class="header-wrap">
+    <a href="index.html">
+      <img src="logo.png" class="header-logo">
+    </a>
+  </div>
+
   <!-- SIDEBAR -->
   <aside class="desktop-side-nav">
-    <a class="desktop-nav-link" href="index.html">
-      <span class="desktop-nav-icon"><img src="/icons/radio.png"></span>
-      <span class="desktop-nav-label">Radio</span>
-    </a>
-
-    <a class="desktop-nav-link" href="join.html">
-      <span class="desktop-nav-icon"><img src="/icons/profile.png"></span>
-      <span class="desktop-nav-label">Profile</span>
-    </a>
-
-    <a class="desktop-nav-link active" href="notifications.html">
-      <span class="desktop-nav-icon"><img src="/icons/notifications.png"></span>
-      <span class="desktop-nav-label">Notifications</span>
-    </a>
-
-    <a class="desktop-nav-link" href="submit-track.html">
-      <span class="desktop-nav-icon"><img src="/icons/track.png"></span>
-      <span class="desktop-nav-label">Track</span>
-    </a>
+    <a class="desktop-nav-link" href="index.html">Radio</a>
+    <a id="profileLinkNav" class="desktop-nav-link hidden" href="edit-profile.html">Profile</a>
+    <a class="desktop-nav-link active" href="notifications.html">Notifications</a>
+    <a id="trackLinkNav" class="desktop-nav-link hidden" href="submit-track.html">Track</a>
+    <a id="loginLinkNav" class="desktop-nav-link" href="login.html">Login</a>
+    <a id="logoutBtnNav" class="desktop-nav-link hidden" href="#">Logout</a>
   </aside>
 
   <!-- CONTENT -->
@@ -217,14 +150,20 @@
     <p class="page-subtitle">Stay updated with your activity</p>
 
     <div class="empty-card">
-      <div class="empty-icon">🔔</div>
-      <div class="empty-title">No notifications yet</div>
-      <div class="empty-text">
-        When something happens, you'll see it here.
-      </div>
+      <div style="font-size:40px;">🔔</div>
+      <h2>No notifications yet</h2>
+      <p>When something happens, you'll see it here.</p>
       <a href="index.html" class="back-link">← Back to Radio</a>
     </div>
   </main>
+
+  <!-- MOBILE NAV -->
+  <div class="mobile-bottom-nav-wrap">
+    <a class="mobile-nav-link" href="index.html">Radio</a>
+    <a id="mobileProfileLink" class="mobile-nav-link hidden" href="edit-profile.html">Profile</a>
+    <a class="mobile-nav-link" href="notifications.html">Notif</a>
+    <a id="mobileTrackLink" class="mobile-nav-link hidden" href="submit-track.html">Track</a>
+  </div>
 
   <!-- SUPABASE -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -235,16 +174,48 @@
       "sb_publishable_255qyDKS77nMU0pbedfa_A_3hdgtEHh"
     );
 
-    async function checkAuth() {
+    const profileLinkNav = document.getElementById("profileLinkNav");
+    const trackLinkNav = document.getElementById("trackLinkNav");
+    const loginLinkNav = document.getElementById("loginLinkNav");
+    const logoutBtnNav = document.getElementById("logoutBtnNav");
+
+    const mobileProfileLink = document.getElementById("mobileProfileLink");
+    const mobileTrackLink = document.getElementById("mobileTrackLink");
+
+    async function init() {
       const { data } = await supabaseClient.auth.getSession();
       const user = data?.session?.user;
 
       if (!user) {
-        window.location.href = "login.html";
+        loginLinkNav.classList.remove("hidden");
+        logoutBtnNav.classList.add("hidden");
+        return;
+      }
+
+      loginLinkNav.classList.add("hidden");
+      logoutBtnNav.classList.remove("hidden");
+
+      profileLinkNav.classList.remove("hidden");
+      mobileProfileLink.classList.remove("hidden");
+
+      const { data: profile } = await supabaseClient
+        .from("profiles")
+        .select("*")
+        .eq("user_id", user.id)
+        .maybeSingle();
+
+      if (profile) {
+        trackLinkNav.classList.remove("hidden");
+        mobileTrackLink.classList.remove("hidden");
       }
     }
 
-    checkAuth();
+    logoutBtnNav.onclick = async () => {
+      await supabaseClient.auth.signOut();
+      window.location.href = "index.html";
+    };
+
+    init();
   </script>
 
 </body>
