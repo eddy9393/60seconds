@@ -1024,15 +1024,15 @@
     }
 
     .concept-copy {
-      max-width: 650px;
+      max-width: 620px;
       margin: 0 auto;
       color: rgba(255,255,255,0.78);
       font-size: 15px;
-      line-height: 1.8;
+      line-height: 1.75;
     }
 
     .join-prompt {
-      margin-top: 28px;
+      margin-top: 24px;
       font-family: 'Space Grotesk', sans-serif;
       font-size: clamp(18px, 3vw, 24px);
       color: #fff1c0;
@@ -1489,12 +1489,12 @@
       </div>
     </div>
 
-    <section class="concept-section">
+    <section id="conceptSection" class="concept-section hidden">
       <div class="concept-card">
-        <div class="concept-kicker">The Concept</div>
-        <h2 class="concept-title">60 seconds. One real chance.</h2>
+        <div class="concept-kicker">Discover More</div>
+        <h2 class="concept-title">What is 60 Seconds?</h2>
         <p class="concept-copy">
-          60 Seconds FM is a discovery platform built around short-form listening. Every artist gets a focused one-minute preview, so listeners can quickly discover new music, connect with fresh talent, and decide what they want to hear more of. It is fast, fair, and designed to put emerging artists and producers in front of real ears.
+          60 Seconds is a platform where emerging music producers and artists can get the showcase they deserve without TikTok dances or crazy challenges. Let musicians be musicians.
         </p>
 
         <div class="join-prompt">Are you an artist or music producer?</div>
@@ -1568,6 +1568,7 @@
     const likeBtn = document.getElementById("likeBtn");
     const skipBtn = document.getElementById("skip");
     const featureNoteEl = document.getElementById("featureNote");
+    const conceptSectionEl = document.getElementById("conceptSection");
     const volume = document.getElementById("volume");
     const volumeBtn = document.getElementById("volumeBtn");
     const volumeControl = document.getElementById("volumeControl");
@@ -1593,6 +1594,11 @@
     let currentPreviewStart = 0;
     let currentPreviewDuration = 60;
     let currentUser = null;
+
+    function updateConceptVisibility() {
+      const shouldShow = !currentUser && isLiveActivated;
+      conceptSectionEl.classList.toggle("hidden", !shouldShow);
+    }
 
     function hideUserStats() {
       submittedCardEl.classList.add("hidden");
@@ -1628,6 +1634,7 @@
       likeBtn.disabled = !isLoggedIn;
       skipBtn.disabled = !isLoggedIn;
       featureNoteEl.classList.toggle("hidden", isLoggedIn);
+      updateConceptVisibility();
 
       if (!isLoggedIn) {
         liked = false;
@@ -2184,6 +2191,7 @@
 
       radioShell.classList.remove("pre-live");
       startOverlay.classList.add("hidden");
+      updateConceptVisibility();
 
       if (!audio.src && tracks.length) {
         const nextIndex = chooseNextTrackIndex();
@@ -2279,6 +2287,7 @@
     async function initPage() {
       setLoggedOutView();
       updateVolumeButtonState();
+      updateConceptVisibility();
       await refreshAuthDependentUI();
       await bootstrapLiveRadio();
     }
