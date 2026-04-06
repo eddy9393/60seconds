@@ -610,21 +610,21 @@
           <span class="desktop-nav-label">Radio</span>
         </a>
 
-        <a class="desktop-nav-link" href="join.html" aria-label="Profile">
+        <a id="desktopProfileLink" class="desktop-nav-link hidden" href="join.html" aria-label="Profile">
           <span class="desktop-nav-icon" aria-hidden="true">
             <img src="/icons/profile.png" alt="" />
           </span>
           <span class="desktop-nav-label">Profile</span>
         </a>
 
-        <a class="desktop-nav-link" href="notifications.html" aria-label="Notifications">
+        <a id="desktopNotificationsLink" class="desktop-nav-link hidden" href="notifications.html" aria-label="Notifications">
           <span class="desktop-nav-icon" aria-hidden="true">
             <img src="/icons/notifications.png" alt="" />
           </span>
           <span class="desktop-nav-label">Notifications</span>
         </a>
 
-        <a class="desktop-nav-link" href="submit-track.html" aria-label="Track">
+        <a id="desktopTrackLink" class="desktop-nav-link hidden" href="submit-track.html" aria-label="Track">
           <span class="desktop-nav-icon" aria-hidden="true">
             <img src="/icons/track.png" alt="" />
           </span>
@@ -652,21 +652,21 @@
         <span class="mobile-nav-label">Radio</span>
       </a>
 
-      <a class="mobile-nav-link" href="join.html" aria-label="Profile">
+      <a id="mobileProfileLink" class="mobile-nav-link hidden" href="join.html" aria-label="Profile">
         <span class="mobile-nav-icon" aria-hidden="true">
           <img src="/icons/profile.png" alt="" />
         </span>
         <span class="mobile-nav-label">Profile</span>
       </a>
 
-      <a class="mobile-nav-link" href="notifications.html" aria-label="Notifications">
+      <a id="mobileNotificationsLink" class="mobile-nav-link hidden" href="notifications.html" aria-label="Notifications">
         <span class="mobile-nav-icon" aria-hidden="true">
           <img src="/icons/notifications.png" alt="" />
         </span>
         <span class="mobile-nav-label">Notifications</span>
       </a>
 
-      <a class="mobile-nav-link" href="submit-track.html" aria-label="Track">
+      <a id="mobileTrackLink" class="mobile-nav-link hidden" href="submit-track.html" aria-label="Track">
         <span class="mobile-nav-icon" aria-hidden="true">
           <img src="/icons/track.png" alt="" />
         </span>
@@ -768,6 +768,14 @@
     const authTitle = document.getElementById("loginTitle");
     const authKicker = document.getElementById("authKicker");
 
+    const desktopProfileLink = document.getElementById("desktopProfileLink");
+    const desktopNotificationsLink = document.getElementById("desktopNotificationsLink");
+    const desktopTrackLink = document.getElementById("desktopTrackLink");
+
+    const mobileProfileLink = document.getElementById("mobileProfileLink");
+    const mobileNotificationsLink = document.getElementById("mobileNotificationsLink");
+    const mobileTrackLink = document.getElementById("mobileTrackLink");
+
     let authMode = "login";
 
     function setFeedback(message = "", type = "") {
@@ -810,15 +818,55 @@
       }
     }
 
-    async function redirectIfAlreadyLoggedIn() {
+    function setLoggedOutMenu() {
+      desktopProfileLink.classList.add("hidden");
+      desktopNotificationsLink.classList.add("hidden");
+      desktopTrackLink.classList.add("hidden");
+
+      mobileProfileLink.classList.add("hidden");
+      mobileNotificationsLink.classList.add("hidden");
+      mobileTrackLink.classList.add("hidden");
+    }
+
+    function setLoggedInMenu() {
+      desktopProfileLink.classList.remove("hidden");
+      desktopNotificationsLink.classList.remove("hidden");
+      desktopTrackLink.classList.remove("hidden");
+
+      mobileProfileLink.classList.remove("hidden");
+      mobileNotificationsLink.classList.remove("hidden");
+      mobileTrackLink.classList.remove("hidden");
+    }
+
+    async function syncMenuVisibility() {
       try {
         const { data, error } = await supabaseClient.auth.getSession();
 
         if (error) {
-          return;
+          setLoggedOutMenu();
+          return null;
         }
 
         const user = data?.session?.user || null;
+
+        if (user) {
+          setLoggedInMenu();
+          return user;
+        } else {
+          setLoggedOutMenu();
+          return null;
+        }
+      } catch (err) {
+        console.error("syncMenuVisibility error:", err);
+        setLoggedOutMenu();
+        return null;
+      }
+    }
+
+    async function redirectIfAlreadyLoggedIn() {
+      try {
+        const user = await syncMenuVisibility();
+
         if (user) {
           window.location.href = "index.html";
         }
@@ -900,7 +948,12 @@
       }
     });
 
+    supabaseClient.auth.onAuthStateChange(() => {
+      syncMenuVisibility().catch(err => console.error(err));
+    });
+
     renderAuthMode();
+    setLoggedOutMenu();
     redirectIfAlreadyLoggedIn();
   </script>
 </body>
