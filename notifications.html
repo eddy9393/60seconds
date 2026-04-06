@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Notifications — 60 Seconds FM</title>
 
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Manrope:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -10,96 +10,557 @@
   <style>
     :root {
       --gold: #d4af37;
+      --gold-2: #f4d77a;
+      --gold-3: #ffd76a;
+      --gold-dark: #8f6b13;
       --text: #f5f5f5;
       --muted: #aaaaaa;
+
       --desktop-rail-width: 86px;
+      --desktop-rail-expanded: 320px;
       --mobile-bottom-nav-height: 86px;
       --mobile-nav-bg: rgba(10, 10, 10, 0.94);
     }
 
-    * { box-sizing: border-box; }
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
 
     body {
       margin: 0;
       min-height: 100vh;
       background:
-        linear-gradient(180deg, rgba(7, 7, 7, 0.46), rgba(7, 7, 7, 0.84)),
+        linear-gradient(180deg, rgba(7, 7, 7, 0.46) 0%, rgba(7, 7, 7, 0.72) 45%, rgba(7, 7, 7, 0.84) 100%),
+        radial-gradient(circle at top, rgba(212, 175, 55, 0.14), transparent 30%),
         url("bg-mobile-final-1080x1920.webp");
+      background-size: cover, auto, cover;
+      background-position: center top, center top, center center;
+      background-repeat: no-repeat, no-repeat, no-repeat;
+      background-attachment: fixed, scroll, fixed;
       color: var(--text);
       font-family: 'Manrope', sans-serif;
+      text-align: center;
       padding: 0 18px 44px calc(var(--desktop-rail-width) + 28px);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
     }
 
-    .hidden { display: none !important; }
+    h1, h2, h3 {
+      font-family: 'Space Grotesk', sans-serif;
+      margin: 0;
+    }
 
-    /* HEADER */
+    img {
+      max-width: 100%;
+      display: block;
+    }
+
+    a {
+      color: inherit;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .site-shell {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding-top: 8px;
+    }
+
     .header-wrap {
       position: sticky;
       top: 0;
-      z-index: 100;
-      padding: 10px;
-      text-align: center;
+      z-index: 80;
+      width: 100%;
+      background: linear-gradient(180deg, rgba(0,0,0,0.78), rgba(0,0,0,0.42) 70%, rgba(0,0,0,0));
+      backdrop-filter: blur(8px);
+    }
+
+    .header-bar {
+      width: 100%;
+      min-height: 74px;
+      display: grid;
+      grid-template-columns: 60px 1fr 60px;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 16px 4px;
+      position: relative;
+    }
+
+    .header-left,
+    .header-center,
+    .header-right {
+      display: flex;
+      align-items: center;
+      min-width: 0;
+    }
+
+    .header-left {
+      justify-content: flex-start;
+    }
+
+    .header-center {
+      justify-content: center;
+      pointer-events: none;
+    }
+
+    .header-center > * {
+      pointer-events: auto;
+    }
+
+    .header-right {
+      justify-content: flex-end;
+      position: relative;
+    }
+
+    .header-logo-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
     }
 
     .header-logo {
-      width: 180px;
+      display: block;
+      width: min(288px, 45vw);
+      height: auto;
+      filter:
+        drop-shadow(0 8px 18px rgba(0, 0, 0, 0.35))
+        drop-shadow(0 0 20px rgba(212, 175, 55, 0.08));
     }
 
-    /* SIDEBAR */
+    .header-icon-btn {
+      width: 42px;
+      height: 42px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.14);
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.12), rgba(255,255,255,0.04)),
+        linear-gradient(180deg, rgba(10,10,10,0.86), rgba(10,10,10,0.92));
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.08),
+        0 10px 22px rgba(0,0,0,0.24);
+      backdrop-filter: blur(4px);
+      transition: transform 0.14s ease, box-shadow 0.14s ease, filter 0.14s ease;
+      padding: 0;
+      text-decoration: none;
+    }
+
+    .header-icon-btn:hover {
+      transform: translateY(-1px);
+      filter: brightness(1.03);
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.10),
+        0 14px 24px rgba(0,0,0,0.28);
+    }
+
+    .person-icon {
+      position: relative;
+      width: 22px;
+      height: 22px;
+    }
+
+    .person-icon::before,
+    .person-icon::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      border: 2.2px solid #f5f5f5;
+      box-sizing: border-box;
+    }
+
+    .person-icon::before {
+      top: 0;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+    }
+
+    .person-icon::after {
+      bottom: -1px;
+      width: 21px;
+      height: 11px;
+      border-top-left-radius: 16px;
+      border-top-right-radius: 16px;
+      border-bottom: 0;
+    }
+
+    .header-avatar-btn {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      padding: 0;
+      overflow: hidden;
+      border: 2px solid rgba(212,175,55,0.55);
+      background: #111;
+      box-shadow:
+        0 10px 22px rgba(0,0,0,0.24),
+        0 0 0 3px rgba(212,175,55,0.08);
+      cursor: pointer;
+    }
+
+    .header-avatar-btn img,
+    .header-avatar-btn .header-avatar-fallback {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      display: block;
+      object-fit: cover;
+    }
+
+    .header-avatar-fallback {
+      display: flex !important;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(180deg, #3a2d0d, #a98325);
+      color: #fff;
+      font-weight: 700;
+      font-size: 15px;
+      font-family: 'Space Grotesk', sans-serif;
+    }
+
+    .account-menu {
+      position: absolute;
+      top: 52px;
+      right: 0;
+      min-width: 210px;
+      padding: 10px;
+      border-radius: 18px;
+      background:
+        linear-gradient(180deg, rgba(20,20,20,0.96), rgba(10,10,10,0.98));
+      border: 1px solid rgba(255,255,255,0.08);
+      box-shadow:
+        0 18px 40px rgba(0,0,0,0.38),
+        inset 0 1px 0 rgba(255,255,255,0.04);
+      backdrop-filter: blur(8px);
+      z-index: 90;
+    }
+
+    .account-menu-actions {
+      display: grid;
+      gap: 8px;
+    }
+
+    .account-menu-link,
+    .account-menu button {
+      width: 100%;
+      text-decoration: none;
+      text-align: center;
+    }
+
     .desktop-side-nav {
       position: fixed;
       top: 50%;
       left: 18px;
       transform: translateY(-50%);
       width: var(--desktop-rail-width);
+      height: min(84vh, 780px);
+      z-index: 120;
+      display: flex;
+      align-items: stretch;
+      overflow: visible;
+      transition: width 0.34s cubic-bezier(.22,.61,.36,1);
     }
 
-    .desktop-nav-link {
+    .desktop-side-nav:hover {
+      width: var(--desktop-rail-expanded);
+    }
+
+    .desktop-side-nav-panel {
+      width: 100%;
+      height: 100%;
+      transition: width 0.34s cubic-bezier(.22,.61,.36,1);
+      display: flex;
+      flex-direction: column;
+      padding: 18px 0 16px;
+      overflow: visible;
+      background: transparent;
+      border: none;
+      box-shadow: none;
+      backdrop-filter: none;
+    }
+
+    .desktop-side-links,
+    .desktop-side-bottom {
+      position: relative;
+      display: grid;
+      gap: 14px;
+      align-content: start;
+      justify-items: stretch;
+    }
+
+    .desktop-side-links {
+      flex: 1;
+      padding-top: 2px;
+    }
+
+    .desktop-side-bottom {
+      margin-top: auto;
+      padding-top: 24px;
+    }
+
+    .desktop-nav-link,
+    .desktop-nav-button {
+      width: 100%;
+      min-height: 60px;
       display: flex;
       align-items: center;
+      justify-content: flex-start;
       gap: 18px;
-      padding: 16px;
+      padding: 0 18px;
+      color: rgba(245,245,245,0.96);
       text-decoration: none;
-      color: white;
+      background: transparent;
+      border: 0;
+      cursor: pointer;
+      overflow: hidden;
+      white-space: nowrap;
+      font-family: 'Manrope', sans-serif;
+      transition: transform 0.18s ease, opacity 0.18s ease, color 0.18s ease, background 0.18s ease;
+      text-align: left;
+      position: relative;
+      border-radius: 18px;
     }
 
-    .desktop-nav-link.active {
-      color: var(--gold);
+    .desktop-side-nav:hover .desktop-nav-link,
+    .desktop-side-nav:hover .desktop-nav-button {
+      width: 100%;
     }
 
-    /* MAIN */
+    .desktop-nav-link:hover,
+    .desktop-nav-button:hover {
+      transform: translateX(2px);
+      background:
+        linear-gradient(90deg, rgba(212,175,55,0.16), rgba(212,175,55,0.05) 58%, transparent);
+    }
+
+    .desktop-nav-link.active,
+    .desktop-nav-button.active {
+      color: #fff5d2;
+      background:
+        linear-gradient(90deg, rgba(212,175,55,0.18), rgba(212,175,55,0.06) 58%, transparent);
+    }
+
+    .desktop-nav-link.active::after,
+    .desktop-nav-button.active::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 9px;
+      bottom: 9px;
+      width: 3px;
+      border-radius: 999px;
+      background: linear-gradient(180deg, #ffe08d, #d4af37 52%, #8f6b13);
+      box-shadow: 0 0 14px rgba(212,175,55,0.30);
+    }
+
+    .desktop-nav-icon,
+    .mobile-nav-icon {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex: 0 0 auto;
+    }
+
+    .desktop-nav-icon {
+      width: 30px;
+      height: 30px;
+    }
+
+    .mobile-nav-icon {
+      width: 24px;
+      height: 24px;
+    }
+
+    .nav-icon-mask {
+      width: 100%;
+      height: 100%;
+      display: block;
+      background:
+        linear-gradient(180deg, #fff3b6 0%, #f4d77a 20%, #d4af37 52%, #b98714 76%, #7d5a10 100%);
+      -webkit-mask-image: var(--icon-url);
+      mask-image: var(--icon-url);
+      -webkit-mask-repeat: no-repeat;
+      mask-repeat: no-repeat;
+      -webkit-mask-position: center;
+      mask-position: center;
+      -webkit-mask-size: contain;
+      mask-size: contain;
+      filter: drop-shadow(0 2px 10px rgba(212,175,55,0.18));
+      opacity: 0.98;
+      transition: transform 0.18s ease, filter 0.18s ease, opacity 0.18s ease, background 0.18s ease;
+      pointer-events: none;
+      user-select: none;
+    }
+
+    .desktop-nav-link:hover .nav-icon-mask,
+    .desktop-nav-button:hover .nav-icon-mask,
+    .mobile-nav-link:hover .nav-icon-mask {
+      transform: scale(1.04);
+      opacity: 1;
+      background:
+        linear-gradient(180deg, #fff7cf 0%, #ffe08d 18%, #f4d77a 36%, #d4af37 58%, #b98714 80%, #7d5a10 100%);
+      filter: drop-shadow(0 2px 11px rgba(212,175,55,0.22));
+    }
+
+    .desktop-nav-link.active .nav-icon-mask,
+    .desktop-nav-button.active .nav-icon-mask,
+    .mobile-nav-link.active .nav-icon-mask {
+      background:
+        linear-gradient(180deg, #fff9da 0%, #ffe9a7 18%, #f7dd82 36%, #d4af37 58%, #ba8a18 80%, #7d5a10 100%);
+      filter:
+        drop-shadow(0 2px 12px rgba(212,175,55,0.24))
+        drop-shadow(0 0 15px rgba(212,175,55,0.20));
+    }
+
+    .desktop-nav-label {
+      font-size: 16px;
+      font-weight: 500;
+      letter-spacing: 0.1px;
+      font-family: 'Manrope', sans-serif;
+      opacity: 0;
+      transform: translateX(-10px);
+      transition:
+        opacity 0.26s ease,
+        transform 0.34s cubic-bezier(.22,.61,.36,1);
+      pointer-events: none;
+      min-width: 170px;
+      max-width: 200px;
+      overflow: visible;
+      text-overflow: clip;
+      text-align: left;
+    }
+
+    .desktop-side-nav:hover .desktop-nav-label {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    .mobile-bottom-nav-wrap {
+      display: none;
+    }
+
     .page-wrap {
       max-width: 720px;
-      margin: 120px auto 0;
+      margin: 90px auto 0;
       text-align: center;
     }
 
     .page-title {
-      font-size: 40px;
+      font-size: clamp(32px, 5vw, 40px);
       margin-bottom: 12px;
+      text-shadow: 0 2px 14px rgba(0,0,0,0.3);
     }
 
     .page-subtitle {
       color: var(--muted);
       margin-bottom: 40px;
+      font-size: 15px;
+      line-height: 1.7;
     }
 
     .empty-card {
       padding: 50px 30px;
       border-radius: 28px;
-      background: rgba(20,20,20,0.8);
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.015)),
+        linear-gradient(180deg, rgba(24,24,24,0.88) 0%, rgba(17,17,17,0.94) 100%);
       border: 1px solid rgba(212,175,55,0.15);
+      backdrop-filter: blur(6px);
+      box-shadow:
+        0 20px 60px rgba(0,0,0,0.32),
+        0 0 35px rgba(212,175,55,0.08),
+        inset 0 1px 0 rgba(255,255,255,0.04);
+    }
+
+    .empty-icon {
+      font-size: 40px;
+      margin-bottom: 20px;
+    }
+
+    .empty-title {
+      font-size: 22px;
+      margin-bottom: 10px;
+      font-family: 'Space Grotesk', sans-serif;
+    }
+
+    .empty-text {
+      color: var(--muted);
+      margin-bottom: 20px;
+      line-height: 1.7;
     }
 
     .back-link {
-      color: var(--gold);
+      color: var(--gold-2);
       text-decoration: none;
+      border-bottom: 1px solid rgba(244,215,122,0.26);
+      font-weight: 500;
     }
 
-    /* MOBILE NAV */
+    .back-link:hover {
+      opacity: 0.8;
+    }
+
+    .metal-btn {
+      border: 1px solid rgba(255,255,255,0.16);
+      background:
+        linear-gradient(180deg, #fbfbfb 0%, #d6d6d6 16%, #b6b6b6 35%, #8b8b8b 52%, #d2d2d2 72%, #f4f4f4 100%);
+      color: #151515;
+      padding: 13px 18px;
+      border-radius: 999px;
+      cursor: pointer;
+      font-weight: 500;
+      font-size: 14px;
+      text-shadow: 0 1px 0 rgba(255,255,255,0.45);
+      box-shadow:
+        inset 0 2px 0 rgba(255,255,255,0.72),
+        inset 0 -2px 3px rgba(0,0,0,0.18),
+        0 10px 22px rgba(0,0,0,0.25);
+      transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
+      backdrop-filter: blur(2px);
+      font-family: 'Manrope', sans-serif;
+    }
+
+    .metal-btn:hover {
+      transform: translateY(-1px);
+      filter: brightness(1.02);
+    }
+
+    .metal-btn:disabled {
+      opacity: 0.7;
+      cursor: default;
+      transform: none;
+    }
+
+    .metal-btn .icon {
+      color: #6a560c;
+      margin-right: 7px;
+      font-size: 15px;
+    }
+
     @media (max-width: 760px) {
       body {
         padding: 0 14px calc(var(--mobile-bottom-nav-height) + 18px);
+        background:
+          linear-gradient(180deg, rgba(7, 7, 7, 0.50) 0%, rgba(7, 7, 7, 0.76) 42%, rgba(7, 7, 7, 0.86) 100%),
+          radial-gradient(circle at top, rgba(212, 175, 55, 0.12), transparent 26%),
+          url("bg-mobile-final-1080x1920.webp");
+        background-size: cover, auto, cover;
+        background-position: center top, center top, center center;
+        background-repeat: no-repeat, no-repeat, no-repeat;
+        background-attachment: scroll, scroll, scroll;
       }
 
       .desktop-side-nav {
@@ -107,65 +568,229 @@
       }
 
       .mobile-bottom-nav-wrap {
+        display: block;
         position: fixed;
+        left: 0;
+        right: 0;
         bottom: 0;
-        width: 100%;
         height: var(--mobile-bottom-nav-height);
         background: var(--mobile-nav-bg);
+        backdrop-filter: blur(18px);
+        border-top: 1px solid rgba(212,175,55,0.08);
+        box-shadow: 0 -8px 28px rgba(0,0,0,0.28);
+        z-index: 130;
+      }
+
+      .mobile-bottom-nav {
+        width: 100%;
+        height: 100%;
         display: flex;
+        align-items: center;
+        justify-content: space-around;
+        gap: 2px;
+        padding: 8px 8px 10px;
       }
 
       .mobile-nav-link {
         flex: 1;
-        text-align: center;
-        font-size: 10px;
-        color: white;
+        min-width: 0;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 7px;
         text-decoration: none;
+        color: #f4f4f4;
+        font-size: 10px;
+        font-weight: 600;
+        letter-spacing: 0.2px;
+        font-family: 'Manrope', sans-serif;
+        padding: 6px 2px;
+        background: transparent;
+      }
+
+      .mobile-nav-link.hidden {
+        display: none !important;
+      }
+
+      .mobile-nav-link.active {
+        color: #fff5d2;
+      }
+
+      .mobile-nav-label {
+        line-height: 1;
+      }
+
+      .header-bar {
+        grid-template-columns: 42px 1fr 42px;
+        min-height: 68px;
+        padding: 6px 8px 2px;
+      }
+
+      .header-logo {
+        width: min(200px, 40vw);
+      }
+
+      .header-icon-btn,
+      .header-avatar-btn {
+        width: 38px;
+        height: 38px;
+      }
+
+      .account-menu {
+        top: 48px;
+        right: 0;
+      }
+
+      .page-wrap {
+        margin-top: 48px;
+      }
+
+      .empty-card {
+        padding: 36px 20px;
       }
     }
   </style>
 </head>
 <body>
 
-  <!-- HEADER -->
-  <div class="header-wrap">
-    <a href="index.html">
-      <img src="logo.png" class="header-logo">
-    </a>
-  </div>
+  <aside class="desktop-side-nav" aria-label="Desktop navigation">
+    <div class="desktop-side-nav-panel">
+      <nav class="desktop-side-links">
+        <a class="desktop-nav-link" href="index.html" aria-label="Radio">
+          <span class="desktop-nav-icon" aria-hidden="true">
+            <span class="nav-icon-mask" style="--icon-url: url('/icons/radio.png');"></span>
+          </span>
+          <span class="desktop-nav-label">Radio</span>
+        </a>
 
-  <!-- SIDEBAR -->
-  <aside class="desktop-side-nav">
-    <a class="desktop-nav-link" href="index.html">Radio</a>
-    <a id="profileLinkNav" class="desktop-nav-link hidden" href="edit-profile.html">Profile</a>
-    <a class="desktop-nav-link active" href="notifications.html">Notifications</a>
-    <a id="trackLinkNav" class="desktop-nav-link hidden" href="submit-track.html">Track</a>
-    <a id="loginLinkNav" class="desktop-nav-link" href="login.html">Login</a>
-    <a id="logoutBtnNav" class="desktop-nav-link hidden" href="#">Logout</a>
+        <a id="desktopProfileLink" class="desktop-nav-link hidden" href="join.html" aria-label="Profile">
+          <span class="desktop-nav-icon" aria-hidden="true">
+            <span class="nav-icon-mask" style="--icon-url: url('/icons/profile.png');"></span>
+          </span>
+          <span class="desktop-nav-label">Profile</span>
+        </a>
+
+        <a id="desktopNotificationsLink" class="desktop-nav-link hidden active" href="notifications.html" aria-label="Notifications">
+          <span class="desktop-nav-icon" aria-hidden="true">
+            <span class="nav-icon-mask" style="--icon-url: url('/icons/notifications.png');"></span>
+          </span>
+          <span class="desktop-nav-label">Notifications</span>
+        </a>
+
+        <a id="desktopTrackLink" class="desktop-nav-link hidden" href="submit-track.html" aria-label="Track">
+          <span class="desktop-nav-icon" aria-hidden="true">
+            <span class="nav-icon-mask" style="--icon-url: url('/icons/track.png');"></span>
+          </span>
+          <span class="desktop-nav-label">Track</span>
+        </a>
+      </nav>
+
+      <div class="desktop-side-bottom">
+        <a id="desktopLoginLink" class="desktop-nav-link" href="login.html" aria-label="Login">
+          <span class="desktop-nav-icon" aria-hidden="true">
+            <span class="nav-icon-mask" style="--icon-url: url('/icons/login.png');"></span>
+          </span>
+          <span class="desktop-nav-label">Login</span>
+        </a>
+
+        <button id="desktopLogoutBtn" class="desktop-nav-button hidden" type="button" aria-label="Logout">
+          <span class="desktop-nav-icon" aria-hidden="true">
+            <span class="nav-icon-mask" style="--icon-url: url('/icons/logout.png');"></span>
+          </span>
+          <span class="desktop-nav-label">Logout</span>
+        </button>
+      </div>
+    </div>
   </aside>
 
-  <!-- CONTENT -->
-  <main class="page-wrap">
-    <h1 class="page-title">Notifications</h1>
-    <p class="page-subtitle">Stay updated with your activity</p>
-
-    <div class="empty-card">
-      <div style="font-size:40px;">🔔</div>
-      <h2>No notifications yet</h2>
-      <p>When something happens, you'll see it here.</p>
-      <a href="index.html" class="back-link">← Back to Radio</a>
-    </div>
-  </main>
-
-  <!-- MOBILE NAV -->
   <div class="mobile-bottom-nav-wrap">
-    <a class="mobile-nav-link" href="index.html">Radio</a>
-    <a id="mobileProfileLink" class="mobile-nav-link hidden" href="edit-profile.html">Profile</a>
-    <a class="mobile-nav-link" href="notifications.html">Notif</a>
-    <a id="mobileTrackLink" class="mobile-nav-link hidden" href="submit-track.html">Track</a>
+    <nav class="mobile-bottom-nav" aria-label="Mobile navigation">
+      <a class="mobile-nav-link" href="index.html" aria-label="Radio">
+        <span class="mobile-nav-icon" aria-hidden="true">
+          <span class="nav-icon-mask" style="--icon-url: url('/icons/radio.png');"></span>
+        </span>
+        <span class="mobile-nav-label">Radio</span>
+      </a>
+
+      <a id="mobileProfileLink" class="mobile-nav-link hidden" href="join.html" aria-label="Profile">
+        <span class="mobile-nav-icon" aria-hidden="true">
+          <span class="nav-icon-mask" style="--icon-url: url('/icons/profile.png');"></span>
+        </span>
+        <span class="mobile-nav-label">Profile</span>
+      </a>
+
+      <a id="mobileNotificationsLink" class="mobile-nav-link hidden active" href="notifications.html" aria-label="Notifications">
+        <span class="mobile-nav-icon" aria-hidden="true">
+          <span class="nav-icon-mask" style="--icon-url: url('/icons/notifications.png');"></span>
+        </span>
+        <span class="mobile-nav-label">Notifications</span>
+      </a>
+
+      <a id="mobileTrackLink" class="mobile-nav-link hidden" href="submit-track.html" aria-label="Track">
+        <span class="mobile-nav-icon" aria-hidden="true">
+          <span class="nav-icon-mask" style="--icon-url: url('/icons/track.png');"></span>
+        </span>
+        <span class="mobile-nav-label">Track</span>
+      </a>
+
+      <a id="mobileLoginLink" class="mobile-nav-link" href="login.html" aria-label="Login">
+        <span class="mobile-nav-icon" aria-hidden="true">
+          <span class="nav-icon-mask" style="--icon-url: url('/icons/login.png');"></span>
+        </span>
+        <span class="mobile-nav-label">Login</span>
+      </a>
+    </nav>
   </div>
 
-  <!-- SUPABASE -->
+  <div class="header-wrap">
+    <header class="header-bar">
+      <div class="header-left"></div>
+
+      <div class="header-center">
+        <a href="/" class="header-logo-link" aria-label="60 Seconds FM home">
+          <img src="logo.png" alt="60 Seconds FM" class="header-logo" />
+        </a>
+      </div>
+
+      <div class="header-right">
+        <a id="showLoginBtn" class="header-icon-btn" href="login.html" aria-label="Login">
+          <span class="person-icon" aria-hidden="true"></span>
+        </a>
+
+        <button id="headerAvatarBtn" class="header-avatar-btn hidden" type="button" aria-label="Open account menu">
+          <img id="headerAvatarImage" class="hidden" src="" alt="Profile photo" />
+          <div id="headerAvatarFallback" class="header-avatar-fallback hidden">A</div>
+        </button>
+
+        <div id="accountMenu" class="account-menu hidden">
+          <div class="account-menu-actions">
+            <a id="accountProfileLink" class="metal-btn account-menu-link hidden" href="javascript:void(0)">Profile</a>
+            <a id="accountNotificationsLink" class="metal-btn account-menu-link hidden" href="notifications.html">Notifications</a>
+            <button id="logout" class="metal-btn" type="button"><span class="icon">⎋</span>Logout</button>
+          </div>
+        </div>
+      </div>
+    </header>
+  </div>
+
+  <div class="site-shell">
+    <main class="page-wrap">
+      <h1 class="page-title">Notifications</h1>
+      <p class="page-subtitle">Stay updated with your activity</p>
+
+      <div class="empty-card">
+        <div class="empty-icon">🔔</div>
+        <div class="empty-title">No notifications yet</div>
+        <div class="empty-text">
+          When something happens, you'll see it here.
+        </div>
+        <a href="index.html" class="back-link">← Back to Radio</a>
+      </div>
+    </main>
+  </div>
+
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <script>
@@ -174,49 +799,245 @@
       "sb_publishable_255qyDKS77nMU0pbedfa_A_3hdgtEHh"
     );
 
-    const profileLinkNav = document.getElementById("profileLinkNav");
-    const trackLinkNav = document.getElementById("trackLinkNav");
-    const loginLinkNav = document.getElementById("loginLinkNav");
-    const logoutBtnNav = document.getElementById("logoutBtnNav");
+    const showLoginBtn = document.getElementById("showLoginBtn");
+    const headerAvatarBtn = document.getElementById("headerAvatarBtn");
+    const headerAvatarImage = document.getElementById("headerAvatarImage");
+    const headerAvatarFallback = document.getElementById("headerAvatarFallback");
+    const accountMenu = document.getElementById("accountMenu");
+    const accountProfileLink = document.getElementById("accountProfileLink");
+    const accountNotificationsLink = document.getElementById("accountNotificationsLink");
 
+    const desktopLoginLink = document.getElementById("desktopLoginLink");
+    const desktopLogoutBtn = document.getElementById("desktopLogoutBtn");
+    const desktopProfileLink = document.getElementById("desktopProfileLink");
+    const desktopNotificationsLink = document.getElementById("desktopNotificationsLink");
+    const desktopTrackLink = document.getElementById("desktopTrackLink");
+
+    const mobileLoginLink = document.getElementById("mobileLoginLink");
     const mobileProfileLink = document.getElementById("mobileProfileLink");
+    const mobileNotificationsLink = document.getElementById("mobileNotificationsLink");
     const mobileTrackLink = document.getElementById("mobileTrackLink");
 
-    async function init() {
-      const { data } = await supabaseClient.auth.getSession();
-      const user = data?.session?.user;
+    let currentProfileData = null;
+    let currentTrackData = null;
 
-      if (!user) {
-        loginLinkNav.classList.remove("hidden");
-        logoutBtnNav.classList.add("hidden");
-        return;
+    function closeHeaderPanels() {
+      accountMenu.classList.add("hidden");
+    }
+
+    function getProfileHref(profile) {
+      if (!profile) return "join.html";
+      if (profile?.user_id) {
+        return `artist.html?user_id=${encodeURIComponent(profile.user_id)}`;
       }
+      return "join.html";
+    }
 
-      loginLinkNav.classList.add("hidden");
-      logoutBtnNav.classList.remove("hidden");
+    function applyMenuState(user, profile, track) {
+      const isLoggedIn = Boolean(user);
+      const hasProfile = Boolean(profile);
+      const hasTrack = Boolean(track);
 
-      profileLinkNav.classList.remove("hidden");
-      mobileProfileLink.classList.remove("hidden");
+      desktopLoginLink.classList.toggle("hidden", isLoggedIn);
+      mobileLoginLink.classList.toggle("hidden", isLoggedIn);
+      desktopLogoutBtn.classList.toggle("hidden", !isLoggedIn);
 
-      const { data: profile } = await supabaseClient
-        .from("profiles")
-        .select("*")
-        .eq("user_id", user.id)
-        .maybeSingle();
+      desktopProfileLink.classList.toggle("hidden", !isLoggedIn);
+      mobileProfileLink.classList.toggle("hidden", !isLoggedIn);
 
-      if (profile) {
-        trackLinkNav.classList.remove("hidden");
-        mobileTrackLink.classList.remove("hidden");
+      desktopNotificationsLink.classList.toggle("hidden", !isLoggedIn);
+      mobileNotificationsLink.classList.toggle("hidden", !isLoggedIn);
+
+      desktopTrackLink.classList.toggle("hidden", !isLoggedIn || !hasProfile);
+      mobileTrackLink.classList.toggle("hidden", !isLoggedIn || !hasProfile);
+
+      const profileHref = getProfileHref(profile);
+
+      desktopProfileLink.href = profileHref;
+      mobileProfileLink.href = profileHref;
+      accountProfileLink.href = profileHref;
+
+      accountProfileLink.classList.toggle("hidden", !isLoggedIn);
+      accountNotificationsLink.classList.toggle("hidden", !isLoggedIn);
+
+      desktopTrackLink.setAttribute("data-track-mode", hasTrack ? "edit" : "submit");
+      mobileTrackLink.setAttribute("data-track-mode", hasTrack ? "edit" : "submit");
+    }
+
+    function setLoggedOutView() {
+      closeHeaderPanels();
+      showLoginBtn.classList.remove("hidden");
+      headerAvatarBtn.classList.add("hidden");
+      headerAvatarImage.classList.add("hidden");
+      headerAvatarFallback.classList.add("hidden");
+      headerAvatarImage.src = "";
+      accountProfileLink.classList.add("hidden");
+      accountProfileLink.href = "javascript:void(0)";
+      currentProfileData = null;
+      currentTrackData = null;
+      applyMenuState(null, null, null);
+    }
+
+    function setLoggedInView() {
+      showLoginBtn.classList.add("hidden");
+      headerAvatarBtn.classList.remove("hidden");
+    }
+
+    function setHeaderAvatar(photoUrl, artistName) {
+      if (photoUrl) {
+        headerAvatarImage.src = photoUrl;
+        headerAvatarImage.classList.remove("hidden");
+        headerAvatarFallback.classList.add("hidden");
+      } else {
+        headerAvatarImage.classList.add("hidden");
+        headerAvatarFallback.classList.remove("hidden");
+        headerAvatarFallback.textContent = (artistName || "A").charAt(0).toUpperCase();
       }
     }
 
-    logoutBtnNav.onclick = async () => {
-      await supabaseClient.auth.signOut();
-      window.location.href = "index.html";
+    async function loadMyProfile(userId) {
+      const { data, error } = await supabaseClient
+        .from("profiles")
+        .select("artist_name, photo_url, user_id")
+        .eq("user_id", userId)
+        .maybeSingle();
+
+      if (error || !data) {
+        currentProfileData = null;
+        setHeaderAvatar("", "•");
+        return null;
+      }
+
+      currentProfileData = data;
+      setHeaderAvatar(data.photo_url, data.artist_name);
+      return data;
+    }
+
+    async function loadMyTrack(userId) {
+      const { data, error } = await supabaseClient
+        .from("tracks")
+        .select("id, user_id, title, status, created_at")
+        .eq("user_id", userId)
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+
+      if (error || !data) {
+        currentTrackData = null;
+        return null;
+      }
+
+      currentTrackData = data;
+      return data;
+    }
+
+    async function refreshAuthUI() {
+      try {
+        const { data, error } = await supabaseClient.auth.getSession();
+
+        if (error) {
+          setLoggedOutView();
+          return null;
+        }
+
+        const user = data?.session?.user || null;
+
+        if (user) {
+          setLoggedInView();
+
+          const profile = await loadMyProfile(user.id);
+          const track = await loadMyTrack(user.id);
+
+          applyMenuState(user, profile, track);
+          return user;
+        } else {
+          setLoggedOutView();
+          return null;
+        }
+      } catch (err) {
+        console.error("refreshAuthUI error:", err);
+        setLoggedOutView();
+        return null;
+      }
+    }
+
+    async function handleLogout() {
+      logoutBtn.disabled = true;
+      desktopLogoutBtn.disabled = true;
+
+      try {
+        const { error } = await supabaseClient.auth.signOut();
+
+        if (error) {
+          console.error("Logout error:", error);
+          return;
+        }
+
+        await refreshAuthUI();
+        window.location.href = "index.html";
+      } catch (err) {
+        console.error("handleLogout error:", err);
+      } finally {
+        logoutBtn.disabled = false;
+        desktopLogoutBtn.disabled = false;
+      }
+    }
+
+    const logoutBtn = document.getElementById("logout");
+
+    showLoginBtn.onclick = () => {
+      closeHeaderPanels();
     };
 
-    init();
-  </script>
+    headerAvatarBtn.onclick = () => {
+      accountMenu.classList.toggle("hidden");
+    };
 
+    accountProfileLink.onclick = () => {
+      accountMenu.classList.add("hidden");
+    };
+
+    accountNotificationsLink.onclick = () => {
+      accountMenu.classList.add("hidden");
+    };
+
+    desktopLogoutBtn.onclick = async () => {
+      await handleLogout();
+    };
+
+    logoutBtn.onclick = handleLogout;
+
+    document.addEventListener("click", (e) => {
+      const insideHeaderRight = e.target.closest(".header-right");
+      const isAvatarButton = e.target.closest("#headerAvatarBtn");
+
+      if (!insideHeaderRight && !isAvatarButton) {
+        accountMenu.classList.add("hidden");
+      }
+    });
+
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") {
+        accountMenu.classList.add("hidden");
+      }
+    });
+
+    supabaseClient.auth.onAuthStateChange(() => {
+      refreshAuthUI().catch(err => console.error(err));
+    });
+
+    async function initPage() {
+      setLoggedOutView();
+      const user = await refreshAuthUI();
+
+      if (!user) {
+        window.location.href = "login.html";
+      }
+    }
+
+    initPage().catch(err => {
+      console.error("initPage error:", err);
+    });
+  </script>
 </body>
 </html>
