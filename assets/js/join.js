@@ -32,26 +32,19 @@ const els = {
   headerAvatarImage: document.getElementById("headerAvatarImage"),
   headerAvatarFallback: document.getElementById("headerAvatarFallback"),
   accountMenu: document.getElementById("accountMenu"),
+  accountProfileLink: document.getElementById("accountProfileLink"),
+  accountNotificationsLink: document.getElementById("accountNotificationsLink"),
 
-  menuBtn: document.getElementById("menuBtn"),
-  sideMenu: document.getElementById("sideMenu"),
-  sideMenuOverlay: document.getElementById("sideMenuOverlay"),
-  closeMenuBtn: document.getElementById("closeMenuBtn"),
-  menuLoginBtn: document.getElementById("menuLoginBtn"),
-  menuSignupBtn: document.getElementById("menuSignupBtn"),
-  menuLogoutBtn: document.getElementById("menuLogoutBtn"),
-  menuCreateProfileLink: document.getElementById("menuCreateProfileLink"),
-  menuEditProfileLink: document.getElementById("menuEditProfileLink"),
-  menuSubmitTrackLink: document.getElementById("menuSubmitTrackLink"),
-  menuSubmitTrackLabel: document.getElementById("menuSubmitTrackLabel"),
-  menuArtistPageLink: document.getElementById("menuArtistPageLink"),
-  menuAuthPanel: document.getElementById("menuAuthPanel"),
-  menuAuthTitle: document.getElementById("menuAuthTitle"),
-  menuEmail: document.getElementById("menuEmail"),
-  menuPassword: document.getElementById("menuPassword"),
-  menuSignupSubmitBtn: document.getElementById("menuSignupSubmitBtn"),
-  menuLoginSubmitBtn: document.getElementById("menuLoginSubmitBtn"),
-  menuAuthMessage: document.getElementById("menuAuthMessage"),
+  desktopLoginLink: document.getElementById("desktopLoginLink"),
+  desktopLogoutBtn: document.getElementById("desktopLogoutBtn"),
+  desktopProfileLink: document.getElementById("desktopProfileLink"),
+  desktopNotificationsLink: document.getElementById("desktopNotificationsLink"),
+  desktopTrackLink: document.getElementById("desktopTrackLink"),
+
+  mobileLoginLink: document.getElementById("mobileLoginLink"),
+  mobileProfileLink: document.getElementById("mobileProfileLink"),
+  mobileNotificationsLink: document.getElementById("mobileNotificationsLink"),
+  mobileTrackLink: document.getElementById("mobileTrackLink"),
 
   email: document.getElementById("email"),
   password: document.getElementById("password"),
@@ -79,9 +72,9 @@ const els = {
 };
 
 const state = {
+  currentUser: null,
   currentProfileData: null,
-  currentTrackData: null,
-  currentMenuAuthMode: "login"
+  currentTrackData: null
 };
 
 function setHidden(el, hidden) {
@@ -89,26 +82,10 @@ function setHidden(el, hidden) {
   el.classList.toggle("hidden", hidden);
 }
 
-function setText(el, value) {
-  if (!el) return;
-  el.textContent = value || "";
-}
-
-function populateCountries() {
-  els.nationalityInput.innerHTML = '<option value="">Select your nationality</option>';
-
-  COUNTRY_OPTIONS.forEach(country => {
-    const option = document.createElement("option");
-    option.value = country;
-    option.textContent = country;
-    els.nationalityInput.appendChild(option);
-  });
-}
-
-function setAuthMessage(msg, error = false, target = els.authMessageEl) {
-  const safeMsg = msg === "Auth session missing!" ? "" : (msg || "");
-  target.textContent = safeMsg;
-  target.style.color = error ? "#ff8a8a" : "#cfcfcf";
+function setAuthMessage(message, isError = false) {
+  const safeMessage = message === "Auth session missing!" ? "" : (message || "");
+  els.authMessageEl.textContent = safeMessage;
+  els.authMessageEl.style.color = isError ? "#ff8a8a" : "#cfcfcf";
 }
 
 function setStatus(message, isError = false) {
@@ -119,36 +96,17 @@ function setStatus(message, isError = false) {
 function clearLoginFields() {
   els.email.value = "";
   els.password.value = "";
-  els.menuEmail.value = "";
-  els.menuPassword.value = "";
 }
 
-function openSideMenu() {
-  els.sideMenu.classList.add("open");
-  els.sideMenuOverlay.classList.add("open");
-  els.menuBtn.classList.add("active");
-  els.menuBtn.setAttribute("aria-expanded", "true");
-  els.sideMenu.setAttribute("aria-hidden", "false");
-  document.body.classList.add("menu-open");
-}
+function populateCountries() {
+  els.nationalityInput.innerHTML = '<option value="">Select your nationality</option>';
 
-function closeSideMenu() {
-  els.sideMenu.classList.remove("open");
-  els.sideMenuOverlay.classList.remove("open");
-  els.menuBtn.classList.remove("active");
-  els.menuBtn.setAttribute("aria-expanded", "false");
-  els.sideMenu.setAttribute("aria-hidden", "true");
-  document.body.classList.remove("menu-open");
-  setHidden(els.menuAuthPanel, true);
-  setAuthMessage("", false, els.menuAuthMessage);
-}
-
-function openMenuAuthPanel(mode = "login") {
-  state.currentMenuAuthMode = mode;
-  setHidden(els.menuAuthPanel, false);
-  els.menuAuthTitle.textContent = mode === "signup" ? "Sign up" : "Log in";
-  setAuthMessage("", false, els.menuAuthMessage);
-  setTimeout(() => els.menuEmail.focus(), 0);
+  for (const country of COUNTRY_OPTIONS) {
+    const option = document.createElement("option");
+    option.value = country;
+    option.textContent = country;
+    els.nationalityInput.appendChild(option);
+  }
 }
 
 function closeHeaderPanels() {
@@ -156,31 +114,12 @@ function closeHeaderPanels() {
   setHidden(els.accountMenu, true);
 }
 
-function getArtistUrl(profile) {
-  if (profile?.user_id) {
+function getProfileHref(profile) {
+  if (!profile) return "join.html";
+  if (profile.user_id) {
     return `artist.html?user_id=${encodeURIComponent(profile.user_id)}`;
   }
-  return "#";
-}
-
-function applyMenuState(user, profile, track) {
-  const isLoggedIn = Boolean(user);
-  const hasProfile = Boolean(profile);
-  const hasTrack = Boolean(track);
-  const artistUrl = getArtistUrl(profile);
-
-  setHidden(els.menuLoginBtn, isLoggedIn);
-  setHidden(els.menuSignupBtn, isLoggedIn);
-  setHidden(els.menuLogoutBtn, !isLoggedIn);
-
-  setHidden(els.menuCreateProfileLink, !isLoggedIn || hasProfile);
-  setHidden(els.menuEditProfileLink, !isLoggedIn || !hasProfile);
-  setHidden(els.menuArtistPageLink, !isLoggedIn || !hasProfile);
-  setHidden(els.menuSubmitTrackLink, !isLoggedIn || !hasProfile);
-
-  els.menuArtistPageLink.href = artistUrl;
-  els.existingArtistPageLink.href = artistUrl;
-  els.menuSubmitTrackLabel.textContent = hasTrack ? "Edit Your Track" : "Submit Your Track";
+  return "join.html";
 }
 
 function setHeaderAvatar(photoUrl, artistName) {
@@ -196,31 +135,6 @@ function setHeaderAvatar(photoUrl, artistName) {
   els.headerAvatarFallback.textContent = (artistName || "A").charAt(0).toUpperCase();
 }
 
-function setLoggedOutView() {
-  closeHeaderPanels();
-  setHidden(els.showLoginBtn, false);
-  setHidden(els.headerAvatarBtn, true);
-  setHidden(els.headerAvatarImage, true);
-  setHidden(els.headerAvatarFallback, true);
-  els.headerAvatarImage.src = "";
-
-  setHidden(els.loginRequiredBox, false);
-  setHidden(els.profileExistsBox, true);
-  setHidden(els.joinFormWrap, true);
-
-  state.currentProfileData = null;
-  state.currentTrackData = null;
-
-  applyMenuState(null, null, null);
-}
-
-function setLoggedInView() {
-  setHidden(els.authBox, true);
-  setHidden(els.menuAuthPanel, true);
-  setHidden(els.showLoginBtn, true);
-  setHidden(els.headerAvatarBtn, false);
-}
-
 function fillProfileForm(profile) {
   els.artistNameInput.value = profile?.artist_name || "";
   els.bioInput.value = profile?.bio || "";
@@ -229,6 +143,99 @@ function fillProfileForm(profile) {
   els.socialLinkInput.value = profile?.social_link || "";
   els.wantsPromotionsInput.checked = Boolean(profile?.wants_promotions);
   els.acceptedTermsInput.checked = Boolean(profile?.accepted_terms);
+}
+
+function applyMenuState(user, profile, track) {
+  const isLoggedIn = Boolean(user);
+  const hasProfile = Boolean(profile);
+  const hasTrack = Boolean(track);
+  const profileHref = getProfileHref(profile);
+
+  setHidden(els.desktopLoginLink, isLoggedIn);
+  setHidden(els.mobileLoginLink, isLoggedIn);
+  setHidden(els.desktopLogoutBtn, !isLoggedIn);
+
+  setHidden(els.desktopProfileLink, !isLoggedIn);
+  setHidden(els.mobileProfileLink, !isLoggedIn);
+
+  setHidden(els.desktopNotificationsLink, !isLoggedIn);
+  setHidden(els.mobileNotificationsLink, !isLoggedIn);
+
+  setHidden(els.desktopTrackLink, !isLoggedIn || !hasProfile);
+  setHidden(els.mobileTrackLink, !isLoggedIn || !hasProfile);
+
+  if (els.desktopProfileLink) els.desktopProfileLink.href = profileHref;
+  if (els.mobileProfileLink) els.mobileProfileLink.href = profileHref;
+  if (els.accountProfileLink) els.accountProfileLink.href = profileHref;
+  if (els.existingArtistPageLink) els.existingArtistPageLink.href = profileHref;
+
+  setHidden(els.accountProfileLink, !isLoggedIn);
+
+  if (els.desktopTrackLink) {
+    els.desktopTrackLink.setAttribute("data-track-mode", hasTrack ? "edit" : "submit");
+  }
+
+  if (els.mobileTrackLink) {
+    els.mobileTrackLink.setAttribute("data-track-mode", hasTrack ? "edit" : "submit");
+  }
+}
+
+function setLoggedOutView() {
+  state.currentUser = null;
+  state.currentProfileData = null;
+  state.currentTrackData = null;
+
+  closeHeaderPanels();
+
+  setHidden(els.showLoginBtn, false);
+  setHidden(els.headerAvatarBtn, true);
+  setHidden(els.headerAvatarImage, true);
+  setHidden(els.headerAvatarFallback, true);
+
+  if (els.headerAvatarImage) {
+    els.headerAvatarImage.src = "";
+  }
+
+  setHidden(els.loginRequiredBox, false);
+  setHidden(els.profileExistsBox, true);
+  setHidden(els.joinFormWrap, true);
+
+  applyMenuState(null, null, null);
+}
+
+function setLoggedInView() {
+  setHidden(els.authBox, true);
+  setHidden(els.showLoginBtn, true);
+  setHidden(els.headerAvatarBtn, false);
+}
+
+function renderPageState() {
+  const user = state.currentUser;
+  const profile = state.currentProfileData;
+  const track = state.currentTrackData;
+
+  applyMenuState(user, profile, track);
+
+  if (!user) {
+    setLoggedOutView();
+    fillProfileForm(null);
+    return;
+  }
+
+  setLoggedInView();
+
+  if (profile) {
+    setHidden(els.loginRequiredBox, true);
+    setHidden(els.profileExistsBox, false);
+    setHidden(els.joinFormWrap, true);
+    fillProfileForm(profile);
+    return;
+  }
+
+  setHidden(els.loginRequiredBox, true);
+  setHidden(els.profileExistsBox, true);
+  setHidden(els.joinFormWrap, false);
+  fillProfileForm(null);
 }
 
 async function getSessionUser() {
@@ -275,43 +282,28 @@ async function loadMyTrack(userId) {
 
 async function refreshPageState() {
   const user = await getSessionUser();
+  state.currentUser = user;
 
   if (!user) {
-    setLoggedOutView();
-    fillProfileForm(null);
+    renderPageState();
     return;
   }
 
-  setLoggedInView();
-
-  const [profile, track] = await Promise.all([
+  await Promise.all([
     loadMyProfile(user.id),
     loadMyTrack(user.id)
   ]);
 
-  applyMenuState(user, profile, track);
-
-  if (profile) {
-    setHidden(els.profileExistsBox, false);
-    setHidden(els.loginRequiredBox, true);
-    setHidden(els.joinFormWrap, true);
-    fillProfileForm(profile);
-    return;
-  }
-
-  setHidden(els.loginRequiredBox, true);
-  setHidden(els.profileExistsBox, true);
-  setHidden(els.joinFormWrap, false);
-  fillProfileForm(null);
+  renderPageState();
 }
 
-async function loginWithCredentials(emailValue, passwordValue, messageTarget) {
+async function loginWithCredentials(emailValue, passwordValue) {
   if (!emailValue || !passwordValue) {
-    setAuthMessage("Please enter email and password.", true, messageTarget);
+    setAuthMessage("Please enter email and password.", true);
     return { ok: false };
   }
 
-  setAuthMessage("", false, messageTarget);
+  setAuthMessage("", false);
 
   const { error } = await supabaseClient.auth.signInWithPassword({
     email: emailValue,
@@ -319,7 +311,7 @@ async function loginWithCredentials(emailValue, passwordValue, messageTarget) {
   });
 
   if (error) {
-    setAuthMessage(error.message, true, messageTarget);
+    setAuthMessage(error.message, true);
     return { ok: false };
   }
 
@@ -327,18 +319,18 @@ async function loginWithCredentials(emailValue, passwordValue, messageTarget) {
   return { ok: true };
 }
 
-async function signupWithCredentials(emailValue, passwordValue, messageTarget) {
+async function signupWithCredentials(emailValue, passwordValue) {
   if (!emailValue || !passwordValue) {
-    setAuthMessage("Please enter email and password.", true, messageTarget);
-    return { ok: false, requiresEmailConfirmation: false, hasSession: false };
+    setAuthMessage("Please enter email and password.", true);
+    return { ok: false, hasSession: false };
   }
 
   if (passwordValue.length < 6) {
-    setAuthMessage("Password must be at least 6 characters.", true, messageTarget);
-    return { ok: false, requiresEmailConfirmation: false, hasSession: false };
+    setAuthMessage("Password must be at least 6 characters.", true);
+    return { ok: false, hasSession: false };
   }
 
-  setAuthMessage("", false, messageTarget);
+  setAuthMessage("", false);
 
   const emailRedirectTo = new URL("join.html", window.location.href).href;
 
@@ -349,8 +341,8 @@ async function signupWithCredentials(emailValue, passwordValue, messageTarget) {
   });
 
   if (error) {
-    setAuthMessage(error.message, true, messageTarget);
-    return { ok: false, requiresEmailConfirmation: false, hasSession: false };
+    setAuthMessage(error.message, true);
+    return { ok: false, hasSession: false };
   }
 
   const hasSession = Boolean(data?.session);
@@ -359,17 +351,17 @@ async function signupWithCredentials(emailValue, passwordValue, messageTarget) {
   clearLoginFields();
 
   if (hasSession) {
-    setAuthMessage("Account created. You are now logged in.", false, messageTarget);
-    return { ok: true, requiresEmailConfirmation: false, hasSession: true };
+    setAuthMessage("Account created. You are now logged in.", false);
+    return { ok: true, hasSession: true };
   }
 
   if (hasUser) {
-    setAuthMessage("Account created. Check your email for the confirmation link.", false, messageTarget);
-    return { ok: true, requiresEmailConfirmation: true, hasSession: false };
+    setAuthMessage("Account created. Check your email for the confirmation link.", false);
+    return { ok: true, hasSession: false };
   }
 
-  setAuthMessage("Signup completed, but the auth response was incomplete. Please try logging in.", false, messageTarget);
-  return { ok: true, requiresEmailConfirmation: false, hasSession: false };
+  setAuthMessage("Signup completed, but the auth response was incomplete. Please try logging in.", false);
+  return { ok: true, hasSession: false };
 }
 
 async function handleLogin() {
@@ -379,8 +371,7 @@ async function handleLogin() {
   try {
     const result = await loginWithCredentials(
       els.email.value.trim(),
-      els.password.value,
-      els.authMessageEl
+      els.password.value
     );
 
     if (!result.ok) return;
@@ -389,7 +380,7 @@ async function handleLogin() {
     await refreshPageState();
   } catch (err) {
     console.error(err);
-    setAuthMessage("Login failed. Try again.", true, els.authMessageEl);
+    setAuthMessage("Login failed. Try again.", true);
   } finally {
     els.loginBtn.disabled = false;
     els.signupBtn.disabled = false;
@@ -403,8 +394,7 @@ async function handleSignup() {
   try {
     const result = await signupWithCredentials(
       els.email.value.trim(),
-      els.password.value,
-      els.authMessageEl
+      els.password.value
     );
 
     if (!result.ok) return;
@@ -415,72 +405,22 @@ async function handleSignup() {
     }
   } catch (err) {
     console.error(err);
-    setAuthMessage("Sign up failed. Try again.", true, els.authMessageEl);
+    setAuthMessage("Sign up failed. Try again.", true);
   } finally {
     els.loginBtn.disabled = false;
     els.signupBtn.disabled = false;
   }
 }
 
-async function handleMenuLogin() {
-  els.menuLoginSubmitBtn.disabled = true;
-  els.menuSignupSubmitBtn.disabled = true;
-
-  try {
-    const result = await loginWithCredentials(
-      els.menuEmail.value.trim(),
-      els.menuPassword.value,
-      els.menuAuthMessage
-    );
-
-    if (!result.ok) return;
-
-    closeSideMenu();
-    await refreshPageState();
-  } catch (err) {
-    console.error(err);
-    setAuthMessage("Login failed. Try again.", true, els.menuAuthMessage);
-  } finally {
-    els.menuLoginSubmitBtn.disabled = false;
-    els.menuSignupSubmitBtn.disabled = false;
-  }
-}
-
-async function handleMenuSignup() {
-  els.menuLoginSubmitBtn.disabled = true;
-  els.menuSignupSubmitBtn.disabled = true;
-
-  try {
-    const result = await signupWithCredentials(
-      els.menuEmail.value.trim(),
-      els.menuPassword.value,
-      els.menuAuthMessage
-    );
-
-    if (!result.ok) return;
-
-    if (result.hasSession) {
-      closeSideMenu();
-      await refreshPageState();
-    }
-  } catch (err) {
-    console.error(err);
-    setAuthMessage("Sign up failed. Try again.", true, els.menuAuthMessage);
-  } finally {
-    els.menuLoginSubmitBtn.disabled = false;
-    els.menuSignupSubmitBtn.disabled = false;
-  }
-}
-
 async function handleLogout() {
   els.logoutBtn.disabled = true;
-  els.menuLogoutBtn.disabled = true;
+  els.desktopLogoutBtn.disabled = true;
 
   try {
     const { error } = await supabaseClient.auth.signOut();
 
     if (error) {
-      setAuthMessage(error.message, true, els.authMessageEl);
+      setAuthMessage(error.message, true);
       return;
     }
 
@@ -488,10 +428,10 @@ async function handleLogout() {
     await refreshPageState();
   } catch (err) {
     console.error(err);
-    setAuthMessage("Logout failed. Try again.", true, els.authMessageEl);
+    setAuthMessage("Logout failed. Try again.", true);
   } finally {
     els.logoutBtn.disabled = false;
-    els.menuLogoutBtn.disabled = false;
+    els.desktopLogoutBtn.disabled = false;
   }
 }
 
@@ -638,12 +578,12 @@ async function handleCreateProfile() {
   }
 }
 
-function bindUIEvents() {
+function bindHeaderEvents() {
   els.showLoginBtn.onclick = () => {
     setHidden(els.accountMenu, true);
-    closeSideMenu();
     els.authBox.classList.toggle("hidden");
     setAuthMessage("");
+
     if (!els.authBox.classList.contains("hidden")) {
       setTimeout(() => els.email.focus(), 0);
     }
@@ -651,47 +591,27 @@ function bindUIEvents() {
 
   els.headerAvatarBtn.onclick = () => {
     setHidden(els.authBox, true);
-    closeSideMenu();
     els.accountMenu.classList.toggle("hidden");
   };
 
-  els.menuBtn.onclick = () => {
-    setHidden(els.authBox, true);
-    setHidden(els.accountMenu, true);
+  if (els.accountProfileLink) {
+    els.accountProfileLink.onclick = () => {
+      setHidden(els.accountMenu, true);
+    };
+  }
 
-    if (els.sideMenu.classList.contains("open")) {
-      closeSideMenu();
-    } else {
-      openSideMenu();
-    }
-  };
+  if (els.accountNotificationsLink) {
+    els.accountNotificationsLink.onclick = () => {
+      setHidden(els.accountMenu, true);
+    };
+  }
+}
 
-  els.closeMenuBtn.onclick = closeSideMenu;
-  els.sideMenuOverlay.onclick = closeSideMenu;
-
-  els.menuLoginBtn.onclick = () => {
-    setHidden(els.authBox, true);
-    setHidden(els.accountMenu, true);
-    openMenuAuthPanel("login");
-  };
-
-  els.menuSignupBtn.onclick = () => {
-    setHidden(els.authBox, true);
-    setHidden(els.accountMenu, true);
-    openMenuAuthPanel("signup");
-  };
-
-  els.menuLogoutBtn.onclick = async () => {
-    closeSideMenu();
-    await handleLogout();
-  };
-
+function bindAuthEvents() {
   els.loginBtn.onclick = handleLogin;
   els.signupBtn.onclick = handleSignup;
   els.logoutBtn.onclick = handleLogout;
-  els.menuLoginSubmitBtn.onclick = handleMenuLogin;
-  els.menuSignupSubmitBtn.onclick = handleMenuSignup;
-  els.saveProfileBtn.onclick = handleCreateProfile;
+  els.desktopLogoutBtn.onclick = handleLogout;
 
   els.email.addEventListener("keydown", (e) => {
     if (e.key === "Enter") handleLogin();
@@ -701,41 +621,23 @@ function bindUIEvents() {
     if (e.key === "Enter") handleLogin();
   });
 
-  els.menuEmail.addEventListener("keydown", (e) => {
-    if (e.key === "Enter") {
-      if (state.currentMenuAuthMode === "signup") {
-        handleMenuSignup();
-      } else {
-        handleMenuLogin();
-      }
-    }
+  supabaseClient.auth.onAuthStateChange(() => {
+    refreshPageState().catch(err => console.error(err));
   });
+}
 
-  els.menuPassword.addEventListener("keydown", (e) => {
-    if (e.key === "Enter") {
-      if (state.currentMenuAuthMode === "signup") {
-        handleMenuSignup();
-      } else {
-        handleMenuLogin();
-      }
-    }
-  });
+function bindPageEvents() {
+  els.saveProfileBtn.onclick = handleCreateProfile;
 
   document.addEventListener("click", (e) => {
     const insideHeaderRight = e.target.closest(".header-right");
     const insideAuthBox = e.target.closest("#authBox");
-    const insideSideMenu = e.target.closest("#sideMenu");
     const isLoginButton = e.target.closest("#showLoginBtn");
     const isAvatarButton = e.target.closest("#headerAvatarBtn");
-    const isMenuButton = e.target.closest("#menuBtn");
 
     if (!insideHeaderRight && !insideAuthBox && !isLoginButton && !isAvatarButton) {
       setHidden(els.authBox, true);
       setHidden(els.accountMenu, true);
-    }
-
-    if (!insideSideMenu && !isMenuButton) {
-      closeSideMenu();
     }
   });
 
@@ -743,12 +645,7 @@ function bindUIEvents() {
     if (e.key === "Escape") {
       setHidden(els.authBox, true);
       setHidden(els.accountMenu, true);
-      closeSideMenu();
     }
-  });
-
-  supabaseClient.auth.onAuthStateChange(() => {
-    refreshPageState().catch(err => console.error(err));
   });
 }
 
@@ -757,7 +654,11 @@ async function initPage() {
   setLoggedOutView();
   fillProfileForm(null);
   setStatus("");
-  bindUIEvents();
+
+  bindHeaderEvents();
+  bindAuthEvents();
+  bindPageEvents();
+
   await refreshPageState();
 }
 
