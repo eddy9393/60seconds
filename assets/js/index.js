@@ -25,6 +25,7 @@ const els = {
 
   logoutBtn: document.getElementById("logout"),
   submitTrackBtn: document.getElementById("submitTrackBtn"),
+  joinBtn: document.getElementById("joinBtn"),
 
   audio: document.getElementById("audio"),
   startBtn: document.getElementById("start"),
@@ -110,9 +111,15 @@ function getTrackPreviewDuration(track) {
   return Number.isFinite(value) && value > 0 ? value : 60;
 }
 
+function updateJoinButtonHref() {
+  if (!els.joinBtn) return;
+  els.joinBtn.href = "login.html";
+}
+
 function updateConceptVisibility() {
   const shouldShow = !state.currentUser && state.isLiveActivated;
   setHidden(els.conceptSectionEl, !shouldShow);
+  updateJoinButtonHref();
 }
 
 function hideUserStats() {
@@ -191,6 +198,7 @@ function applyMenuState(user, profile, track) {
   els.mobileTrackLink.setAttribute("data-track-mode", hasTrack ? "edit" : "submit");
 
   els.submitTrackBtn.textContent = "Tune";
+  updateJoinButtonHref();
 }
 
 function setHeaderAvatar(photoUrl, artistName) {
@@ -227,6 +235,7 @@ function setLoggedOutView() {
   applyMenuState(null, null, null);
   hideUserStats();
   updateInteractiveControls();
+  updateJoinButtonHref();
 }
 
 function setLoggedInView() {
@@ -296,6 +305,7 @@ async function refreshAuthUI() {
 
     applyMenuState(user, profile, tune);
     updateInteractiveControls();
+    updateJoinButtonHref();
     return user;
   } catch (err) {
     console.error("refreshAuthUI error:", err);
@@ -377,6 +387,7 @@ async function refreshAuthDependentUI() {
     loadTrackStats(),
     loadMyTotalPlays()
   ]);
+  updateJoinButtonHref();
 }
 
 async function loadTracksFromSupabase() {
@@ -793,6 +804,7 @@ function bindIntervals() {
 }
 
 async function initPage() {
+  updateJoinButtonHref();
   setLoggedOutView();
   updateVolumeButtonState();
   updateConceptVisibility();
@@ -800,6 +812,7 @@ async function initPage() {
   bindIntervals();
   await refreshAuthDependentUI();
   await bootstrapLiveRadio();
+  updateJoinButtonHref();
 }
 
 initPage().catch(err => {
