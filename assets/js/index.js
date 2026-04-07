@@ -3,109 +3,162 @@ const supabaseClient = window.supabase.createClient(
   "sb_publishable_255qyDKS77nMU0pbedfa_A_3hdgtEHh"
 );
 
-const showLoginBtn = document.getElementById("showLoginBtn");
-const headerAvatarBtn = document.getElementById("headerAvatarBtn");
-const headerAvatarImage = document.getElementById("headerAvatarImage");
-const headerAvatarFallback = document.getElementById("headerAvatarFallback");
-const accountMenu = document.getElementById("accountMenu");
-const accountProfileLink = document.getElementById("accountProfileLink");
-const accountNotificationsLink = document.getElementById("accountNotificationsLink");
+const els = {
+  showLoginBtn: document.getElementById("showLoginBtn"),
+  headerAvatarBtn: document.getElementById("headerAvatarBtn"),
+  headerAvatarImage: document.getElementById("headerAvatarImage"),
+  headerAvatarFallback: document.getElementById("headerAvatarFallback"),
+  accountMenu: document.getElementById("accountMenu"),
+  accountProfileLink: document.getElementById("accountProfileLink"),
+  accountNotificationsLink: document.getElementById("accountNotificationsLink"),
 
-const desktopLoginLink = document.getElementById("desktopLoginLink");
-const desktopLogoutBtn = document.getElementById("desktopLogoutBtn");
-const desktopProfileLink = document.getElementById("desktopProfileLink");
-const desktopNotificationsLink = document.getElementById("desktopNotificationsLink");
-const desktopTrackLink = document.getElementById("desktopTrackLink");
+  desktopLoginLink: document.getElementById("desktopLoginLink"),
+  desktopLogoutBtn: document.getElementById("desktopLogoutBtn"),
+  desktopProfileLink: document.getElementById("desktopProfileLink"),
+  desktopNotificationsLink: document.getElementById("desktopNotificationsLink"),
+  desktopTrackLink: document.getElementById("desktopTrackLink"),
 
-const mobileLoginLink = document.getElementById("mobileLoginLink");
-const mobileProfileLink = document.getElementById("mobileProfileLink");
-const mobileNotificationsLink = document.getElementById("mobileNotificationsLink");
-const mobileTrackLink = document.getElementById("mobileTrackLink");
+  mobileLoginLink: document.getElementById("mobileLoginLink"),
+  mobileProfileLink: document.getElementById("mobileProfileLink"),
+  mobileNotificationsLink: document.getElementById("mobileNotificationsLink"),
+  mobileTrackLink: document.getElementById("mobileTrackLink"),
 
-const logoutBtn = document.getElementById("logout");
-const submitTrackBtn = document.getElementById("submitTrackBtn");
+  logoutBtn: document.getElementById("logout"),
+  submitTrackBtn: document.getElementById("submitTrackBtn"),
 
-const audio = document.getElementById("audio");
-const startBtn = document.getElementById("start");
-const startOverlay = document.getElementById("startOverlay");
-const radioShell = document.getElementById("radioShell");
-const titleEl = document.getElementById("title");
-const artistWrapEl = document.getElementById("artistWrap");
-const likeBtn = document.getElementById("likeBtn");
-const skipBtn = document.getElementById("skip");
-const featureNoteEl = document.getElementById("featureNote");
-const conceptSectionEl = document.getElementById("conceptSection");
-const volume = document.getElementById("volume");
-const volumeBtn = document.getElementById("volumeBtn");
-const volumeControl = document.getElementById("volumeControl");
-const progressFill = document.getElementById("progress");
-const elapsedTimeEl = document.getElementById("elapsedTime");
-const durationTimeEl = document.getElementById("durationTime");
-const listenersCountEl = document.getElementById("listenersCount");
-const submittedCountEl = document.getElementById("submittedCount");
-const submittedCardEl = document.getElementById("submittedCard");
-const playsPerDayEl = document.getElementById("playsPerDay");
-const playsCardEl = document.getElementById("playsCard");
-const myPlaysCardEl = document.getElementById("myPlaysCard");
-const myTotalPlaysEl = document.getElementById("myTotalPlays");
+  audio: document.getElementById("audio"),
+  startBtn: document.getElementById("start"),
+  startOverlay: document.getElementById("startOverlay"),
+  radioShell: document.getElementById("radioShell"),
+  titleEl: document.getElementById("title"),
+  artistWrapEl: document.getElementById("artistWrap"),
+  likeBtn: document.getElementById("likeBtn"),
+  skipBtn: document.getElementById("skip"),
+  featureNoteEl: document.getElementById("featureNote"),
+  conceptSectionEl: document.getElementById("conceptSection"),
+  volume: document.getElementById("volume"),
+  volumeBtn: document.getElementById("volumeBtn"),
+  volumeControl: document.getElementById("volumeControl"),
+  progressFill: document.getElementById("progress"),
+  elapsedTimeEl: document.getElementById("elapsedTime"),
+  durationTimeEl: document.getElementById("durationTime"),
+  listenersCountEl: document.getElementById("listenersCount"),
+  submittedCountEl: document.getElementById("submittedCount"),
+  submittedCardEl: document.getElementById("submittedCard"),
+  playsPerDayEl: document.getElementById("playsPerDay"),
+  playsCardEl: document.getElementById("playsCard"),
+  myPlaysCardEl: document.getElementById("myPlaysCard"),
+  myTotalPlaysEl: document.getElementById("myTotalPlays")
+};
 
-let tracks = [];
-let current = -1;
-let liked = false;
-let listenerIdentity = null;
-let isLiveActivated = false;
-let liveBooted = false;
-let currentProfileData = null;
-let currentTrackData = null;
-let currentPreviewStart = 0;
-let currentPreviewDuration = 60;
-let currentUser = null;
+const state = {
+  tracks: [],
+  current: -1,
+  liked: false,
+  listenerIdentity: null,
+  isLiveActivated: false,
+  liveBooted: false,
+  currentProfileData: null,
+  currentTrackData: null,
+  currentPreviewStart: 0,
+  currentPreviewDuration: 60,
+  currentUser: null
+};
+
+const REFRESH_INTERVALS = {
+  listenerHeartbeat: 15000,
+  listenerCount: 10000,
+  tracksReload: 30000
+};
+
+function setHidden(el, hidden) {
+  if (!el) return;
+  el.classList.toggle("hidden", hidden);
+}
+
+function setText(el, value) {
+  if (!el) return;
+  el.textContent = value;
+}
+
+function formatNumber(value) {
+  return Number(value || 0).toLocaleString();
+}
+
+function formatTime(seconds) {
+  const mins = Math.floor(seconds / 60);
+  const secs = Math.floor(seconds % 60).toString().padStart(2, "0");
+  return `${mins}:${secs}`;
+}
+
+function escapeHtml(str) {
+  return String(str || "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
+
+function getTrackPreviewStart(track) {
+  const value = Number(track?.preview_start_seconds);
+  return Number.isFinite(value) && value >= 0 ? value : 0;
+}
+
+function getTrackPreviewDuration(track) {
+  const value = Number(track?.preview_duration_seconds);
+  return Number.isFinite(value) && value > 0 ? value : 60;
+}
 
 function updateConceptVisibility() {
-  const shouldShow = !currentUser && isLiveActivated;
-  conceptSectionEl.classList.toggle("hidden", !shouldShow);
+  const shouldShow = !state.currentUser && state.isLiveActivated;
+  setHidden(els.conceptSectionEl, !shouldShow);
 }
 
 function hideUserStats() {
-  submittedCardEl.classList.add("hidden");
-  playsCardEl.classList.add("hidden");
-  myPlaysCardEl.classList.add("hidden");
-  submittedCountEl.textContent = "0";
-  playsPerDayEl.textContent = "0";
-  myTotalPlaysEl.textContent = "0";
+  setHidden(els.submittedCardEl, true);
+  setHidden(els.playsCardEl, true);
+  setHidden(els.myPlaysCardEl, true);
+  setText(els.submittedCountEl, "0");
+  setText(els.playsPerDayEl, "0");
+  setText(els.myTotalPlaysEl, "0");
 }
 
 function updateVolumeButtonState() {
-  const isMuted = audio.muted || Number(audio.volume) === 0;
-  volumeBtn.classList.toggle("muted", isMuted);
-  volumeBtn.setAttribute("aria-label", isMuted ? "Volume muted" : "Volume");
+  const isMuted = els.audio.muted || Number(els.audio.volume) === 0;
+  els.volumeBtn.classList.toggle("muted", isMuted);
+  els.volumeBtn.setAttribute("aria-label", isMuted ? "Volume muted" : "Volume");
 }
 
 function closeHeaderPanels() {
-  accountMenu.classList.add("hidden");
-  volumeControl.classList.remove("open");
+  setHidden(els.accountMenu, true);
+  els.volumeControl.classList.remove("open");
 }
 
 function getProfileHref(profile) {
   if (!profile) return "join.html";
-  if (profile?.user_id) {
+  if (profile.user_id) {
     return `artist.html?user_id=${encodeURIComponent(profile.user_id)}`;
   }
   return "join.html";
 }
 
-function updateInteractiveControls() {
-  const isLoggedIn = Boolean(currentUser);
+function resetLike() {
+  state.liked = false;
+  els.likeBtn.innerHTML = `<span class="icon">♥</span>Like`;
+  els.likeBtn.classList.remove("liked");
+}
 
-  likeBtn.disabled = !isLoggedIn;
-  skipBtn.disabled = !isLoggedIn;
-  featureNoteEl.classList.toggle("hidden", isLoggedIn);
+function updateInteractiveControls() {
+  const isLoggedIn = Boolean(state.currentUser);
+
+  els.likeBtn.disabled = !isLoggedIn;
+  els.skipBtn.disabled = !isLoggedIn;
+  setHidden(els.featureNoteEl, isLoggedIn);
   updateConceptVisibility();
 
   if (!isLoggedIn) {
-    liked = false;
-    likeBtn.innerHTML = `<span class="icon">♥</span>Like`;
-    likeBtn.classList.remove("liked");
+    resetLike();
   }
 }
 
@@ -113,67 +166,79 @@ function applyMenuState(user, profile, track) {
   const isLoggedIn = Boolean(user);
   const hasProfile = Boolean(profile);
   const hasTrack = Boolean(track);
-
-  desktopLoginLink.classList.toggle("hidden", isLoggedIn);
-  mobileLoginLink.classList.toggle("hidden", isLoggedIn);
-  desktopLogoutBtn.classList.toggle("hidden", !isLoggedIn);
-
-  desktopProfileLink.classList.toggle("hidden", !isLoggedIn);
-  mobileProfileLink.classList.toggle("hidden", !isLoggedIn);
-
-  desktopNotificationsLink.classList.toggle("hidden", !isLoggedIn);
-  mobileNotificationsLink.classList.toggle("hidden", !isLoggedIn);
-
-  desktopTrackLink.classList.toggle("hidden", !isLoggedIn || !hasProfile);
-  mobileTrackLink.classList.toggle("hidden", !isLoggedIn || !hasProfile);
-
   const profileHref = getProfileHref(profile);
 
-  desktopProfileLink.href = profileHref;
-  mobileProfileLink.href = profileHref;
-  accountProfileLink.href = profileHref;
+  setHidden(els.desktopLoginLink, isLoggedIn);
+  setHidden(els.mobileLoginLink, isLoggedIn);
+  setHidden(els.desktopLogoutBtn, !isLoggedIn);
 
-  accountProfileLink.classList.toggle("hidden", !isLoggedIn);
+  setHidden(els.desktopProfileLink, !isLoggedIn);
+  setHidden(els.mobileProfileLink, !isLoggedIn);
 
-  desktopTrackLink.setAttribute("data-track-mode", hasTrack ? "edit" : "submit");
-  mobileTrackLink.setAttribute("data-track-mode", hasTrack ? "edit" : "submit");
-  submitTrackBtn.textContent = "Tune";
+  setHidden(els.desktopNotificationsLink, !isLoggedIn);
+  setHidden(els.mobileNotificationsLink, !isLoggedIn);
+
+  setHidden(els.desktopTrackLink, !isLoggedIn || !hasProfile);
+  setHidden(els.mobileTrackLink, !isLoggedIn || !hasProfile);
+
+  els.desktopProfileLink.href = profileHref;
+  els.mobileProfileLink.href = profileHref;
+  els.accountProfileLink.href = profileHref;
+
+  setHidden(els.accountProfileLink, !isLoggedIn);
+
+  els.desktopTrackLink.setAttribute("data-track-mode", hasTrack ? "edit" : "submit");
+  els.mobileTrackLink.setAttribute("data-track-mode", hasTrack ? "edit" : "submit");
+
+  els.submitTrackBtn.textContent = "Tune";
+}
+
+function setHeaderAvatar(photoUrl, artistName) {
+  if (photoUrl) {
+    els.headerAvatarImage.src = photoUrl;
+    setHidden(els.headerAvatarImage, false);
+    setHidden(els.headerAvatarFallback, true);
+    return;
+  }
+
+  setHidden(els.headerAvatarImage, true);
+  setHidden(els.headerAvatarFallback, false);
+  els.headerAvatarFallback.textContent = (artistName || "A").charAt(0).toUpperCase();
 }
 
 function setLoggedOutView() {
   closeHeaderPanels();
-  submitTrackBtn.classList.add("hidden");
-  showLoginBtn.classList.remove("hidden");
-  headerAvatarBtn.classList.add("hidden");
-  headerAvatarImage.classList.add("hidden");
-  headerAvatarFallback.classList.add("hidden");
-  headerAvatarImage.src = "";
-  accountProfileLink.classList.add("hidden");
-  accountProfileLink.href = "javascript:void(0)";
-  currentProfileData = null;
-  currentTrackData = null;
-  currentUser = null;
+
+  setHidden(els.submitTrackBtn, true);
+  setHidden(els.showLoginBtn, false);
+  setHidden(els.headerAvatarBtn, true);
+  setHidden(els.headerAvatarImage, true);
+  setHidden(els.headerAvatarFallback, true);
+
+  els.headerAvatarImage.src = "";
+  setHidden(els.accountProfileLink, true);
+  els.accountProfileLink.href = "javascript:void(0)";
+
+  state.currentProfileData = null;
+  state.currentTrackData = null;
+  state.currentUser = null;
+  state.listenerIdentity = null;
+
   applyMenuState(null, null, null);
   hideUserStats();
   updateInteractiveControls();
 }
 
 function setLoggedInView() {
-  submitTrackBtn.classList.add("hidden");
-  showLoginBtn.classList.add("hidden");
-  headerAvatarBtn.classList.remove("hidden");
+  setHidden(els.submitTrackBtn, true);
+  setHidden(els.showLoginBtn, true);
+  setHidden(els.headerAvatarBtn, false);
 }
 
-function setHeaderAvatar(photoUrl, artistName) {
-  if (photoUrl) {
-    headerAvatarImage.src = photoUrl;
-    headerAvatarImage.classList.remove("hidden");
-    headerAvatarFallback.classList.add("hidden");
-  } else {
-    headerAvatarImage.classList.add("hidden");
-    headerAvatarFallback.classList.remove("hidden");
-    headerAvatarFallback.textContent = (artistName || "A").charAt(0).toUpperCase();
-  }
+async function getSessionUser() {
+  const { data, error } = await supabaseClient.auth.getSession();
+  if (error) throw error;
+  return data?.session?.user || null;
 }
 
 async function loadMyProfile(userId) {
@@ -184,12 +249,12 @@ async function loadMyProfile(userId) {
     .maybeSingle();
 
   if (error || !data) {
-    currentProfileData = null;
+    state.currentProfileData = null;
     setHeaderAvatar("", "•");
     return null;
   }
 
-  currentProfileData = data;
+  state.currentProfileData = data;
   setHeaderAvatar(data.photo_url, data.artist_name);
   return data;
 }
@@ -204,39 +269,34 @@ async function loadMyTune(userId) {
     .maybeSingle();
 
   if (error || !data) {
-    currentTrackData = null;
+    state.currentTrackData = null;
     return null;
   }
 
-  currentTrackData = data;
+  state.currentTrackData = data;
   return data;
 }
 
 async function refreshAuthUI() {
   try {
-    const { data, error } = await supabaseClient.auth.getSession();
+    const user = await getSessionUser();
+    state.currentUser = user;
 
-    if (error) {
+    if (!user) {
       setLoggedOutView();
       return null;
     }
 
-    const user = data?.session?.user || null;
-    currentUser = user;
+    setLoggedInView();
 
-    if (user) {
-      setLoggedInView();
+    const [profile, tune] = await Promise.all([
+      loadMyProfile(user.id),
+      loadMyTune(user.id)
+    ]);
 
-      const profile = await loadMyProfile(user.id);
-      const tune = await loadMyTune(user.id);
-
-      applyMenuState(user, profile, tune);
-      updateInteractiveControls();
-      return user;
-    } else {
-      setLoggedOutView();
-      return null;
-    }
+    applyMenuState(user, profile, tune);
+    updateInteractiveControls();
+    return user;
   } catch (err) {
     console.error("refreshAuthUI error:", err);
     setLoggedOutView();
@@ -245,164 +305,78 @@ async function refreshAuthUI() {
 }
 
 async function loadTrackStats() {
-  const { data } = await supabaseClient.auth.getSession();
-  const user = data?.session?.user || null;
+  try {
+    const user = await getSessionUser();
 
-  if (!user) {
-    submittedCardEl.classList.add("hidden");
-    playsCardEl.classList.add("hidden");
-    return;
+    if (!user) {
+      setHidden(els.submittedCardEl, true);
+      setHidden(els.playsCardEl, true);
+      return;
+    }
+
+    const [
+      { count: submittedCount },
+      { count: approvedCount },
+      { count: myApproved }
+    ] = await Promise.all([
+      supabaseClient.from("tracks").select("*", { count: "exact", head: true }),
+      supabaseClient.from("tracks").select("*", { count: "exact", head: true }).eq("status", "approved"),
+      supabaseClient.from("tracks").select("*", { count: "exact", head: true }).eq("user_id", user.id).eq("status", "approved")
+    ]);
+
+    setHidden(els.submittedCardEl, false);
+    setText(els.submittedCountEl, formatNumber(submittedCount));
+
+    if (!myApproved || myApproved === 0) {
+      setHidden(els.playsCardEl, true);
+      return;
+    }
+
+    const perDay = approvedCount && approvedCount > 0
+      ? Math.floor(1440 / approvedCount)
+      : 0;
+
+    setHidden(els.playsCardEl, false);
+    setText(els.playsPerDayEl, formatNumber(perDay));
+  } catch (err) {
+    console.error("loadTrackStats error:", err);
   }
-
-  const { count: submittedCount } = await supabaseClient
-    .from("tracks")
-    .select("*", { count: "exact", head: true });
-
-  const { count: approvedCount } = await supabaseClient
-    .from("tracks")
-    .select("*", { count: "exact", head: true })
-    .eq("status", "approved");
-
-  submittedCardEl.classList.remove("hidden");
-  submittedCountEl.textContent = (submittedCount || 0).toLocaleString();
-
-  const { count: myApproved } = await supabaseClient
-    .from("tracks")
-    .select("*", { count: "exact", head: true })
-    .eq("user_id", user.id)
-    .eq("status", "approved");
-
-  if (!myApproved || myApproved === 0) {
-    playsCardEl.classList.add("hidden");
-    return;
-  }
-
-  playsCardEl.classList.remove("hidden");
-
-  const perDay = approvedCount && approvedCount > 0
-    ? Math.floor(1440 / approvedCount)
-    : 0;
-
-  playsPerDayEl.textContent = perDay.toLocaleString();
 }
 
 async function loadMyTotalPlays() {
-  const { data } = await supabaseClient.auth.getSession();
-  const user = data?.session?.user || null;
+  try {
+    const user = await getSessionUser();
 
-  if (!user) {
-    myPlaysCardEl.classList.add("hidden");
-    return;
+    if (!user) {
+      setHidden(els.myPlaysCardEl, true);
+      return;
+    }
+
+    const { data: myTracks, error } = await supabaseClient
+      .from("tracks")
+      .select("play_count")
+      .eq("user_id", user.id);
+
+    if (error || !myTracks || myTracks.length === 0) {
+      setHidden(els.myPlaysCardEl, true);
+      return;
+    }
+
+    const total = myTracks.reduce((sum, track) => sum + (track.play_count || 0), 0);
+
+    setHidden(els.myPlaysCardEl, false);
+    setText(els.myTotalPlaysEl, formatNumber(total));
+  } catch (err) {
+    console.error("loadMyTotalPlays error:", err);
   }
-
-  const { data: myTracks, error } = await supabaseClient
-    .from("tracks")
-    .select("play_count")
-    .eq("user_id", user.id);
-
-  if (error || !myTracks || myTracks.length === 0) {
-    myPlaysCardEl.classList.add("hidden");
-    return;
-  }
-
-  let total = 0;
-  myTracks.forEach(track => {
-    total += track.play_count || 0;
-  });
-
-  myPlaysCardEl.classList.remove("hidden");
-  myTotalPlaysEl.textContent = total.toLocaleString();
 }
 
 async function refreshAuthDependentUI() {
   await refreshAuthUI();
-  await loadTrackStats();
-  await loadMyTotalPlays();
-}
-
-showLoginBtn.onclick = () => {
-  closeHeaderPanels();
-};
-
-headerAvatarBtn.onclick = () => {
-  volumeControl.classList.remove("open");
-  accountMenu.classList.toggle("hidden");
-};
-
-accountProfileLink.onclick = () => {
-  accountMenu.classList.add("hidden");
-};
-
-accountNotificationsLink.onclick = () => {
-  accountMenu.classList.add("hidden");
-};
-
-desktopLogoutBtn.onclick = async () => {
-  await handleLogout();
-};
-
-volumeBtn.onclick = () => {
-  accountMenu.classList.add("hidden");
-  volumeControl.classList.toggle("open");
-};
-
-document.addEventListener("click", (e) => {
-  const insideHeaderRight = e.target.closest(".header-right");
-  const insideVolumeWrap = e.target.closest(".volume-wrap");
-  const isAvatarButton = e.target.closest("#headerAvatarBtn");
-
-  if (!insideHeaderRight && !isAvatarButton) {
-    accountMenu.classList.add("hidden");
-  }
-
-  if (!insideVolumeWrap) {
-    volumeControl.classList.remove("open");
-  }
-});
-
-document.addEventListener("keydown", (e) => {
-  if (e.key === "Escape") {
-    accountMenu.classList.add("hidden");
-    volumeControl.classList.remove("open");
-  }
-});
-
-async function handleLogout() {
-  logoutBtn.disabled = true;
-  desktopLogoutBtn.disabled = true;
-
-  try {
-    const { error } = await supabaseClient.auth.signOut();
-
-    if (error) {
-      console.error("Logout error:", error);
-      return;
-    }
-
-    listenerIdentity = null;
-    await refreshAuthDependentUI();
-  } catch (err) {
-    console.error("handleLogout error:", err);
-  } finally {
-    logoutBtn.disabled = false;
-    desktopLogoutBtn.disabled = false;
-  }
-}
-
-logoutBtn.onclick = handleLogout;
-
-supabaseClient.auth.onAuthStateChange(() => {
-  refreshAuthDependentUI().catch(err => console.error(err));
-});
-
-function getTrackPreviewStart(track) {
-  const value = Number(track?.preview_start_seconds);
-  return Number.isFinite(value) && value >= 0 ? value : 0;
-}
-
-function getTrackPreviewDuration(track) {
-  const value = Number(track?.preview_duration_seconds);
-  return Number.isFinite(value) && value > 0 ? value : 60;
+  await Promise.all([
+    loadTrackStats(),
+    loadMyTotalPlays()
+  ]);
 }
 
 async function loadTracksFromSupabase() {
@@ -414,11 +388,11 @@ async function loadTracksFromSupabase() {
 
   if (error) {
     console.error("loadTracksFromSupabase error:", error);
-    tracks = [];
+    state.tracks = [];
     return;
   }
 
-  tracks = (data || []).map(track => ({
+  state.tracks = (data || []).map(track => ({
     id: track.id,
     title: track.title,
     artist: track.artist,
@@ -430,52 +404,39 @@ async function loadTracksFromSupabase() {
   }));
 }
 
-function escapeHtml(str) {
-  return String(str || "")
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#039;");
-}
-
 function renderArtist(track) {
   if (track.user_id) {
-    artistWrapEl.innerHTML = `
+    els.artistWrapEl.innerHTML = `
       <a class="artist-link" href="artist.html?user_id=${encodeURIComponent(track.user_id)}">
         ${escapeHtml(track.artist)}
       </a>
     `;
-  } else {
-    artistWrapEl.innerHTML = `<span>${escapeHtml(track.artist)}</span>`;
+    return;
   }
-}
 
-function resetLike() {
-  liked = false;
-  likeBtn.innerHTML = `<span class="icon">♥</span>Like`;
-  likeBtn.classList.remove("liked");
+  els.artistWrapEl.innerHTML = `<span>${escapeHtml(track.artist)}</span>`;
 }
 
 function setTrackUI(track) {
-  titleEl.textContent = track.title || "Untitled";
+  setText(els.titleEl, track.title || "Untitled");
   renderArtist(track);
-  currentPreviewStart = getTrackPreviewStart(track);
-  currentPreviewDuration = getTrackPreviewDuration(track);
-  durationTimeEl.textContent = formatTime(currentPreviewDuration);
-  elapsedTimeEl.textContent = "0:00";
-  progressFill.style.width = "0%";
+
+  state.currentPreviewStart = getTrackPreviewStart(track);
+  state.currentPreviewDuration = getTrackPreviewDuration(track);
+
+  setText(els.durationTimeEl, formatTime(state.currentPreviewDuration));
+  setText(els.elapsedTimeEl, "0:00");
+  els.progressFill.style.width = "0%";
+
   resetLike();
 }
 
 function incrementPlayCount(track) {
-  if (!track || !track.id) return;
+  if (!track?.id) return;
 
   supabaseClient
     .from("tracks")
-    .update({
-      play_count: (track.play_count || 0) + 1
-    })
+    .update({ play_count: (track.play_count || 0) + 1 })
     .eq("id", track.id)
     .then(() => {
       track.play_count = (track.play_count || 0) + 1;
@@ -484,42 +445,51 @@ function incrementPlayCount(track) {
 }
 
 function chooseNextTrackIndex() {
-  if (!tracks.length) return -1;
+  if (!state.tracks.length) return -1;
 
   let next;
   do {
-    next = Math.floor(Math.random() * tracks.length);
-  } while (tracks.length > 1 && next === current);
+    next = Math.floor(Math.random() * state.tracks.length);
+  } while (state.tracks.length > 1 && next === state.current);
 
   return next;
 }
 
-function playTrackAt(index, previewOffset = 0, countPlay = true) {
-  if (index < 0 || !tracks[index]) return;
+function setEmptyRadioState() {
+  setText(els.titleEl, "No live tunes yet");
+  els.artistWrapEl.innerHTML = `<span>Check back soon</span>`;
+  els.progressFill.style.width = "0%";
+  setText(els.elapsedTimeEl, "0:00");
+  setText(els.durationTimeEl, "1:00");
+}
 
-  current = index;
-  const track = tracks[index];
+function playTrackAt(index, previewOffset = 0, countPlay = true) {
+  const track = state.tracks[index];
+  if (index < 0 || !track) return;
+
+  state.current = index;
+
   const previewStart = getTrackPreviewStart(track);
   const previewDuration = getTrackPreviewDuration(track);
   const safeOffset = Math.max(0, Math.min(previewOffset, Math.max(previewDuration - 0.25, 0)));
   const targetStartTime = previewStart + safeOffset;
 
   setTrackUI(track);
-  audio.src = track.file_url;
-  elapsedTimeEl.textContent = formatTime(safeOffset);
-  progressFill.style.width = `${previewDuration > 0 ? (safeOffset / previewDuration) * 100 : 0}%`;
+  els.audio.src = track.file_url;
+  setText(els.elapsedTimeEl, formatTime(safeOffset));
+  els.progressFill.style.width = `${previewDuration > 0 ? (safeOffset / previewDuration) * 100 : 0}%`;
 
-  audio.onloadedmetadata = () => {
-    const maxStart = Math.max(0, (audio.duration || targetStartTime) - 0.25);
+  els.audio.onloadedmetadata = () => {
+    const maxStart = Math.max(0, (els.audio.duration || targetStartTime) - 0.25);
     const clampedStart = Math.min(targetStartTime, maxStart);
 
     try {
-      audio.currentTime = clampedStart;
+      els.audio.currentTime = clampedStart;
     } catch (e) {
       console.error("set currentTime error:", e);
     }
 
-    const playPromise = audio.play();
+    const playPromise = els.audio.play();
     if (playPromise) {
       playPromise.catch(err => {
         console.log("audio play blocked:", err);
@@ -533,12 +503,8 @@ function playTrackAt(index, previewOffset = 0, countPlay = true) {
 }
 
 function nextTrack(previewOffset = 0, countPlay = true) {
-  if (!tracks.length) {
-    titleEl.textContent = "No live tunes yet";
-    artistWrapEl.innerHTML = `<span>Check back soon</span>`;
-    progressFill.style.width = "0%";
-    elapsedTimeEl.textContent = "0:00";
-    durationTimeEl.textContent = "1:00";
+  if (!state.tracks.length) {
+    setEmptyRadioState();
     return;
   }
 
@@ -546,15 +512,8 @@ function nextTrack(previewOffset = 0, countPlay = true) {
   playTrackAt(nextIndex, previewOffset, countPlay);
 }
 
-function formatTime(seconds) {
-  const mins = Math.floor(seconds / 60);
-  const secs = Math.floor(seconds % 60).toString().padStart(2, "0");
-  return `${mins}:${secs}`;
-}
-
 async function getListenerIdentity() {
-  const { data } = await supabaseClient.auth.getSession();
-  const user = data?.session?.user || null;
+  const user = await getSessionUser();
 
   if (user?.id) return user.id;
 
@@ -568,17 +527,17 @@ async function getListenerIdentity() {
 
 async function registerListener() {
   try {
-    if (!isLiveActivated) return;
+    if (!state.isLiveActivated) return;
 
-    if (!listenerIdentity) {
-      listenerIdentity = await getListenerIdentity();
+    if (!state.listenerIdentity) {
+      state.listenerIdentity = await getListenerIdentity();
     }
 
     const { error } = await supabaseClient
       .from("listeners")
       .upsert(
         [{
-          user_id: listenerIdentity,
+          user_id: state.listenerIdentity,
           last_seen: new Date().toISOString()
         }],
         { onConflict: "user_id" }
@@ -601,10 +560,13 @@ async function updateListeners() {
       .select("*", { count: "exact", head: true })
       .gt("last_seen", fiveMinutesAgo);
 
-    if (!error && count !== null) {
-      listenersCountEl.textContent = `${count.toLocaleString()} Listeners`;
-    } else if (error) {
+    if (error) {
       console.error("updateListeners error:", error);
+      return;
+    }
+
+    if (count !== null) {
+      setText(els.listenersCountEl, `${formatNumber(count)} Listeners`);
     }
   } catch (err) {
     console.error("updateListeners crash:", err);
@@ -614,146 +576,228 @@ async function updateListeners() {
 async function bootstrapLiveRadio() {
   await loadTracksFromSupabase();
 
-  if (!tracks.length) {
-    titleEl.textContent = "No live tunes yet";
-    artistWrapEl.innerHTML = `<span>Check back soon</span>`;
+  if (!state.tracks.length) {
+    setEmptyRadioState();
     await updateListeners();
     return;
   }
 
-  audio.volume = Number(volume.value);
-  audio.muted = true;
+  els.audio.volume = Number(els.volume.value);
+  els.audio.muted = true;
   updateVolumeButtonState();
 
   const nextIndex = chooseNextTrackIndex();
   if (nextIndex >= 0) {
-    const previewDuration = getTrackPreviewDuration(tracks[nextIndex]);
+    const previewDuration = getTrackPreviewDuration(state.tracks[nextIndex]);
     const randomLiveOffset = Math.floor(Math.random() * Math.max(previewDuration, 1));
     playTrackAt(nextIndex, randomLiveOffset, false);
   }
 
-  liveBooted = true;
+  state.liveBooted = true;
   await updateListeners();
 }
 
 async function ensureBackgroundPlayback() {
-  if (!liveBooted || !audio.src) return;
+  if (!state.liveBooted || !els.audio.src) return;
 
-  if (audio.paused) {
-    audio.muted = true;
+  if (els.audio.paused) {
+    els.audio.muted = true;
     updateVolumeButtonState();
-    audio.play().catch(() => {});
+    els.audio.play().catch(() => {});
   }
 }
 
-startBtn.onclick = async () => {
-  isLiveActivated = true;
-  listenerIdentity = null;
+async function handleStartRadio() {
+  state.isLiveActivated = true;
+  state.listenerIdentity = null;
 
   await registerListener();
   await updateListeners();
   await loadTrackStats();
   await loadMyTotalPlays();
 
-  radioShell.classList.remove("pre-live");
-  startOverlay.classList.add("hidden");
+  els.radioShell.classList.remove("pre-live");
+  setHidden(els.startOverlay, true);
   updateConceptVisibility();
 
-  if (!audio.src && tracks.length) {
+  if (!els.audio.src && state.tracks.length) {
     const nextIndex = chooseNextTrackIndex();
-    const previewDuration = nextIndex >= 0 ? getTrackPreviewDuration(tracks[nextIndex]) : 60;
+    const previewDuration = nextIndex >= 0 ? getTrackPreviewDuration(state.tracks[nextIndex]) : 60;
     const randomOffset = Math.floor(Math.random() * Math.max(previewDuration, 1));
     playTrackAt(nextIndex, randomOffset, false);
   }
 
-  if (Number(volume.value) > 0) {
-    audio.muted = false;
+  if (Number(els.volume.value) > 0) {
+    els.audio.muted = false;
   }
 
   updateVolumeButtonState();
 
-  audio.play().catch(err => {
+  els.audio.play().catch(err => {
     console.error("Start Radio play error:", err);
   });
-};
+}
 
-skipBtn.onclick = () => {
-  if (!currentUser) return;
+function handleSkip() {
+  if (!state.currentUser) return;
   nextTrack(0, true);
-};
+}
 
-likeBtn.onclick = () => {
-  if (!currentUser) return;
+function handleLike() {
+  if (!state.currentUser) return;
 
-  liked = !liked;
+  state.liked = !state.liked;
 
-  if (liked) {
-    likeBtn.innerHTML = `<span class="icon">♥</span>Liked`;
-    likeBtn.classList.add("liked");
-  } else {
-    likeBtn.innerHTML = `<span class="icon">♥</span>Like`;
-    likeBtn.classList.remove("liked");
+  if (state.liked) {
+    els.likeBtn.innerHTML = `<span class="icon">♥</span>Liked`;
+    els.likeBtn.classList.add("liked");
+    return;
   }
-};
 
-audio.addEventListener("timeupdate", () => {
-  const previewElapsed = Math.max(0, (audio.currentTime || 0) - currentPreviewStart);
-  const clampedElapsed = Math.min(previewElapsed, currentPreviewDuration);
+  els.likeBtn.innerHTML = `<span class="icon">♥</span>Like`;
+  els.likeBtn.classList.remove("liked");
+}
 
-  progressFill.style.width = `${currentPreviewDuration > 0 ? (clampedElapsed / currentPreviewDuration) * 100 : 0}%`;
-  elapsedTimeEl.textContent = formatTime(clampedElapsed);
+async function handleLogout() {
+  els.logoutBtn.disabled = true;
+  els.desktopLogoutBtn.disabled = true;
 
-  if (previewElapsed >= currentPreviewDuration) {
+  try {
+    const { error } = await supabaseClient.auth.signOut();
+
+    if (error) {
+      console.error("Logout error:", error);
+      return;
+    }
+
+    state.listenerIdentity = null;
+    await refreshAuthDependentUI();
+  } catch (err) {
+    console.error("handleLogout error:", err);
+  } finally {
+    els.logoutBtn.disabled = false;
+    els.desktopLogoutBtn.disabled = false;
+  }
+}
+
+function bindUIEvents() {
+  els.showLoginBtn.onclick = () => {
+    closeHeaderPanels();
+  };
+
+  els.headerAvatarBtn.onclick = () => {
+    els.volumeControl.classList.remove("open");
+    els.accountMenu.classList.toggle("hidden");
+  };
+
+  els.accountProfileLink.onclick = () => {
+    setHidden(els.accountMenu, true);
+  };
+
+  els.accountNotificationsLink.onclick = () => {
+    setHidden(els.accountMenu, true);
+  };
+
+  els.desktopLogoutBtn.onclick = handleLogout;
+  els.logoutBtn.onclick = handleLogout;
+
+  els.volumeBtn.onclick = () => {
+    setHidden(els.accountMenu, true);
+    els.volumeControl.classList.toggle("open");
+  };
+
+  els.startBtn.onclick = handleStartRadio;
+  els.skipBtn.onclick = handleSkip;
+  els.likeBtn.onclick = handleLike;
+
+  els.volume.addEventListener("input", (e) => {
+    const v = Number(e.target.value);
+    els.audio.volume = v;
+    els.audio.muted = v === 0 || !state.isLiveActivated;
+    updateVolumeButtonState();
+  });
+
+  document.addEventListener("click", (e) => {
+    const insideHeaderRight = e.target.closest(".header-right");
+    const insideVolumeWrap = e.target.closest(".volume-wrap");
+    const isAvatarButton = e.target.closest("#headerAvatarBtn");
+
+    if (!insideHeaderRight && !isAvatarButton) {
+      setHidden(els.accountMenu, true);
+    }
+
+    if (!insideVolumeWrap) {
+      els.volumeControl.classList.remove("open");
+    }
+  });
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") {
+      setHidden(els.accountMenu, true);
+      els.volumeControl.classList.remove("open");
+    }
+  });
+
+  document.addEventListener("visibilitychange", () => {
+    if (!document.hidden && state.isLiveActivated) {
+      registerListener().catch(() => {});
+    }
+    updateListeners().catch(() => {});
+    ensureBackgroundPlayback();
+  });
+
+  window.addEventListener("focus", () => {
+    if (state.isLiveActivated) {
+      registerListener().catch(() => {});
+    }
+    updateListeners().catch(() => {});
+    ensureBackgroundPlayback();
+  });
+
+  els.audio.addEventListener("timeupdate", () => {
+    const previewElapsed = Math.max(0, (els.audio.currentTime || 0) - state.currentPreviewStart);
+    const clampedElapsed = Math.min(previewElapsed, state.currentPreviewDuration);
+
+    els.progressFill.style.width = `${state.currentPreviewDuration > 0 ? (clampedElapsed / state.currentPreviewDuration) * 100 : 0}%`;
+    setText(els.elapsedTimeEl, formatTime(clampedElapsed));
+
+    if (previewElapsed >= state.currentPreviewDuration) {
+      nextTrack(0, true);
+    }
+  });
+
+  els.audio.addEventListener("ended", () => {
     nextTrack(0, true);
-  }
-});
+  });
 
-audio.addEventListener("ended", () => {
-  nextTrack(0, true);
-});
+  supabaseClient.auth.onAuthStateChange(() => {
+    refreshAuthDependentUI().catch(err => console.error(err));
+  });
+}
 
-volume.addEventListener("input", (e) => {
-  const v = Number(e.target.value);
-  audio.volume = v;
-  audio.muted = v === 0 || !isLiveActivated;
-  updateVolumeButtonState();
-});
+function bindIntervals() {
+  setInterval(() => {
+    if (state.isLiveActivated && !document.hidden) {
+      registerListener();
+    }
+  }, REFRESH_INTERVALS.listenerHeartbeat);
 
-document.addEventListener("visibilitychange", () => {
-  if (!document.hidden && isLiveActivated) {
-    registerListener().catch(() => {});
-  }
-  updateListeners().catch(() => {});
-  ensureBackgroundPlayback();
-});
+  setInterval(() => {
+    updateListeners();
+  }, REFRESH_INTERVALS.listenerCount);
 
-window.addEventListener("focus", () => {
-  if (isLiveActivated) {
-    registerListener().catch(() => {});
-  }
-  updateListeners().catch(() => {});
-  ensureBackgroundPlayback();
-});
-
-setInterval(() => {
-  if (isLiveActivated && !document.hidden) {
-    registerListener();
-  }
-}, 15000);
-
-setInterval(() => {
-  updateListeners();
-}, 10000);
-
-setInterval(async () => {
-  await loadTracksFromSupabase();
-  await ensureBackgroundPlayback();
-}, 30000);
+  setInterval(async () => {
+    await loadTracksFromSupabase();
+    await ensureBackgroundPlayback();
+  }, REFRESH_INTERVALS.tracksReload);
+}
 
 async function initPage() {
   setLoggedOutView();
   updateVolumeButtonState();
   updateConceptVisibility();
+  bindUIEvents();
+  bindIntervals();
   await refreshAuthDependentUI();
   await bootstrapLiveRadio();
 }
