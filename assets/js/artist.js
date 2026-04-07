@@ -152,20 +152,16 @@ function applyMenuState(user, profile, track) {
 
 function setLoggedOutHeader() {
   closeHeaderPanels();
-
   setHidden(els.header.showLoginBtn, false);
   setHidden(els.header.headerAvatarBtn, true);
   setHidden(els.header.headerAvatarImage, true);
   setHidden(els.header.headerAvatarFallback, true);
-
   els.header.headerAvatarImage.src = "";
   setHidden(els.header.accountProfileLink, true);
   els.header.accountProfileLink.href = "javascript:void(0)";
-
   state.currentUserId = null;
   state.currentProfileData = null;
   state.currentTrackData = null;
-
   applyMenuState(null, null, null);
 }
 
@@ -186,7 +182,7 @@ async function handleLogout() {
       return;
     }
 
-    await refreshWholePage();
+    window.location.href = "index.html";
   } catch (err) {
     console.error(err);
     setArtistStatus("Logout failed. Try again.", true);
@@ -202,7 +198,7 @@ async function loadCurrentUserState() {
 
   if (!user) {
     setLoggedOutHeader();
-    return;
+    return null;
   }
 
   state.currentUserId = user.id;
@@ -229,6 +225,37 @@ async function loadCurrentUserState() {
   setLoggedInHeader();
   setHeaderAvatar(state.currentProfileData?.photo_url || "", state.currentProfileData?.artist_name || "A");
   applyMenuState(user, state.currentProfileData, state.currentTrackData);
+
+  return user;
+}
+
+async function fetchArtistProfile(userId) {
+  const { data, error } = await supabaseClient
+    .from("profiles")
+    .select("user_id, artist_name, photo_url, bio, social_link, nationality, created_at, date_of_birth")
+    .eq("user_id", userId)
+    .maybeSingle();
+
+  if (error) {
+    throw new Error("Could not load artist profile: " + error.message);
+  }
+
+  return data || null;
+}
+
+async function fetchApprovedTracks(userId) {
+  const { data, error } = await supabaseClient
+    .from("tracks")
+    .select("id, title, artist, file_url, created_at, status, user_id, preview_start_seconds, preview_duration_seconds, genre_primary, genre_secondary, feeling_tags")
+    .eq("user_id", userId)
+    .eq("status", "approved")
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    throw new Error("Could not load approved track: " + error.message);
+  }
+
+  return data || [];
 }
 
 function formatDate(dateString) {
@@ -432,7 +459,7 @@ function renderArtistProfile(profile, isOwnPage, hasOwnTrack) {
 
   if (isOwnPage && state.currentProfileData) {
     setHidden(els.page.submitTrackBtn, false);
-    setText(els.page.submitTrackBtn, hasOwnTrack ? "Edit Your Track" : "Submit Your Track");
+    setText(els.page.submitTrackBtn, state.currentTrackData ? "Edit Your Track" : "Submit Your Track");
     els.page.submitTrackBtn.href = "submit-track.html";
   } else {
     setHidden(els.page.submitTrackBtn, true);
@@ -536,10 +563,18 @@ function buildTrackCard(track) {
   return card;
 }
 
-async function loadViewedArtistPage() {
-  state.viewedArtistUserId = getArtistUserIdFromUrl();
+function resetArtistPageShell() {
+  setArtistStatus("");
+  setHidden(els.page.tracksWrap, true);
+  setHidden(els.page.noTracksBox, true);
+  els.page.tracksWrap.innerHTML = "";
+  setText(els.page.submissionTitle, "Track");
+}
 
-  if (!state.viewedArtistUserId) {
+async function loadViewedArtistPage(userId) {
+  state.viewedArtistUserId = userId;
+
+  if (!userId) {
     setText(els.page.artistName, "Artist not found");
     setText(els.page.submissionTitle, "Track");
     setHidden(els.page.noTracksBox, true);
@@ -548,49 +583,37 @@ async function loadViewedArtistPage() {
     return;
   }
 
-  setArtistStatus("");
-  setHidden(els.page.tracksWrap, true);
-  setHidden(els.page.noTracksBox, true);
-  els.page.tracksWrap.innerHTML = "";
+  resetArtistPageShell();
 
-  const { data: profile, error: profileError } = await supabaseClient
-    .from("profiles")
-    .select("user_id, artist_name, photo_url, bio, social_link, nationality, created_at, date_of_birth")
-    .eq("user_id", state.viewedArtistUserId)
-    .maybeSingle();
-
-  if (profileError) {
+  let profile;
+  try {
+    profile = await fetchArtistProfile(userId);
+  } catch (err) {
     setText(els.page.artistName, "Artist not found");
-    setText(els.page.submissionTitle, "Track");
-    setArtistStatus("Could not load artist profile: " + profileError.message, true);
+    setArtistStatus(err.message || "Could not load artist profile.", true);
     return;
   }
 
   if (!profile) {
     setText(els.page.artistName, "Artist not found");
-    setText(els.page.submissionTitle, "Track");
     setArtistStatus("This artist profile does not exist.", true);
     return;
   }
 
-  const isOwnPage = Boolean(state.currentUserId && state.currentUserId === state.viewedArtistUserId);
+  const isOwnPage = Boolean(state.currentUserId && state.currentUserId === userId);
   const hasOwnTrack = Boolean(state.currentTrackData);
 
   renderArtistProfile(profile, isOwnPage, hasOwnTrack);
 
-  const { data: approvedTracks, error: tracksError } = await supabaseClient
-    .from("tracks")
-    .select("id, title, artist, file_url, created_at, status, user_id, preview_start_seconds, preview_duration_seconds, genre_primary, genre_secondary, feeling_tags")
-    .eq("user_id", state.viewedArtistUserId)
-    .eq("status", "approved")
-    .order("created_at", { ascending: false });
-
-  if (tracksError) {
-    setArtistStatus("Could not load approved track: " + tracksError.message, true);
+  let approvedTracks;
+  try {
+    approvedTracks = await fetchApprovedTracks(userId);
+  } catch (err) {
+    setArtistStatus(err.message || "Could not load approved track.", true);
     return;
   }
 
-  if (!approvedTracks || approvedTracks.length === 0) {
+  if (!approvedTracks.length) {
     setHidden(els.page.noTracksBox, false);
     setHidden(els.page.tracksWrap, true);
     return;
@@ -606,8 +629,26 @@ async function loadViewedArtistPage() {
 }
 
 async function refreshWholePage() {
-  await loadCurrentUserState();
-  await loadViewedArtistPage();
+  resetArtistPageShell();
+
+  const userPromise = loadCurrentUserState();
+  const urlUserId = getArtistUserIdFromUrl();
+
+  if (urlUserId) {
+    await userPromise;
+    await loadViewedArtistPage(urlUserId);
+    return;
+  }
+
+  const user = await userPromise;
+
+  if (user && state.currentProfileData?.user_id) {
+    await loadViewedArtistPage(state.currentProfileData.user_id);
+    return;
+  }
+
+  setText(els.page.artistName, "Artist not found");
+  setArtistStatus("No artist user_id was provided in the URL.", true);
 }
 
 function bindEvents() {
@@ -654,7 +695,6 @@ function bindEvents() {
 }
 
 async function initPage() {
-  setArtistStatus("");
   bindEvents();
   await refreshWholePage();
 }
