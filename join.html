@@ -9,99 +9,98 @@
   <link rel="stylesheet" href="assets/css/join.css" />
 </head>
 <body>
-  <div id="sideMenuOverlay" class="side-menu-overlay"></div>
+  <aside class="desktop-side-nav" aria-label="Desktop navigation">
+    <div class="desktop-side-nav-panel">
+      <nav class="desktop-side-links">
+        <a class="desktop-nav-link" href="index.html" aria-label="Radio">
+          <span class="desktop-nav-icon" aria-hidden="true">
+            <span class="nav-icon-mask" style="--icon-url: url('/icons/radio.png');"></span>
+          </span>
+          <span class="desktop-nav-label">Radio</span>
+        </a>
 
-  <aside id="sideMenu" class="side-menu" aria-hidden="true">
-    <div class="side-menu-top">
-      <div class="side-menu-brand">
-        <div class="side-menu-kicker">Navigation</div>
-        <div class="side-menu-title">60 Seconds FM</div>
+        <a id="desktopProfileLink" class="desktop-nav-link active hidden" href="join.html" aria-label="Profile">
+          <span class="desktop-nav-icon" aria-hidden="true">
+            <span class="nav-icon-mask" style="--icon-url: url('/icons/profile.png');"></span>
+          </span>
+          <span class="desktop-nav-label">Profile</span>
+        </a>
+
+        <a id="desktopNotificationsLink" class="desktop-nav-link hidden" href="notifications.html" aria-label="Notifications">
+          <span class="desktop-nav-icon" aria-hidden="true">
+            <span class="nav-icon-mask" style="--icon-url: url('/icons/notifications.png');"></span>
+          </span>
+          <span class="desktop-nav-label">Notifications</span>
+        </a>
+
+        <a id="desktopTrackLink" class="desktop-nav-link hidden" href="submit-track.html" aria-label="Tune">
+          <span class="desktop-nav-icon" aria-hidden="true">
+            <span class="nav-icon-mask" style="--icon-url: url('/icons/track.png');"></span>
+          </span>
+          <span class="desktop-nav-label">Tune</span>
+        </a>
+      </nav>
+
+      <div class="desktop-side-bottom">
+        <a id="desktopLoginLink" class="desktop-nav-link" href="login.html" aria-label="Login">
+          <span class="desktop-nav-icon" aria-hidden="true">
+            <span class="nav-icon-mask" style="--icon-url: url('/icons/login.png');"></span>
+          </span>
+          <span class="desktop-nav-label">Login</span>
+        </a>
+
+        <button id="desktopLogoutBtn" class="desktop-nav-button hidden" type="button" aria-label="Logout">
+          <span class="desktop-nav-icon" aria-hidden="true">
+            <span class="nav-icon-mask" style="--icon-url: url('/icons/logout.png');"></span>
+          </span>
+          <span class="desktop-nav-label">Logout</span>
+        </button>
       </div>
-      <button id="closeMenuBtn" class="side-menu-close" type="button" aria-label="Close menu">×</button>
     </div>
-
-    <nav class="side-menu-links">
-      <a class="menu-link" href="index.html">
-        <span class="menu-link-icon" aria-hidden="true">
-          <svg viewBox="0 0 24 24" fill="none">
-            <path d="M12 3V8" stroke="#111" stroke-width="2.2" stroke-linecap="round"/>
-            <path d="M8 21H16" stroke="#111" stroke-width="2.2" stroke-linecap="round"/>
-            <path d="M9.5 21V15.5" stroke="#111" stroke-width="2.2" stroke-linecap="round"/>
-            <path d="M14.5 21V15.5" stroke="#111" stroke-width="2.2" stroke-linecap="round"/>
-            <path d="M7.5 10.5H16.5V15.5H7.5Z" stroke="#111" stroke-width="2.2" stroke-linejoin="round"/>
-            <path d="M5 12C5 8.8 8 6.5 12 6.5C16 6.5 19 8.8 19 12" stroke="#111" stroke-width="2.2" stroke-linecap="round"/>
-            <path d="M3.5 9.5C5.8 6.5 8.6 5 12 5C15.4 5 18.2 6.5 20.5 9.5" stroke="#111" stroke-width="2.2" stroke-linecap="round"/>
-          </svg>
-        </span>
-        <span>Listen To Radio</span>
-      </a>
-
-      <a id="menuArtistPageLink" class="menu-link hidden" href="#">
-        <span class="menu-link-icon">★</span>
-        <span>My Artist Page</span>
-      </a>
-
-      <a id="menuCreateProfileLink" class="menu-link hidden" href="join.html">
-        <span class="menu-link-icon">＋</span>
-        <span>Create Artist Profile</span>
-      </a>
-
-      <a id="menuEditProfileLink" class="menu-link hidden" href="edit-profile.html">
-        <span class="menu-link-icon">✎</span>
-        <span>Edit Profile</span>
-      </a>
-
-      <a id="menuSubmitTrackLink" class="menu-link hidden" href="submit-track.html">
-        <span class="menu-link-icon">♫</span>
-        <span id="menuSubmitTrackLabel">Submit Your Track</span>
-      </a>
-
-      <div class="side-menu-divider"></div>
-
-      <button id="menuLoginBtn" class="menu-action-btn" type="button">
-        <span class="menu-link-icon">↳</span>
-        <span>Log in</span>
-      </button>
-
-      <button id="menuSignupBtn" class="menu-action-btn" type="button">
-        <span class="menu-link-icon">✦</span>
-        <span>Sign up</span>
-      </button>
-
-      <div id="menuAuthPanel" class="menu-auth-panel hidden">
-        <div id="menuAuthTitle" class="menu-auth-title">Log in</div>
-
-        <div class="menu-auth-inputs">
-          <input id="menuEmail" type="email" placeholder="Email" autocomplete="email" />
-          <input id="menuPassword" type="password" placeholder="Password" autocomplete="current-password" />
-        </div>
-
-        <div class="menu-auth-actions">
-          <button id="menuSignupSubmitBtn" class="metal-btn" type="button"><span class="icon">✦</span>Sign up</button>
-          <button id="menuLoginSubmitBtn" class="metal-btn" type="button"><span class="icon">↳</span>Log in</button>
-        </div>
-
-        <div id="menuAuthMessage" class="menu-auth-message"></div>
-      </div>
-
-      <button id="menuLogoutBtn" class="menu-action-btn hidden" type="button">
-        <span class="menu-link-icon">⎋</span>
-        <span>Log out</span>
-      </button>
-    </nav>
   </aside>
+
+  <div class="mobile-bottom-nav-wrap">
+    <nav class="mobile-bottom-nav" aria-label="Mobile navigation">
+      <a class="mobile-nav-link" href="index.html" aria-label="Radio">
+        <span class="mobile-nav-icon" aria-hidden="true">
+          <span class="nav-icon-mask" style="--icon-url: url('/icons/radio.png');"></span>
+        </span>
+        <span class="mobile-nav-label">Radio</span>
+      </a>
+
+      <a id="mobileProfileLink" class="mobile-nav-link active hidden" href="join.html" aria-label="Profile">
+        <span class="mobile-nav-icon" aria-hidden="true">
+          <span class="nav-icon-mask" style="--icon-url: url('/icons/profile.png');"></span>
+        </span>
+        <span class="mobile-nav-label">Profile</span>
+      </a>
+
+      <a id="mobileNotificationsLink" class="mobile-nav-link hidden" href="notifications.html" aria-label="Notifications">
+        <span class="mobile-nav-icon" aria-hidden="true">
+          <span class="nav-icon-mask" style="--icon-url: url('/icons/notifications.png');"></span>
+        </span>
+        <span class="mobile-nav-label">Notifications</span>
+      </a>
+
+      <a id="mobileTrackLink" class="mobile-nav-link hidden" href="submit-track.html" aria-label="Tune">
+        <span class="mobile-nav-icon" aria-hidden="true">
+          <span class="nav-icon-mask" style="--icon-url: url('/icons/track.png');"></span>
+        </span>
+        <span class="mobile-nav-label">Tune</span>
+      </a>
+
+      <a id="mobileLoginLink" class="mobile-nav-link" href="login.html" aria-label="Login">
+        <span class="mobile-nav-icon" aria-hidden="true">
+          <span class="nav-icon-mask" style="--icon-url: url('/icons/login.png');"></span>
+        </span>
+        <span class="mobile-nav-label">Login</span>
+      </a>
+    </nav>
+  </div>
 
   <div class="header-wrap">
     <header class="header-bar">
-      <div class="header-left">
-        <button id="menuBtn" class="header-icon-btn" type="button" aria-label="Open menu" aria-expanded="false">
-          <span class="menu-icon" aria-hidden="true">
-            <span></span>
-            <span></span>
-            <span></span>
-          </span>
-        </button>
-      </div>
+      <div class="header-left"></div>
 
       <div class="header-center">
         <a href="/" class="header-logo-link" aria-label="60 Seconds FM home">
@@ -136,7 +135,11 @@
         </div>
 
         <div id="accountMenu" class="account-menu hidden">
-          <button id="logout" class="metal-btn" type="button"><span class="icon">⎋</span>Log out</button>
+          <div class="account-menu-actions">
+            <a id="accountProfileLink" class="metal-btn account-menu-link hidden" href="javascript:void(0)">Profile</a>
+            <a id="accountNotificationsLink" class="metal-btn account-menu-link" href="notifications.html">Notifications</a>
+            <button id="logout" class="metal-btn" type="button"><span class="icon">⎋</span>Logout</button>
+          </div>
         </div>
       </div>
     </header>
