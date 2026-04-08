@@ -12,6 +12,9 @@ const els = {
   accountProfileLink: document.getElementById("accountProfileLink"),
   accountNotificationsLink: document.getElementById("accountNotificationsLink"),
 
+  currencyBadge: document.getElementById("currencyBadge"),
+  currencyValue: document.getElementById("currencyValue"),
+
   desktopLoginLink: document.getElementById("desktopLoginLink"),
   desktopLogoutBtn: document.getElementById("desktopLogoutBtn"),
   desktopProfileLink: document.getElementById("desktopProfileLink"),
@@ -114,6 +117,14 @@ function getTrackPreviewDuration(track) {
 function updateJoinButtonHref() {
   if (!els.joinBtn) return;
   els.joinBtn.href = "login.html";
+}
+
+function setCurrency(value = 0) {
+  setText(els.currencyValue, formatNumber(value));
+}
+
+function updateCurrencyVisibility(user) {
+  setHidden(els.currencyBadge, !user);
 }
 
 function updateConceptVisibility() {
@@ -235,6 +246,8 @@ function setLoggedOutView() {
   applyMenuState(null, null, null);
   hideUserStats();
   updateInteractiveControls();
+  updateCurrencyVisibility(null);
+  setCurrency(0);
   updateJoinButtonHref();
 }
 
@@ -242,6 +255,7 @@ function setLoggedInView() {
   setHidden(els.submitTrackBtn, true);
   setHidden(els.showLoginBtn, true);
   setHidden(els.headerAvatarBtn, false);
+  updateCurrencyVisibility(state.currentUser || true);
 }
 
 async function getSessionUser() {
@@ -260,11 +274,13 @@ async function loadMyProfile(userId) {
   if (error || !data) {
     state.currentProfileData = null;
     setHeaderAvatar("", "•");
+    setCurrency(0);
     return null;
   }
 
   state.currentProfileData = data;
   setHeaderAvatar(data.photo_url, data.artist_name);
+  setCurrency(0);
   return data;
 }
 
@@ -296,6 +312,7 @@ async function refreshAuthUI() {
       return null;
     }
 
+    updateCurrencyVisibility(user);
     setLoggedInView();
 
     const [profile, tune] = await Promise.all([
