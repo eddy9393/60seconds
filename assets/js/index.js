@@ -58,7 +58,8 @@ const els = {
   myTotalPlaysEl: document.getElementById("myTotalPlays"),
 
   earnSecondsWrap: document.getElementById("earnSecondsWrap"),
-  earnSecondsProgress: document.getElementById("earnSecondsProgress")
+  earnSecondsProgress: document.getElementById("earnSecondsProgress"),
+  earnSecondsCopy: document.getElementById("earnSecondsCopy")
 };
 
 const state = {
@@ -206,15 +207,18 @@ function resetLike() {
   els.likeBtn.classList.remove("liked");
 }
 
-function resetEarnSecondsProgress() {
+function updateEarnSecondsProgress() {
   if (!els.earnSecondsProgress) return;
-  els.earnSecondsProgress.style.width = "0%";
-}
 
-function updateEarnSecondsProgress(progress) {
-  if (!els.earnSecondsProgress) return;
-  const safeProgress = Math.max(0, Math.min(progress, 100));
-  els.earnSecondsProgress.style.width = `${safeProgress}%`;
+  const safeCurrent = Math.max(0, Number(state.dailySecondsEarned) || 0);
+  const safeLimit = Math.max(1, Number(DAILY_SECONDS_LIMIT) || 1);
+  const percentage = Math.min((safeCurrent / safeLimit) * 100, 100);
+
+  els.earnSecondsProgress.style.width = `${percentage}%`;
+
+  if (els.earnSecondsCopy) {
+    els.earnSecondsCopy.textContent = `Earn Seconds by listening the entire tune · ${safeCurrent}/${safeLimit} today`;
+  }
 }
 
 function updateEarnSecondsVisibility() {
@@ -225,8 +229,6 @@ function updateEarnSecondsVisibility() {
 function updateSkipButtonState() {
   const isLoggedIn = Boolean(state.currentUser);
   const hasCoins = state.currentCoins >= SKIP_COST;
-
-  els.skipBtn.innerHTML = `<span class="icon">⏭</span>Skip · ${SKIP_COST} Second`;
   els.skipBtn.disabled = !isLoggedIn || !hasCoins;
 }
 
@@ -238,10 +240,10 @@ function updateInteractiveControls() {
   updateConceptVisibility();
   updateEarnSecondsVisibility();
   updateSkipButtonState();
+  updateEarnSecondsProgress();
 
   if (!isLoggedIn) {
     resetLike();
-    resetEarnSecondsProgress();
   }
 }
 
@@ -318,7 +320,6 @@ function setLoggedOutView() {
   updateInteractiveControls();
   updateCurrencyVisibility(null);
   setCurrency(0);
-  resetEarnSecondsProgress();
   updateJoinButtonHref();
 }
 
@@ -372,6 +373,7 @@ async function loadMyProfile(userId) {
     setHeaderAvatar("", "•");
     setCurrency(0);
     updateSkipButtonState();
+    updateEarnSecondsProgress();
     return null;
   }
 
@@ -382,6 +384,7 @@ async function loadMyProfile(userId) {
   setHeaderAvatar(data.photo_url, data.artist_name);
   setCurrency(state.currentCoins);
   updateSkipButtonState();
+  updateEarnSecondsProgress();
 
   return data;
 }
@@ -411,6 +414,7 @@ async function refreshCoins() {
     state.dailySecondsEarnedDate = null;
     setCurrency(0);
     updateSkipButtonState();
+    updateEarnSecondsProgress();
     return 0;
   }
 
@@ -427,6 +431,7 @@ async function refreshCoins() {
     state.dailySecondsEarnedDate = getTodayDateKey();
     setCurrency(0);
     updateSkipButtonState();
+    updateEarnSecondsProgress();
     return 0;
   }
 
@@ -434,6 +439,7 @@ async function refreshCoins() {
   normalizeDailySecondsState(data);
   setCurrency(state.currentCoins);
   updateSkipButtonState();
+  updateEarnSecondsProgress();
   return state.currentCoins;
 }
 
@@ -453,6 +459,7 @@ async function awardListeningSecond() {
 
   if (state.dailySecondsEarned >= DAILY_SECONDS_LIMIT) {
     state.rewardGrantedForTrackId = currentTrack.id;
+    updateEarnSecondsProgress();
     return false;
   }
 
@@ -467,7 +474,7 @@ async function awardListeningSecond() {
 
   setCurrency(state.currentCoins);
   updateSkipButtonState();
-  updateEarnSecondsProgress(100);
+  updateEarnSecondsProgress();
 
   const success = await persistProfileEconomyState();
 
@@ -478,6 +485,7 @@ async function awardListeningSecond() {
     state.rewardGrantedForTrackId = null;
     setCurrency(state.currentCoins);
     updateSkipButtonState();
+    updateEarnSecondsProgress();
     return false;
   }
 
@@ -639,9 +647,9 @@ function setTrackUI(track) {
   setText(els.durationTimeEl, formatTime(state.currentPreviewDuration));
   setText(els.elapsedTimeEl, "0:00");
   els.progressFill.style.width = "0%";
-  resetEarnSecondsProgress();
 
   resetLike();
+  updateEarnSecondsProgress();
 }
 
 function incrementPlayCount(track) {
@@ -674,7 +682,7 @@ function setEmptyRadioState() {
   els.progressFill.style.width = "0%";
   setText(els.elapsedTimeEl, "0:00");
   setText(els.durationTimeEl, "1:00");
-  resetEarnSecondsProgress();
+  updateEarnSecondsProgress();
 }
 
 function playTrackAt(index, previewOffset = 0, countPlay = true) {
@@ -692,7 +700,6 @@ function playTrackAt(index, previewOffset = 0, countPlay = true) {
   els.audio.src = track.file_url;
   setText(els.elapsedTimeEl, formatTime(safeOffset));
   els.progressFill.style.width = `${previewDuration > 0 ? (safeOffset / previewDuration) * 100 : 0}%`;
-  updateEarnSecondsProgress(previewDuration > 0 ? (safeOffset / previewDuration) * 100 : 0);
 
   els.audio.onloadedmetadata = () => {
     const maxStart = Math.max(0, (els.audio.duration || targetStartTime) - 0.25);
@@ -1010,7 +1017,6 @@ function bindUIEvents() {
 
     els.progressFill.style.width = `${state.currentPreviewDuration > 0 ? (clampedElapsed / state.currentPreviewDuration) * 100 : 0}%`;
     setText(els.elapsedTimeEl, formatTime(clampedElapsed));
-    updateEarnSecondsProgress(state.currentPreviewDuration > 0 ? (clampedElapsed / state.currentPreviewDuration) * 100 : 0);
 
     if (previewElapsed >= state.currentPreviewDuration) {
       advanceAfterTrackCompletion().catch(err => {
