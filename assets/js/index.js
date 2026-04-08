@@ -77,7 +77,6 @@ const state = {
   currentCoins: 0,
   dailySecondsEarned: 0,
   dailySecondsEarnedDate: null,
-  rewardGrantedForTrackId: null,
   trackAdvanceLock: false
 };
 
@@ -316,7 +315,6 @@ function setLoggedOutView() {
   state.dailySecondsEarned = 0;
   state.dailySecondsEarnedDate = null;
   state.listenerIdentity = null;
-  state.rewardGrantedForTrackId = null;
   state.trackAdvanceLock = false;
 
   applyMenuState(null, null, null);
@@ -420,12 +418,10 @@ async function refreshCoins() {
   return state.currentCoins;
 }
 
-async function awardListeningSecond(trackId) {
-  if (!state.currentUser || !trackId) return false;
+async function awardListeningSecond() {
+  if (!state.currentUser) return false;
 
-  const { data, error } = await supabaseClient.rpc("award_listening_second", {
-    p_track_id: String(trackId)
-  });
+  const { data, error } = await supabaseClient.rpc("award_listening_second");
 
   if (error || !data) {
     console.error("awardListeningSecond error:", error);
@@ -447,7 +443,6 @@ async function awardListeningSecond(trackId) {
   state.currentCoins = Number(data.coins) || 0;
   state.dailySecondsEarned = Number(data.daily_seconds_earned) || 0;
   state.dailySecondsEarnedDate = getTodayDateKey();
-  state.rewardGrantedForTrackId = String(trackId);
 
   setCurrency(state.currentCoins);
   updateEarnSecondsProgress();
@@ -604,7 +599,6 @@ function setTrackUI(track) {
 
   state.currentPreviewStart = getTrackPreviewStart(track);
   state.currentPreviewDuration = getTrackPreviewDuration(track);
-  state.rewardGrantedForTrackId = null;
 
   setText(els.durationTimeEl, formatTime(state.currentPreviewDuration));
   setText(els.elapsedTimeEl, "0:00");
@@ -827,10 +821,7 @@ async function advanceAfterTrackCompletion() {
   state.trackAdvanceLock = true;
 
   try {
-    const currentTrack = state.tracks[state.current];
-    if (currentTrack?.id) {
-      await awardListeningSecond(currentTrack.id);
-    }
+    await awardListeningSecond();
     nextTrack(0, true);
   } finally {
     state.trackAdvanceLock = false;
