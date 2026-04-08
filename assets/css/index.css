@@ -565,37 +565,26 @@ img {
   font-size: 15px;
 }
 
-.skip-cost-wrap {
+.skip-button-content {
   display: inline-flex;
   align-items: center;
   gap: 8px;
   white-space: nowrap;
 }
 
-.skip-cost-inline {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  margin-left: 2px;
-}
-
-.skip-cost-minus {
-  color: #6a560c;
-  font-weight: 700;
-  line-height: 1;
-}
-
-.skip-cost-coin {
-  width: 16px;
-  height: 16px;
+.skip-coin-icon {
+  width: 24px;
+  height: 24px;
   object-fit: contain;
   display: block;
   flex: 0 0 auto;
 }
 
-.skip-cost-value {
-  line-height: 1;
+.skip-cost {
+  color: #6a560c;
   font-weight: 700;
+  line-height: 1;
+  font-family: 'Space Grotesk', sans-serif;
 }
 
 .liked {
@@ -1407,8 +1396,8 @@ img {
     font-size: 10px;
   }
 
-  .skip-cost-coin {
-    width: 14px;
-    height: 14px;
+  .skip-coin-icon {
+    width: 21px;
+    height: 21px;
   }
 }
