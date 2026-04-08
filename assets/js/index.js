@@ -280,7 +280,10 @@ async function loadMyProfile(userId) {
 
   state.currentProfileData = data;
   setHeaderAvatar(data.photo_url, data.artist_name);
+
+  // Later kun je hier een echte coinwaarde uit Supabase zetten.
   setCurrency(0);
+
   return data;
 }
 
