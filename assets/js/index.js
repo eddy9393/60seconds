@@ -160,7 +160,9 @@ function updateJoinButtonHref() {
 }
 
 function setCurrency(value = 0) {
-  setText(els.currencyValue, formatNumber(value));
+  state.currentCoins = Number(value) || 0;
+  setText(els.currencyValue, formatNumber(state.currentCoins));
+  updateSkipButtonState();
 }
 
 function updateCurrencyVisibility(user) {
@@ -229,7 +231,9 @@ function updateEarnSecondsVisibility() {
 function updateSkipButtonState() {
   const isLoggedIn = Boolean(state.currentUser);
   const hasCoins = state.currentCoins >= SKIP_COST;
-  els.skipBtn.disabled = !isLoggedIn || !hasCoins;
+  if (els.skipBtn) {
+    els.skipBtn.disabled = !isLoggedIn || !hasCoins;
+  }
 }
 
 function updateInteractiveControls() {
@@ -336,28 +340,6 @@ async function getSessionUser() {
   return data?.session?.user || null;
 }
 
-async function persistProfileEconomyState() {
-  if (!state.currentUser) return false;
-
-  const payload = {
-    coins: Math.max(0, Number(state.currentCoins) || 0),
-    daily_seconds_earned: Math.max(0, Number(state.dailySecondsEarned) || 0),
-    daily_seconds_earned_date: state.dailySecondsEarnedDate || getTodayDateKey()
-  };
-
-  const { error } = await supabaseClient
-    .from("profiles")
-    .update(payload)
-    .eq("user_id", state.currentUser.id);
-
-  if (error) {
-    console.error("persistProfileEconomyState error:", error);
-    return false;
-  }
-
-  return true;
-}
-
 async function loadMyProfile(userId) {
   const { data, error } = await supabaseClient
     .from("profiles")
@@ -372,7 +354,6 @@ async function loadMyProfile(userId) {
     state.dailySecondsEarnedDate = getTodayDateKey();
     setHeaderAvatar("", "•");
     setCurrency(0);
-    updateSkipButtonState();
     updateEarnSecondsProgress();
     return null;
   }
@@ -383,7 +364,6 @@ async function loadMyProfile(userId) {
 
   setHeaderAvatar(data.photo_url, data.artist_name);
   setCurrency(state.currentCoins);
-  updateSkipButtonState();
   updateEarnSecondsProgress();
 
   return data;
@@ -413,7 +393,6 @@ async function refreshCoins() {
     state.dailySecondsEarned = 0;
     state.dailySecondsEarnedDate = null;
     setCurrency(0);
-    updateSkipButtonState();
     updateEarnSecondsProgress();
     return 0;
   }
@@ -430,7 +409,6 @@ async function refreshCoins() {
     state.dailySecondsEarned = 0;
     state.dailySecondsEarnedDate = getTodayDateKey();
     setCurrency(0);
-    updateSkipButtonState();
     updateEarnSecondsProgress();
     return 0;
   }
@@ -438,57 +416,41 @@ async function refreshCoins() {
   state.currentCoins = getProfileCoins(data);
   normalizeDailySecondsState(data);
   setCurrency(state.currentCoins);
-  updateSkipButtonState();
   updateEarnSecondsProgress();
   return state.currentCoins;
 }
 
-async function awardListeningSecond() {
-  if (!state.currentUser) return false;
+async function awardListeningSecond(trackId) {
+  if (!state.currentUser || !trackId) return false;
 
-  const currentTrack = state.tracks[state.current];
-  if (!currentTrack?.id) return false;
-  if (state.rewardGrantedForTrackId === currentTrack.id) return false;
+  const { data, error } = await supabaseClient.rpc("award_listening_second", {
+    p_track_id: trackId
+  });
 
-  const today = getTodayDateKey();
-
-  if (state.dailySecondsEarnedDate !== today) {
-    state.dailySecondsEarnedDate = today;
-    state.dailySecondsEarned = 0;
-  }
-
-  if (state.dailySecondsEarned >= DAILY_SECONDS_LIMIT) {
-    state.rewardGrantedForTrackId = currentTrack.id;
-    updateEarnSecondsProgress();
+  if (error || !data) {
+    console.error("awardListeningSecond error:", error);
     return false;
   }
 
-  const previousCoins = state.currentCoins;
-  const previousDailyEarned = state.dailySecondsEarned;
-  const previousDailyDate = state.dailySecondsEarnedDate;
+  if (!data.success) {
+    if (typeof data.coins !== "undefined") {
+      setCurrency(data.coins);
+    }
+    if (typeof data.daily_seconds_earned !== "undefined") {
+      state.dailySecondsEarned = Number(data.daily_seconds_earned) || 0;
+      state.dailySecondsEarnedDate = getTodayDateKey();
+      updateEarnSecondsProgress();
+    }
+    return false;
+  }
 
-  state.currentCoins += 1;
-  state.dailySecondsEarned += 1;
-  state.dailySecondsEarnedDate = today;
-  state.rewardGrantedForTrackId = currentTrack.id;
+  state.currentCoins = Number(data.coins) || 0;
+  state.dailySecondsEarned = Number(data.daily_seconds_earned) || 0;
+  state.dailySecondsEarnedDate = getTodayDateKey();
+  state.rewardGrantedForTrackId = trackId;
 
   setCurrency(state.currentCoins);
-  updateSkipButtonState();
   updateEarnSecondsProgress();
-
-  const success = await persistProfileEconomyState();
-
-  if (!success) {
-    state.currentCoins = previousCoins;
-    state.dailySecondsEarned = previousDailyEarned;
-    state.dailySecondsEarnedDate = previousDailyDate;
-    state.rewardGrantedForTrackId = null;
-    setCurrency(state.currentCoins);
-    updateSkipButtonState();
-    updateEarnSecondsProgress();
-    return false;
-  }
-
   return true;
 }
 
@@ -865,7 +827,10 @@ async function advanceAfterTrackCompletion() {
   state.trackAdvanceLock = true;
 
   try {
-    await awardListeningSecond();
+    const currentTrack = state.tracks[state.current];
+    if (currentTrack?.id) {
+      await awardListeningSecond(currentTrack.id);
+    }
     nextTrack(0, true);
   } finally {
     state.trackAdvanceLock = false;
@@ -878,20 +843,24 @@ async function handleSkip() {
 
   els.skipBtn.disabled = true;
 
-  const previousCoins = state.currentCoins;
-  state.currentCoins = Math.max(0, state.currentCoins - SKIP_COST);
-  setCurrency(state.currentCoins);
-  updateSkipButtonState();
+  const { data, error } = await supabaseClient.rpc("skip_track_cost");
 
-  const success = await persistProfileEconomyState();
-
-  if (!success) {
-    state.currentCoins = previousCoins;
-    setCurrency(state.currentCoins);
+  if (error || !data) {
+    console.error("handleSkip rpc error:", error);
     updateSkipButtonState();
     return;
   }
 
+  if (!data.success) {
+    if (typeof data.coins !== "undefined") {
+      setCurrency(data.coins);
+    } else {
+      updateSkipButtonState();
+    }
+    return;
+  }
+
+  setCurrency(data.coins);
   nextTrack(0, true);
 }
 
