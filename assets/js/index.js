@@ -421,7 +421,7 @@ async function refreshCoins() {
 async function awardListeningSecond() {
   if (!state.currentUser) return false;
 
-  const { data, error } = await supabaseClient.rpc("award_listening_second");
+  const { data, error } = await supabaseClient.rpc("award_listening_second_v2", {});
 
   if (error || !data) {
     console.error("awardListeningSecond error:", error);
