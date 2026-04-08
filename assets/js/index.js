@@ -3,6 +3,9 @@ const supabaseClient = window.supabase.createClient(
   "sb_publishable_255qyDKS77nMU0pbedfa_A_3hdgtEHh"
 );
 
+const DAILY_SECONDS_LIMIT = 10;
+const SKIP_COST = 1;
+
 const els = {
   showLoginBtn: document.getElementById("showLoginBtn"),
   headerAvatarBtn: document.getElementById("headerAvatarBtn"),
@@ -52,7 +55,10 @@ const els = {
   playsPerDayEl: document.getElementById("playsPerDay"),
   playsCardEl: document.getElementById("playsCard"),
   myPlaysCardEl: document.getElementById("myPlaysCard"),
-  myTotalPlaysEl: document.getElementById("myTotalPlays")
+  myTotalPlaysEl: document.getElementById("myTotalPlays"),
+
+  earnSecondsWrap: document.getElementById("earnSecondsWrap"),
+  earnSecondsProgress: document.getElementById("earnSecondsProgress")
 };
 
 const state = {
@@ -67,7 +73,11 @@ const state = {
   currentPreviewStart: 0,
   currentPreviewDuration: 60,
   currentUser: null,
-  currentCoins: 0
+  currentCoins: 0,
+  dailySecondsEarned: 0,
+  dailySecondsEarnedDate: null,
+  rewardGrantedForTrackId: null,
+  trackAdvanceLock: false
 };
 
 const REFRESH_INTERVALS = {
@@ -118,6 +128,29 @@ function getTrackPreviewDuration(track) {
 function getProfileCoins(profile) {
   const value = Number(profile?.coins);
   return Number.isFinite(value) && value >= 0 ? value : 0;
+}
+
+function getTodayDateKey() {
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, "0");
+  const day = String(now.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
+function normalizeDailySecondsState(profile) {
+  const today = getTodayDateKey();
+  const profileDate = profile?.daily_seconds_earned_date || null;
+  const profileCount = Number(profile?.daily_seconds_earned);
+
+  if (profileDate === today) {
+    state.dailySecondsEarnedDate = today;
+    state.dailySecondsEarned = Number.isFinite(profileCount) && profileCount >= 0 ? profileCount : 0;
+    return;
+  }
+
+  state.dailySecondsEarnedDate = today;
+  state.dailySecondsEarned = 0;
 }
 
 function updateJoinButtonHref() {
@@ -173,16 +206,42 @@ function resetLike() {
   els.likeBtn.classList.remove("liked");
 }
 
+function resetEarnSecondsProgress() {
+  if (!els.earnSecondsProgress) return;
+  els.earnSecondsProgress.style.width = "0%";
+}
+
+function updateEarnSecondsProgress(progress) {
+  if (!els.earnSecondsProgress) return;
+  const safeProgress = Math.max(0, Math.min(progress, 100));
+  els.earnSecondsProgress.style.width = `${safeProgress}%`;
+}
+
+function updateEarnSecondsVisibility() {
+  const shouldShow = Boolean(state.currentUser);
+  setHidden(els.earnSecondsWrap, !shouldShow);
+}
+
+function updateSkipButtonState() {
+  const isLoggedIn = Boolean(state.currentUser);
+  const hasCoins = state.currentCoins >= SKIP_COST;
+
+  els.skipBtn.innerHTML = `<span class="icon">⏭</span>Skip · ${SKIP_COST} Second`;
+  els.skipBtn.disabled = !isLoggedIn || !hasCoins;
+}
+
 function updateInteractiveControls() {
   const isLoggedIn = Boolean(state.currentUser);
 
   els.likeBtn.disabled = !isLoggedIn;
-  els.skipBtn.disabled = !isLoggedIn;
   setHidden(els.featureNoteEl, isLoggedIn);
   updateConceptVisibility();
+  updateEarnSecondsVisibility();
+  updateSkipButtonState();
 
   if (!isLoggedIn) {
     resetLike();
+    resetEarnSecondsProgress();
   }
 }
 
@@ -248,13 +307,18 @@ function setLoggedOutView() {
   state.currentTrackData = null;
   state.currentUser = null;
   state.currentCoins = 0;
+  state.dailySecondsEarned = 0;
+  state.dailySecondsEarnedDate = null;
   state.listenerIdentity = null;
+  state.rewardGrantedForTrackId = null;
+  state.trackAdvanceLock = false;
 
   applyMenuState(null, null, null);
   hideUserStats();
   updateInteractiveControls();
   updateCurrencyVisibility(null);
   setCurrency(0);
+  resetEarnSecondsProgress();
   updateJoinButtonHref();
 }
 
@@ -271,26 +335,53 @@ async function getSessionUser() {
   return data?.session?.user || null;
 }
 
+async function persistProfileEconomyState() {
+  if (!state.currentUser) return false;
+
+  const payload = {
+    coins: Math.max(0, Number(state.currentCoins) || 0),
+    daily_seconds_earned: Math.max(0, Number(state.dailySecondsEarned) || 0),
+    daily_seconds_earned_date: state.dailySecondsEarnedDate || getTodayDateKey()
+  };
+
+  const { error } = await supabaseClient
+    .from("profiles")
+    .update(payload)
+    .eq("user_id", state.currentUser.id);
+
+  if (error) {
+    console.error("persistProfileEconomyState error:", error);
+    return false;
+  }
+
+  return true;
+}
+
 async function loadMyProfile(userId) {
   const { data, error } = await supabaseClient
     .from("profiles")
-    .select("artist_name, photo_url, user_id, coins")
+    .select("artist_name, photo_url, user_id, coins, daily_seconds_earned, daily_seconds_earned_date")
     .eq("user_id", userId)
     .maybeSingle();
 
   if (error || !data) {
     state.currentProfileData = null;
     state.currentCoins = 0;
+    state.dailySecondsEarned = 0;
+    state.dailySecondsEarnedDate = getTodayDateKey();
     setHeaderAvatar("", "•");
     setCurrency(0);
+    updateSkipButtonState();
     return null;
   }
 
   state.currentProfileData = data;
   state.currentCoins = getProfileCoins(data);
+  normalizeDailySecondsState(data);
 
   setHeaderAvatar(data.photo_url, data.artist_name);
   setCurrency(state.currentCoins);
+  updateSkipButtonState();
 
   return data;
 }
@@ -316,26 +407,81 @@ async function loadMyTune(userId) {
 async function refreshCoins() {
   if (!state.currentUser) {
     state.currentCoins = 0;
+    state.dailySecondsEarned = 0;
+    state.dailySecondsEarnedDate = null;
     setCurrency(0);
+    updateSkipButtonState();
     return 0;
   }
 
   const { data, error } = await supabaseClient
     .from("profiles")
-    .select("coins")
+    .select("coins, daily_seconds_earned, daily_seconds_earned_date")
     .eq("user_id", state.currentUser.id)
     .maybeSingle();
 
   if (error || !data) {
     console.error("refreshCoins error:", error);
     state.currentCoins = 0;
+    state.dailySecondsEarned = 0;
+    state.dailySecondsEarnedDate = getTodayDateKey();
     setCurrency(0);
+    updateSkipButtonState();
     return 0;
   }
 
   state.currentCoins = getProfileCoins(data);
+  normalizeDailySecondsState(data);
   setCurrency(state.currentCoins);
+  updateSkipButtonState();
   return state.currentCoins;
+}
+
+async function awardListeningSecond() {
+  if (!state.currentUser) return false;
+
+  const currentTrack = state.tracks[state.current];
+  if (!currentTrack?.id) return false;
+  if (state.rewardGrantedForTrackId === currentTrack.id) return false;
+
+  const today = getTodayDateKey();
+
+  if (state.dailySecondsEarnedDate !== today) {
+    state.dailySecondsEarnedDate = today;
+    state.dailySecondsEarned = 0;
+  }
+
+  if (state.dailySecondsEarned >= DAILY_SECONDS_LIMIT) {
+    state.rewardGrantedForTrackId = currentTrack.id;
+    return false;
+  }
+
+  const previousCoins = state.currentCoins;
+  const previousDailyEarned = state.dailySecondsEarned;
+  const previousDailyDate = state.dailySecondsEarnedDate;
+
+  state.currentCoins += 1;
+  state.dailySecondsEarned += 1;
+  state.dailySecondsEarnedDate = today;
+  state.rewardGrantedForTrackId = currentTrack.id;
+
+  setCurrency(state.currentCoins);
+  updateSkipButtonState();
+  updateEarnSecondsProgress(100);
+
+  const success = await persistProfileEconomyState();
+
+  if (!success) {
+    state.currentCoins = previousCoins;
+    state.dailySecondsEarned = previousDailyEarned;
+    state.dailySecondsEarnedDate = previousDailyDate;
+    state.rewardGrantedForTrackId = null;
+    setCurrency(state.currentCoins);
+    updateSkipButtonState();
+    return false;
+  }
+
+  return true;
 }
 
 async function refreshAuthUI() {
@@ -488,10 +634,12 @@ function setTrackUI(track) {
 
   state.currentPreviewStart = getTrackPreviewStart(track);
   state.currentPreviewDuration = getTrackPreviewDuration(track);
+  state.rewardGrantedForTrackId = null;
 
   setText(els.durationTimeEl, formatTime(state.currentPreviewDuration));
   setText(els.elapsedTimeEl, "0:00");
   els.progressFill.style.width = "0%";
+  resetEarnSecondsProgress();
 
   resetLike();
 }
@@ -526,6 +674,7 @@ function setEmptyRadioState() {
   els.progressFill.style.width = "0%";
   setText(els.elapsedTimeEl, "0:00");
   setText(els.durationTimeEl, "1:00");
+  resetEarnSecondsProgress();
 }
 
 function playTrackAt(index, previewOffset = 0, countPlay = true) {
@@ -543,6 +692,7 @@ function playTrackAt(index, previewOffset = 0, countPlay = true) {
   els.audio.src = track.file_url;
   setText(els.elapsedTimeEl, formatTime(safeOffset));
   els.progressFill.style.width = `${previewDuration > 0 ? (safeOffset / previewDuration) * 100 : 0}%`;
+  updateEarnSecondsProgress(previewDuration > 0 ? (safeOffset / previewDuration) * 100 : 0);
 
   els.audio.onloadedmetadata = () => {
     const maxStart = Math.max(0, (els.audio.duration || targetStartTime) - 0.25);
@@ -703,8 +853,38 @@ async function handleStartRadio() {
   });
 }
 
-function handleSkip() {
+async function advanceAfterTrackCompletion() {
+  if (state.trackAdvanceLock) return;
+  state.trackAdvanceLock = true;
+
+  try {
+    await awardListeningSecond();
+    nextTrack(0, true);
+  } finally {
+    state.trackAdvanceLock = false;
+  }
+}
+
+async function handleSkip() {
   if (!state.currentUser) return;
+  if (state.currentCoins < SKIP_COST) return;
+
+  els.skipBtn.disabled = true;
+
+  const previousCoins = state.currentCoins;
+  state.currentCoins = Math.max(0, state.currentCoins - SKIP_COST);
+  setCurrency(state.currentCoins);
+  updateSkipButtonState();
+
+  const success = await persistProfileEconomyState();
+
+  if (!success) {
+    state.currentCoins = previousCoins;
+    setCurrency(state.currentCoins);
+    updateSkipButtonState();
+    return;
+  }
+
   nextTrack(0, true);
 }
 
@@ -737,6 +917,8 @@ async function handleLogout() {
 
     state.listenerIdentity = null;
     state.currentCoins = 0;
+    state.dailySecondsEarned = 0;
+    state.dailySecondsEarnedDate = null;
     await refreshAuthDependentUI();
   } catch (err) {
     console.error("handleLogout error:", err);
@@ -773,7 +955,9 @@ function bindUIEvents() {
   };
 
   els.startBtn.onclick = handleStartRadio;
-  els.skipBtn.onclick = handleSkip;
+  els.skipBtn.onclick = () => {
+    handleSkip().catch(err => console.error("handleSkip error:", err));
+  };
   els.likeBtn.onclick = handleLike;
 
   els.volume.addEventListener("input", (e) => {
@@ -826,14 +1010,19 @@ function bindUIEvents() {
 
     els.progressFill.style.width = `${state.currentPreviewDuration > 0 ? (clampedElapsed / state.currentPreviewDuration) * 100 : 0}%`;
     setText(els.elapsedTimeEl, formatTime(clampedElapsed));
+    updateEarnSecondsProgress(state.currentPreviewDuration > 0 ? (clampedElapsed / state.currentPreviewDuration) * 100 : 0);
 
     if (previewElapsed >= state.currentPreviewDuration) {
-      nextTrack(0, true);
+      advanceAfterTrackCompletion().catch(err => {
+        console.error("advanceAfterTrackCompletion error:", err);
+      });
     }
   });
 
   els.audio.addEventListener("ended", () => {
-    nextTrack(0, true);
+    advanceAfterTrackCompletion().catch(err => {
+      console.error("advanceAfterTrackCompletion error:", err);
+    });
   });
 
   supabaseClient.auth.onAuthStateChange(() => {
