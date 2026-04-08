@@ -189,13 +189,23 @@
               <div id="earnSecondsProgress" class="earn-seconds-fill"></div>
             </div>
             <div class="earn-seconds-copy">
-              <span>Earn Seconds by listening the entire tune.</span>
+              <span id="earnSecondsCopy">Earn Seconds by listening the entire tune · 0/10 today</span>
             </div>
           </div>
 
           <div class="player-actions">
             <button id="likeBtn" class="metal-btn" type="button"><span class="icon">♥</span>Like</button>
-            <button id="skip" class="metal-btn" type="button"><span class="icon">⏭</span>Skip · 1 Second</button>
+            <button id="skip" class="metal-btn" type="button">
+              <span class="skip-cost-wrap">
+                <span class="icon">⏭</span>
+                <span>Skip</span>
+                <span class="skip-cost-inline">
+                  <span class="skip-cost-minus">-</span>
+                  <img src="coin.png" alt="" class="skip-cost-coin" />
+                  <span class="skip-cost-value">1</span>
+                </span>
+              </span>
+            </button>
           </div>
 
           <div id="featureNote" class="feature-note hidden">
