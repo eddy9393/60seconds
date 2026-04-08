@@ -1,1070 +1,1414 @@
-const supabaseClient = window.supabase.createClient(
-  "https://rgoutegbcpjytplqcwze.supabase.co",
-  "sb_publishable_255qyDKS77nMU0pbedfa_A_3hdgtEHh"
-);
+:root {
+  --gold: #d4af37;
+  --gold-2: #f4d77a;
+  --gold-3: #ffd76a;
+  --gold-dark: #8f6b13;
+  --text: #f5f5f5;
+  --muted: #a8a8a8;
+  --top-btn-height: 52px;
 
-const DAILY_SECONDS_LIMIT = 10;
-const SKIP_COST = 1;
+  --fs-label: 12px;
+  --fs-body: 14px;
+  --fs-artist: 18px;
+  --fs-stat-label: 12px;
+  --fs-stat-value: clamp(26px, 4vw, 34px);
+  --fs-track-title: clamp(30px, 5vw, 48px);
 
-const els = {
-  showLoginBtn: document.getElementById("showLoginBtn"),
-  headerAvatarBtn: document.getElementById("headerAvatarBtn"),
-  headerAvatarImage: document.getElementById("headerAvatarImage"),
-  headerAvatarFallback: document.getElementById("headerAvatarFallback"),
-  accountMenu: document.getElementById("accountMenu"),
-  accountProfileLink: document.getElementById("accountProfileLink"),
-  accountNotificationsLink: document.getElementById("accountNotificationsLink"),
-
-  currencyBadge: document.getElementById("currencyBadge"),
-  currencyValue: document.getElementById("currencyValue"),
-
-  desktopLoginLink: document.getElementById("desktopLoginLink"),
-  desktopLogoutBtn: document.getElementById("desktopLogoutBtn"),
-  desktopProfileLink: document.getElementById("desktopProfileLink"),
-  desktopNotificationsLink: document.getElementById("desktopNotificationsLink"),
-  desktopTrackLink: document.getElementById("desktopTrackLink"),
-
-  mobileLoginLink: document.getElementById("mobileLoginLink"),
-  mobileProfileLink: document.getElementById("mobileProfileLink"),
-  mobileNotificationsLink: document.getElementById("mobileNotificationsLink"),
-  mobileTrackLink: document.getElementById("mobileTrackLink"),
-
-  logoutBtn: document.getElementById("logout"),
-  submitTrackBtn: document.getElementById("submitTrackBtn"),
-  joinBtn: document.getElementById("joinBtn"),
-
-  audio: document.getElementById("audio"),
-  startBtn: document.getElementById("start"),
-  startOverlay: document.getElementById("startOverlay"),
-  radioShell: document.getElementById("radioShell"),
-  titleEl: document.getElementById("title"),
-  artistWrapEl: document.getElementById("artistWrap"),
-  likeBtn: document.getElementById("likeBtn"),
-  skipBtn: document.getElementById("skip"),
-  featureNoteEl: document.getElementById("featureNote"),
-  conceptSectionEl: document.getElementById("conceptSection"),
-  volume: document.getElementById("volume"),
-  volumeBtn: document.getElementById("volumeBtn"),
-  volumeControl: document.getElementById("volumeControl"),
-  progressFill: document.getElementById("progress"),
-  elapsedTimeEl: document.getElementById("elapsedTime"),
-  durationTimeEl: document.getElementById("durationTime"),
-  listenersCountEl: document.getElementById("listenersCount"),
-  submittedCountEl: document.getElementById("submittedCount"),
-  submittedCardEl: document.getElementById("submittedCard"),
-  playsPerDayEl: document.getElementById("playsPerDay"),
-  playsCardEl: document.getElementById("playsCard"),
-  myPlaysCardEl: document.getElementById("myPlaysCard"),
-  myTotalPlaysEl: document.getElementById("myTotalPlays"),
-
-  earnSecondsWrap: document.getElementById("earnSecondsWrap"),
-  earnSecondsProgress: document.getElementById("earnSecondsProgress"),
-  earnSecondsCopy: document.getElementById("earnSecondsCopy")
-};
-
-const state = {
-  tracks: [],
-  current: -1,
-  liked: false,
-  listenerIdentity: null,
-  isLiveActivated: false,
-  liveBooted: false,
-  currentProfileData: null,
-  currentTrackData: null,
-  currentPreviewStart: 0,
-  currentPreviewDuration: 60,
-  currentUser: null,
-  currentCoins: 0,
-  dailySecondsEarned: 0,
-  dailySecondsEarnedDate: null,
-  rewardGrantedForTrackId: null,
-  trackAdvanceLock: false
-};
-
-const REFRESH_INTERVALS = {
-  listenerHeartbeat: 15000,
-  listenerCount: 10000,
-  tracksReload: 30000
-};
-
-function setHidden(el, hidden) {
-  if (!el) return;
-  el.classList.toggle("hidden", hidden);
+  --desktop-rail-width: 86px;
+  --desktop-rail-expanded: 320px;
+  --mobile-bottom-nav-height: 86px;
+  --mobile-nav-bg: rgba(10, 10, 10, 0.94);
 }
 
-function setText(el, value) {
-  if (!el) return;
-  el.textContent = value;
+* {
+  box-sizing: border-box;
 }
 
-function formatNumber(value) {
-  return Number(value || 0).toLocaleString();
+html {
+  scroll-behavior: smooth;
 }
 
-function formatTime(seconds) {
-  const mins = Math.floor(seconds / 60);
-  const secs = Math.floor(seconds % 60).toString().padStart(2, "0");
-  return `${mins}:${secs}`;
+body {
+  margin: 0;
+  min-height: 100vh;
+  background:
+    linear-gradient(180deg, rgba(7, 7, 7, 0.46) 0%, rgba(7, 7, 7, 0.72) 45%, rgba(7, 7, 7, 0.84) 100%),
+    radial-gradient(circle at top, rgba(212, 175, 55, 0.14), transparent 30%),
+    url("../../bg-mobile-final-1080x1920.webp");
+  background-size: cover, auto, cover;
+  background-position: center top, center top, center center;
+  background-repeat: no-repeat, no-repeat, no-repeat;
+  background-attachment: fixed, scroll, fixed;
+  color: var(--text);
+  font-family: 'Manrope', sans-serif;
+  text-align: center;
+  padding: 0 18px 44px calc(var(--desktop-rail-width) + 28px);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-function escapeHtml(str) {
-  return String(str || "")
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#039;");
+h1, h2, h3 {
+  font-family: 'Space Grotesk', sans-serif;
 }
 
-function getTrackPreviewStart(track) {
-  const value = Number(track?.preview_start_seconds);
-  return Number.isFinite(value) && value >= 0 ? value : 0;
+img {
+  max-width: 100%;
+  display: block;
 }
 
-function getTrackPreviewDuration(track) {
-  const value = Number(track?.preview_duration_seconds);
-  return Number.isFinite(value) && value > 0 ? value : 60;
+.hidden {
+  display: none !important;
 }
 
-function getProfileCoins(profile) {
-  const value = Number(profile?.coins);
-  return Number.isFinite(value) && value >= 0 ? value : 0;
+.site-shell {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding-top: 8px;
 }
 
-function getTodayDateKey() {
-  const now = new Date();
-  const year = now.getFullYear();
-  const month = String(now.getMonth() + 1).padStart(2, "0");
-  const day = String(now.getDate()).padStart(2, "0");
-  return `${year}-${month}-${day}`;
+.header-wrap {
+  position: sticky;
+  top: 0;
+  z-index: 80;
+  width: 100%;
+  background: linear-gradient(180deg, rgba(0,0,0,0.78), rgba(0,0,0,0.42) 70%, rgba(0,0,0,0));
+  backdrop-filter: blur(8px);
 }
 
-function normalizeDailySecondsState(profile) {
-  const today = getTodayDateKey();
-  const profileDate = profile?.daily_seconds_earned_date || null;
-  const profileCount = Number(profile?.daily_seconds_earned);
+.header-bar {
+  width: 100%;
+  min-height: 74px;
+  display: grid;
+  grid-template-columns: 60px 1fr 60px;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 16px 4px;
+  position: relative;
+}
 
-  if (profileDate === today) {
-    state.dailySecondsEarnedDate = today;
-    state.dailySecondsEarned = Number.isFinite(profileCount) && profileCount >= 0 ? profileCount : 0;
-    return;
+.header-left,
+.header-center,
+.header-right {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+}
+
+.header-left {
+  justify-content: flex-start;
+}
+
+.currency-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 46px;
+  width: max-content;
+  min-width: 88px;
+  max-width: none;
+  padding: 0 16px 0 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.10);
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02)),
+    linear-gradient(180deg, rgba(14,14,14,0.88), rgba(10,10,10,0.94));
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.05),
+    0 10px 22px rgba(0,0,0,0.22);
+  backdrop-filter: blur(6px);
+  white-space: nowrap;
+  flex: 0 0 auto;
+  flex-shrink: 0;
+}
+
+.currency-badge-icon {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+  display: block;
+  flex: 0 0 auto;
+}
+
+.currency-badge-value {
+  display: inline-block;
+  flex: 0 0 auto;
+  min-width: 0;
+  color: #f7e6ac;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1;
+  font-family: 'Space Grotesk', sans-serif;
+  letter-spacing: 0.3px;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.header-center {
+  justify-content: center;
+  pointer-events: none;
+}
+
+.header-center > * {
+  pointer-events: auto;
+}
+
+.header-right {
+  justify-content: flex-end;
+  position: relative;
+}
+
+.header-logo-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+}
+
+.header-logo {
+  display: block;
+  width: min(288px, 45vw);
+  height: auto;
+  filter:
+    drop-shadow(0 8px 18px rgba(0, 0, 0, 0.35))
+    drop-shadow(0 0 20px rgba(212, 175, 55, 0.08));
+}
+
+.header-icon-btn {
+  width: 42px;
+  height: 42px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.14);
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.12), rgba(255,255,255,0.04)),
+    linear-gradient(180deg, rgba(10,10,10,0.86), rgba(10,10,10,0.92));
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.08),
+    0 10px 22px rgba(0,0,0,0.24);
+  backdrop-filter: blur(4px);
+  transition: transform 0.14s ease, box-shadow 0.14s ease, filter 0.14s ease;
+  padding: 0;
+  text-decoration: none;
+}
+
+.header-icon-btn:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.03);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.10),
+    0 14px 24px rgba(0,0,0,0.28);
+}
+
+.person-icon {
+  position: relative;
+  width: 22px;
+  height: 22px;
+}
+
+.person-icon::before,
+.person-icon::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 2.2px solid #f5f5f5;
+  box-sizing: border-box;
+}
+
+.person-icon::before {
+  top: 0;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+}
+
+.person-icon::after {
+  bottom: -1px;
+  width: 21px;
+  height: 11px;
+  border-top-left-radius: 16px;
+  border-top-right-radius: 16px;
+  border-bottom: 0;
+}
+
+.header-avatar-btn {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  padding: 0;
+  overflow: hidden;
+  border: 2px solid rgba(212,175,55,0.55);
+  background: #111;
+  box-shadow:
+    0 10px 22px rgba(0,0,0,0.24),
+    0 0 0 3px rgba(212,175,55,0.08);
+  cursor: pointer;
+}
+
+.header-avatar-btn img,
+.header-avatar-btn .header-avatar-fallback {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  display: block;
+  object-fit: cover;
+}
+
+.header-avatar-fallback {
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(180deg, #3a2d0d, #a98325);
+  color: #fff;
+  font-weight: 700;
+  font-size: 15px;
+  font-family: 'Space Grotesk', sans-serif;
+}
+
+.account-menu {
+  position: absolute;
+  top: 52px;
+  right: 0;
+  min-width: 210px;
+  padding: 10px;
+  border-radius: 18px;
+  background:
+    linear-gradient(180deg, rgba(20,20,20,0.96), rgba(10,10,10,0.98));
+  border: 1px solid rgba(255,255,255,0.08);
+  box-shadow:
+    0 18px 40px rgba(0,0,0,0.38),
+    inset 0 1px 0 rgba(255,255,255,0.04);
+  backdrop-filter: blur(8px);
+  z-index: 90;
+}
+
+.account-menu-actions {
+  display: grid;
+  gap: 8px;
+}
+
+.account-menu-link,
+.account-menu button {
+  width: 100%;
+  text-decoration: none;
+  text-align: center;
+}
+
+.desktop-side-nav {
+  position: fixed;
+  top: 50%;
+  left: 18px;
+  transform: translateY(-50%);
+  width: var(--desktop-rail-width);
+  height: min(84vh, 780px);
+  z-index: 120;
+  display: flex;
+  align-items: stretch;
+  overflow: visible;
+  transition: width 0.34s cubic-bezier(.22,.61,.36,1);
+}
+
+.desktop-side-nav:hover {
+  width: var(--desktop-rail-expanded);
+}
+
+.desktop-side-nav-panel {
+  width: 100%;
+  height: 100%;
+  transition: width 0.34s cubic-bezier(.22,.61,.36,1);
+  display: flex;
+  flex-direction: column;
+  padding: 18px 0 16px;
+  overflow: visible;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  backdrop-filter: none;
+}
+
+.desktop-side-links,
+.desktop-side-bottom {
+  position: relative;
+  display: grid;
+  gap: 14px;
+  align-content: start;
+  justify-items: stretch;
+}
+
+.desktop-side-links {
+  flex: 1;
+  padding-top: 2px;
+}
+
+.desktop-side-bottom {
+  margin-top: auto;
+  padding-top: 24px;
+}
+
+.desktop-nav-link,
+.desktop-nav-button {
+  width: 100%;
+  min-height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 18px;
+  padding: 0 18px;
+  color: rgba(245,245,245,0.96);
+  text-decoration: none;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  overflow: hidden;
+  white-space: nowrap;
+  font-family: 'Manrope', sans-serif;
+  transition: transform 0.18s ease, opacity 0.18s ease, color 0.18s ease, background 0.18s ease;
+  text-align: left;
+  position: relative;
+  border-radius: 18px;
+}
+
+.desktop-side-nav:hover .desktop-nav-link,
+.desktop-side-nav:hover .desktop-nav-button {
+  width: 100%;
+}
+
+.desktop-nav-link:hover,
+.desktop-nav-button:hover {
+  transform: translateX(2px);
+  background:
+    linear-gradient(90deg, rgba(212,175,55,0.16), rgba(212,175,55,0.05) 58%, transparent);
+}
+
+.desktop-nav-link.active,
+.desktop-nav-button.active {
+  color: #fff5d2;
+  background:
+    linear-gradient(90deg, rgba(212,175,55,0.18), rgba(212,175,55,0.06) 58%, transparent);
+}
+
+.desktop-nav-link.active::after,
+.desktop-nav-button.active::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 9px;
+  bottom: 9px;
+  width: 3px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #ffe08d, #d4af37 52%, #8f6b13);
+  box-shadow: 0 0 14px rgba(212,175,55,0.30);
+}
+
+.desktop-nav-icon,
+.mobile-nav-icon {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+}
+
+.desktop-nav-icon {
+  width: 30px;
+  height: 30px;
+}
+
+.mobile-nav-icon {
+  width: 24px;
+  height: 24px;
+}
+
+.nav-icon-mask {
+  width: 100%;
+  height: 100%;
+  display: block;
+  background:
+    linear-gradient(180deg, #fff3b6 0%, #f4d77a 20%, #d4af37 52%, #b98714 76%, #7d5a10 100%);
+  -webkit-mask-image: var(--icon-url);
+  mask-image: var(--icon-url);
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  filter: drop-shadow(0 2px 10px rgba(212,175,55,0.18));
+  opacity: 0.98;
+  transition: transform 0.18s ease, filter 0.18s ease, opacity 0.18s ease, background 0.18s ease;
+  pointer-events: none;
+  user-select: none;
+}
+
+.desktop-nav-link:hover .nav-icon-mask,
+.desktop-nav-button:hover .nav-icon-mask,
+.mobile-nav-link:hover .nav-icon-mask {
+  transform: scale(1.04);
+  opacity: 1;
+  background:
+    linear-gradient(180deg, #fff7cf 0%, #ffe08d 18%, #f4d77a 36%, #d4af37 58%, #b98714 80%, #7d5a10 100%);
+  filter: drop-shadow(0 2px 11px rgba(212,175,55,0.22));
+}
+
+.desktop-nav-link.active .nav-icon-mask,
+.desktop-nav-button.active .nav-icon-mask,
+.mobile-nav-link.active .nav-icon-mask {
+  background:
+    linear-gradient(180deg, #fff9da 0%, #ffe9a7 18%, #f7dd82 36%, #d4af37 58%, #ba8a18 80%, #7d5a10 100%);
+  filter:
+    drop-shadow(0 2px 12px rgba(212,175,55,0.24))
+    drop-shadow(0 0 15px rgba(212,175,55,0.20));
+}
+
+.desktop-nav-label {
+  font-size: 16px;
+  font-weight: 500;
+  letter-spacing: 0.1px;
+  font-family: 'Manrope', sans-serif;
+  opacity: 0;
+  transform: translateX(-10px);
+  transition:
+    opacity 0.26s ease,
+    transform 0.34s cubic-bezier(.22,.61,.36,1);
+  pointer-events: none;
+  min-width: 170px;
+  max-width: 200px;
+  overflow: visible;
+  text-overflow: clip;
+  text-align: left;
+}
+
+.desktop-side-nav:hover .desktop-nav-label {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.mobile-bottom-nav-wrap {
+  display: none;
+}
+
+.submit-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--top-btn-height);
+  padding: 0 28px;
+  border-radius: 999px;
+  text-decoration: none;
+  color: #231700;
+  font-weight: 600;
+  font-size: 15px;
+  letter-spacing: 0.2px;
+  background:
+    linear-gradient(180deg, #fff5c9 0%, #f4d77a 20%, #d4af37 52%, #b98816 75%, #7c5a11 100%);
+  border: 1px solid rgba(255, 230, 150, 0.38);
+  box-shadow:
+    inset 0 2px 0 rgba(255,255,255,0.45),
+    inset 0 -2px 4px rgba(90,50,0,0.28),
+    0 12px 26px rgba(212,175,55,0.22),
+    0 0 0 1px rgba(212,175,55,0.08);
+  transition: transform 0.16s ease, box-shadow 0.16s ease, filter 0.16s ease;
+  white-space: nowrap;
+  text-shadow: 0 1px 0 rgba(255,255,255,0.22);
+  backdrop-filter: blur(2px);
+  font-family: 'Manrope', sans-serif;
+}
+
+.submit-link:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.03);
+}
+
+.metal-btn {
+  border: 1px solid rgba(255,255,255,0.16);
+  background:
+    linear-gradient(180deg, #fbfbfb 0%, #d6d6d6 16%, #b6b6b6 35%, #8b8b8b 52%, #d2d2d2 72%, #f4f4f4 100%);
+  color: #151515;
+  padding: 13px 18px;
+  border-radius: 999px;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 14px;
+  text-shadow: 0 1px 0 rgba(255,255,255,0.45);
+  box-shadow:
+    inset 0 2px 0 rgba(255,255,255,0.72),
+    inset 0 -2px 3px rgba(0,0,0,0.18),
+    0 10px 22px rgba(0,0,0,0.25);
+  transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease, opacity 0.15s ease;
+  backdrop-filter: blur(2px);
+  font-family: 'Manrope', sans-serif;
+}
+
+.metal-btn:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.02);
+}
+
+.metal-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
+  filter: grayscale(0.25);
+  box-shadow:
+    inset 0 2px 0 rgba(255,255,255,0.32),
+    inset 0 -2px 3px rgba(0,0,0,0.12),
+    0 4px 12px rgba(0,0,0,0.18);
+}
+
+.metal-btn .icon {
+  color: #6a560c;
+  margin-right: 7px;
+  font-size: 15px;
+}
+
+.skip-cost-wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+}
+
+.skip-cost-inline {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: 2px;
+}
+
+.skip-cost-minus {
+  color: #6a560c;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.skip-cost-coin {
+  width: 16px;
+  height: 16px;
+  object-fit: contain;
+  display: block;
+  flex: 0 0 auto;
+}
+
+.skip-cost-value {
+  line-height: 1;
+  font-weight: 700;
+}
+
+.liked {
+  background:
+    linear-gradient(180deg, #fff6cb 0%, #e9c75f 24%, #d4af37 52%, #b98714 76%, #826113 100%);
+  color: #111;
+  border-color: rgba(255,220,120,0.35);
+}
+
+.liked .icon {
+  color: #111;
+}
+
+.radio-stage {
+  position: relative;
+  max-width: 880px;
+  margin: 32px auto 0;
+  min-height: 52vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.radio-shell {
+  position: relative;
+  width: 100%;
+  max-width: 780px;
+  margin: 0 auto;
+  padding: 0;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  backdrop-filter: none;
+  transition: opacity 0.45s ease, transform 0.45s ease, filter 0.45s ease;
+}
+
+.radio-shell.pre-live {
+  opacity: 0;
+  transform: translateY(18px) scale(0.985);
+  pointer-events: none;
+  visibility: hidden;
+  max-height: 0;
+  overflow: hidden;
+}
+
+.start-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: auto;
+  z-index: 5;
+}
+
+.overlay-content {
+  text-align: center;
+  padding: 24px;
+  max-width: 640px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+}
+
+.overlay-label,
+.now-playing {
+  font-family: 'Space Grotesk', sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-size: var(--fs-label);
+  opacity: 0.78;
+}
+
+.overlay-label {
+  color: rgba(255,255,255,0.88);
+  text-shadow: 0 1px 8px rgba(0,0,0,0.4);
+}
+
+.overlay-title {
+  margin: 0;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: clamp(34px, 7vw, 74px);
+  line-height: 0.95;
+  letter-spacing: -0.04em;
+  font-weight: 600;
+  color: #fff7d7;
+  text-shadow:
+    0 2px 20px rgba(0,0,0,0.45),
+    0 0 28px rgba(212,175,55,0.10);
+  max-width: 10ch;
+}
+
+.overlay-subcopy {
+  max-width: 560px;
+  margin: 0;
+  color: rgba(255,255,255,0.72);
+  font-size: 15px;
+  line-height: 1.7;
+  letter-spacing: 0.01em;
+}
+
+.start-btn-wrap {
+  position: relative;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.start-btn-wrap::before {
+  content: "";
+  position: absolute;
+  inset: -18px -22px;
+  border-radius: 999px;
+  background: radial-gradient(circle, rgba(212,175,55,0.18) 0%, rgba(212,175,55,0.06) 45%, transparent 72%);
+  filter: blur(12px);
+  pointer-events: none;
+}
+
+.start-btn {
+  min-width: 250px;
+  min-height: 68px;
+  padding: 0 34px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,232,166,0.42);
+  background:
+    linear-gradient(180deg, #fff8dc 0%, #f8e4a1 18%, #e7c45d 40%, #d4af37 58%, #b78312 82%, #7f5c11 100%);
+  color: #181203;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-shadow: 0 1px 0 rgba(255,255,255,0.35);
+  box-shadow:
+    inset 0 2px 0 rgba(255,255,255,0.6),
+    inset 0 -3px 8px rgba(90,50,0,0.24),
+    0 18px 36px rgba(0,0,0,0.34),
+    0 0 34px rgba(212,175,55,0.20);
+  backdrop-filter: blur(2px);
+  transition: transform 0.16s ease, filter 0.16s ease, box-shadow 0.16s ease;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.start-btn:hover {
+  transform: translateY(-2px) scale(1.01);
+  filter: brightness(1.03);
+  box-shadow:
+    inset 0 2px 0 rgba(255,255,255,0.62),
+    inset 0 -3px 8px rgba(90,50,0,0.24),
+    0 22px 44px rgba(0,0,0,0.36),
+    0 0 40px rgba(212,175,55,0.24);
+}
+
+.radio-shell-content {
+  display: grid;
+  gap: 18px;
+}
+
+.now-playing {
+  color: var(--muted);
+  margin-bottom: 2px;
+}
+
+.waveform-wrap {
+  width: 100%;
+  max-width: 620px;
+  display: flex;
+  justify-content: center;
+  margin: 0 auto 8px;
+}
+
+.waveform {
+  width: 100%;
+  height: 44px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 4px;
+  padding: 0;
+  opacity: 0.9;
+}
+
+.waveform-bar {
+  flex: 1 1 0;
+  min-width: 4px;
+  max-width: 14px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, var(--gold-2), var(--gold), var(--gold-dark));
+  box-shadow: 0 0 10px rgba(212,175,55,0.18);
+  transform-origin: bottom center;
+  animation: waveformPulse 1.2s ease-in-out infinite;
+}
+
+.waveform-bar:nth-child(1) { height: 14px; animation-delay: 0s; }
+.waveform-bar:nth-child(2) { height: 28px; animation-delay: 0.08s; }
+.waveform-bar:nth-child(3) { height: 18px; animation-delay: 0.16s; }
+.waveform-bar:nth-child(4) { height: 34px; animation-delay: 0.24s; }
+.waveform-bar:nth-child(5) { height: 22px; animation-delay: 0.32s; }
+.waveform-bar:nth-child(6) { height: 38px; animation-delay: 0.40s; }
+.waveform-bar:nth-child(7) { height: 20px; animation-delay: 0.48s; }
+.waveform-bar:nth-child(8) { height: 30px; animation-delay: 0.56s; }
+.waveform-bar:nth-child(9) { height: 16px; animation-delay: 0.64s; }
+.waveform-bar:nth-child(10) { height: 26px; animation-delay: 0.72s; }
+.waveform-bar:nth-child(11) { height: 18px; animation-delay: 0.80s; }
+.waveform-bar:nth-child(12) { height: 32px; animation-delay: 0.88s; }
+.waveform-bar:nth-child(13) { height: 20px; animation-delay: 0.96s; }
+.waveform-bar:nth-child(14) { height: 28px; animation-delay: 1.04s; }
+.waveform-bar:nth-child(15) { height: 14px; animation-delay: 1.12s; }
+
+@keyframes waveformPulse {
+  0%, 100% {
+    transform: scaleY(0.65);
+    opacity: 0.72;
   }
-
-  state.dailySecondsEarnedDate = today;
-  state.dailySecondsEarned = 0;
-}
-
-function updateJoinButtonHref() {
-  if (!els.joinBtn) return;
-  els.joinBtn.href = "login.html";
-}
-
-function setCurrency(value = 0) {
-  setText(els.currencyValue, formatNumber(value));
-}
-
-function updateCurrencyVisibility(user) {
-  setHidden(els.currencyBadge, !user);
-}
-
-function updateConceptVisibility() {
-  const shouldShow = !state.currentUser && state.isLiveActivated;
-  setHidden(els.conceptSectionEl, !shouldShow);
-  updateJoinButtonHref();
-}
-
-function hideUserStats() {
-  setHidden(els.submittedCardEl, true);
-  setHidden(els.playsCardEl, true);
-  setHidden(els.myPlaysCardEl, true);
-  setText(els.submittedCountEl, "0");
-  setText(els.playsPerDayEl, "0");
-  setText(els.myTotalPlaysEl, "0");
-}
-
-function updateVolumeButtonState() {
-  const isMuted = els.audio.muted || Number(els.audio.volume) === 0;
-  els.volumeBtn.classList.toggle("muted", isMuted);
-  els.volumeBtn.setAttribute("aria-label", isMuted ? "Volume muted" : "Volume");
-}
-
-function closeHeaderPanels() {
-  setHidden(els.accountMenu, true);
-  els.volumeControl.classList.remove("open");
-}
-
-function getProfileHref(profile) {
-  if (!profile) return "join.html";
-  if (profile.user_id) {
-    return `artist.html?user_id=${encodeURIComponent(profile.user_id)}`;
-  }
-  return "join.html";
-}
-
-function resetLike() {
-  state.liked = false;
-  els.likeBtn.innerHTML = `<span class="icon">♥</span>Like`;
-  els.likeBtn.classList.remove("liked");
-}
-
-function updateEarnSecondsProgress() {
-  if (!els.earnSecondsProgress) return;
-
-  const safeCurrent = Math.max(0, Number(state.dailySecondsEarned) || 0);
-  const safeLimit = Math.max(1, Number(DAILY_SECONDS_LIMIT) || 1);
-  const percentage = Math.min((safeCurrent / safeLimit) * 100, 100);
-
-  els.earnSecondsProgress.style.width = `${percentage}%`;
-
-  if (els.earnSecondsCopy) {
-    els.earnSecondsCopy.textContent = `Earn Seconds by listening the entire tune · ${safeCurrent}/${safeLimit} today`;
-  }
-}
-
-function updateEarnSecondsVisibility() {
-  const shouldShow = Boolean(state.currentUser);
-  setHidden(els.earnSecondsWrap, !shouldShow);
-}
-
-function updateSkipButtonState() {
-  const isLoggedIn = Boolean(state.currentUser);
-  const hasCoins = state.currentCoins >= SKIP_COST;
-  els.skipBtn.disabled = !isLoggedIn || !hasCoins;
-}
-
-function updateInteractiveControls() {
-  const isLoggedIn = Boolean(state.currentUser);
-
-  els.likeBtn.disabled = !isLoggedIn;
-  setHidden(els.featureNoteEl, isLoggedIn);
-  updateConceptVisibility();
-  updateEarnSecondsVisibility();
-  updateSkipButtonState();
-  updateEarnSecondsProgress();
-
-  if (!isLoggedIn) {
-    resetLike();
-  }
-}
-
-function applyMenuState(user, profile, track) {
-  const isLoggedIn = Boolean(user);
-  const hasProfile = Boolean(profile);
-  const hasTrack = Boolean(track);
-  const profileHref = getProfileHref(profile);
-
-  setHidden(els.desktopLoginLink, isLoggedIn);
-  setHidden(els.mobileLoginLink, isLoggedIn);
-  setHidden(els.desktopLogoutBtn, !isLoggedIn);
-
-  setHidden(els.desktopProfileLink, !isLoggedIn);
-  setHidden(els.mobileProfileLink, !isLoggedIn);
-
-  setHidden(els.desktopNotificationsLink, !isLoggedIn);
-  setHidden(els.mobileNotificationsLink, !isLoggedIn);
-
-  setHidden(els.desktopTrackLink, !isLoggedIn || !hasProfile);
-  setHidden(els.mobileTrackLink, !isLoggedIn || !hasProfile);
-
-  els.desktopProfileLink.href = profileHref;
-  els.mobileProfileLink.href = profileHref;
-  els.accountProfileLink.href = profileHref;
-
-  setHidden(els.accountProfileLink, !isLoggedIn);
-
-  els.desktopTrackLink.setAttribute("data-track-mode", hasTrack ? "edit" : "submit");
-  els.mobileTrackLink.setAttribute("data-track-mode", hasTrack ? "edit" : "submit");
-
-  els.submitTrackBtn.textContent = "Tune";
-  updateJoinButtonHref();
-}
-
-function setHeaderAvatar(photoUrl, artistName) {
-  if (photoUrl) {
-    els.headerAvatarImage.src = photoUrl;
-    setHidden(els.headerAvatarImage, false);
-    setHidden(els.headerAvatarFallback, true);
-    return;
-  }
-
-  setHidden(els.headerAvatarImage, true);
-  setHidden(els.headerAvatarFallback, false);
-  els.headerAvatarFallback.textContent = (artistName || "A").charAt(0).toUpperCase();
-}
-
-function setLoggedOutView() {
-  closeHeaderPanels();
-
-  setHidden(els.submitTrackBtn, true);
-  setHidden(els.showLoginBtn, false);
-  setHidden(els.headerAvatarBtn, true);
-  setHidden(els.headerAvatarImage, true);
-  setHidden(els.headerAvatarFallback, true);
-
-  els.headerAvatarImage.src = "";
-  setHidden(els.accountProfileLink, true);
-  els.accountProfileLink.href = "javascript:void(0)";
-
-  state.currentProfileData = null;
-  state.currentTrackData = null;
-  state.currentUser = null;
-  state.currentCoins = 0;
-  state.dailySecondsEarned = 0;
-  state.dailySecondsEarnedDate = null;
-  state.listenerIdentity = null;
-  state.rewardGrantedForTrackId = null;
-  state.trackAdvanceLock = false;
-
-  applyMenuState(null, null, null);
-  hideUserStats();
-  updateInteractiveControls();
-  updateCurrencyVisibility(null);
-  setCurrency(0);
-  updateJoinButtonHref();
-}
-
-function setLoggedInView() {
-  setHidden(els.submitTrackBtn, true);
-  setHidden(els.showLoginBtn, true);
-  setHidden(els.headerAvatarBtn, false);
-  updateCurrencyVisibility(state.currentUser || true);
-}
-
-async function getSessionUser() {
-  const { data, error } = await supabaseClient.auth.getSession();
-  if (error) throw error;
-  return data?.session?.user || null;
-}
-
-async function persistProfileEconomyState() {
-  if (!state.currentUser) return false;
-
-  const payload = {
-    coins: Math.max(0, Number(state.currentCoins) || 0),
-    daily_seconds_earned: Math.max(0, Number(state.dailySecondsEarned) || 0),
-    daily_seconds_earned_date: state.dailySecondsEarnedDate || getTodayDateKey()
-  };
-
-  const { error } = await supabaseClient
-    .from("profiles")
-    .update(payload)
-    .eq("user_id", state.currentUser.id);
-
-  if (error) {
-    console.error("persistProfileEconomyState error:", error);
-    return false;
-  }
-
-  return true;
-}
-
-async function loadMyProfile(userId) {
-  const { data, error } = await supabaseClient
-    .from("profiles")
-    .select("artist_name, photo_url, user_id, coins, daily_seconds_earned, daily_seconds_earned_date")
-    .eq("user_id", userId)
-    .maybeSingle();
-
-  if (error || !data) {
-    state.currentProfileData = null;
-    state.currentCoins = 0;
-    state.dailySecondsEarned = 0;
-    state.dailySecondsEarnedDate = getTodayDateKey();
-    setHeaderAvatar("", "•");
-    setCurrency(0);
-    updateSkipButtonState();
-    updateEarnSecondsProgress();
-    return null;
-  }
-
-  state.currentProfileData = data;
-  state.currentCoins = getProfileCoins(data);
-  normalizeDailySecondsState(data);
-
-  setHeaderAvatar(data.photo_url, data.artist_name);
-  setCurrency(state.currentCoins);
-  updateSkipButtonState();
-  updateEarnSecondsProgress();
-
-  return data;
-}
-
-async function loadMyTune(userId) {
-  const { data, error } = await supabaseClient
-    .from("tracks")
-    .select("id, user_id, title, status, created_at")
-    .eq("user_id", userId)
-    .order("created_at", { ascending: false })
-    .limit(1)
-    .maybeSingle();
-
-  if (error || !data) {
-    state.currentTrackData = null;
-    return null;
-  }
-
-  state.currentTrackData = data;
-  return data;
-}
-
-async function refreshCoins() {
-  if (!state.currentUser) {
-    state.currentCoins = 0;
-    state.dailySecondsEarned = 0;
-    state.dailySecondsEarnedDate = null;
-    setCurrency(0);
-    updateSkipButtonState();
-    updateEarnSecondsProgress();
-    return 0;
-  }
-
-  const { data, error } = await supabaseClient
-    .from("profiles")
-    .select("coins, daily_seconds_earned, daily_seconds_earned_date")
-    .eq("user_id", state.currentUser.id)
-    .maybeSingle();
-
-  if (error || !data) {
-    console.error("refreshCoins error:", error);
-    state.currentCoins = 0;
-    state.dailySecondsEarned = 0;
-    state.dailySecondsEarnedDate = getTodayDateKey();
-    setCurrency(0);
-    updateSkipButtonState();
-    updateEarnSecondsProgress();
-    return 0;
-  }
-
-  state.currentCoins = getProfileCoins(data);
-  normalizeDailySecondsState(data);
-  setCurrency(state.currentCoins);
-  updateSkipButtonState();
-  updateEarnSecondsProgress();
-  return state.currentCoins;
-}
-
-async function awardListeningSecond() {
-  if (!state.currentUser) return false;
-
-  const currentTrack = state.tracks[state.current];
-  if (!currentTrack?.id) return false;
-  if (state.rewardGrantedForTrackId === currentTrack.id) return false;
-
-  const today = getTodayDateKey();
-
-  if (state.dailySecondsEarnedDate !== today) {
-    state.dailySecondsEarnedDate = today;
-    state.dailySecondsEarned = 0;
-  }
-
-  if (state.dailySecondsEarned >= DAILY_SECONDS_LIMIT) {
-    state.rewardGrantedForTrackId = currentTrack.id;
-    updateEarnSecondsProgress();
-    return false;
-  }
-
-  const previousCoins = state.currentCoins;
-  const previousDailyEarned = state.dailySecondsEarned;
-  const previousDailyDate = state.dailySecondsEarnedDate;
-
-  state.currentCoins += 1;
-  state.dailySecondsEarned += 1;
-  state.dailySecondsEarnedDate = today;
-  state.rewardGrantedForTrackId = currentTrack.id;
-
-  setCurrency(state.currentCoins);
-  updateSkipButtonState();
-  updateEarnSecondsProgress();
-
-  const success = await persistProfileEconomyState();
-
-  if (!success) {
-    state.currentCoins = previousCoins;
-    state.dailySecondsEarned = previousDailyEarned;
-    state.dailySecondsEarnedDate = previousDailyDate;
-    state.rewardGrantedForTrackId = null;
-    setCurrency(state.currentCoins);
-    updateSkipButtonState();
-    updateEarnSecondsProgress();
-    return false;
-  }
-
-  return true;
-}
-
-async function refreshAuthUI() {
-  try {
-    const user = await getSessionUser();
-    state.currentUser = user;
-
-    if (!user) {
-      setLoggedOutView();
-      return null;
-    }
-
-    updateCurrencyVisibility(user);
-    setCurrency(state.currentCoins || 0);
-    setLoggedInView();
-
-    const [profile, tune] = await Promise.all([
-      loadMyProfile(user.id),
-      loadMyTune(user.id)
-    ]);
-
-    applyMenuState(user, profile, tune);
-    updateInteractiveControls();
-    updateJoinButtonHref();
-    return user;
-  } catch (err) {
-    console.error("refreshAuthUI error:", err);
-    setLoggedOutView();
-    return null;
-  }
-}
-
-async function loadTrackStats() {
-  try {
-    const user = await getSessionUser();
-
-    if (!user) {
-      setHidden(els.submittedCardEl, true);
-      setHidden(els.playsCardEl, true);
-      return;
-    }
-
-    const [
-      { count: submittedCount },
-      { count: approvedCount },
-      { count: myApproved }
-    ] = await Promise.all([
-      supabaseClient.from("tracks").select("*", { count: "exact", head: true }),
-      supabaseClient.from("tracks").select("*", { count: "exact", head: true }).eq("status", "approved"),
-      supabaseClient.from("tracks").select("*", { count: "exact", head: true }).eq("user_id", user.id).eq("status", "approved")
-    ]);
-
-    setHidden(els.submittedCardEl, false);
-    setText(els.submittedCountEl, formatNumber(submittedCount));
-
-    if (!myApproved || myApproved === 0) {
-      setHidden(els.playsCardEl, true);
-      return;
-    }
-
-    const perDay = approvedCount && approvedCount > 0
-      ? Math.floor(1440 / approvedCount)
-      : 0;
-
-    setHidden(els.playsCardEl, false);
-    setText(els.playsPerDayEl, formatNumber(perDay));
-  } catch (err) {
-    console.error("loadTrackStats error:", err);
-  }
-}
-
-async function loadMyTotalPlays() {
-  try {
-    const user = await getSessionUser();
-
-    if (!user) {
-      setHidden(els.myPlaysCardEl, true);
-      return;
-    }
-
-    const { data: myTracks, error } = await supabaseClient
-      .from("tracks")
-      .select("play_count")
-      .eq("user_id", user.id);
-
-    if (error || !myTracks || myTracks.length === 0) {
-      setHidden(els.myPlaysCardEl, true);
-      return;
-    }
-
-    const total = myTracks.reduce((sum, track) => sum + (track.play_count || 0), 0);
-
-    setHidden(els.myPlaysCardEl, false);
-    setText(els.myTotalPlaysEl, formatNumber(total));
-  } catch (err) {
-    console.error("loadMyTotalPlays error:", err);
-  }
-}
-
-async function refreshAuthDependentUI() {
-  await refreshAuthUI();
-  await Promise.all([
-    loadTrackStats(),
-    loadMyTotalPlays()
-  ]);
-  updateJoinButtonHref();
-}
-
-async function loadTracksFromSupabase() {
-  const { data, error } = await supabaseClient
-    .from("tracks")
-    .select("id, title, artist, file_url, user_id, play_count, status, created_at, preview_start_seconds, preview_duration_seconds")
-    .eq("status", "approved")
-    .order("created_at", { ascending: false });
-
-  if (error) {
-    console.error("loadTracksFromSupabase error:", error);
-    state.tracks = [];
-    return;
-  }
-
-  state.tracks = (data || []).map(track => ({
-    id: track.id,
-    title: track.title,
-    artist: track.artist,
-    file_url: track.file_url,
-    user_id: track.user_id || null,
-    play_count: track.play_count || 0,
-    preview_start_seconds: track.preview_start_seconds,
-    preview_duration_seconds: track.preview_duration_seconds
-  }));
-}
-
-function renderArtist(track) {
-  if (track.user_id) {
-    els.artistWrapEl.innerHTML = `
-      <a class="artist-link" href="artist.html?user_id=${encodeURIComponent(track.user_id)}">
-        ${escapeHtml(track.artist)}
-      </a>
-    `;
-    return;
-  }
-
-  els.artistWrapEl.innerHTML = `<span>${escapeHtml(track.artist)}</span>`;
-}
-
-function setTrackUI(track) {
-  setText(els.titleEl, track.title || "Untitled");
-  renderArtist(track);
-
-  state.currentPreviewStart = getTrackPreviewStart(track);
-  state.currentPreviewDuration = getTrackPreviewDuration(track);
-  state.rewardGrantedForTrackId = null;
-
-  setText(els.durationTimeEl, formatTime(state.currentPreviewDuration));
-  setText(els.elapsedTimeEl, "0:00");
-  els.progressFill.style.width = "0%";
-
-  resetLike();
-  updateEarnSecondsProgress();
-}
-
-function incrementPlayCount(track) {
-  if (!track?.id) return;
-
-  supabaseClient
-    .from("tracks")
-    .update({ play_count: (track.play_count || 0) + 1 })
-    .eq("id", track.id)
-    .then(() => {
-      track.play_count = (track.play_count || 0) + 1;
-    })
-    .catch(err => console.error("incrementPlayCount error:", err));
-}
-
-function chooseNextTrackIndex() {
-  if (!state.tracks.length) return -1;
-
-  let next;
-  do {
-    next = Math.floor(Math.random() * state.tracks.length);
-  } while (state.tracks.length > 1 && next === state.current);
-
-  return next;
-}
-
-function setEmptyRadioState() {
-  setText(els.titleEl, "No live tunes yet");
-  els.artistWrapEl.innerHTML = `<span>Check back soon</span>`;
-  els.progressFill.style.width = "0%";
-  setText(els.elapsedTimeEl, "0:00");
-  setText(els.durationTimeEl, "1:00");
-  updateEarnSecondsProgress();
-}
-
-function playTrackAt(index, previewOffset = 0, countPlay = true) {
-  const track = state.tracks[index];
-  if (index < 0 || !track) return;
-
-  state.current = index;
-
-  const previewStart = getTrackPreviewStart(track);
-  const previewDuration = getTrackPreviewDuration(track);
-  const safeOffset = Math.max(0, Math.min(previewOffset, Math.max(previewDuration - 0.25, 0)));
-  const targetStartTime = previewStart + safeOffset;
-
-  setTrackUI(track);
-  els.audio.src = track.file_url;
-  setText(els.elapsedTimeEl, formatTime(safeOffset));
-  els.progressFill.style.width = `${previewDuration > 0 ? (safeOffset / previewDuration) * 100 : 0}%`;
-
-  els.audio.onloadedmetadata = () => {
-    const maxStart = Math.max(0, (els.audio.duration || targetStartTime) - 0.25);
-    const clampedStart = Math.min(targetStartTime, maxStart);
-
-    try {
-      els.audio.currentTime = clampedStart;
-    } catch (e) {
-      console.error("set currentTime error:", e);
-    }
-
-    const playPromise = els.audio.play();
-    if (playPromise) {
-      playPromise.catch(err => {
-        console.log("audio play blocked:", err);
-      });
-    }
-  };
-
-  if (countPlay) {
-    incrementPlayCount(track);
-  }
-}
-
-function nextTrack(previewOffset = 0, countPlay = true) {
-  if (!state.tracks.length) {
-    setEmptyRadioState();
-    return;
-  }
-
-  const nextIndex = chooseNextTrackIndex();
-  playTrackAt(nextIndex, previewOffset, countPlay);
-}
-
-async function getListenerIdentity() {
-  const user = await getSessionUser();
-
-  if (user?.id) return user.id;
-
-  let anonId = localStorage.getItem("listener_id");
-  if (!anonId) {
-    anonId = crypto.randomUUID();
-    localStorage.setItem("listener_id", anonId);
-  }
-  return anonId;
-}
-
-async function registerListener() {
-  try {
-    if (!state.isLiveActivated) return;
-
-    if (!state.listenerIdentity) {
-      state.listenerIdentity = await getListenerIdentity();
-    }
-
-    const { error } = await supabaseClient
-      .from("listeners")
-      .upsert(
-        [{
-          user_id: state.listenerIdentity,
-          last_seen: new Date().toISOString()
-        }],
-        { onConflict: "user_id" }
-      );
-
-    if (error) {
-      console.error("registerListener error:", error);
-    }
-  } catch (err) {
-    console.error("registerListener crash:", err);
-  }
-}
-
-async function updateListeners() {
-  try {
-    const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000).toISOString();
-
-    const { count, error } = await supabaseClient
-      .from("listeners")
-      .select("*", { count: "exact", head: true })
-      .gt("last_seen", fiveMinutesAgo);
-
-    if (error) {
-      console.error("updateListeners error:", error);
-      return;
-    }
-
-    if (count !== null) {
-      setText(els.listenersCountEl, `${formatNumber(count)} Listeners`);
-    }
-  } catch (err) {
-    console.error("updateListeners crash:", err);
-  }
-}
-
-async function bootstrapLiveRadio() {
-  await loadTracksFromSupabase();
-
-  if (!state.tracks.length) {
-    setEmptyRadioState();
-    await updateListeners();
-    return;
-  }
-
-  els.audio.volume = Number(els.volume.value);
-  els.audio.muted = true;
-  updateVolumeButtonState();
-
-  const nextIndex = chooseNextTrackIndex();
-  if (nextIndex >= 0) {
-    const previewDuration = getTrackPreviewDuration(state.tracks[nextIndex]);
-    const randomLiveOffset = Math.floor(Math.random() * Math.max(previewDuration, 1));
-    playTrackAt(nextIndex, randomLiveOffset, false);
-  }
-
-  state.liveBooted = true;
-  await updateListeners();
-}
-
-async function ensureBackgroundPlayback() {
-  if (!state.liveBooted || !els.audio.src) return;
-
-  if (els.audio.paused) {
-    els.audio.muted = true;
-    updateVolumeButtonState();
-    els.audio.play().catch(() => {});
+  50% {
+    transform: scaleY(1.15);
+    opacity: 1;
   }
 }
 
-async function handleStartRadio() {
-  state.isLiveActivated = true;
-  state.listenerIdentity = null;
+.track-title {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: var(--fs-track-title);
+  margin: 0;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-shadow: 0 2px 14px rgba(0,0,0,0.3);
+}
 
-  await registerListener();
-  await updateListeners();
-  await loadTrackStats();
-  await loadMyTotalPlays();
+.artist-wrap {
+  margin: 0;
+  font-size: var(--fs-artist);
+  font-family: 'Manrope', sans-serif;
+  font-weight: 400;
+}
 
-  els.radioShell.classList.remove("pre-live");
-  setHidden(els.startOverlay, true);
-  updateConceptVisibility();
+.artist-link {
+  color: var(--gold);
+  text-decoration: none;
+  border-bottom: 1px solid rgba(212,175,55,0.32);
+}
 
-  if (!els.audio.src && state.tracks.length) {
-    const nextIndex = chooseNextTrackIndex();
-    const previewDuration = nextIndex >= 0 ? getTrackPreviewDuration(state.tracks[nextIndex]) : 60;
-    const randomOffset = Math.floor(Math.random() * Math.max(previewDuration, 1));
-    playTrackAt(nextIndex, randomOffset, false);
+.artist-link:hover {
+  opacity: 0.88;
+}
+
+.time-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: rgba(255,255,255,0.68);
+  font-size: var(--fs-body);
+  margin: 0 auto 10px;
+  width: 100%;
+  max-width: 620px;
+  font-family: 'Manrope', sans-serif;
+  letter-spacing: 0.02em;
+}
+
+.progress {
+  position: relative;
+  width: 100%;
+  max-width: 620px;
+  height: 14px;
+  margin: 0 auto;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.07), rgba(255,255,255,0.02)),
+    linear-gradient(90deg, rgba(20,20,20,0.96), rgba(10,10,10,0.98));
+  border: 1px solid rgba(244,215,122,0.22);
+  border-radius: 999px;
+  overflow: hidden;
+  box-shadow:
+    inset 0 1px 2px rgba(255,255,255,0.05),
+    inset 0 -3px 6px rgba(0,0,0,0.48),
+    0 0 0 1px rgba(212,175,55,0.05),
+    0 0 20px rgba(212,175,55,0.06);
+}
+
+.progress::before {
+  content: "";
+  position: absolute;
+  inset: 1px;
+  border-radius: inherit;
+  background: linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0.06), rgba(255,255,255,0.02));
+  pointer-events: none;
+  opacity: 0.55;
+}
+
+.fill {
+  position: relative;
+  height: 100%;
+  width: 0%;
+  border-radius: inherit;
+  background:
+    linear-gradient(90deg, #6e4f0e 0%, #a97812 16%, #d4af37 46%, #f4d77a 78%, #fff1b8 100%);
+  box-shadow:
+    0 0 16px rgba(212,175,55,0.28),
+    0 0 28px rgba(212,175,55,0.16);
+}
+
+.fill::before {
+  content: "";
+  position: absolute;
+  inset: 1px auto 1px 1px;
+  width: calc(100% - 2px);
+  border-radius: inherit;
+  background: linear-gradient(180deg, rgba(255,255,255,0.34), rgba(255,255,255,0.04) 52%, rgba(255,255,255,0));
+  pointer-events: none;
+}
+
+.fill::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  right: 0;
+  width: 18px;
+  height: 18px;
+  transform: translate(35%, -50%);
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255,247,207,0.98) 0%, rgba(244,215,122,0.95) 42%, rgba(212,175,55,0.72) 70%, rgba(212,175,55,0) 100%);
+  box-shadow:
+    0 0 14px rgba(244,215,122,0.45),
+    0 0 26px rgba(212,175,55,0.30);
+  pointer-events: none;
+}
+
+.earn-seconds-wrap {
+  width: 100%;
+  max-width: 620px;
+  margin: -6px auto 0;
+  display: grid;
+  gap: 8px;
+}
+
+.earn-seconds-progress {
+  width: 100%;
+  height: 4px;
+  border-radius: 999px;
+  overflow: hidden;
+  background: rgba(255,255,255,0.08);
+  box-shadow:
+    inset 0 1px 1px rgba(255,255,255,0.04),
+    0 0 0 1px rgba(212,175,55,0.03);
+}
+
+.earn-seconds-fill {
+  width: 0%;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, rgba(212,175,55,0.45), rgba(244,215,122,0.95));
+  box-shadow: 0 0 12px rgba(212,175,55,0.18);
+  transition: width 0.18s linear;
+}
+
+.earn-seconds-copy {
+  color: rgba(255,255,255,0.58);
+  font-size: 11px;
+  line-height: 1.4;
+  letter-spacing: 0.02em;
+}
+
+.player-actions {
+  margin-top: 18px;
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.feature-note {
+  margin-top: 10px;
+  font-size: 12px;
+  color: rgba(255,255,255,0.6);
+  line-height: 1.5;
+}
+
+.volume-wrap {
+  margin-top: 12px;
+  display: flex;
+  justify-content: center;
+  min-height: 50px;
+}
+
+.volume-control {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.volume-slider-inline {
+  width: 0;
+  opacity: 0;
+  overflow: hidden;
+  transition: width 0.22s ease, opacity 0.18s ease, margin 0.22s ease;
+  margin-left: 0;
+}
+
+.volume-control.open .volume-slider-inline {
+  width: 156px;
+  opacity: 1;
+  margin-left: 4px;
+}
+
+.volume-slider-inline input[type="range"] {
+  width: 156px;
+  margin: 0;
+  accent-color: var(--gold);
+}
+
+.volume-button {
+  width: 50px;
+  height: 50px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.16);
+  background:
+    linear-gradient(180deg, #fbfbfb 0%, #d6d6d6 16%, #b6b6b6 35%, #8b8b8b 52%, #d2d2d2 72%, #f4f4f4 100%);
+  color: #151515;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow:
+    inset 0 2px 0 rgba(255,255,255,0.72),
+    inset 0 -2px 3px rgba(0,0,0,0.18),
+    0 10px 22px rgba(0,0,0,0.25);
+  flex: 0 0 auto;
+  padding: 0;
+  transition: transform 0.14s ease, box-shadow 0.18s ease, filter 0.18s ease;
+}
+
+.volume-button:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.02);
+  box-shadow:
+    inset 0 2px 0 rgba(255,255,255,0.78),
+    inset 0 -2px 3px rgba(0,0,0,0.18),
+    0 12px 24px rgba(0,0,0,0.28),
+    0 0 14px rgba(212,175,55,0.16);
+}
+
+.volume-button:active {
+  transform: scale(0.96);
+}
+
+.volume-button svg {
+  width: 22px;
+  height: 22px;
+  display: block;
+}
+
+.volume-button .icon-muted {
+  display: none;
+}
+
+.volume-button.muted .icon-on {
+  display: none;
+}
+
+.volume-button.muted .icon-muted {
+  display: block;
+}
+
+.listeners-pill {
+  margin: 10px auto 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0;
+  border-radius: 999px;
+  background: transparent;
+  border: none;
+  color: #d9d9d9;
+  font-size: var(--fs-body);
+  box-shadow: none;
+  backdrop-filter: none;
+  font-family: 'Manrope', sans-serif;
+  opacity: 0.88;
+}
+
+.listeners-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--gold);
+  box-shadow: 0 0 8px rgba(212,175,55,0.5);
+}
+
+.concept-section {
+  max-width: 780px;
+  margin: 34px auto 0;
+  padding: 0 12px;
+}
+
+.concept-card {
+  position: relative;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.015)),
+    radial-gradient(circle at top, rgba(212,175,55,0.10), transparent 55%),
+    linear-gradient(180deg, rgba(20,20,20,0.82) 0%, rgba(12,12,12,0.90) 100%);
+  border: 1px solid rgba(212,175,55,0.14);
+  border-radius: 28px;
+  padding: 30px 26px;
+  box-shadow:
+    0 18px 48px rgba(0,0,0,0.28),
+    0 0 28px rgba(212,175,55,0.06),
+    inset 0 1px 0 rgba(255,255,255,0.04);
+  backdrop-filter: blur(6px);
+}
+
+.concept-kicker {
+  font-family: 'Space Grotesk', sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-size: 12px;
+  color: var(--muted);
+  opacity: 0.82;
+  margin-bottom: 12px;
+}
+
+.concept-title {
+  margin: 0 0 14px;
+  font-size: clamp(26px, 4vw, 36px);
+  text-shadow: 0 2px 14px rgba(0,0,0,0.3);
+}
+
+.concept-copy {
+  max-width: 620px;
+  margin: 0 auto;
+  color: rgba(255,255,255,0.78);
+  font-size: 15px;
+  line-height: 1.75;
+}
+
+.join-prompt {
+  margin-top: 24px;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: clamp(18px, 3vw, 24px);
+  color: #fff1c0;
+}
+
+.join-cta-wrap {
+  margin-top: 18px;
+  display: flex;
+  justify-content: center;
+}
+
+.stats-row {
+  max-width: 900px;
+  margin: 30px auto 0;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 30px;
+  align-items: start;
+}
+
+.stat-card {
+  background: transparent;
+  border-radius: 0;
+  padding: 18px 8px 10px;
+  border: none;
+  box-shadow: none;
+  backdrop-filter: none;
+  position: relative;
+}
+
+.stat-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 72px;
+  height: 1px;
+  transform: translateX(-50%);
+  background: linear-gradient(90deg, transparent, rgba(212,175,55,0.85), transparent);
+  opacity: 0.8;
+}
+
+.stat-label {
+  color: var(--muted);
+  font-size: var(--fs-stat-label);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 10px;
+  font-family: 'Space Grotesk', sans-serif;
+  opacity: 0.78;
+}
+
+.stat-value {
+  color: var(--gold);
+  font-size: var(--fs-stat-value);
+  font-weight: 700;
+  text-shadow:
+    0 1px 10px rgba(0,0,0,0.25),
+    0 0 18px rgba(212,175,55,0.08);
+  font-family: 'Space Grotesk', sans-serif;
+}
+
+@media (max-width: 760px) {
+  body {
+    padding: 0 14px calc(var(--mobile-bottom-nav-height) + 18px);
+    background:
+      linear-gradient(180deg, rgba(7, 7, 7, 0.50) 0%, rgba(7, 7, 7, 0.76) 42%, rgba(7, 7, 7, 0.86) 100%),
+      radial-gradient(circle at top, rgba(212, 175, 55, 0.12), transparent 26%),
+      url("../../bg-mobile-final-1080x1920.webp");
+    background-size: cover, auto, cover;
+    background-position: center top, center top, center center;
+    background-repeat: no-repeat, no-repeat, no-repeat;
+    background-attachment: scroll, scroll, scroll;
   }
 
-  if (Number(els.volume.value) > 0) {
-    els.audio.muted = false;
+  .desktop-side-nav {
+    display: none;
   }
 
-  updateVolumeButtonState();
-
-  els.audio.play().catch(err => {
-    console.error("Start Radio play error:", err);
-  });
-}
-
-async function advanceAfterTrackCompletion() {
-  if (state.trackAdvanceLock) return;
-  state.trackAdvanceLock = true;
-
-  try {
-    await awardListeningSecond();
-    nextTrack(0, true);
-  } finally {
-    state.trackAdvanceLock = false;
-  }
-}
-
-async function handleSkip() {
-  if (!state.currentUser) return;
-  if (state.currentCoins < SKIP_COST) return;
-
-  els.skipBtn.disabled = true;
-
-  const previousCoins = state.currentCoins;
-  state.currentCoins = Math.max(0, state.currentCoins - SKIP_COST);
-  setCurrency(state.currentCoins);
-  updateSkipButtonState();
-
-  const success = await persistProfileEconomyState();
-
-  if (!success) {
-    state.currentCoins = previousCoins;
-    setCurrency(state.currentCoins);
-    updateSkipButtonState();
-    return;
+  .mobile-bottom-nav-wrap {
+    display: block;
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: var(--mobile-bottom-nav-height);
+    background: var(--mobile-nav-bg);
+    backdrop-filter: blur(18px);
+    border-top: 1px solid rgba(212,175,55,0.08);
+    box-shadow: 0 -8px 28px rgba(0,0,0,0.28);
+    z-index: 130;
   }
 
-  nextTrack(0, true);
-}
-
-function handleLike() {
-  if (!state.currentUser) return;
-
-  state.liked = !state.liked;
-
-  if (state.liked) {
-    els.likeBtn.innerHTML = `<span class="icon">♥</span>Liked`;
-    els.likeBtn.classList.add("liked");
-    return;
+  .mobile-bottom-nav {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    gap: 2px;
+    padding: 8px 8px 10px;
   }
 
-  els.likeBtn.innerHTML = `<span class="icon">♥</span>Like`;
-  els.likeBtn.classList.remove("liked");
-}
+  .mobile-nav-link {
+    flex: 1;
+    min-width: 0;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    text-decoration: none;
+    color: #f4f4f4;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.2px;
+    font-family: 'Manrope', sans-serif;
+    padding: 6px 2px;
+    background: transparent;
+  }
 
-async function handleLogout() {
-  els.logoutBtn.disabled = true;
-  els.desktopLogoutBtn.disabled = true;
+  .mobile-nav-link.hidden {
+    display: none !important;
+  }
 
-  try {
-    const { error } = await supabaseClient.auth.signOut();
+  .mobile-nav-link.active {
+    color: #fff5d2;
+  }
 
-    if (error) {
-      console.error("Logout error:", error);
-      return;
-    }
+  .mobile-nav-label {
+    line-height: 1;
+  }
 
-    state.listenerIdentity = null;
-    state.currentCoins = 0;
-    state.dailySecondsEarned = 0;
-    state.dailySecondsEarnedDate = null;
-    await refreshAuthDependentUI();
-  } catch (err) {
-    console.error("handleLogout error:", err);
-  } finally {
-    els.logoutBtn.disabled = false;
-    els.desktopLogoutBtn.disabled = false;
+  .header-bar {
+    grid-template-columns: 42px 1fr 42px;
+    min-height: 68px;
+    padding: 6px 8px 2px;
+  }
+
+  .currency-badge {
+    min-height: 40px;
+    width: max-content;
+    min-width: 80px;
+    max-width: none;
+    padding: 0 12px 0 10px;
+    gap: 8px;
+    flex: 0 0 auto;
+    flex-shrink: 0;
+  }
+
+  .currency-badge-icon {
+    width: 24px;
+    height: 24px;
+  }
+
+  .currency-badge-value {
+    font-size: 14px;
+    white-space: nowrap;
+  }
+
+  .header-logo {
+    width: min(200px, 40vw);
+  }
+
+  .header-icon-btn,
+  .header-avatar-btn {
+    width: 38px;
+    height: 38px;
+  }
+
+  .account-menu {
+    top: 48px;
+    right: 0;
+  }
+
+  .radio-stage {
+    min-height: 48vh;
+    margin-top: 18px;
+  }
+
+  .overlay-content {
+    padding: 12px;
+    gap: 14px;
+  }
+
+  .overlay-title {
+    font-size: clamp(28px, 10vw, 46px);
+    max-width: 11ch;
+  }
+
+  .overlay-subcopy {
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  .start-btn {
+    min-width: 220px;
+    min-height: 62px;
+    font-size: 15px;
+    padding: 0 28px;
+  }
+
+  .stats-row {
+    grid-template-columns: 1fr;
+    gap: 10px;
+    margin-top: 24px;
+  }
+
+  .waveform-wrap,
+  .time-row,
+  .progress,
+  .earn-seconds-wrap {
+    max-width: 100%;
+  }
+
+  .waveform {
+    height: 38px;
+    gap: 3px;
+  }
+
+  .waveform-bar {
+    min-width: 3px;
+  }
+
+  .track-title {
+    font-size: clamp(21px, 6vw, 30px);
+    margin-bottom: 3px;
+  }
+
+  .artist-wrap {
+    font-size: 15px;
+  }
+
+  .submit-link {
+    width: 100%;
+    max-width: 320px;
+  }
+
+  .volume-control.open .volume-slider-inline {
+    width: 120px;
+  }
+
+  .volume-slider-inline input[type="range"] {
+    width: 120px;
+  }
+
+  .progress {
+    height: 12px;
+  }
+
+  .fill::after {
+    width: 14px;
+    height: 14px;
+  }
+
+  .concept-card {
+    padding: 24px 18px;
+    border-radius: 24px;
+  }
+
+  .concept-copy {
+    font-size: 14px;
+    line-height: 1.7;
+  }
+
+  .earn-seconds-copy {
+    font-size: 10px;
+  }
+
+  .skip-cost-coin {
+    width: 14px;
+    height: 14px;
   }
 }
-
-function bindUIEvents() {
-  els.showLoginBtn.onclick = () => {
-    closeHeaderPanels();
-  };
-
-  els.headerAvatarBtn.onclick = () => {
-    els.volumeControl.classList.remove("open");
-    els.accountMenu.classList.toggle("hidden");
-  };
-
-  els.accountProfileLink.onclick = () => {
-    setHidden(els.accountMenu, true);
-  };
-
-  els.accountNotificationsLink.onclick = () => {
-    setHidden(els.accountMenu, true);
-  };
-
-  els.desktopLogoutBtn.onclick = handleLogout;
-  els.logoutBtn.onclick = handleLogout;
-
-  els.volumeBtn.onclick = () => {
-    setHidden(els.accountMenu, true);
-    els.volumeControl.classList.toggle("open");
-  };
-
-  els.startBtn.onclick = handleStartRadio;
-  els.skipBtn.onclick = () => {
-    handleSkip().catch(err => console.error("handleSkip error:", err));
-  };
-  els.likeBtn.onclick = handleLike;
-
-  els.volume.addEventListener("input", (e) => {
-    const v = Number(e.target.value);
-    els.audio.volume = v;
-    els.audio.muted = v === 0 || !state.isLiveActivated;
-    updateVolumeButtonState();
-  });
-
-  document.addEventListener("click", (e) => {
-    const insideHeaderRight = e.target.closest(".header-right");
-    const insideVolumeWrap = e.target.closest(".volume-wrap");
-    const isAvatarButton = e.target.closest("#headerAvatarBtn");
-
-    if (!insideHeaderRight && !isAvatarButton) {
-      setHidden(els.accountMenu, true);
-    }
-
-    if (!insideVolumeWrap) {
-      els.volumeControl.classList.remove("open");
-    }
-  });
-
-  document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape") {
-      setHidden(els.accountMenu, true);
-      els.volumeControl.classList.remove("open");
-    }
-  });
-
-  document.addEventListener("visibilitychange", () => {
-    if (!document.hidden && state.isLiveActivated) {
-      registerListener().catch(() => {});
-    }
-    updateListeners().catch(() => {});
-    ensureBackgroundPlayback();
-  });
-
-  window.addEventListener("focus", () => {
-    if (state.isLiveActivated) {
-      registerListener().catch(() => {});
-    }
-    updateListeners().catch(() => {});
-    ensureBackgroundPlayback();
-  });
-
-  els.audio.addEventListener("timeupdate", () => {
-    const previewElapsed = Math.max(0, (els.audio.currentTime || 0) - state.currentPreviewStart);
-    const clampedElapsed = Math.min(previewElapsed, state.currentPreviewDuration);
-
-    els.progressFill.style.width = `${state.currentPreviewDuration > 0 ? (clampedElapsed / state.currentPreviewDuration) * 100 : 0}%`;
-    setText(els.elapsedTimeEl, formatTime(clampedElapsed));
-
-    if (previewElapsed >= state.currentPreviewDuration) {
-      advanceAfterTrackCompletion().catch(err => {
-        console.error("advanceAfterTrackCompletion error:", err);
-      });
-    }
-  });
-
-  els.audio.addEventListener("ended", () => {
-    advanceAfterTrackCompletion().catch(err => {
-      console.error("advanceAfterTrackCompletion error:", err);
-    });
-  });
-
-  supabaseClient.auth.onAuthStateChange(() => {
-    refreshAuthDependentUI().catch(err => console.error(err));
-  });
-}
-
-function bindIntervals() {
-  setInterval(() => {
-    if (state.isLiveActivated && !document.hidden) {
-      registerListener();
-    }
-  }, REFRESH_INTERVALS.listenerHeartbeat);
-
-  setInterval(() => {
-    updateListeners();
-  }, REFRESH_INTERVALS.listenerCount);
-
-  setInterval(async () => {
-    await loadTracksFromSupabase();
-    await ensureBackgroundPlayback();
-  }, REFRESH_INTERVALS.tracksReload);
-}
-
-async function initPage() {
-  updateJoinButtonHref();
-  setLoggedOutView();
-  updateVolumeButtonState();
-  updateConceptVisibility();
-  bindUIEvents();
-  bindIntervals();
-  await refreshAuthDependentUI();
-  await bootstrapLiveRadio();
-  updateJoinButtonHref();
-}
-
-initPage().catch(err => {
-  console.error("initPage error:", err);
-});
