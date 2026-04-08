@@ -100,7 +100,12 @@
 
   <div class="header-wrap">
     <header class="header-bar">
-      <div class="header-left"></div>
+      <div class="header-left">
+        <div id="currencyBadge" class="currency-badge hidden" aria-label="Coins balance">
+          <img src="coin.png" alt="" class="currency-badge-icon" />
+          <span id="currencyValue" class="currency-badge-value">0</span>
+        </div>
+      </div>
 
       <div class="header-center">
         <a href="/" class="header-logo-link" aria-label="60 Seconds FM home">
@@ -229,7 +234,7 @@
         <div class="join-prompt">Are you an artist or music producer?</div>
 
         <div class="join-cta-wrap">
-          <a class="start-btn" href="login.html">Join 60 Seconds now</a>
+          <a id="joinBtn" class="start-btn" href="login.html">Join 60 Seconds now</a>
         </div>
       </div>
     </section>
