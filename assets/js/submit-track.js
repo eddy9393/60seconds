@@ -28,7 +28,9 @@ const els = {
     accountMenu: document.getElementById("accountMenu"),
     accountProfileLink: document.getElementById("accountProfileLink"),
     accountNotificationsLink: document.getElementById("accountNotificationsLink"),
-    logoutBtn: document.getElementById("logout")
+    logoutBtn: document.getElementById("logout"),
+    currencyBadge: document.getElementById("currencyBadge"),
+    currencyValue: document.getElementById("currencyValue")
   },
 
   desktopNav: {
@@ -104,6 +106,17 @@ function setHidden(element, hidden) {
 function setText(element, value) {
   if (!element) return;
   element.textContent = value ?? "";
+}
+
+function setCurrency(value) {
+  const amount = Number(value);
+
+  if (!Number.isFinite(amount)) {
+    setText(els.header.currencyValue, "0");
+    return;
+  }
+
+  setText(els.header.currencyValue, String(Math.max(0, Math.floor(amount))));
 }
 
 function setStatus(message, isError = false) {
@@ -284,6 +297,7 @@ function setLoggedOutView() {
 function setLoggedInHeader() {
   setHidden(els.header.showLoginBtn, true);
   setHidden(els.header.headerAvatarBtn, false);
+  setHidden(els.header.currencyBadge, false);
 }
 
 function setPageMode(track) {
@@ -436,17 +450,21 @@ function fillTrackForm(track) {
 async function loadMyProfile(userId) {
   const { data, error } = await supabaseClient
     .from("profiles")
-    .select("user_id, artist_name, photo_url")
+    .select("user_id, artist_name, photo_url, coins")
     .eq("user_id", userId)
     .maybeSingle();
 
   if (error || !data) {
     state.currentProfileData = null;
+    setHidden(els.header.currencyBadge, true);
+    setCurrency(0);
     setHeaderAvatar("", "A");
     return null;
   }
 
   state.currentProfileData = data;
+  setHidden(els.header.currencyBadge, false);
+  setCurrency(data.coins || 0);
   setHeaderAvatar(data.photo_url, data.artist_name);
   return data;
 }

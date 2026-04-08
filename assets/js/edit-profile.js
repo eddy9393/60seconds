@@ -35,7 +35,9 @@ const els = {
     accountMenu: document.getElementById("accountMenu"),
     accountProfileLink: document.getElementById("accountProfileLink"),
     accountNotificationsLink: document.getElementById("accountNotificationsLink"),
-    logoutBtn: document.getElementById("logout")
+    logoutBtn: document.getElementById("logout"),
+    currencyBadge: document.getElementById("currencyBadge"),
+    currencyValue: document.getElementById("currencyValue")
   },
 
   desktopNav: {
@@ -94,6 +96,17 @@ function setHidden(element, hidden) {
 function setText(element, value) {
   if (!element) return;
   element.textContent = value ?? "";
+}
+
+function setCurrency(value) {
+  const amount = Number(value);
+
+  if (!Number.isFinite(amount)) {
+    setText(els.header.currencyValue, "0");
+    return;
+  }
+
+  setText(els.header.currencyValue, String(Math.max(0, Math.floor(amount))));
 }
 
 function populateCountryOptions() {
@@ -174,6 +187,8 @@ function setLoggedOutView() {
   setHidden(els.header.headerAvatarBtn, true);
   setHidden(els.header.headerAvatarImage, true);
   setHidden(els.header.headerAvatarFallback, true);
+  setHidden(els.header.currencyBadge, true);
+  setCurrency(0);
   els.header.headerAvatarImage.src = "";
 
   setHidden(els.page.loginRequiredBox, false);
@@ -192,6 +207,7 @@ function setLoggedInView() {
   setHidden(els.auth.userBox, false);
   setHidden(els.header.showLoginBtn, true);
   setHidden(els.header.headerAvatarBtn, false);
+  setHidden(els.header.currencyBadge, false);
   setHidden(els.page.loginRequiredBox, true);
 }
 
@@ -219,7 +235,7 @@ function fillProfileForm(profile) {
 async function loadMyProfile(userId) {
   const { data, error } = await supabaseClient
     .from("profiles")
-    .select("artist_name, bio, nationality, date_of_birth, social_link, photo_url, wants_promotions, accepted_terms, user_id")
+    .select("artist_name, bio, nationality, date_of_birth, social_link, photo_url, wants_promotions, accepted_terms, user_id, coins")
     .eq("user_id", userId)
     .maybeSingle();
 
@@ -235,6 +251,7 @@ async function loadMyProfile(userId) {
   }
 
   state.currentProfile = data;
+  setCurrency(data.coins || 0);
   setHeaderAvatar(data.photo_url, data.artist_name);
 
   const artistHref = `artist.html?user_id=${encodeURIComponent(data.user_id)}`;

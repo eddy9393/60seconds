@@ -34,6 +34,8 @@ const els = {
   accountMenu: document.getElementById("accountMenu"),
   accountProfileLink: document.getElementById("accountProfileLink"),
   accountNotificationsLink: document.getElementById("accountNotificationsLink"),
+  currencyBadge: document.getElementById("currencyBadge"),
+  currencyValue: document.getElementById("currencyValue"),
 
   desktopLoginLink: document.getElementById("desktopLoginLink"),
   desktopLogoutBtn: document.getElementById("desktopLogoutBtn"),
@@ -91,6 +93,19 @@ function setAuthMessage(message, isError = false) {
 function setStatus(message, isError = false) {
   els.statusEl.textContent = message || "";
   els.statusEl.style.color = isError ? "#ff8a8a" : "#cfcfcf";
+}
+
+function setCurrency(value) {
+  const amount = Number(value);
+
+  if (!Number.isFinite(amount)) {
+    if (els.currencyValue) els.currencyValue.textContent = "0";
+    return;
+  }
+
+  if (els.currencyValue) {
+    els.currencyValue.textContent = String(Math.max(0, Math.floor(amount)));
+  }
 }
 
 function clearLoginFields() {
@@ -191,6 +206,8 @@ function setLoggedOutView() {
   setHidden(els.headerAvatarBtn, true);
   setHidden(els.headerAvatarImage, true);
   setHidden(els.headerAvatarFallback, true);
+  setHidden(els.currencyBadge, true);
+  setCurrency(0);
 
   if (els.headerAvatarImage) {
     els.headerAvatarImage.src = "";
@@ -207,6 +224,7 @@ function setLoggedInView() {
   setHidden(els.authBox, true);
   setHidden(els.showLoginBtn, true);
   setHidden(els.headerAvatarBtn, false);
+  setHidden(els.currencyBadge, false);
 }
 
 function renderPageState() {
@@ -247,17 +265,20 @@ async function getSessionUser() {
 async function loadMyProfile(userId) {
   const { data, error } = await supabaseClient
     .from("profiles")
-    .select("user_id, artist_name, photo_url, bio, nationality, date_of_birth, social_link, wants_promotions, accepted_terms")
+    .select("user_id, artist_name, photo_url, bio, nationality, date_of_birth, social_link, wants_promotions, accepted_terms, coins")
     .eq("user_id", userId)
     .maybeSingle();
 
   if (error || !data) {
     state.currentProfileData = null;
+    setHidden(els.currencyBadge, true);
+    setCurrency(0);
     setHeaderAvatar("", "A");
     return null;
   }
 
   state.currentProfileData = data;
+  setCurrency(data.coins || 0);
   setHeaderAvatar(data.photo_url, data.artist_name);
   return data;
 }

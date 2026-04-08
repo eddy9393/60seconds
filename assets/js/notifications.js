@@ -12,7 +12,9 @@ const els = {
     accountMenu: document.getElementById("accountMenu"),
     accountProfileLink: document.getElementById("accountProfileLink"),
     accountNotificationsLink: document.getElementById("accountNotificationsLink"),
-    logoutBtn: document.getElementById("logout")
+    logoutBtn: document.getElementById("logout"),
+    currencyBadge: document.getElementById("currencyBadge"),
+    currencyValue: document.getElementById("currencyValue")
   },
 
   desktopNav: {
@@ -43,6 +45,19 @@ function setHidden(element, hidden) {
 
 function closeHeaderPanels() {
   setHidden(els.header.accountMenu, true);
+}
+
+function setCurrency(value) {
+  const amount = Number(value);
+
+  if (!Number.isFinite(amount)) {
+    if (els.header.currencyValue) els.header.currencyValue.textContent = "0";
+    return;
+  }
+
+  if (els.header.currencyValue) {
+    els.header.currencyValue.textContent = String(Math.max(0, Math.floor(amount)));
+  }
 }
 
 function getProfileHref(profile) {
@@ -93,6 +108,8 @@ function setLoggedOutView() {
   els.header.headerAvatarImage.src = "";
   setHidden(els.header.accountProfileLink, true);
   els.header.accountProfileLink.href = "javascript:void(0)";
+  setHidden(els.header.currencyBadge, true);
+  setCurrency(0);
 
   state.currentProfileData = null;
   state.currentTrackData = null;
@@ -103,6 +120,7 @@ function setLoggedOutView() {
 function setLoggedInView() {
   setHidden(els.header.showLoginBtn, true);
   setHidden(els.header.headerAvatarBtn, false);
+  setHidden(els.header.currencyBadge, false);
 }
 
 function setHeaderAvatar(photoUrl, artistName) {
@@ -121,7 +139,7 @@ function setHeaderAvatar(photoUrl, artistName) {
 async function loadMyProfile(userId) {
   const { data, error } = await supabaseClient
     .from("profiles")
-    .select("artist_name, photo_url, user_id")
+    .select("artist_name, photo_url, user_id, coins")
     .eq("user_id", userId)
     .maybeSingle();
 
@@ -132,6 +150,7 @@ async function loadMyProfile(userId) {
   }
 
   state.currentProfileData = data;
+  setCurrency(data.coins || 0);
   setHeaderAvatar(data.photo_url, data.artist_name);
   return data;
 }
