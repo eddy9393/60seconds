@@ -66,7 +66,8 @@ const state = {
   currentTrackData: null,
   currentPreviewStart: 0,
   currentPreviewDuration: 60,
-  currentUser: null
+  currentUser: null,
+  currentCoins: 0
 };
 
 const REFRESH_INTERVALS = {
@@ -112,6 +113,11 @@ function getTrackPreviewStart(track) {
 function getTrackPreviewDuration(track) {
   const value = Number(track?.preview_duration_seconds);
   return Number.isFinite(value) && value > 0 ? value : 60;
+}
+
+function getProfileCoins(profile) {
+  const value = Number(profile?.coins);
+  return Number.isFinite(value) && value >= 0 ? value : 0;
 }
 
 function updateJoinButtonHref() {
@@ -241,6 +247,7 @@ function setLoggedOutView() {
   state.currentProfileData = null;
   state.currentTrackData = null;
   state.currentUser = null;
+  state.currentCoins = 0;
   state.listenerIdentity = null;
 
   applyMenuState(null, null, null);
@@ -267,22 +274,23 @@ async function getSessionUser() {
 async function loadMyProfile(userId) {
   const { data, error } = await supabaseClient
     .from("profiles")
-    .select("artist_name, photo_url, user_id")
+    .select("artist_name, photo_url, user_id, coins")
     .eq("user_id", userId)
     .maybeSingle();
 
   if (error || !data) {
     state.currentProfileData = null;
+    state.currentCoins = 0;
     setHeaderAvatar("", "•");
     setCurrency(0);
     return null;
   }
 
   state.currentProfileData = data;
-  setHeaderAvatar(data.photo_url, data.artist_name);
+  state.currentCoins = getProfileCoins(data);
 
-  // Later kun je hier een echte coinwaarde uit Supabase zetten.
-  setCurrency(0);
+  setHeaderAvatar(data.photo_url, data.artist_name);
+  setCurrency(state.currentCoins);
 
   return data;
 }
@@ -305,6 +313,31 @@ async function loadMyTune(userId) {
   return data;
 }
 
+async function refreshCoins() {
+  if (!state.currentUser) {
+    state.currentCoins = 0;
+    setCurrency(0);
+    return 0;
+  }
+
+  const { data, error } = await supabaseClient
+    .from("profiles")
+    .select("coins")
+    .eq("user_id", state.currentUser.id)
+    .maybeSingle();
+
+  if (error || !data) {
+    console.error("refreshCoins error:", error);
+    state.currentCoins = 0;
+    setCurrency(0);
+    return 0;
+  }
+
+  state.currentCoins = getProfileCoins(data);
+  setCurrency(state.currentCoins);
+  return state.currentCoins;
+}
+
 async function refreshAuthUI() {
   try {
     const user = await getSessionUser();
@@ -316,6 +349,7 @@ async function refreshAuthUI() {
     }
 
     updateCurrencyVisibility(user);
+    setCurrency(state.currentCoins || 0);
     setLoggedInView();
 
     const [profile, tune] = await Promise.all([
@@ -702,6 +736,7 @@ async function handleLogout() {
     }
 
     state.listenerIdentity = null;
+    state.currentCoins = 0;
     await refreshAuthDependentUI();
   } catch (err) {
     console.error("handleLogout error:", err);
