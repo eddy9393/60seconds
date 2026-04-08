@@ -12,7 +12,9 @@ const els = {
     accountMenu: document.getElementById("accountMenu"),
     accountProfileLink: document.getElementById("accountProfileLink"),
     accountNotificationsLink: document.getElementById("accountNotificationsLink"),
-    logoutBtn: document.getElementById("logout")
+    logoutBtn: document.getElementById("logout"),
+    currencyBadge: document.getElementById("currencyBadge"),
+    currencyValue: document.getElementById("currencyValue")
   },
 
   desktopNav: {
@@ -66,6 +68,17 @@ function setHidden(element, hidden) {
 function setText(element, value) {
   if (!element) return;
   element.textContent = value ?? "";
+}
+
+function setCurrency(value) {
+  const amount = Number(value);
+
+  if (!Number.isFinite(amount)) {
+    setText(els.header.currencyValue, "0");
+    return;
+  }
+
+  setText(els.header.currencyValue, String(Math.max(0, Math.floor(amount))));
 }
 
 function escapeHtml(value) {
@@ -159,6 +172,8 @@ function setLoggedOutHeader() {
   els.header.headerAvatarImage.src = "";
   setHidden(els.header.accountProfileLink, true);
   els.header.accountProfileLink.href = "javascript:void(0)";
+  setHidden(els.header.currencyBadge, true);
+  setCurrency(0);
   state.currentUserId = null;
   state.currentProfileData = null;
   state.currentTrackData = null;
@@ -168,6 +183,7 @@ function setLoggedOutHeader() {
 function setLoggedInHeader() {
   setHidden(els.header.showLoginBtn, true);
   setHidden(els.header.headerAvatarBtn, false);
+  setHidden(els.header.currencyBadge, false);
 }
 
 async function handleLogout() {
@@ -205,7 +221,7 @@ async function loadCurrentUserState() {
 
   const profilePromise = supabaseClient
     .from("profiles")
-    .select("user_id, artist_name, photo_url, bio, nationality, social_link, created_at, date_of_birth")
+    .select("user_id, artist_name, photo_url, bio, nationality, social_link, created_at, date_of_birth, coins")
     .eq("user_id", user.id)
     .maybeSingle();
 
@@ -223,6 +239,7 @@ async function loadCurrentUserState() {
   state.currentTrackData = trackData || null;
 
   setLoggedInHeader();
+  setCurrency(state.currentProfileData?.coins || 0);
   setHeaderAvatar(state.currentProfileData?.photo_url || "", state.currentProfileData?.artist_name || "A");
   applyMenuState(user, state.currentProfileData, state.currentTrackData);
 
