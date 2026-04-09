@@ -15,6 +15,13 @@
   const STORAGE_SYNC_MS = 1200;
 
   const state = {
+  const MINI_PLAYER_ICONS = {
+    heart: '<svg viewBox="0 0 24 24" aria-hidden="true" class="mini-svg-icon"><path d="M12 20.5 4.7 13.9a4.8 4.8 0 0 1-.4-6.8A4.7 4.7 0 0 1 11 7.3l1 1 1-1a4.7 4.7 0 0 1 6.7-.2 4.8 4.8 0 0 1-.4 6.8L12 20.5Z" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+    play: '<svg viewBox="0 0 24 24" aria-hidden="true" class="mini-svg-icon"><path d="M8 6.5v11l9-5.5-9-5.5Z" fill="currentColor"/></svg>',
+    pause: '<svg viewBox="0 0 24 24" aria-hidden="true" class="mini-svg-icon"><rect x="7" y="6.5" width="3.5" height="11" rx="1.2" fill="currentColor"/><rect x="13.5" y="6.5" width="3.5" height="11" rx="1.2" fill="currentColor"/></svg>',
+    volume: '<svg viewBox="0 0 24 24" aria-hidden="true" class="mini-svg-icon"><path d="M4 10h4l5-4v12l-5-4H4z" fill="currentColor"/><path d="M16 9.2a3.3 3.3 0 0 1 0 5.6" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/><path d="M18.7 6.8a6.3 6.3 0 0 1 0 10.4" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg>'
+  };
+
     tracks: [],
     currentIndex: -1,
     currentTrack: null,
@@ -79,15 +86,15 @@
   function updatePlayPauseLabel() {
     if (!state.els.pauseBtn) return;
     state.els.pauseBtn.innerHTML = state.audio && !state.audio.paused
-      ? '<span class="mini-player-icon">⏸</span><span>Pause</span>'
-      : '<span class="mini-player-icon">▶</span><span>Play</span>';
+      ? `<span class="mini-player-icon">${MINI_PLAYER_ICONS.pause}</span><span>Pause</span>`
+      : `<span class="mini-player-icon">${MINI_PLAYER_ICONS.play}</span><span>Play</span>`;
   }
 
   function updateLikeLabel() {
     if (!state.els.likeBtn) return;
     state.els.likeBtn.innerHTML = state.liked
-      ? '<span class="mini-player-icon">♥</span><span>Liked</span>'
-      : '<span class="mini-player-icon">♥</span><span>Like</span>';
+      ? `<span class="mini-player-icon">${MINI_PLAYER_ICONS.heart}</span><span>Liked</span>`
+      : `<span class="mini-player-icon">${MINI_PLAYER_ICONS.heart}</span><span>Like</span>`;
     state.els.likeBtn.classList.toggle('is-liked', state.liked);
   }
 
@@ -321,13 +328,13 @@
 .mini-radio-controls{display:flex;align-items:center;gap:6px;flex-wrap:nowrap;min-width:0;overflow:hidden}
 .mini-radio-btn{appearance:none;-webkit-appearance:none;min-height:32px;border-radius:999px;border:1px solid rgba(255,255,255,0.14)!important;background:linear-gradient(180deg, rgba(255,255,255,0.12), rgba(255,255,255,0.04)), linear-gradient(180deg, rgba(10,10,10,0.86), rgba(10,10,10,0.92))!important;color:#f5f5f5!important;padding:0 10px;display:inline-flex;align-items:center;justify-content:center;gap:6px;font-size:12px;font-weight:600;cursor:pointer;box-shadow:inset 0 1px 0 rgba(255,255,255,0.08),0 10px 22px rgba(0,0,0,0.18);white-space:nowrap;text-decoration:none!important;font-family:'Manrope',sans-serif;line-height:1;flex:0 0 auto}
 .mini-radio-btn span{color:inherit!important}
-.mini-radio-btn .mini-player-icon{font-size:13px;line-height:1;color:#d4af37!important}
+.mini-radio-btn .mini-player-icon{width:14px;height:14px;display:inline-flex;align-items:center;justify-content:center;line-height:1;color:#d4af37!important;flex:0 0 auto}.mini-svg-icon{width:14px;height:14px;display:block}
 .mini-radio-btn.is-liked{border-color:rgba(212,175,55,0.72)!important;background:linear-gradient(180deg,#f3d87a,#cfa12a)!important;color:#141414!important;box-shadow:inset 0 1px 0 rgba(255,255,255,0.35),0 10px 22px rgba(0,0,0,0.18),0 0 0 1px rgba(212,175,55,0.28)}
 .mini-radio-btn.is-liked span{color:#141414!important}
 .mini-radio-btn.is-liked .mini-player-icon{color:#141414!important}
 .mini-radio-btn.like-feedback{transform:scale(1.08)}
 .mini-radio-volume-wrap{display:inline-flex;align-items:center;gap:7px;min-width:78px;flex:0 0 92px;padding:0 8px;height:32px;border-radius:999px;border:1px solid rgba(255,255,255,0.14);background:linear-gradient(180deg, rgba(255,255,255,0.12), rgba(255,255,255,0.04)), linear-gradient(180deg, rgba(10,10,10,0.86), rgba(10,10,10,0.92));box-shadow:inset 0 1px 0 rgba(255,255,255,0.08),0 10px 22px rgba(0,0,0,0.18);margin-left:auto}
-.mini-radio-volume-icon{font-size:14px;line-height:1;color:#d4af37;flex:0 0 auto}
+.mini-radio-volume-icon{width:14px;height:14px;display:inline-flex;align-items:center;justify-content:center;line-height:1;color:#d4af37;flex:0 0 auto}.mini-radio-volume-icon .mini-svg-icon{width:14px;height:14px}
 .mini-radio-volume-wrap input[type=range]{width:100%;min-width:0;margin:0;accent-color:#d4af37;background:transparent}
 .mini-radio-time{font-size:10px;color:#bfbfbf;white-space:nowrap;min-width:60px;text-align:right;flex:0 0 auto}
 @media (max-width:420px){.mini-radio-btn{padding:0 8px;font-size:11px}.mini-radio-btn span:last-child{display:none}.mini-radio-btn#miniRadioLike span:last-child{display:inline}.mini-radio-volume-wrap{min-width:72px;flex-basis:84px;padding:0 7px}.mini-radio-time{min-width:48px;font-size:9px}}
@@ -339,7 +346,7 @@
     injectStyles();
     const wrap = document.createElement('div');
     wrap.className = 'mini-radio-player hidden';
-    wrap.innerHTML = '<div class="mini-radio-top"><div id="miniRadioArtist" class="mini-radio-artist">—</div><div id="miniRadioTitle" class="mini-radio-title">—</div></div><div class="mini-radio-controls"><button id="miniRadioLike" class="mini-radio-btn" type="button"><span class="mini-player-icon">♥</span><span>Like</span></button><button id="miniRadioPause" class="mini-radio-btn" type="button"><span class="mini-player-icon">▶</span><span>Play</span></button><div class="mini-radio-volume-wrap"><span class="mini-radio-volume-icon" aria-hidden="true">🔊</span><input id="miniRadioVolume" type="range" min="0" max="1" step="0.01" value="0.3" aria-label="Volume"></div><div id="miniRadioTime" class="mini-radio-time">0:00 / 1:00</div></div>';
+    wrap.innerHTML = `<div class="mini-radio-top"><div id="miniRadioArtist" class="mini-radio-artist">—</div><div id="miniRadioTitle" class="mini-radio-title">—</div></div><div class="mini-radio-controls"><button id="miniRadioLike" class="mini-radio-btn" type="button"><span class="mini-player-icon">${MINI_PLAYER_ICONS.heart}</span><span>Like</span></button><button id="miniRadioPause" class="mini-radio-btn" type="button"><span class="mini-player-icon">${MINI_PLAYER_ICONS.play}</span><span>Play</span></button><div class="mini-radio-volume-wrap"><span class="mini-radio-volume-icon" aria-hidden="true">${MINI_PLAYER_ICONS.volume}</span><input id="miniRadioVolume" type="range" min="0" max="1" step="0.01" value="0.3" aria-label="Volume"></div><div id="miniRadioTime" class="mini-radio-time">0:00 / 1:00</div></div>`;
     document.body.appendChild(wrap);
     state.els.wrap = wrap;
     state.els.artist = wrap.querySelector('#miniRadioArtist');
