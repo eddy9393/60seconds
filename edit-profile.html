@@ -7,7 +7,6 @@
 
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Manrope:wght@300;400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="assets/css/edit-profile.css">
-  <link rel="stylesheet" href="assets/css/radio-player.css">
 </head>
 <body>
   <aside class="desktop-side-nav" aria-label="Desktop navigation">
@@ -182,7 +181,7 @@
         <div class="form-grid hidden" id="editFormWrap">
           <div class="field-group">
             <label class="field-label" for="artistName">(Artist)name</label>
-            <input id="artistName" class="field-input" type="text" placeholder="Enter your name or artist name" />
+            <input id="artistName" class="field-input" type="text" placeholder="Enter your (artist)name" />
           </div>
 
           <div class="field-group">
@@ -193,43 +192,49 @@
           <div class="field-group">
             <label class="field-label" for="nationality">Nationality</label>
             <select id="nationality" class="field-select">
-              <option value="">None</option>
+              <option value="">Select your nationality</option>
             </select>
           </div>
 
-          <div class="field-group field-group-with-toggle">
-            <div class="field-label-row">
-              <label class="field-label" for="musicRole">Musical Role</label>
-              <label class="toggle-pill">
-                <input id="showRoleOnArtistPage" type="checkbox" />
-                <span>Show on artist page</span>
-              </label>
-            </div>
-            <select id="musicRole" class="field-select">
-              <option value="">None</option>
-            </select>
+          <div class="field-group field-group-wide">
+            <label class="field-label">Musical role</label>
+            <div id="musicRolesWrap" class="role-list"></div>
+            <button id="addRoleBtn" class="ghost-link add-role-btn" type="button">+ Add role</button>
+            <div class="form-meta">Optional. Choose one or more roles. Select none if you do not want to show a role.</div>
           </div>
 
-          <div class="field-group field-group-with-toggle">
-            <div class="field-label-row">
-              <label class="field-label" for="city">City</label>
-              <label class="toggle-pill">
-                <input id="showCityOnArtistPage" type="checkbox" />
-                <span>Show on artist page</span>
-              </label>
-            </div>
-            <input id="city" class="field-input" type="text" placeholder="Enter your city" />
+          <div class="field-group">
+            <label class="field-label" for="city">City</label>
+            <input id="city" class="field-input" type="text" placeholder="Your city" />
           </div>
 
-          <div class="field-group field-group-with-toggle">
-            <div class="field-label-row">
-              <label class="field-label" for="dateOfBirth">Date of Birth</label>
-              <label class="toggle-pill">
-                <input id="showBirthOnArtistPage" type="checkbox" />
-                <span>Show on artist page</span>
-              </label>
-            </div>
+          <div class="field-group">
+            <label class="field-label" for="dateOfBirth">Date of Birth</label>
             <input id="dateOfBirth" class="field-input" type="date" />
+          </div>
+
+          <div class="field-group toggle-field-group">
+            <label class="field-label" for="showRoleOnArtistPage">Show role on artist page</label>
+            <label class="toggle-switch" for="showRoleOnArtistPage">
+              <input id="showRoleOnArtistPage" type="checkbox" />
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+
+          <div class="field-group toggle-field-group">
+            <label class="field-label" for="showCityOnArtistPage">Show city on artist page</label>
+            <label class="toggle-switch" for="showCityOnArtistPage">
+              <input id="showCityOnArtistPage" type="checkbox" />
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+
+          <div class="field-group toggle-field-group">
+            <label class="field-label" for="showBirthOnArtistPage">Show date of birth on artist page</label>
+            <label class="toggle-switch" for="showBirthOnArtistPage">
+              <input id="showBirthOnArtistPage" type="checkbox" />
+              <span class="toggle-slider"></span>
+            </label>
           </div>
 
           <div class="field-group">
@@ -268,6 +273,6 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="assets/js/edit-profile.js"></script>
-  <script src="assets/js/radio-player.js"></script>
+  <script src="assets/js/radio-mini-player.js"></script>
 </body>
 </html>
