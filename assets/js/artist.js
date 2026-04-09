@@ -248,8 +248,8 @@ async function loadCurrentUserState() {
 
 async function fetchArtistProfile(userId) {
   const { data, error } = await supabaseClient
-    .from("profiles")
-    .select("user_id, artist_name, photo_url, bio, social_link, nationality, created_at, date_of_birth, music_roles, music_role, city, show_role_on_artist_page, show_city_on_artist_page, show_birth_on_artist_page")
+    .from("public_artist_profiles")
+    .select("user_id, artist_name, photo_url, bio, social_link, nationality, created_at, date_of_birth, music_roles, city")
     .eq("user_id", userId)
     .maybeSingle();
 
@@ -443,14 +443,14 @@ function renderArtistProfile(profile, isOwnPage, hasOwnTrack) {
     ? profile.music_roles
     : (profile?.music_role ? [profile.music_role] : []);
 
-  if (profile?.show_role_on_artist_page && profileRoles.length && !profileRoles.includes('none')) {
+  if (profileRoles.length && !profileRoles.includes('none')) {
     const rolePill = document.createElement("div");
     rolePill.className = "meta-pill";
     rolePill.textContent = profileRoles.map((role) => role.charAt(0).toUpperCase() + role.slice(1)).join(" · ");
     els.page.artistMeta.appendChild(rolePill);
   }
 
-  if (profile?.show_city_on_artist_page && profile?.city) {
+  if (profile?.city) {
     const cityPill = document.createElement("div");
     cityPill.className = "meta-pill";
     cityPill.textContent = profile.city;
@@ -462,7 +462,7 @@ function renderArtistProfile(profile, isOwnPage, hasOwnTrack) {
   memberSincePill.textContent = `Member since ${getMemberSinceDisplay(profile?.created_at)}`;
   els.page.artistMeta.appendChild(memberSincePill);
 
-  const birthdayDisplay = profile?.show_birth_on_artist_page ? getBirthdayDisplay(profile?.date_of_birth) : "";
+  const birthdayDisplay = getBirthdayDisplay(profile?.date_of_birth);
   if (birthdayDisplay) {
     const birthdayPill = document.createElement("div");
     birthdayPill.className = "meta-pill birthday-pill";

@@ -120,9 +120,6 @@
     state.volumeOpen = Boolean(open);
     if (!state.els.wrap) return;
     state.els.wrap.classList.toggle('volume-open', state.volumeOpen);
-    if (state.els.volumePanel) {
-      state.els.volumePanel.setAttribute('aria-hidden', state.volumeOpen ? 'false' : 'true');
-    }
   }
 
   function applyBodySpacing() {
@@ -314,7 +311,7 @@
     if (document.getElementById('ssfmMiniPlayerStyles')) return;
     const style = document.createElement('style');
     style.id = 'ssfmMiniPlayerStyles';
-    style.textContent = `.has-mini-radio-player{padding-bottom:calc(var(--mobile-bottom-nav-height, 86px) + 92px + env(safe-area-inset-bottom, 0px)) !important;}.mini-radio-player{position:fixed;left:12px;right:12px;bottom:calc(var(--mobile-bottom-nav-height,86px) + env(safe-area-inset-bottom,0px) - 1px);z-index:115;border-radius:18px 18px 0 0;padding:10px 12px 8px;background:linear-gradient(180deg, rgba(20,20,20,0.97), rgba(10,10,10,0.99));border:1px solid rgba(255,255,255,0.08);border-bottom:0;box-shadow:0 -8px 24px rgba(0,0,0,0.28), inset 0 1px 0 rgba(255,255,255,0.04);backdrop-filter:blur(8px);color:#f5f5f5;font-family:'Manrope',sans-serif}.mini-radio-player.hidden{display:none!important}.mini-radio-top{display:flex;flex-direction:column;gap:2px;min-width:0;margin-bottom:8px}.mini-radio-artist,.mini-radio-title{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.mini-radio-artist{font-size:12px;color:#d9d9d9}.mini-radio-title{font-size:14px;font-weight:700;font-family:'Space Grotesk',sans-serif;color:#fff}.mini-radio-controls{display:flex;align-items:center;gap:8px;flex-wrap:nowrap}.mini-radio-btn{min-height:34px;border-radius:999px;border:1px solid rgba(255,255,255,0.14);background:linear-gradient(180deg, rgba(255,255,255,0.12), rgba(255,255,255,0.04)), linear-gradient(180deg, rgba(10,10,10,0.86), rgba(10,10,10,0.92));color:#f5f5f5;padding:0 12px;display:inline-flex;align-items:center;gap:7px;font-size:13px;font-weight:600;cursor:pointer;box-shadow:inset 0 1px 0 rgba(255,255,255,0.08),0 10px 22px rgba(0,0,0,0.18)}.mini-radio-btn .mini-player-icon{font-size:13px;line-height:1;color:#d4af37}.mini-radio-btn.is-liked .mini-player-icon{color:#fff}.mini-radio-btn.mini-radio-icon-btn{width:34px;min-width:34px;padding:0;justify-content:center}.mini-radio-btn.mini-radio-icon-btn .mini-player-icon{font-size:14px}.mini-radio-volume-wrap{position:relative;margin-left:auto}.mini-radio-volume-panel{position:absolute;right:0;bottom:42px;width:138px;padding:10px 12px;border-radius:14px;border:1px solid rgba(255,255,255,0.1);background:rgba(10,10,10,0.96);box-shadow:0 16px 28px rgba(0,0,0,0.32);opacity:0;pointer-events:none;transform:translateY(8px);transition:opacity .16s ease, transform .16s ease}.mini-radio-player.volume-open .mini-radio-volume-panel{opacity:1;pointer-events:auto;transform:translateY(0)}.mini-radio-volume-panel input[type=range]{width:100%;accent-color:#d4af37}.mini-radio-time{font-size:11px;color:#bfbfbf;white-space:nowrap;min-width:72px;text-align:right}@media (min-width:901px){.has-mini-radio-player{padding-bottom:0 !important}.mini-radio-player{left:auto;right:24px;bottom:24px;width:min(420px,calc(100vw - 120px));border-radius:22px;border-bottom:1px solid rgba(255,255,255,0.08);padding:14px 16px}.mini-radio-top{gap:4px;margin-bottom:10px}.mini-radio-title{font-size:15px}.mini-radio-artist{font-size:13px}.mini-radio-btn{min-height:40px;padding:0 14px;font-size:14px}.mini-radio-btn.mini-radio-icon-btn{width:40px;min-width:40px}.mini-radio-time{font-size:12px}.mini-radio-volume-panel{bottom:48px;width:148px}}`;
+    style.textContent = `.has-mini-radio-player{padding-bottom:calc(var(--mobile-bottom-nav-height, 86px) + 78px + env(safe-area-inset-bottom, 0px)) !important;}.mini-radio-player{position:fixed;left:8px;right:8px;bottom:calc(var(--mobile-bottom-nav-height,86px) + env(safe-area-inset-bottom,0px) - 1px);z-index:115;border-radius:16px 16px 0 0;padding:8px 10px 6px;background:linear-gradient(180deg, rgba(20,20,20,0.97), rgba(10,10,10,0.99));border:1px solid rgba(255,255,255,0.08);border-bottom:0;box-shadow:0 -8px 24px rgba(0,0,0,0.28), inset 0 1px 0 rgba(255,255,255,0.04);backdrop-filter:blur(8px);color:#f5f5f5;font-family:'Manrope',sans-serif}.mini-radio-player.hidden{display:none!important}.mini-radio-top{display:flex;flex-direction:column;gap:1px;min-width:0;margin-bottom:6px}.mini-radio-artist,.mini-radio-title{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.mini-radio-artist{font-size:11px;color:#d9d9d9}.mini-radio-title{font-size:13px;font-weight:700;font-family:'Space Grotesk',sans-serif;color:#fff}.mini-radio-controls{display:flex;align-items:center;gap:6px;flex-wrap:nowrap;min-width:0}.mini-radio-btn{min-height:32px;border-radius:999px;border:1px solid rgba(255,255,255,0.14);background:linear-gradient(180deg, rgba(255,255,255,0.12), rgba(255,255,255,0.04)), linear-gradient(180deg, rgba(10,10,10,0.86), rgba(10,10,10,0.92));color:#f5f5f5;padding:0 10px;display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;cursor:pointer;box-shadow:inset 0 1px 0 rgba(255,255,255,0.08),0 10px 22px rgba(0,0,0,0.18);white-space:nowrap}.mini-radio-btn .mini-player-icon{font-size:13px;line-height:1;color:#d4af37}.mini-radio-btn.is-liked .mini-player-icon{color:#fff}.mini-radio-volume-wrap{display:inline-flex;align-items:center;gap:8px;min-width:96px;flex:1 1 110px;padding:0 10px;height:32px;border-radius:999px;border:1px solid rgba(255,255,255,0.14);background:linear-gradient(180deg, rgba(255,255,255,0.12), rgba(255,255,255,0.04)), linear-gradient(180deg, rgba(10,10,10,0.86), rgba(10,10,10,0.92));box-shadow:inset 0 1px 0 rgba(255,255,255,0.08),0 10px 22px rgba(0,0,0,0.18);margin-left:auto}.mini-radio-volume-icon{font-size:14px;line-height:1;color:#d4af37;flex:0 0 auto}.mini-radio-volume-wrap input[type=range]{width:100%;min-width:0;margin:0;accent-color:#d4af37;background:transparent}.mini-radio-time{font-size:10px;color:#bfbfbf;white-space:nowrap;min-width:60px;text-align:right;flex:0 0 auto}@media (max-width:420px){.mini-radio-btn{padding:0 9px;font-size:11px}.mini-radio-btn span:last-child{display:none}.mini-radio-volume-wrap{min-width:88px;flex-basis:92px}.mini-radio-time{min-width:52px;font-size:9px}}@media (min-width:901px){.has-mini-radio-player{padding-bottom:0 !important}.mini-radio-player{left:auto;right:24px;bottom:24px;width:min(430px,calc(100vw - 120px));border-radius:22px;border-bottom:1px solid rgba(255,255,255,0.08);padding:14px 16px}.mini-radio-top{gap:4px;margin-bottom:10px}.mini-radio-title{font-size:15px}.mini-radio-artist{font-size:13px}.mini-radio-btn{min-height:40px;padding:0 14px;font-size:14px}.mini-radio-volume-wrap{height:40px;min-width:124px;flex-basis:140px}.mini-radio-time{font-size:12px;min-width:72px}}`;
     document.head.appendChild(style);
   }
 
@@ -322,15 +319,13 @@
     injectStyles();
     const wrap = document.createElement('div');
     wrap.className = 'mini-radio-player hidden';
-    wrap.innerHTML = '<div class="mini-radio-top"><div id="miniRadioArtist" class="mini-radio-artist">—</div><div id="miniRadioTitle" class="mini-radio-title">—</div></div><div class="mini-radio-controls"><button id="miniRadioLike" class="mini-radio-btn" type="button"><span class="mini-player-icon">♥</span><span>Like</span></button><button id="miniRadioPause" class="mini-radio-btn" type="button"><span class="mini-player-icon">▶</span><span>Play</span></button><div class="mini-radio-volume-wrap"><button id="miniRadioVolumeToggle" class="mini-radio-btn mini-radio-icon-btn" type="button" aria-label="Volume"><span class="mini-player-icon">🔊</span></button><div id="miniRadioVolumePanel" class="mini-radio-volume-panel" aria-hidden="true"><input id="miniRadioVolume" type="range" min="0" max="1" step="0.01" value="0.3"></div></div><div id="miniRadioTime" class="mini-radio-time">0:00 / 1:00</div></div>';
+    wrap.innerHTML = '<div class="mini-radio-top"><div id="miniRadioArtist" class="mini-radio-artist">—</div><div id="miniRadioTitle" class="mini-radio-title">—</div></div><div class="mini-radio-controls"><button id="miniRadioLike" class="mini-radio-btn" type="button"><span class="mini-player-icon">♥</span><span>Like</span></button><button id="miniRadioPause" class="mini-radio-btn" type="button"><span class="mini-player-icon">▶</span><span>Play</span></button><div class="mini-radio-volume-wrap"><span class="mini-radio-volume-icon" aria-hidden="true">🔊</span><input id="miniRadioVolume" type="range" min="0" max="1" step="0.01" value="0.3" aria-label="Volume"></div><div id="miniRadioTime" class="mini-radio-time">0:00 / 1:00</div></div>';
     document.body.appendChild(wrap);
     state.els.wrap = wrap;
     state.els.artist = wrap.querySelector('#miniRadioArtist');
     state.els.title = wrap.querySelector('#miniRadioTitle');
     state.els.likeBtn = wrap.querySelector('#miniRadioLike');
     state.els.pauseBtn = wrap.querySelector('#miniRadioPause');
-    state.els.volumeToggle = wrap.querySelector('#miniRadioVolumeToggle');
-    state.els.volumePanel = wrap.querySelector('#miniRadioVolumePanel');
     state.els.volume = wrap.querySelector('#miniRadioVolume');
     state.els.time = wrap.querySelector('#miniRadioTime');
     applyBodySpacing();
@@ -356,26 +351,12 @@
       }
       persistProgress(true);
     });
-    state.els.volumeToggle.addEventListener('click', (e) => {
-      e.stopPropagation();
-      setVolumeOpen(!state.volumeOpen);
-    });
     state.els.volume.addEventListener('input', (e) => {
       const value = getSafeVolume(e.target.value);
       if (!state.audio) return;
       state.audio.volume = value;
       state.audio.muted = value === 0;
       persistProgress(true);
-    });
-
-    document.addEventListener('click', (event) => {
-      if (!state.volumeOpen) return;
-      if (event.target.closest('.mini-radio-volume-wrap')) return;
-      setVolumeOpen(false);
-    });
-
-    document.addEventListener('keydown', (event) => {
-      if (event.key === 'Escape') setVolumeOpen(false);
     });
   }
 
@@ -414,7 +395,6 @@
 
     await playTrackAt(index, Number(session.previewOffset) || 0, state.desiredPlayback);
     state.els.wrap.classList.remove('hidden');
-    setVolumeOpen(false);
     updatePlayPauseLabel();
     updateLikeLabel();
 
