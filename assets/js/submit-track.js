@@ -237,11 +237,14 @@ function isMobileHeaderMenuMode() {
 }
 
 function handleHeaderAvatarAction(profileHref) {
-  if (isMobileHeaderMenuMode()) {
-    setHidden(els.header.accountMenu, !els.header.accountMenu.classList.contains("hidden"));
+  const menuEl = els.header.accountMenu;
+  if (isMobileHeaderMenuMode() && menuEl) {
+    menuEl.classList.toggle("hidden");
     return;
   }
-  setHidden(els.header.accountMenu, true);
+  if (menuEl) {
+    menuEl.classList.add("hidden");
+  }
   window.location.href = profileHref || "artist.html";
 }
 

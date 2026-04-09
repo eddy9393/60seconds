@@ -316,11 +316,14 @@ function isMobileHeaderMenuMode() {
 }
 
 function handleHeaderAvatarAction(profileHref) {
-  if (isMobileHeaderMenuMode()) {
-    setHidden(els.accountMenu, !els.accountMenu.classList.contains("hidden"));
+  const menuEl = els.accountMenu;
+  if (isMobileHeaderMenuMode() && menuEl) {
+    menuEl.classList.toggle("hidden");
     return;
   }
-  setHidden(els.accountMenu, true);
+  if (menuEl) {
+    menuEl.classList.add("hidden");
+  }
   window.location.href = profileHref || "artist.html";
 }
 
@@ -1121,8 +1124,7 @@ function bindUIEvents() {
 
   els.headerAvatarBtn.onclick = () => {
     els.volumeControl.classList.remove("open");
-    setHidden(els.accountMenu, true);
-    window.location.href = "artist.html";
+    handleHeaderAvatarAction(els.accountProfileLink?.href || "artist.html");
   };
 
   els.accountProfileLink.onclick = () => {
