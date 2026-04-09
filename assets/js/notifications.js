@@ -253,13 +253,17 @@ function bindEvents() {
     handleHeaderAvatarAction(els.header.accountProfileLink?.href || "artist.html");
   };
 
-  els.header.accountProfileLink.onclick = () => {
-    setHidden(els.header.accountMenu, true);
-  };
+  if (els.header.accountProfileLink) {
+    els.header.accountProfileLink.onclick = () => {
+      setHidden(els.header.accountMenu, true);
+    };
+  }
 
-  els.header.accountNotificationsLink.onclick = () => {
-    setHidden(els.header.accountMenu, true);
-  };
+  if (els.header.accountNotificationsLink) {
+    els.header.accountNotificationsLink.onclick = () => {
+      setHidden(els.header.accountMenu, true);
+    };
+  }
 
   els.desktopNav.logoutBtn.onclick = async () => {
     await handleLogout();

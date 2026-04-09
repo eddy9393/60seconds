@@ -1127,13 +1127,17 @@ function bindUIEvents() {
     handleHeaderAvatarAction(els.accountProfileLink?.href || "artist.html");
   };
 
-  els.accountProfileLink.onclick = () => {
-    setHidden(els.accountMenu, true);
-  };
+  if (els.accountProfileLink) {
+    els.accountProfileLink.onclick = () => {
+      setHidden(els.accountMenu, true);
+    };
+  }
 
-  els.accountNotificationsLink.onclick = () => {
-    setHidden(els.accountMenu, true);
-  };
+  if (els.accountNotificationsLink) {
+    els.accountNotificationsLink.onclick = () => {
+      setHidden(els.accountMenu, true);
+    };
+  }
 
   els.desktopLogoutBtn.onclick = handleLogout;
   els.logoutBtn.onclick = handleLogout;
