@@ -403,6 +403,26 @@ function formatTime(seconds) {
   return `${mins}:${secs.toString().padStart(2, "0")}`;
 }
 
+
+function pauseSharedRadioPlayback() {
+  try {
+    const raw = localStorage.getItem("ssfm_radio_session_v2");
+    const session = raw ? JSON.parse(raw) : {};
+    session.desiredPlaying = false;
+    session.isPlaying = false;
+    session.lastUpdatedAt = Date.now();
+    localStorage.setItem("ssfm_radio_session_v2", JSON.stringify(session));
+  } catch {}
+
+  if (typeof window.__ssfmPauseMiniRadio === "function") {
+    window.__ssfmPauseMiniRadio();
+  }
+
+  if (typeof window.__ssfmPauseMainRadio === "function") {
+    window.__ssfmPauseMainRadio();
+  }
+}
+
 function stopCurrentAudio() {
   if (state.currentPreviewInterval) {
     clearInterval(state.currentPreviewInterval);
@@ -579,6 +599,7 @@ function buildTrackCard(track) {
       }
 
       stopCurrentAudio();
+      pauseSharedRadioPlayback();
 
       state.currentAudio = audio;
       state.currentAudioButton = playBtn;

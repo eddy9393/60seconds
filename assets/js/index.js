@@ -1273,6 +1273,20 @@ function bindIntervals() {
   }, REFRESH_INTERVALS.tracksReload);
 }
 
+
+function pauseMainRadioExternally() {
+  state.desiredPlayback = false;
+  clearUnexpectedPauseTimer();
+  if (els.audio && !els.audio.paused) {
+    els.audio.pause();
+  }
+  persistRadioSession();
+  updatePauseButtonState();
+  syncWaveformState();
+}
+
+window.__ssfmPauseMainRadio = pauseMainRadioExternally;
+
 async function initPage() {
   updateJoinButtonHref();
   setLoggedOutView();
