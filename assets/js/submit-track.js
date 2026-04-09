@@ -231,6 +231,20 @@ function setHeaderAvatar(photoUrl, artistName) {
   setText(els.header.headerAvatarFallback, (artistName || "A").charAt(0).toUpperCase());
 }
 
+
+function isMobileHeaderMenuMode() {
+  return window.matchMedia("(max-width: 768px)").matches;
+}
+
+function handleHeaderAvatarAction(profileHref) {
+  if (isMobileHeaderMenuMode()) {
+    setHidden(els.header.accountMenu, !els.header.accountMenu.classList.contains("hidden"));
+    return;
+  }
+  setHidden(els.header.accountMenu, true);
+  window.location.href = profileHref || "artist.html";
+}
+
 function applyMenuState(user, profile, track) {
   const isLoggedIn = Boolean(user);
   const hasProfile = Boolean(profile);
@@ -794,8 +808,7 @@ function bindEvents() {
   };
 
   els.header.headerAvatarBtn.onclick = () => {
-    setHidden(els.header.accountMenu, true);
-    window.location.href = "artist.html";
+    handleHeaderAvatarAction(els.header.accountProfileLink?.href || "artist.html");
   };
 
   els.header.accountProfileLink.onclick = () => {

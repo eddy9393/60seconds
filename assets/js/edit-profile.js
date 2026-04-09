@@ -101,6 +101,20 @@ function setStatus(message, isError = false) { setText(els.page.status, message 
 function clearLoginFields() { els.auth.email.value = ''; els.auth.password.value = ''; }
 function closeMenus() { setHidden(els.auth.authBox, true); setHidden(els.header.accountMenu, true); }
 function setHeaderAvatar(photoUrl, artistName) { if (photoUrl) { els.header.headerAvatarImage.src = photoUrl; setHidden(els.header.headerAvatarImage, false); setHidden(els.header.headerAvatarFallback, true); return; } setHidden(els.header.headerAvatarImage, true); setHidden(els.header.headerAvatarFallback, false); setText(els.header.headerAvatarFallback, (artistName || 'A').charAt(0).toUpperCase()); }
+
+function isMobileHeaderMenuMode() {
+  return window.matchMedia("(max-width: 768px)").matches;
+}
+
+function handleHeaderAvatarAction(profileHref) {
+  if (isMobileHeaderMenuMode()) {
+    setHidden(els.header.accountMenu, !els.header.accountMenu.classList.contains("hidden"));
+    return;
+  }
+  setHidden(els.header.accountMenu, true);
+  window.location.href = profileHref || "artist.html";
+}
+
 function applyMenuState(user, profile) { const isLoggedIn = Boolean(user); const hasProfile = Boolean(profile); setHidden(els.desktopNav.loginLink, isLoggedIn); setHidden(els.mobileNav.loginLink, isLoggedIn); setHidden(els.desktopNav.logoutBtn, !isLoggedIn); setHidden(els.desktopNav.profileLink, !isLoggedIn); setHidden(els.mobileNav.profileLink, !isLoggedIn); setHidden(els.desktopNav.notificationsLink, !isLoggedIn); setHidden(els.mobileNav.notificationsLink, !isLoggedIn); setHidden(els.desktopNav.trackLink, !isLoggedIn || !hasProfile); setHidden(els.mobileNav.trackLink, !isLoggedIn || !hasProfile); setHidden(els.header.accountProfileLink, !isLoggedIn); setHidden(els.header.accountNotificationsLink, true); }
 function setLoggedOutView() { closeMenus(); setHidden(els.auth.userBox, true); setHidden(els.header.showLoginBtn, false); setHidden(els.header.headerAvatarBtn, true); setHidden(els.header.headerAvatarImage, true); setHidden(els.header.headerAvatarFallback, true); setHidden(els.header.currencyBadge, true); setCurrency(0); els.header.headerAvatarImage.src = ''; setHidden(els.page.loginRequiredBox, false); setHidden(els.page.profileMissingBox, true); setHidden(els.page.editFormWrap, true); setHidden(els.page.actionRow, true); els.page.viewArtistLink.href = '#'; state.currentProfile = null; applyMenuState(null, null); }
 function setLoggedInView() { setHidden(els.auth.authBox, true); setHidden(els.auth.userBox, false); setHidden(els.header.showLoginBtn, true); setHidden(els.header.headerAvatarBtn, false);

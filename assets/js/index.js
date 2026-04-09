@@ -310,6 +310,20 @@ function normalizeDailySecondsState(profile) {
   state.dailySecondsEarned = 0;
 }
 
+
+function isMobileHeaderMenuMode() {
+  return window.matchMedia("(max-width: 768px)").matches;
+}
+
+function handleHeaderAvatarAction(profileHref) {
+  if (isMobileHeaderMenuMode()) {
+    setHidden(els.accountMenu, !els.accountMenu.classList.contains("hidden"));
+    return;
+  }
+  setHidden(els.accountMenu, true);
+  window.location.href = profileHref || "artist.html";
+}
+
 function updateJoinButtonHref() {
   if (!els.joinBtn) return;
   els.joinBtn.href = "login.html";

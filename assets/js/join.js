@@ -600,6 +600,20 @@ async function handleCreateProfile() {
   }
 }
 
+
+function isMobileHeaderMenuMode() {
+  return window.matchMedia("(max-width: 768px)").matches;
+}
+
+function handleHeaderAvatarAction(profileHref) {
+  if (isMobileHeaderMenuMode()) {
+    setHidden(els.accountMenu, !els.accountMenu.classList.contains("hidden"));
+    return;
+  }
+  setHidden(els.accountMenu, true);
+  window.location.href = profileHref || "artist.html";
+}
+
 function bindHeaderEvents() {
   els.showLoginBtn.onclick = () => {
     setHidden(els.accountMenu, true);
@@ -613,8 +627,7 @@ function bindHeaderEvents() {
 
   els.headerAvatarBtn.onclick = () => {
     setHidden(els.authBox, true);
-    setHidden(els.accountMenu, true);
-    window.location.href = "artist.html";
+    handleHeaderAvatarAction(els.accountProfileLink?.href || "artist.html");
   };
 
   if (els.accountProfileLink) {
