@@ -785,3 +785,9 @@ img {
     transform: none;
   }
 }
+
+
+/* v13 remove notifications shortcut from avatar popup */
+#accountNotificationsLink {
+  display: none !important;
+}
