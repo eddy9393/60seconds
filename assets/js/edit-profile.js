@@ -3,20 +3,6 @@ const supabaseClient = window.supabase.createClient(
   "sb_publishable_255qyDKS77nMU0pbedfa_A_3hdgtEHh"
 );
 
-const MUSIC_ROLE_OPTIONS = [
-  "",
-  "Vocalist",
-  "Producer",
-  "Singer",
-  "Rapper",
-  "Songwriter",
-  "Singer-Songwriter",
-  "DJ",
-  "Beatmaker",
-  "Instrumentalist",
-  "Composer"
-];
-
 const COUNTRY_OPTIONS = [
   "Afghanistan","Albania","Algeria","Andorra","Angola","Antigua and Barbuda","Argentina","Armenia","Australia","Austria",
   "Azerbaijan","Bahamas","Bahrain","Bangladesh","Barbados","Belarus","Belgium","Belize","Benin","Bhutan",
@@ -40,6 +26,8 @@ const COUNTRY_OPTIONS = [
   "Venezuela","Vietnam","Yemen","Zambia","Zimbabwe"
 ];
 
+const ROLE_OPTIONS = ['none','vocalist','producer','dj','rapper','songwriter','composer','musician','band','engineer'];
+
 const els = {
   header: {
     showLoginBtn: document.getElementById("showLoginBtn"),
@@ -53,7 +41,6 @@ const els = {
     currencyBadge: document.getElementById("currencyBadge"),
     currencyValue: document.getElementById("currencyValue")
   },
-
   desktopNav: {
     loginLink: document.getElementById("desktopLoginLink"),
     logoutBtn: document.getElementById("desktopLogoutBtn"),
@@ -61,14 +48,12 @@ const els = {
     notificationsLink: document.getElementById("desktopNotificationsLink"),
     trackLink: document.getElementById("desktopTrackLink")
   },
-
   mobileNav: {
     loginLink: document.getElementById("mobileLoginLink"),
     profileLink: document.getElementById("mobileProfileLink"),
     notificationsLink: document.getElementById("mobileNotificationsLink"),
     trackLink: document.getElementById("mobileTrackLink")
   },
-
   auth: {
     email: document.getElementById("email"),
     password: document.getElementById("password"),
@@ -79,7 +64,6 @@ const els = {
     authMessage: document.getElementById("authMessage"),
     profileLink: document.getElementById("profileLink")
   },
-
   page: {
     loginRequiredBox: document.getElementById("loginRequiredBox"),
     profileMissingBox: document.getElementById("profileMissingBox"),
@@ -89,7 +73,8 @@ const els = {
     artistNameInput: document.getElementById("artistName"),
     bioInput: document.getElementById("bio"),
     nationalityInput: document.getElementById("nationality"),
-    musicRoleInput: document.getElementById("musicRole"),
+    rolesWrap: document.getElementById("musicRolesWrap"),
+    addRoleBtn: document.getElementById("addRoleBtn"),
     cityInput: document.getElementById("city"),
     dateOfBirthInput: document.getElementById("dateOfBirth"),
     showRoleOnArtistPageInput: document.getElementById("showRoleOnArtistPage"),
@@ -103,516 +88,35 @@ const els = {
   }
 };
 
-const state = {
-  currentProfile: null
-};
-
-function setHidden(element, hidden) {
-  if (!element) return;
-  element.classList.toggle("hidden", hidden);
-}
-
-function setText(element, value) {
-  if (!element) return;
-  element.textContent = value ?? "";
-}
-
-function setCurrency(value) {
-  const amount = Number(value);
-
-  if (!Number.isFinite(amount)) {
-    setText(els.header.currencyValue, "0");
-    return;
-  }
-
-  setText(els.header.currencyValue, String(Math.max(0, Math.floor(amount))));
-}
-
-function populateCountryOptions() {
-  els.page.nationalityInput.innerHTML = '<option value="">None</option>';
-
-  COUNTRY_OPTIONS.forEach((country) => {
-    const option = document.createElement("option");
-    option.value = country;
-    option.textContent = country;
-    els.page.nationalityInput.appendChild(option);
-  });
-}
-
-function populateMusicRoleOptions() {
-  els.page.musicRoleInput.innerHTML = "";
-
-  MUSIC_ROLE_OPTIONS.forEach((role) => {
-    const option = document.createElement("option");
-    option.value = role;
-    option.textContent = role || "None";
-    els.page.musicRoleInput.appendChild(option);
-  });
-}
-
-function setAuthMessage(message, error = false) {
-  let nextMessage = message;
-  if (nextMessage === "Auth session missing!") {
-    nextMessage = "";
-  }
-
-  setText(els.auth.authMessage, nextMessage || "");
-  els.auth.authMessage.style.color = error ? "#ff8a8a" : "#cfcfcf";
-}
-
-function setStatus(message, isError = false) {
-  setText(els.page.status, message || "");
-  els.page.status.style.color = isError ? "#ff8a8a" : "#cfcfcf";
-}
-
-function clearLoginFields() {
-  els.auth.email.value = "";
-  els.auth.password.value = "";
-}
-
-function closeMenus() {
-  setHidden(els.auth.authBox, true);
-  setHidden(els.header.accountMenu, true);
-}
-
-function setHeaderAvatar(photoUrl, artistName) {
-  if (photoUrl) {
-    els.header.headerAvatarImage.src = photoUrl;
-    setHidden(els.header.headerAvatarImage, false);
-    setHidden(els.header.headerAvatarFallback, true);
-    return;
-  }
-
-  setHidden(els.header.headerAvatarImage, true);
-  setHidden(els.header.headerAvatarFallback, false);
-  setText(els.header.headerAvatarFallback, (artistName || "A").charAt(0).toUpperCase());
-}
-
-function applyMenuState(user, profile) {
-  const isLoggedIn = Boolean(user);
-  const hasProfile = Boolean(profile);
-
-  setHidden(els.desktopNav.loginLink, isLoggedIn);
-  setHidden(els.mobileNav.loginLink, isLoggedIn);
-  setHidden(els.desktopNav.logoutBtn, !isLoggedIn);
-
-  setHidden(els.desktopNav.profileLink, !isLoggedIn);
-  setHidden(els.mobileNav.profileLink, !isLoggedIn);
-
-  setHidden(els.desktopNav.notificationsLink, !isLoggedIn);
-  setHidden(els.mobileNav.notificationsLink, !isLoggedIn);
-
-  setHidden(els.desktopNav.trackLink, !isLoggedIn || !hasProfile);
-  setHidden(els.mobileNav.trackLink, !isLoggedIn || !hasProfile);
-
-  setHidden(els.header.accountProfileLink, !isLoggedIn);
-  setHidden(els.header.accountNotificationsLink, !isLoggedIn);
-}
-
-function setLoggedOutView() {
-  closeMenus();
-
-  setHidden(els.auth.userBox, true);
-  setHidden(els.header.showLoginBtn, false);
-  setHidden(els.header.headerAvatarBtn, true);
-  setHidden(els.header.headerAvatarImage, true);
-  setHidden(els.header.headerAvatarFallback, true);
-  setHidden(els.header.currencyBadge, true);
-  setCurrency(0);
-  els.header.headerAvatarImage.src = "";
-
-  setHidden(els.page.loginRequiredBox, false);
-  setHidden(els.page.profileMissingBox, true);
-  setHidden(els.page.editFormWrap, true);
-  setHidden(els.page.actionRow, true);
-
-  els.page.viewArtistLink.href = "#";
-  state.currentProfile = null;
-
-  applyMenuState(null, null);
-}
-
-function setLoggedInView() {
-  setHidden(els.auth.authBox, true);
-  setHidden(els.auth.userBox, false);
-  setHidden(els.header.showLoginBtn, true);
-  setHidden(els.header.headerAvatarBtn, false);
-  setHidden(els.header.currencyBadge, false);
-  setHidden(els.page.loginRequiredBox, true);
-}
-
-function setProfileMissingView() {
-  setHidden(els.page.profileMissingBox, false);
-  setHidden(els.page.editFormWrap, true);
-  setHidden(els.page.actionRow, true);
-}
-
-function setProfileReadyView() {
-  setHidden(els.page.profileMissingBox, true);
-  setHidden(els.page.editFormWrap, false);
-  setHidden(els.page.actionRow, false);
-}
-
-function fillProfileForm(profile) {
-  els.page.artistNameInput.value = profile?.artist_name || "";
-  els.page.bioInput.value = profile?.bio || "";
-  els.page.nationalityInput.value = profile?.nationality || "";
-  els.page.musicRoleInput.value = profile?.music_role || "";
-  els.page.cityInput.value = profile?.city || "";
-  els.page.dateOfBirthInput.value = profile?.date_of_birth || "";
-  els.page.showRoleOnArtistPageInput.checked = Boolean(profile?.show_role_on_artist_page);
-  els.page.showCityOnArtistPageInput.checked = Boolean(profile?.show_city_on_artist_page);
-  els.page.showBirthOnArtistPageInput.checked = Boolean(profile?.show_birth_on_artist_page);
-  els.page.socialLinkInput.value = profile?.social_link || "";
-  els.page.wantsPromotionsInput.checked = Boolean(profile?.wants_promotions);
-}
-
-async function loadMyProfile(userId) {
-  const { data, error } = await supabaseClient
-    .from("profiles")
-    .select("artist_name, bio, nationality, music_role, city, date_of_birth, show_role_on_artist_page, show_city_on_artist_page, show_birth_on_artist_page, social_link, photo_url, wants_promotions, accepted_terms, user_id, coins")
-    .eq("user_id", userId)
-    .maybeSingle();
-
-  if (error || !data) {
-    state.currentProfile = null;
-    els.auth.profileLink.href = "#";
-    els.page.viewArtistLink.href = "#";
-    setHeaderAvatar("", "A");
-    fillProfileForm(null);
-    setProfileMissingView();
-    applyMenuState({ id: userId }, null);
-    return null;
-  }
-
-  state.currentProfile = data;
-  setCurrency(data.coins || 0);
-  setHeaderAvatar(data.photo_url, data.artist_name);
-
-  const artistHref = `artist.html?user_id=${encodeURIComponent(data.user_id)}`;
-  els.auth.profileLink.href = artistHref;
-  els.page.viewArtistLink.href = artistHref;
-
-  fillProfileForm(data);
-  setProfileReadyView();
-  applyMenuState({ id: userId }, data);
-
-  return data;
-}
-
-async function refreshAuthUI() {
-  try {
-    const { data, error } = await supabaseClient.auth.getSession();
-
-    if (error) {
-      setLoggedOutView();
-      state.currentProfile = null;
-      fillProfileForm(null);
-      return null;
-    }
-
-    const user = data?.session?.user || null;
-
-    if (user) {
-      setLoggedInView();
-      await loadMyProfile(user.id);
-      return user;
-    }
-
-    setLoggedOutView();
-    state.currentProfile = null;
-    fillProfileForm(null);
-    return null;
-  } catch (err) {
-    console.error("refreshAuthUI error:", err);
-    setLoggedOutView();
-    state.currentProfile = null;
-    fillProfileForm(null);
-    return null;
-  }
-}
-
-async function handleLogin() {
-  const emailValue = els.auth.email.value.trim();
-  const passwordValue = els.auth.password.value.trim();
-
-  if (!emailValue || !passwordValue) {
-    setAuthMessage("Please enter email and password.", true);
-    return;
-  }
-
-  els.auth.loginBtn.disabled = true;
-  els.auth.signupBtn.disabled = true;
-  setAuthMessage("");
-
-  try {
-    const { error } = await supabaseClient.auth.signInWithPassword({
-      email: emailValue,
-      password: passwordValue
-    });
-
-    if (error) {
-      setAuthMessage(error.message, true);
-      return;
-    }
-
-    clearLoginFields();
-    setStatus("");
-    await refreshAuthUI();
-  } catch (err) {
-    console.error("handleLogin error:", err);
-    setAuthMessage("Login failed. Try again.", true);
-  } finally {
-    els.auth.loginBtn.disabled = false;
-    els.auth.signupBtn.disabled = false;
-  }
-}
-
-async function handleSignup() {
-  const emailValue = els.auth.email.value.trim();
-  const passwordValue = els.auth.password.value.trim();
-
-  if (!emailValue || !passwordValue) {
-    setAuthMessage("Please enter email and password.", true);
-    return;
-  }
-
-  els.auth.loginBtn.disabled = true;
-  els.auth.signupBtn.disabled = true;
-  setAuthMessage("");
-
-  try {
-    const { error } = await supabaseClient.auth.signUp({
-      email: emailValue,
-      password: passwordValue
-    });
-
-    if (error) {
-      setAuthMessage(error.message, true);
-      return;
-    }
-
-    setAuthMessage("Account created. Check your email.");
-    await refreshAuthUI();
-  } catch (err) {
-    console.error("handleSignup error:", err);
-    setAuthMessage("Sign up failed. Try again.", true);
-  } finally {
-    els.auth.loginBtn.disabled = false;
-    els.auth.signupBtn.disabled = false;
-  }
-}
-
-async function handleLogout() {
-  els.header.logoutBtn.disabled = true;
-  els.desktopNav.logoutBtn.disabled = true;
-  setAuthMessage("");
-
-  try {
-    const { error } = await supabaseClient.auth.signOut();
-
-    if (error) {
-      setAuthMessage(error.message, true);
-      return;
-    }
-
-    clearLoginFields();
-    state.currentProfile = null;
-    setStatus("");
-    await refreshAuthUI();
-  } catch (err) {
-    console.error("handleLogout error:", err);
-    setAuthMessage("Logout failed. Try again.", true);
-  } finally {
-    els.header.logoutBtn.disabled = false;
-    els.desktopNav.logoutBtn.disabled = false;
-  }
-}
-
-async function uploadPhotoIfNeeded(userId, photoFile) {
-  if (!photoFile) {
-    return state.currentProfile?.photo_url || "";
-  }
-
-  const photoPath = `${userId}/${Date.now()}-${photoFile.name.replace(/\s+/g, "-")}`;
-
-  const { error: photoUploadError } = await supabaseClient
-    .storage
-    .from("artist-photos")
-    .upload(photoPath, photoFile, {
-      cacheControl: "3600",
-      upsert: true
-    });
-
-  if (photoUploadError) {
-    throw new Error("Photo upload failed: " + photoUploadError.message);
-  }
-
-  const { data: photoUrlData } = supabaseClient
-    .storage
-    .from("artist-photos")
-    .getPublicUrl(photoPath);
-
-  return photoUrlData.publicUrl;
-}
-
-async function handleSaveProfile() {
-  const artistName = els.page.artistNameInput.value.trim();
-  const bio = els.page.bioInput.value.trim();
-  const nationality = els.page.nationalityInput.value.trim();
-  const musicRole = els.page.musicRoleInput.value.trim();
-  const city = els.page.cityInput.value.trim();
-  const dateOfBirth = els.page.dateOfBirthInput.value;
-  const showRoleOnArtistPage = els.page.showRoleOnArtistPageInput.checked;
-  const showCityOnArtistPage = els.page.showCityOnArtistPageInput.checked;
-  const showBirthOnArtistPage = els.page.showBirthOnArtistPageInput.checked;
-  const socialLink = els.page.socialLinkInput.value.trim();
-  const photoFile = els.page.photoFileInput.files[0];
-  const wantsPromotions = els.page.wantsPromotionsInput.checked;
-
-  if (!artistName) {
-    setStatus("Please enter your artist name.", true);
-    return;
-  }
-
-  els.page.saveProfileBtn.disabled = true;
-  setStatus("Checking login...");
-
-  try {
-    const { data: userData, error: userError } = await supabaseClient.auth.getUser();
-
-    if (userError) {
-      setStatus("Could not check current user: " + userError.message, true);
-      return;
-    }
-
-    if (!userData.user) {
-      setStatus("You must be logged in before editing your profile.", true);
-      return;
-    }
-
-    const userId = userData.user.id;
-
-    if (!state.currentProfile) {
-      setStatus("No artist profile found. Please create your profile first.", true);
-      setProfileMissingView();
-      return;
-    }
-
-    const photoUrl = await uploadPhotoIfNeeded(userId, photoFile);
-
-    setStatus("Saving profile...");
-
-    const { error: profileError } = await supabaseClient
-      .from("profiles")
-      .update({
-        artist_name: artistName,
-        bio: bio || null,
-        nationality: nationality || null,
-        music_role: musicRole || null,
-        city: city || null,
-        date_of_birth: dateOfBirth || null,
-        show_role_on_artist_page: showRoleOnArtistPage,
-        show_city_on_artist_page: showCityOnArtistPage,
-        show_birth_on_artist_page: showBirthOnArtistPage,
-        social_link: socialLink || null,
-        photo_url: photoUrl || null,
-        wants_promotions: wantsPromotions,
-        accepted_terms: state.currentProfile?.accepted_terms ?? true
-      })
-      .eq("user_id", userId);
-
-    if (profileError) {
-      setStatus("Saving profile failed: " + profileError.message, true);
-      return;
-    }
-
-    els.page.photoFileInput.value = "";
-    setStatus("Profile updated successfully.");
-
-    await loadMyProfile(userId);
-
-    window.location.href = `artist.html?user_id=${encodeURIComponent(userId)}`;
-  } catch (err) {
-    console.error("save profile error:", err);
-    setStatus(err.message || "Something went wrong while saving your profile.", true);
-  } finally {
-    els.page.saveProfileBtn.disabled = false;
-  }
-}
-
-function bindEvents() {
-  els.header.showLoginBtn.onclick = () => {
-    setHidden(els.header.accountMenu, true);
-    els.auth.authBox.classList.toggle("hidden");
-    setAuthMessage("");
-
-    if (!els.auth.authBox.classList.contains("hidden")) {
-      setTimeout(() => els.auth.email.focus(), 0);
-    }
-  };
-
-  els.header.headerAvatarBtn.onclick = () => {
-    setHidden(els.auth.authBox, true);
-    els.header.accountMenu.classList.toggle("hidden");
-  };
-
-  els.header.accountProfileLink.onclick = () => {
-    setHidden(els.header.accountMenu, true);
-  };
-
-  els.header.accountNotificationsLink.onclick = () => {
-    setHidden(els.header.accountMenu, true);
-  };
-
-  els.desktopNav.logoutBtn.onclick = handleLogout;
-  els.header.logoutBtn.onclick = handleLogout;
-  els.auth.loginBtn.onclick = handleLogin;
-  els.auth.signupBtn.onclick = handleSignup;
-  els.page.saveProfileBtn.onclick = handleSaveProfile;
-
-  document.addEventListener("click", (e) => {
-    const insideHeaderRight = e.target.closest(".header-right");
-    const insideAuthBox = e.target.closest("#authBox");
-    const isLoginButton = e.target.closest("#showLoginBtn");
-    const isAvatarButton = e.target.closest("#headerAvatarBtn");
-
-    if (!insideHeaderRight && !insideAuthBox && !isLoginButton && !isAvatarButton) {
-      setHidden(els.auth.authBox, true);
-      setHidden(els.header.accountMenu, true);
-    }
-  });
-
-  document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape") {
-      setHidden(els.auth.authBox, true);
-      setHidden(els.header.accountMenu, true);
-    }
-  });
-
-  els.auth.email.addEventListener("keydown", (e) => {
-    if (e.key === "Enter") handleLogin();
-  });
-
-  els.auth.password.addEventListener("keydown", (e) => {
-    if (e.key === "Enter") handleLogin();
-  });
-
-  supabaseClient.auth.onAuthStateChange(() => {
-    refreshAuthUI().catch((err) => console.error(err));
-  });
-}
-
-async function initPage() {
-  populateCountryOptions();
-  populateMusicRoleOptions();
-  setLoggedOutView();
-  fillProfileForm(null);
-  setStatus("");
-  bindEvents();
-  await refreshAuthUI();
-}
-
-initPage().catch((err) => {
-  console.error("initPage error:", err);
-});
+const state = { currentProfile: null, roleValues: ['none'] };
+function setHidden(element, hidden) { if (element) element.classList.toggle('hidden', hidden); }
+function setText(element, value) { if (element) element.textContent = value ?? ''; }
+function setCurrency(value) { const amount = Number(value); setText(els.header.currencyValue, Number.isFinite(amount) ? String(Math.max(0, Math.floor(amount))) : '0'); }
+function populateCountryOptions() { els.page.nationalityInput.innerHTML = '<option value="">Select your nationality</option>'; COUNTRY_OPTIONS.forEach((country) => { const option = document.createElement('option'); option.value = country; option.textContent = country; els.page.nationalityInput.appendChild(option); }); }
+function normalizeRoleValue(value) { const safe = String(value || 'none').trim().toLowerCase(); return ROLE_OPTIONS.includes(safe) ? safe : 'none'; }
+function getRoleLabel(role) { return role === 'none' ? 'None' : role.charAt(0).toUpperCase() + role.slice(1); }
+function setAuthMessage(message, error = false) { let nextMessage = message; if (nextMessage === 'Auth session missing!') nextMessage = ''; setText(els.auth.authMessage, nextMessage || ''); els.auth.authMessage.style.color = error ? '#ff8a8a' : '#cfcfcf'; }
+function setStatus(message, isError = false) { setText(els.page.status, message || ''); els.page.status.style.color = isError ? '#ff8a8a' : '#cfcfcf'; }
+function clearLoginFields() { els.auth.email.value = ''; els.auth.password.value = ''; }
+function closeMenus() { setHidden(els.auth.authBox, true); setHidden(els.header.accountMenu, true); }
+function setHeaderAvatar(photoUrl, artistName) { if (photoUrl) { els.header.headerAvatarImage.src = photoUrl; setHidden(els.header.headerAvatarImage, false); setHidden(els.header.headerAvatarFallback, true); return; } setHidden(els.header.headerAvatarImage, true); setHidden(els.header.headerAvatarFallback, false); setText(els.header.headerAvatarFallback, (artistName || 'A').charAt(0).toUpperCase()); }
+function applyMenuState(user, profile) { const isLoggedIn = Boolean(user); const hasProfile = Boolean(profile); setHidden(els.desktopNav.loginLink, isLoggedIn); setHidden(els.mobileNav.loginLink, isLoggedIn); setHidden(els.desktopNav.logoutBtn, !isLoggedIn); setHidden(els.desktopNav.profileLink, !isLoggedIn); setHidden(els.mobileNav.profileLink, !isLoggedIn); setHidden(els.desktopNav.notificationsLink, !isLoggedIn); setHidden(els.mobileNav.notificationsLink, !isLoggedIn); setHidden(els.desktopNav.trackLink, !isLoggedIn || !hasProfile); setHidden(els.mobileNav.trackLink, !isLoggedIn || !hasProfile); setHidden(els.header.accountProfileLink, !isLoggedIn); setHidden(els.header.accountNotificationsLink, !isLoggedIn); }
+function setLoggedOutView() { closeMenus(); setHidden(els.auth.userBox, true); setHidden(els.header.showLoginBtn, false); setHidden(els.header.headerAvatarBtn, true); setHidden(els.header.headerAvatarImage, true); setHidden(els.header.headerAvatarFallback, true); setHidden(els.header.currencyBadge, true); setCurrency(0); els.header.headerAvatarImage.src = ''; setHidden(els.page.loginRequiredBox, false); setHidden(els.page.profileMissingBox, true); setHidden(els.page.editFormWrap, true); setHidden(els.page.actionRow, true); els.page.viewArtistLink.href = '#'; state.currentProfile = null; applyMenuState(null, null); }
+function setLoggedInView() { setHidden(els.auth.authBox, true); setHidden(els.auth.userBox, false); setHidden(els.header.showLoginBtn, true); setHidden(els.header.headerAvatarBtn, false); setHidden(els.header.currencyBadge, false); setHidden(els.page.loginRequiredBox, true); }
+function setProfileMissingView() { setHidden(els.page.profileMissingBox, false); setHidden(els.page.editFormWrap, true); setHidden(els.page.actionRow, true); }
+function setProfileReadyView() { setHidden(els.page.profileMissingBox, true); setHidden(els.page.editFormWrap, false); setHidden(els.page.actionRow, false); }
+function renderRoleRows() { const values = state.roleValues.length ? state.roleValues : ['none']; els.page.rolesWrap.innerHTML = ''; values.forEach((value, index) => { const row = document.createElement('div'); row.className = 'role-row'; const select = document.createElement('select'); select.className = 'field-select'; ROLE_OPTIONS.forEach((role) => { const option = document.createElement('option'); option.value = role; option.textContent = getRoleLabel(role); if (role === normalizeRoleValue(value)) option.selected = true; select.appendChild(option); }); const removeBtn = document.createElement('button'); removeBtn.type = 'button'; removeBtn.className = 'role-remove-btn'; removeBtn.textContent = '−'; removeBtn.disabled = values.length === 1; removeBtn.addEventListener('click', () => { state.roleValues.splice(index, 1); if (!state.roleValues.length) state.roleValues = ['none']; renderRoleRows(); }); select.addEventListener('change', (event) => { state.roleValues[index] = normalizeRoleValue(event.target.value); }); row.appendChild(select); row.appendChild(removeBtn); els.page.rolesWrap.appendChild(row); }); }
+function getCleanRoles() { const normalized = state.roleValues.map(normalizeRoleValue); if (normalized.includes('none')) return ['none']; const unique = []; normalized.forEach((role) => { if (!unique.includes(role)) unique.push(role); }); return unique.length ? unique : ['none']; }
+function fillProfileForm(profile) { els.page.artistNameInput.value = profile?.artist_name || ''; els.page.bioInput.value = profile?.bio || ''; els.page.nationalityInput.value = profile?.nationality || ''; const roles = Array.isArray(profile?.music_roles) && profile.music_roles.length ? profile.music_roles : [profile?.music_role || 'none']; state.roleValues = roles.map(normalizeRoleValue); renderRoleRows(); els.page.cityInput.value = profile?.city || ''; els.page.dateOfBirthInput.value = profile?.date_of_birth || ''; els.page.showRoleOnArtistPageInput.checked = Boolean(profile?.show_role_on_artist_page); els.page.showCityOnArtistPageInput.checked = Boolean(profile?.show_city_on_artist_page); els.page.showBirthOnArtistPageInput.checked = Boolean(profile?.show_birth_on_artist_page); els.page.socialLinkInput.value = profile?.social_link || ''; els.page.wantsPromotionsInput.checked = Boolean(profile?.wants_promotions); }
+async function loadMyProfile(userId) { const { data, error } = await supabaseClient.from('profiles').select('artist_name, bio, nationality, music_roles, music_role, city, date_of_birth, social_link, photo_url, wants_promotions, accepted_terms, user_id, coins, show_role_on_artist_page, show_city_on_artist_page, show_birth_on_artist_page').eq('user_id', userId).maybeSingle(); if (error || !data) { state.currentProfile = null; els.auth.profileLink.href = '#'; els.page.viewArtistLink.href = '#'; setHeaderAvatar('', 'A'); fillProfileForm(null); setProfileMissingView(); applyMenuState({ id: userId }, null); return null; } state.currentProfile = data; setCurrency(data.coins || 0); setHeaderAvatar(data.photo_url, data.artist_name); const artistHref = `artist.html?user_id=${encodeURIComponent(data.user_id)}`; els.auth.profileLink.href = artistHref; els.page.viewArtistLink.href = artistHref; fillProfileForm(data); setProfileReadyView(); applyMenuState({ id: userId }, data); return data; }
+async function refreshAuthUI() { try { const { data, error } = await supabaseClient.auth.getSession(); if (error) { setLoggedOutView(); state.currentProfile = null; fillProfileForm(null); return null; } const user = data?.session?.user || null; if (user) { setLoggedInView(); await loadMyProfile(user.id); return user; } setLoggedOutView(); state.currentProfile = null; fillProfileForm(null); return null; } catch (err) { console.error('refreshAuthUI error:', err); setLoggedOutView(); state.currentProfile = null; fillProfileForm(null); return null; } }
+async function handleLogin() { const emailValue = els.auth.email.value.trim(); const passwordValue = els.auth.password.value.trim(); if (!emailValue || !passwordValue) { setAuthMessage('Please enter email and password.', true); return; } els.auth.loginBtn.disabled = true; els.auth.signupBtn.disabled = true; setAuthMessage(''); try { const { error } = await supabaseClient.auth.signInWithPassword({ email: emailValue, password: passwordValue }); if (error) { setAuthMessage(error.message, true); return; } clearLoginFields(); setStatus(''); await refreshAuthUI(); } catch (err) { console.error('handleLogin error:', err); setAuthMessage('Login failed. Try again.', true); } finally { els.auth.loginBtn.disabled = false; els.auth.signupBtn.disabled = false; } }
+async function handleSignup() { const emailValue = els.auth.email.value.trim(); const passwordValue = els.auth.password.value.trim(); if (!emailValue || !passwordValue) { setAuthMessage('Please enter email and password.', true); return; } els.auth.loginBtn.disabled = true; els.auth.signupBtn.disabled = true; setAuthMessage(''); try { const { error } = await supabaseClient.auth.signUp({ email: emailValue, password: passwordValue }); if (error) { setAuthMessage(error.message, true); return; } setAuthMessage('Account created. Check your email.'); await refreshAuthUI(); } catch (err) { console.error('handleSignup error:', err); setAuthMessage('Sign up failed. Try again.', true); } finally { els.auth.loginBtn.disabled = false; els.auth.signupBtn.disabled = false; } }
+async function handleLogout() { els.header.logoutBtn.disabled = true; els.desktopNav.logoutBtn.disabled = true; setAuthMessage(''); try { const { error } = await supabaseClient.auth.signOut(); if (error) { setAuthMessage(error.message, true); return; } clearLoginFields(); state.currentProfile = null; setStatus(''); await refreshAuthUI(); } catch (err) { console.error('handleLogout error:', err); setAuthMessage('Logout failed. Try again.', true); } finally { els.header.logoutBtn.disabled = false; els.desktopNav.logoutBtn.disabled = false; } }
+async function uploadPhotoIfNeeded(userId, photoFile) { if (!photoFile) return state.currentProfile?.photo_url || ''; const photoPath = `${userId}/${Date.now()}-${photoFile.name.replace(/\s+/g, '-')}`; const { error: photoUploadError } = await supabaseClient.storage.from('artist-photos').upload(photoPath, photoFile, { cacheControl: '3600', upsert: true }); if (photoUploadError) throw new Error('Photo upload failed: ' + photoUploadError.message); const { data: photoUrlData } = supabaseClient.storage.from('artist-photos').getPublicUrl(photoPath); return photoUrlData.publicUrl; }
+async function handleSaveProfile() { const artistName = els.page.artistNameInput.value.trim(); const bio = els.page.bioInput.value.trim(); const nationality = els.page.nationalityInput.value.trim(); const musicRoles = getCleanRoles(); const city = els.page.cityInput.value.trim(); const dateOfBirth = els.page.dateOfBirthInput.value; const socialLink = els.page.socialLinkInput.value.trim(); const photoFile = els.page.photoFileInput.files[0]; const wantsPromotions = els.page.wantsPromotionsInput.checked; const showRoleOnArtistPage = els.page.showRoleOnArtistPageInput.checked; const showCityOnArtistPage = els.page.showCityOnArtistPageInput.checked; const showBirthOnArtistPage = els.page.showBirthOnArtistPageInput.checked; if (!artistName) { setStatus('Please enter your (artist)name.', true); return; } els.page.saveProfileBtn.disabled = true; setStatus('Checking login...'); try { const { data: userData, error: userError } = await supabaseClient.auth.getUser(); if (userError) { setStatus('Could not check current user: ' + userError.message, true); return; } if (!userData.user) { setStatus('You must be logged in before editing your profile.', true); return; } const userId = userData.user.id; if (!state.currentProfile) { setStatus('No artist profile found. Please create your profile first.', true); setProfileMissingView(); return; } const photoUrl = await uploadPhotoIfNeeded(userId, photoFile); setStatus('Saving profile...'); const payload = { artist_name: artistName, bio: bio || null, nationality: nationality || null, music_roles: musicRoles, city: city || null, date_of_birth: dateOfBirth || null, show_role_on_artist_page: showRoleOnArtistPage, show_city_on_artist_page: showCityOnArtistPage, show_birth_on_artist_page: showBirthOnArtistPage, social_link: socialLink || null, photo_url: photoUrl || null, wants_promotions: wantsPromotions, accepted_terms: state.currentProfile?.accepted_terms ?? true }; const { error: profileError } = await supabaseClient.from('profiles').update(payload).eq('user_id', userId); if (profileError) { setStatus('Saving profile failed: ' + profileError.message, true); return; } els.page.photoFileInput.value = ''; setStatus('Profile updated successfully.'); await loadMyProfile(userId); window.location.href = `artist.html?user_id=${encodeURIComponent(userId)}`; } catch (err) { console.error('save profile error:', err); setStatus(err.message || 'Something went wrong while saving your profile.', true); } finally { els.page.saveProfileBtn.disabled = false; } }
+function bindEvents() { els.header.showLoginBtn.onclick = () => { setHidden(els.header.accountMenu, true); els.auth.authBox.classList.toggle('hidden'); setAuthMessage(''); if (!els.auth.authBox.classList.contains('hidden')) setTimeout(() => els.auth.email.focus(), 0); }; els.header.headerAvatarBtn.onclick = () => { setHidden(els.auth.authBox, true); els.header.accountMenu.classList.toggle('hidden'); }; els.header.accountProfileLink.onclick = () => { setHidden(els.header.accountMenu, true); }; els.header.accountNotificationsLink.onclick = () => { setHidden(els.header.accountMenu, true); }; els.desktopNav.logoutBtn.onclick = handleLogout; els.header.logoutBtn.onclick = handleLogout; els.auth.loginBtn.onclick = handleLogin; els.auth.signupBtn.onclick = handleSignup; els.page.saveProfileBtn.onclick = handleSaveProfile; els.page.addRoleBtn.onclick = () => { if (state.roleValues.length === 1 && normalizeRoleValue(state.roleValues[0]) === 'none') state.roleValues = []; state.roleValues.push('producer'); renderRoleRows(); }; document.addEventListener('click', (e) => { const insideHeaderRight = e.target.closest('.header-right'); const insideAuthBox = e.target.closest('#authBox'); const isLoginButton = e.target.closest('#showLoginBtn'); const isAvatarButton = e.target.closest('#headerAvatarBtn'); if (!insideHeaderRight && !insideAuthBox && !isLoginButton && !isAvatarButton) { setHidden(els.auth.authBox, true); setHidden(els.header.accountMenu, true); } }); document.addEventListener('keydown', (e) => { if (e.key === 'Escape') { setHidden(els.auth.authBox, true); setHidden(els.header.accountMenu, true); } }); els.auth.email.addEventListener('keydown', (e) => { if (e.key === 'Enter') handleLogin(); }); els.auth.password.addEventListener('keydown', (e) => { if (e.key === 'Enter') handleLogin(); }); supabaseClient.auth.onAuthStateChange(() => { refreshAuthUI().catch((err) => console.error(err)); }); }
+populateCountryOptions();
+renderRoleRows();
+bindEvents();
+refreshAuthUI().catch((err) => console.error('init edit profile error:', err));

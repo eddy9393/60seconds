@@ -439,10 +439,14 @@ function renderArtistProfile(profile, isOwnPage, hasOwnTrack) {
     els.page.artistMeta.appendChild(nationalityPill);
   }
 
-  if (profile?.show_role_on_artist_page && profile?.music_role) {
+  const profileRoles = Array.isArray(profile?.music_roles) && profile.music_roles.length
+    ? profile.music_roles
+    : (profile?.music_role ? [profile.music_role] : []);
+
+  if (profile?.show_role_on_artist_page && profileRoles.length && !profileRoles.includes('none')) {
     const rolePill = document.createElement("div");
     rolePill.className = "meta-pill";
-    rolePill.textContent = profile.music_role;
+    rolePill.textContent = profileRoles.map((role) => role.charAt(0).toUpperCase() + role.slice(1)).join(" · ");
     els.page.artistMeta.appendChild(rolePill);
   }
 
