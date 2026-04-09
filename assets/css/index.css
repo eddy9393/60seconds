@@ -573,8 +573,8 @@ img {
 }
 
 .skip-coin-icon {
-  width: 18px;
-  height: 18px;
+  width: 16px;
+  height: 16px;
   object-fit: contain;
   display: block;
   flex: 0 0 auto;
@@ -906,8 +906,8 @@ img {
   position: absolute;
   top: 50%;
   right: 0;
-  width: 18px;
-  height: 18px;
+  width: 16px;
+  height: 16px;
   transform: translate(35%, -50%);
   border-radius: 50%;
   background: radial-gradient(circle, rgba(255,247,207,0.98) 0%, rgba(244,215,122,0.95) 42%, rgba(212,175,55,0.72) 70%, rgba(212,175,55,0) 100%);
