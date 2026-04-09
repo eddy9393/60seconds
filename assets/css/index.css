@@ -802,7 +802,8 @@ img {
 
 
 .waveform-wrap.is-paused .waveform-bar {
-  animation-play-state: paused;
+  animation: none !important;
+  transform: scaleY(1) !important;
   opacity: 0.5;
 }
 
@@ -963,7 +964,44 @@ img {
   display: flex;
   justify-content: center;
   gap: 12px;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
+}
+
+
+
+@media (max-width: 900px) {
+  .player-actions {
+    gap: 8px;
+    align-items: stretch;
+  }
+
+  .player-actions .metal-btn {
+    flex: 1 1 0;
+    min-width: 0;
+    padding: 12px 10px;
+    font-size: 12px;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .player-actions .metal-btn .icon {
+    margin-right: 5px;
+    font-size: 14px;
+  }
+
+  .player-actions .skip-button-content {
+    gap: 5px;
+  }
+
+  .player-actions .skip-coin-icon {
+    width: 14px;
+    height: 14px;
+  }
+
+  .player-actions .skip-cost {
+    font-size: 12px;
+  }
 }
 
 .feature-note {
