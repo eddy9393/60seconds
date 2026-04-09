@@ -1112,3 +1112,62 @@ img {
 .toggle-switch input:checked + .toggle-slider::before {
   transform: translateX(24px);
 }
+
+
+/* v8 header + mobile account menu refinements */
+.account-menu:not(.hidden) {
+  display: block !important;
+}
+
+.header-logo {
+  width: min(216px, 33.75vw);
+}
+
+@media (max-width: 768px) {
+  .header-wrap .site-shell > header,
+  .header-wrap .site-header,
+  .header-wrap header {
+    grid-template-columns: 72px 1fr 72px;
+    gap: 8px;
+  }
+
+  .header-left {
+    justify-content: flex-start;
+  }
+
+  .header-center {
+    justify-content: center;
+  }
+
+  .header-right {
+    justify-content: flex-end;
+  }
+
+  .header-logo-link {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .header-logo {
+    width: min(150px, 46vw);
+    margin: 0 auto;
+  }
+
+  .account-menu {
+    top: 50px;
+    right: 0;
+    min-width: 180px;
+    padding: 8px;
+  }
+
+  .account-menu-actions {
+    gap: 6px;
+  }
+
+  .account-menu .metal-btn,
+  .account-menu .account-menu-link {
+    min-height: 42px;
+    border-radius: 14px;
+    font-size: 14px;
+  }
+}
