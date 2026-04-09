@@ -439,12 +439,26 @@ function renderArtistProfile(profile, isOwnPage, hasOwnTrack) {
     els.page.artistMeta.appendChild(nationalityPill);
   }
 
+  if (profile?.show_role_on_artist_page && profile?.music_role) {
+    const rolePill = document.createElement("div");
+    rolePill.className = "meta-pill";
+    rolePill.textContent = profile.music_role;
+    els.page.artistMeta.appendChild(rolePill);
+  }
+
+  if (profile?.show_city_on_artist_page && profile?.city) {
+    const cityPill = document.createElement("div");
+    cityPill.className = "meta-pill";
+    cityPill.textContent = profile.city;
+    els.page.artistMeta.appendChild(cityPill);
+  }
+
   const memberSincePill = document.createElement("div");
   memberSincePill.className = "meta-pill member-since-pill";
   memberSincePill.textContent = `Member since ${getMemberSinceDisplay(profile?.created_at)}`;
   els.page.artistMeta.appendChild(memberSincePill);
 
-  const birthdayDisplay = getBirthdayDisplay(profile?.date_of_birth);
+  const birthdayDisplay = profile?.show_birth_on_artist_page ? getBirthdayDisplay(profile?.date_of_birth) : "";
   if (birthdayDisplay) {
     const birthdayPill = document.createElement("div");
     birthdayPill.className = "meta-pill birthday-pill";

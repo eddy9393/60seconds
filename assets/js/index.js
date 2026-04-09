@@ -5,6 +5,8 @@ const supabaseClient = window.supabase.createClient(
 
 const DAILY_SECONDS_LIMIT = 10;
 const SKIP_COST = 1;
+const RADIO_STATE_KEY = "ssfm_radio_state_v2";
+const RADIO_LIKES_KEY = "ssfm_radio_likes_v1";
 
 const els = {
   showLoginBtn: document.getElementById("showLoginBtn"),
@@ -77,7 +79,8 @@ const state = {
   currentCoins: 0,
   dailySecondsEarned: 0,
   dailySecondsEarnedDate: null,
-  trackAdvanceLock: false
+  trackAdvanceLock: false,
+  bootstrappedFromSavedState: false
 };
 
 const REFRESH_INTERVALS = {
@@ -153,6 +156,64 @@ function normalizeDailySecondsState(profile) {
   state.dailySecondsEarned = 0;
 }
 
+function readRadioState() {
+  try {
+    return JSON.parse(localStorage.getItem(RADIO_STATE_KEY) || "{}");
+  } catch {
+    return {};
+  }
+}
+
+function writeRadioState(patch = {}) {
+  const next = {
+    ...readRadioState(),
+    ...patch,
+    updatedAt: Date.now()
+  };
+  localStorage.setItem(RADIO_STATE_KEY, JSON.stringify(next));
+  return next;
+}
+
+function readLikedTracks() {
+  try {
+    const parsed = JSON.parse(localStorage.getItem(RADIO_LIKES_KEY) || "[]");
+    return Array.isArray(parsed) ? parsed.map(String) : [];
+  } catch {
+    return [];
+  }
+}
+
+function writeLikedTracks(ids) {
+  localStorage.setItem(RADIO_LIKES_KEY, JSON.stringify(ids));
+}
+
+function isRadioActivatedToday() {
+  const saved = readRadioState();
+  return saved.activationDate === getTodayDateKey() && saved.isActivated;
+}
+
+function persistRadioProgress(extra = {}) {
+  const currentTrack = state.tracks[state.current];
+  const previewElapsed = Math.max(0, (els.audio.currentTime || 0) - state.currentPreviewStart);
+
+  writeRadioState({
+    activationDate: state.isLiveActivated ? getTodayDateKey() : null,
+    isActivated: state.isLiveActivated,
+    currentTrackId: currentTrack?.id || null,
+    currentTrackUrl: currentTrack?.file_url || "",
+    currentTitle: currentTrack?.title || "",
+    currentArtist: currentTrack?.artist || "",
+    currentUserId: currentTrack?.user_id || null,
+    previewStart: state.currentPreviewStart,
+    previewDuration: state.currentPreviewDuration,
+    previewElapsed,
+    volume: Number(els.volume?.value || 0.8),
+    muted: Boolean(els.audio.muted),
+    isPlaying: !els.audio.paused,
+    ...extra
+  });
+}
+
 function updateJoinButtonHref() {
   if (!els.joinBtn) return;
   els.joinBtn.href = "login.html";
@@ -202,10 +263,16 @@ function getProfileHref(profile) {
   return "join.html";
 }
 
+function syncLikeButton() {
+  const currentTrack = state.tracks[state.current];
+  const likedIds = readLikedTracks();
+  state.liked = Boolean(currentTrack?.id && likedIds.includes(String(currentTrack.id)));
+  els.likeBtn.innerHTML = `<span class="icon">♥</span>${state.liked ? "Liked" : "Like"}`;
+  els.likeBtn.classList.toggle("liked", state.liked);
+}
+
 function resetLike() {
-  state.liked = false;
-  els.likeBtn.innerHTML = `<span class="icon">♥</span>Like`;
-  els.likeBtn.classList.remove("liked");
+  syncLikeButton();
 }
 
 function updateEarnSecondsProgress() {
@@ -678,6 +745,8 @@ function playTrackAt(index, previewOffset = 0, countPlay = true) {
   if (countPlay) {
     incrementPlayCount(track);
   }
+
+  persistRadioProgress({ isPlaying: true });
 }
 
 function nextTrack(previewOffset = 0, countPlay = true) {
@@ -764,11 +833,25 @@ async function bootstrapLiveRadio() {
   els.audio.muted = true;
   updateVolumeButtonState();
 
-  const nextIndex = chooseNextTrackIndex();
+  const saved = readRadioState();
+  let nextIndex = -1;
+  let previewOffset = 0;
+
+  if (saved.currentTrackId) {
+    nextIndex = state.tracks.findIndex((track) => String(track.id) === String(saved.currentTrackId));
+    previewOffset = Math.max(0, Number(saved.previewElapsed) || 0);
+  }
+
+  if (nextIndex < 0) {
+    nextIndex = chooseNextTrackIndex();
+    if (nextIndex >= 0) {
+      const previewDuration = getTrackPreviewDuration(state.tracks[nextIndex]);
+      previewOffset = Math.floor(Math.random() * Math.max(previewDuration, 1));
+    }
+  }
+
   if (nextIndex >= 0) {
-    const previewDuration = getTrackPreviewDuration(state.tracks[nextIndex]);
-    const randomLiveOffset = Math.floor(Math.random() * Math.max(previewDuration, 1));
-    playTrackAt(nextIndex, randomLiveOffset, false);
+    playTrackAt(nextIndex, previewOffset, false);
   }
 
   state.liveBooted = true;
@@ -788,6 +871,7 @@ async function ensureBackgroundPlayback() {
 async function handleStartRadio() {
   state.isLiveActivated = true;
   state.listenerIdentity = null;
+  writeRadioState({ activationDate: getTodayDateKey(), isActivated: true });
 
   await registerListener();
   await updateListeners();
@@ -799,10 +883,19 @@ async function handleStartRadio() {
   updateConceptVisibility();
 
   if (!els.audio.src && state.tracks.length) {
-    const nextIndex = chooseNextTrackIndex();
-    const previewDuration = nextIndex >= 0 ? getTrackPreviewDuration(state.tracks[nextIndex]) : 60;
-    const randomOffset = Math.floor(Math.random() * Math.max(previewDuration, 1));
-    playTrackAt(nextIndex, randomOffset, false);
+    const saved = readRadioState();
+    const savedIndex = saved.currentTrackId
+      ? state.tracks.findIndex((track) => String(track.id) === String(saved.currentTrackId))
+      : -1;
+
+    if (savedIndex >= 0) {
+      playTrackAt(savedIndex, Math.max(0, Number(saved.previewElapsed) || 0), false);
+    } else {
+      const nextIndex = chooseNextTrackIndex();
+      const previewDuration = nextIndex >= 0 ? getTrackPreviewDuration(state.tracks[nextIndex]) : 60;
+      const randomOffset = Math.floor(Math.random() * Math.max(previewDuration, 1));
+      playTrackAt(nextIndex, randomOffset, false);
+    }
   }
 
   if (Number(els.volume.value) > 0) {
@@ -810,8 +903,11 @@ async function handleStartRadio() {
   }
 
   updateVolumeButtonState();
+  persistRadioProgress({ isPlaying: true });
 
-  els.audio.play().catch(err => {
+  els.audio.play().then(() => {
+    persistRadioProgress({ isPlaying: true });
+  }).catch(err => {
     console.error("Start Radio play error:", err);
   });
 }
@@ -858,16 +954,20 @@ async function handleSkip() {
 function handleLike() {
   if (!state.currentUser) return;
 
-  state.liked = !state.liked;
+  const currentTrack = state.tracks[state.current];
+  if (!currentTrack?.id) return;
 
-  if (state.liked) {
-    els.likeBtn.innerHTML = `<span class="icon">♥</span>Liked`;
-    els.likeBtn.classList.add("liked");
-    return;
+  const likedIds = new Set(readLikedTracks());
+  const key = String(currentTrack.id);
+
+  if (likedIds.has(key)) {
+    likedIds.delete(key);
+  } else {
+    likedIds.add(key);
   }
 
-  els.likeBtn.innerHTML = `<span class="icon">♥</span>Like`;
-  els.likeBtn.classList.remove("liked");
+  writeLikedTracks([...likedIds]);
+  syncLikeButton();
 }
 
 async function handleLogout() {
@@ -883,6 +983,7 @@ async function handleLogout() {
     }
 
     state.listenerIdentity = null;
+    writeRadioState({ isPlaying: false });
     state.currentCoins = 0;
     state.dailySecondsEarned = 0;
     state.dailySecondsEarnedDate = null;
@@ -932,6 +1033,7 @@ function bindUIEvents() {
     els.audio.volume = v;
     els.audio.muted = v === 0 || !state.isLiveActivated;
     updateVolumeButtonState();
+    persistRadioProgress({ volume: v, muted: els.audio.muted });
   });
 
   document.addEventListener("click", (e) => {
@@ -971,12 +1073,23 @@ function bindUIEvents() {
     ensureBackgroundPlayback();
   });
 
+  window.addEventListener("beforeunload", () => {
+    persistRadioProgress({ isPlaying: false });
+  });
+
+  window.addEventListener("storage", (event) => {
+    if (event.key === RADIO_LIKES_KEY) {
+      syncLikeButton();
+    }
+  });
+
   els.audio.addEventListener("timeupdate", () => {
     const previewElapsed = Math.max(0, (els.audio.currentTime || 0) - state.currentPreviewStart);
     const clampedElapsed = Math.min(previewElapsed, state.currentPreviewDuration);
 
     els.progressFill.style.width = `${state.currentPreviewDuration > 0 ? (clampedElapsed / state.currentPreviewDuration) * 100 : 0}%`;
     setText(els.elapsedTimeEl, formatTime(clampedElapsed));
+    persistRadioProgress({ previewElapsed: clampedElapsed, isPlaying: true });
 
     if (previewElapsed >= state.currentPreviewDuration) {
       advanceAfterTrackCompletion().catch(err => {
@@ -986,6 +1099,7 @@ function bindUIEvents() {
   });
 
   els.audio.addEventListener("ended", () => {
+    persistRadioProgress({ isPlaying: false });
     advanceAfterTrackCompletion().catch(err => {
       console.error("advanceAfterTrackCompletion error:", err);
     });
@@ -1014,14 +1128,40 @@ function bindIntervals() {
 }
 
 async function initPage() {
+  const savedRadioState = readRadioState();
+
   updateJoinButtonHref();
   setLoggedOutView();
   updateVolumeButtonState();
   updateConceptVisibility();
   bindUIEvents();
   bindIntervals();
+
+  if (typeof savedRadioState.volume === "number") {
+    els.volume.value = String(savedRadioState.volume);
+    els.audio.volume = savedRadioState.volume;
+  }
+
+  if (isRadioActivatedToday()) {
+    state.isLiveActivated = true;
+    els.radioShell.classList.remove("pre-live");
+    setHidden(els.startOverlay, true);
+  }
+
   await refreshAuthDependentUI();
   await bootstrapLiveRadio();
+
+  if (isRadioActivatedToday()) {
+    updateConceptVisibility();
+    if (Number(els.volume.value) > 0) {
+      els.audio.muted = false;
+    }
+    updateVolumeButtonState();
+    els.audio.play().then(() => {
+      persistRadioProgress({ isPlaying: true });
+    }).catch(() => {});
+  }
+
   updateJoinButtonHref();
 }
 

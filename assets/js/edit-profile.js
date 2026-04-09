@@ -3,6 +3,20 @@ const supabaseClient = window.supabase.createClient(
   "sb_publishable_255qyDKS77nMU0pbedfa_A_3hdgtEHh"
 );
 
+const MUSIC_ROLE_OPTIONS = [
+  "",
+  "Vocalist",
+  "Producer",
+  "Singer",
+  "Rapper",
+  "Songwriter",
+  "Singer-Songwriter",
+  "DJ",
+  "Beatmaker",
+  "Instrumentalist",
+  "Composer"
+];
+
 const COUNTRY_OPTIONS = [
   "Afghanistan","Albania","Algeria","Andorra","Angola","Antigua and Barbuda","Argentina","Armenia","Australia","Austria",
   "Azerbaijan","Bahamas","Bahrain","Bangladesh","Barbados","Belarus","Belgium","Belize","Benin","Bhutan",
@@ -75,7 +89,12 @@ const els = {
     artistNameInput: document.getElementById("artistName"),
     bioInput: document.getElementById("bio"),
     nationalityInput: document.getElementById("nationality"),
+    musicRoleInput: document.getElementById("musicRole"),
+    cityInput: document.getElementById("city"),
     dateOfBirthInput: document.getElementById("dateOfBirth"),
+    showRoleOnArtistPageInput: document.getElementById("showRoleOnArtistPage"),
+    showCityOnArtistPageInput: document.getElementById("showCityOnArtistPage"),
+    showBirthOnArtistPageInput: document.getElementById("showBirthOnArtistPage"),
     socialLinkInput: document.getElementById("socialLink"),
     photoFileInput: document.getElementById("photoFile"),
     wantsPromotionsInput: document.getElementById("wantsPromotions"),
@@ -110,13 +129,24 @@ function setCurrency(value) {
 }
 
 function populateCountryOptions() {
-  els.page.nationalityInput.innerHTML = '<option value="">Select your nationality</option>';
+  els.page.nationalityInput.innerHTML = '<option value="">None</option>';
 
   COUNTRY_OPTIONS.forEach((country) => {
     const option = document.createElement("option");
     option.value = country;
     option.textContent = country;
     els.page.nationalityInput.appendChild(option);
+  });
+}
+
+function populateMusicRoleOptions() {
+  els.page.musicRoleInput.innerHTML = "";
+
+  MUSIC_ROLE_OPTIONS.forEach((role) => {
+    const option = document.createElement("option");
+    option.value = role;
+    option.textContent = role || "None";
+    els.page.musicRoleInput.appendChild(option);
   });
 }
 
@@ -227,7 +257,12 @@ function fillProfileForm(profile) {
   els.page.artistNameInput.value = profile?.artist_name || "";
   els.page.bioInput.value = profile?.bio || "";
   els.page.nationalityInput.value = profile?.nationality || "";
+  els.page.musicRoleInput.value = profile?.music_role || "";
+  els.page.cityInput.value = profile?.city || "";
   els.page.dateOfBirthInput.value = profile?.date_of_birth || "";
+  els.page.showRoleOnArtistPageInput.checked = Boolean(profile?.show_role_on_artist_page);
+  els.page.showCityOnArtistPageInput.checked = Boolean(profile?.show_city_on_artist_page);
+  els.page.showBirthOnArtistPageInput.checked = Boolean(profile?.show_birth_on_artist_page);
   els.page.socialLinkInput.value = profile?.social_link || "";
   els.page.wantsPromotionsInput.checked = Boolean(profile?.wants_promotions);
 }
@@ -235,7 +270,7 @@ function fillProfileForm(profile) {
 async function loadMyProfile(userId) {
   const { data, error } = await supabaseClient
     .from("profiles")
-    .select("artist_name, bio, nationality, date_of_birth, social_link, photo_url, wants_promotions, accepted_terms, user_id, coins")
+    .select("artist_name, bio, nationality, music_role, city, date_of_birth, show_role_on_artist_page, show_city_on_artist_page, show_birth_on_artist_page, social_link, photo_url, wants_promotions, accepted_terms, user_id, coins")
     .eq("user_id", userId)
     .maybeSingle();
 
@@ -425,7 +460,12 @@ async function handleSaveProfile() {
   const artistName = els.page.artistNameInput.value.trim();
   const bio = els.page.bioInput.value.trim();
   const nationality = els.page.nationalityInput.value.trim();
+  const musicRole = els.page.musicRoleInput.value.trim();
+  const city = els.page.cityInput.value.trim();
   const dateOfBirth = els.page.dateOfBirthInput.value;
+  const showRoleOnArtistPage = els.page.showRoleOnArtistPageInput.checked;
+  const showCityOnArtistPage = els.page.showCityOnArtistPageInput.checked;
+  const showBirthOnArtistPage = els.page.showBirthOnArtistPageInput.checked;
   const socialLink = els.page.socialLinkInput.value.trim();
   const photoFile = els.page.photoFileInput.files[0];
   const wantsPromotions = els.page.wantsPromotionsInput.checked;
@@ -469,7 +509,12 @@ async function handleSaveProfile() {
         artist_name: artistName,
         bio: bio || null,
         nationality: nationality || null,
+        music_role: musicRole || null,
+        city: city || null,
         date_of_birth: dateOfBirth || null,
+        show_role_on_artist_page: showRoleOnArtistPage,
+        show_city_on_artist_page: showCityOnArtistPage,
+        show_birth_on_artist_page: showBirthOnArtistPage,
         social_link: socialLink || null,
         photo_url: photoUrl || null,
         wants_promotions: wantsPromotions,
@@ -560,6 +605,7 @@ function bindEvents() {
 
 async function initPage() {
   populateCountryOptions();
+  populateMusicRoleOptions();
   setLoggedOutView();
   fillProfileForm(null);
   setStatus("");
