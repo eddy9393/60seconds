@@ -1401,3 +1401,7 @@ img {
     height: 16px;
   }
 }
+
+.pause-btn-playing .icon {
+  color: #111;
+}
