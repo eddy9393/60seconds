@@ -573,15 +573,15 @@ img {
 }
 
 .skip-coin-icon {
-  width: 24px;
-  height: 24px;
+  width: 18px;
+  height: 18px;
   object-fit: contain;
   display: block;
   flex: 0 0 auto;
 }
 
 .skip-cost {
-  color: #6a560c;
+  color: #111;
   font-weight: 700;
   line-height: 1;
   font-family: 'Space Grotesk', sans-serif;
@@ -1397,7 +1397,7 @@ img {
   }
 
   .skip-coin-icon {
-    width: 21px;
-    height: 21px;
+    width: 16px;
+    height: 16px;
   }
 }
