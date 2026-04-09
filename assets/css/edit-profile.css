@@ -1224,3 +1224,21 @@ img {
     font-size: 14px;
   }
 }
+
+
+/* v11 mobile account menu visibility fix */
+@media (max-width: 768px) {
+  .header-right {
+    overflow: visible;
+  }
+
+  .account-menu {
+    top: 50px;
+    bottom: auto;
+    right: 0;
+    left: auto;
+    min-width: 176px;
+    max-width: min(220px, calc(100vw - 20px));
+    transform: none;
+  }
+}
