@@ -297,6 +297,7 @@ function setLoggedOutView() {
 function setLoggedInHeader() {
   setHidden(els.header.showLoginBtn, true);
   setHidden(els.header.headerAvatarBtn, false);
+  setHidden(els.header.accountMenu, true);
   setHidden(els.header.currencyBadge, false);
 }
 
@@ -793,7 +794,8 @@ function bindEvents() {
   };
 
   els.header.headerAvatarBtn.onclick = () => {
-    els.header.accountMenu.classList.toggle("hidden");
+    setHidden(els.header.accountMenu, true);
+    window.location.href = "artist.html";
   };
 
   els.header.accountProfileLink.onclick = () => {

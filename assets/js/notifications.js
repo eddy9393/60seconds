@@ -93,7 +93,7 @@ function applyMenuState(user, profile, track) {
   els.header.accountProfileLink.href = profileHref;
 
   setHidden(els.header.accountProfileLink, !isLoggedIn);
-  setHidden(els.header.accountNotificationsLink, !isLoggedIn);
+  setHidden(els.header.accountNotificationsLink, true);
 
   els.desktopNav.trackLink.setAttribute("data-track-mode", hasTrack ? "edit" : "submit");
   els.mobileNav.trackLink.setAttribute("data-track-mode", hasTrack ? "edit" : "submit");
@@ -120,6 +120,7 @@ function setLoggedOutView() {
 function setLoggedInView() {
   setHidden(els.header.showLoginBtn, true);
   setHidden(els.header.headerAvatarBtn, false);
+  setHidden(els.header.accountMenu, true);
   setHidden(els.header.currencyBadge, false);
 }
 
@@ -231,7 +232,8 @@ function bindEvents() {
   };
 
   els.header.headerAvatarBtn.onclick = () => {
-    els.header.accountMenu.classList.toggle("hidden");
+    setHidden(els.header.accountMenu, true);
+    window.location.href = "artist.html";
   };
 
   els.header.accountProfileLink.onclick = () => {

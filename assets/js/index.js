@@ -486,6 +486,7 @@ function setLoggedInView() {
   setHidden(els.submitTrackBtn, true);
   setHidden(els.showLoginBtn, true);
   setHidden(els.headerAvatarBtn, false);
+  setHidden(els.accountMenu, true);
   updateCurrencyVisibility(state.currentUser || true);
 }
 
@@ -1106,7 +1107,8 @@ function bindUIEvents() {
 
   els.headerAvatarBtn.onclick = () => {
     els.volumeControl.classList.remove("open");
-    els.accountMenu.classList.toggle("hidden");
+    setHidden(els.accountMenu, true);
+    window.location.href = "artist.html";
   };
 
   els.accountProfileLink.onclick = () => {
