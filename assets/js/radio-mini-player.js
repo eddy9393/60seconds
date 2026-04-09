@@ -14,7 +14,6 @@
   const DEFAULT_VOLUME = 0.3;
   const STORAGE_SYNC_MS = 1200;
 
-  const state = {
   const MINI_PLAYER_ICONS = {
     heart: '<svg viewBox="0 0 24 24" aria-hidden="true" class="mini-svg-icon"><path d="M12 20.5 4.7 13.9a4.8 4.8 0 0 1-.4-6.8A4.7 4.7 0 0 1 11 7.3l1 1 1-1a4.7 4.7 0 0 1 6.7-.2 4.8 4.8 0 0 1-.4 6.8L12 20.5Z" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg>',
     play: '<svg viewBox="0 0 24 24" aria-hidden="true" class="mini-svg-icon"><path d="M8 6.5v11l9-5.5-9-5.5Z" fill="currentColor"/></svg>',
@@ -22,6 +21,7 @@
     volume: '<svg viewBox="0 0 24 24" aria-hidden="true" class="mini-svg-icon"><path d="M4 10h4l5-4v12l-5-4H4z" fill="currentColor"/><path d="M16 9.2a3.3 3.3 0 0 1 0 5.6" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/><path d="M18.7 6.8a6.3 6.3 0 0 1 0 10.4" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg>'
   };
 
+  const state = {
     tracks: [],
     currentIndex: -1,
     currentTrack: null,
