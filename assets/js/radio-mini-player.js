@@ -21,13 +21,15 @@
     previewStart: 0,
     previewDuration: 60,
     shouldPlay: false,
+    desiredPlayback: false,
     liked: false,
     audio: null,
     els: {},
     booting: false,
     lastPersistAt: 0,
     playRequestToken: 0,
-    sessionKeyToday: ''
+    sessionKeyToday: '',
+    unlockEventsBound: false
   };
 
   function todayKey() {
@@ -43,6 +45,12 @@
     const next = Object.assign({}, loadSession(), patch, { lastUpdatedAt: Date.now(), lastPath: window.location.pathname });
     localStorage.setItem(SESSION_KEY, JSON.stringify(next));
     return next;
+  }
+
+  function getDesiredPlayback(session = loadSession()) {
+    if (!session.isStarted || session.startedDate !== state.sessionKeyToday) return false;
+    if (typeof session.desiredPlaying === 'boolean') return session.desiredPlaying;
+    return session.isPlaying !== false;
   }
 
   function formatTime(seconds) {
@@ -88,8 +96,7 @@
 
   function syncVolumeUi() {
     if (!state.audio || !state.els.volume) return;
-    const safeVolume = getSafeVolume(state.audio.volume);
-    state.els.volume.value = String(safeVolume);
+    state.els.volume.value = String(getSafeVolume(state.audio.volume));
   }
 
   function persistProgress(force = false) {
@@ -101,7 +108,8 @@
     saveSession({
       startedDate: state.sessionKeyToday,
       isStarted: true,
-      isPlaying: !state.audio.paused && state.shouldPlay,
+      isPlaying: !state.audio.paused,
+      desiredPlaying: state.desiredPlayback,
       currentTrack: state.currentTrack,
       currentTrackId: state.currentTrack.id,
       currentIndex: state.currentIndex,
@@ -164,6 +172,7 @@
     });
 
     state.audio.addEventListener('pause', () => {
+      state.shouldPlay = false;
       updatePlayPauseLabel();
       persistProgress(true);
     });
@@ -171,7 +180,7 @@
     state.audio.addEventListener('ended', () => { nextTrack().catch((err) => console.error(err)); });
   }
 
-  async function playTrackAt(index, previewOffset = 0, autoplay = true) {
+  async function playTrackAt(index, previewOffset = 0, autoplay = state.desiredPlayback) {
     const track = state.tracks[index];
     if (!track || !state.audio) return;
     const requestToken = ++state.playRequestToken;
@@ -179,6 +188,7 @@
     state.currentTrack = track;
     state.previewStart = getPreviewStart(track);
     state.previewDuration = getPreviewDuration(track);
+    state.desiredPlayback = Boolean(autoplay);
     updateMeta();
     const safeOffset = Math.max(0, Math.min(previewOffset, Math.max(state.previewDuration - 0.25, 0)));
     const targetTime = state.previewStart + safeOffset;
@@ -200,6 +210,7 @@
     saveSession({
       startedDate: state.sessionKeyToday,
       isStarted: true,
+      desiredPlaying: state.desiredPlayback,
       currentTrack: track,
       currentTrackId: track.id,
       currentIndex: index,
@@ -208,7 +219,7 @@
       muted: state.audio.muted
     });
 
-    if (autoplay) {
+    if (state.desiredPlayback) {
       state.shouldPlay = true;
       try {
         await state.audio.play();
@@ -228,7 +239,7 @@
   async function nextTrack() {
     const nextIndex = chooseNextTrackIndex();
     if (nextIndex < 0) return;
-    await playTrackAt(nextIndex, 0, true);
+    await playTrackAt(nextIndex, 0, state.desiredPlayback);
   }
 
   async function attemptResumeFromSession(forcePlay = false) {
@@ -247,13 +258,16 @@
     state.audio.volume = safeVolume;
     state.audio.muted = safeVolume === 0;
     syncVolumeUi();
-    state.shouldPlay = forcePlay || session.isPlaying !== false;
-    if (state.shouldPlay && state.audio.paused) {
+    state.desiredPlayback = forcePlay || getDesiredPlayback(session);
+    state.shouldPlay = state.desiredPlayback;
+    if (state.desiredPlayback && state.audio.paused) {
       try {
         await state.audio.play();
       } catch (err) {
         console.log('mini player resume blocked:', err);
       }
+    } else if (!state.desiredPlayback && !state.audio.paused) {
+      state.audio.pause();
     }
     updatePlayPauseLabel();
     persistProgress(true);
@@ -290,9 +304,11 @@
     state.els.pauseBtn.addEventListener('click', async () => {
       if (!state.audio) return;
       if (state.audio.paused) {
+        state.desiredPlayback = true;
         state.shouldPlay = true;
         try { await state.audio.play(); } catch (err) { console.log(err); }
       } else {
+        state.desiredPlayback = false;
         state.shouldPlay = false;
         state.audio.pause();
       }
@@ -321,7 +337,8 @@
     state.audio.volume = initialVolume;
     state.audio.muted = initialVolume === 0;
     state.els.volume.value = String(initialVolume);
-    state.shouldPlay = session.isPlaying !== false;
+    state.desiredPlayback = getDesiredPlayback(session);
+    state.shouldPlay = state.desiredPlayback;
 
     await loadTracks();
     if (!state.tracks.length && !(session.currentTrack && session.currentTrack.file_url)) return;
@@ -333,7 +350,7 @@
     }
     if (index < 0) index = 0;
 
-    await playTrackAt(index, Number(session.previewOffset) || 0, state.shouldPlay);
+    await playTrackAt(index, Number(session.previewOffset) || 0, state.desiredPlayback);
     state.els.wrap.classList.remove('hidden');
     updatePlayPauseLabel();
     updateLikeLabel();
@@ -347,6 +364,18 @@
       }
       attemptResumeFromSession(false).catch(() => {});
     });
+
+    if (!state.unlockEventsBound) {
+      state.unlockEventsBound = true;
+      const resumeIfNeeded = () => {
+        if (!state.audio || !state.desiredPlayback || !state.audio.paused) return;
+        state.audio.play().then(() => persistProgress(true)).catch(() => {});
+      };
+      ['touchstart', 'pointerdown', 'click'].forEach((eventName) => {
+        document.addEventListener(eventName, resumeIfNeeded, { passive: true });
+      });
+    }
+
     window.addEventListener('beforeunload', () => persistProgress(true));
     window.addEventListener('pagehide', () => persistProgress(true));
     window.addEventListener('storage', (event) => {

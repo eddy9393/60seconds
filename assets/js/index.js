@@ -64,7 +64,8 @@ const els = {
 
   earnSecondsWrap: document.getElementById("earnSecondsWrap"),
   earnSecondsProgress: document.getElementById("earnSecondsProgress"),
-  earnSecondsCopy: document.getElementById("earnSecondsCopy")
+  earnSecondsCopy: document.getElementById("earnSecondsCopy"),
+  waveformWrap: document.querySelector(".waveform-wrap")
 };
 
 const state = {
@@ -82,7 +83,9 @@ const state = {
   currentCoins: 0,
   dailySecondsEarned: 0,
   dailySecondsEarnedDate: null,
-  trackAdvanceLock: false
+  trackAdvanceLock: false,
+  desiredPlayback: false,
+  playbackUnlockBound: false
 };
 
 const REFRESH_INTERVALS = {
@@ -179,6 +182,7 @@ function persistRadioSession() {
     startedDate: getTodayDateKey(),
     isStarted: state.isLiveActivated,
     isPlaying: state.isLiveActivated && !els.audio.paused,
+    desiredPlaying: state.isLiveActivated && state.desiredPlayback,
     currentTrack,
     currentTrackId: currentTrack?.id || null,
     currentIndex: state.current,
@@ -195,6 +199,77 @@ function updatePauseButtonState() {
   els.pauseBtn.innerHTML = isPlaying
     ? `<span class="icon">⏸</span>Pause`
     : `<span class="icon">▶</span>Play`;
+}
+
+function syncWaveformState() {
+  if (!els.waveformWrap) return;
+  const isPlaying = state.isLiveActivated && !els.audio.paused;
+  els.waveformWrap.classList.toggle("is-paused", !isPlaying);
+}
+
+function getDesiredSessionPlayback(session = getSavedRadioSession()) {
+  if (!session?.isStarted || session?.startedDate !== getTodayDateKey()) return false;
+  if (typeof session.desiredPlaying === "boolean") return session.desiredPlaying;
+  return session.isPlaying !== false;
+}
+
+async function restoreExactPlaybackState() {
+  if (!state.liveBooted || !els.audio.src) return;
+
+  const session = getSavedRadioSession();
+  const safeVolume = getSafeVolume(session?.volume ?? localStorage.getItem(RADIO_VOLUME_KEY) ?? DEFAULT_VOLUME);
+  els.volume.value = String(safeVolume);
+  els.audio.volume = safeVolume;
+  els.audio.muted = safeVolume === 0;
+  updateVolumeButtonState();
+
+  const desiredOffset = Number(session?.previewOffset);
+  if (Number.isFinite(desiredOffset)) {
+    const currentOffset = Math.max(0, (els.audio.currentTime || 0) - state.currentPreviewStart);
+    if (Math.abs(currentOffset - desiredOffset) > 2 && !els.audio.seeking) {
+      try {
+        els.audio.currentTime = state.currentPreviewStart + Math.max(0, desiredOffset);
+      } catch (err) {
+        console.error("restore currentTime error:", err);
+      }
+    }
+  }
+
+  state.desiredPlayback = getDesiredSessionPlayback(session);
+
+  if (state.desiredPlayback) {
+    if (els.audio.paused) {
+      try {
+        await els.audio.play();
+      } catch (err) {
+        console.log("restore play blocked:", err);
+      }
+    }
+  } else if (!els.audio.paused) {
+    els.audio.pause();
+  }
+
+  updatePauseButtonState();
+  syncWaveformState();
+  persistRadioSession();
+}
+
+function bindPlaybackUnlockEvents() {
+  if (state.playbackUnlockBound) return;
+  state.playbackUnlockBound = true;
+
+  const resumeIfNeeded = () => {
+    if (!state.isLiveActivated || !state.desiredPlayback || !els.audio.src || !els.audio.paused) return;
+    els.audio.play().then(() => {
+      updatePauseButtonState();
+      syncWaveformState();
+      persistRadioSession();
+    }).catch(() => {});
+  };
+
+  ["touchstart", "pointerdown", "click"].forEach((eventName) => {
+    document.addEventListener(eventName, resumeIfNeeded, { passive: true });
+  });
 }
 
 function normalizeDailySecondsState(profile) {
@@ -700,11 +775,12 @@ function setEmptyRadioState() {
   updateEarnSecondsProgress();
 }
 
-function playTrackAt(index, previewOffset = 0, countPlay = true, autoplay = true) {
+function playTrackAt(index, previewOffset = 0, countPlay = true, autoplay = state.desiredPlayback) {
   const track = state.tracks[index];
   if (index < 0 || !track) return;
 
   state.current = index;
+  state.desiredPlayback = Boolean(autoplay);
 
   const previewStart = getTrackPreviewStart(track);
   const previewDuration = getTrackPreviewDuration(track);
@@ -736,6 +812,7 @@ function playTrackAt(index, previewOffset = 0, countPlay = true, autoplay = true
     } else {
       els.audio.pause();
       updatePauseButtonState();
+      syncWaveformState();
     }
   };
 
@@ -746,14 +823,14 @@ function playTrackAt(index, previewOffset = 0, countPlay = true, autoplay = true
   }
 }
 
-function nextTrack(previewOffset = 0, countPlay = true) {
+function nextTrack(previewOffset = 0, countPlay = true, autoplay = state.desiredPlayback) {
   if (!state.tracks.length) {
     setEmptyRadioState();
     return;
   }
 
   const nextIndex = chooseNextTrackIndex();
-  playTrackAt(nextIndex, previewOffset, countPlay);
+  playTrackAt(nextIndex, previewOffset, countPlay, autoplay);
 }
 
 async function getListenerIdentity() {
@@ -837,6 +914,7 @@ async function bootstrapLiveRadio() {
   const session = getSavedRadioSession();
   if (session?.isStarted && session?.startedDate === getTodayDateKey()) {
     state.isLiveActivated = true;
+    state.desiredPlayback = getDesiredSessionPlayback(session);
     els.radioShell.classList.remove("pre-live");
     setHidden(els.startOverlay, true);
     updateConceptVisibility();
@@ -844,34 +922,25 @@ async function bootstrapLiveRadio() {
     let index = state.tracks.findIndex(track => String(track.id) === String(session.currentTrackId || session.currentTrack?.id || ""));
     if (index < 0) index = Number.isInteger(session.currentIndex) ? session.currentIndex : chooseNextTrackIndex();
     if (index < 0) index = chooseNextTrackIndex();
-    await playTrackAt(index, Number(session.previewOffset) || 0, false, session.isPlaying !== false);
+    await playTrackAt(index, Number(session.previewOffset) || 0, false, state.desiredPlayback);
   }
 
   state.liveBooted = true;
+  syncWaveformState();
   await updateListeners();
 }
 
-async function ensureBackgroundPlayback() {
-  if (!state.liveBooted || !els.audio.src) return;
-
-  if (els.audio.paused) {
-    const session = getSavedRadioSession();
-    const safeVolume = getSafeVolume(session?.volume ?? localStorage.getItem(RADIO_VOLUME_KEY) ?? DEFAULT_VOLUME);
-    els.audio.volume = safeVolume;
-    els.audio.muted = safeVolume === 0;
-    updateVolumeButtonState();
-    els.audio.play().catch(() => {});
-  }
-}
 
 async function handleStartRadio() {
   state.isLiveActivated = true;
+  state.desiredPlayback = true;
   state.listenerIdentity = null;
 
   saveRadioSession({
     startedDate: getTodayDateKey(),
     isStarted: true,
-    isPlaying: true
+    isPlaying: true,
+    desiredPlaying: true
   });
 
   await registerListener();
@@ -909,7 +978,7 @@ async function advanceAfterTrackCompletion() {
 
   try {
     await awardListeningSecond();
-    nextTrack(0, true);
+    nextTrack(0, true, true);
   } finally {
     state.trackAdvanceLock = false;
   }
@@ -939,7 +1008,7 @@ async function handleSkip() {
   }
 
   setCurrency(data.coins);
-  nextTrack(0, true);
+  nextTrack(0, true, state.desiredPlayback);
 }
 
 function handleLike() {
@@ -962,12 +1031,15 @@ function handlePauseToggle() {
   if (!state.isLiveActivated) return;
 
   if (els.audio.paused) {
+    state.desiredPlayback = true;
     els.audio.play().catch(err => console.error("resume error:", err));
   } else {
+    state.desiredPlayback = false;
     els.audio.pause();
   }
 
   updatePauseButtonState();
+  syncWaveformState();
   persistRadioSession();
 }
 
@@ -1068,7 +1140,7 @@ function bindUIEvents() {
       registerListener().catch(() => {});
     }
     updateListeners().catch(() => {});
-    ensureBackgroundPlayback();
+    restoreExactPlaybackState().catch(() => {});
   });
 
   window.addEventListener("focus", () => {
@@ -1076,11 +1148,11 @@ function bindUIEvents() {
       registerListener().catch(() => {});
     }
     updateListeners().catch(() => {});
-    ensureBackgroundPlayback();
+    restoreExactPlaybackState().catch(() => {});
   });
 
   window.addEventListener("pageshow", () => {
-    ensureBackgroundPlayback();
+    restoreExactPlaybackState().catch(() => {});
   });
 
   els.audio.addEventListener("timeupdate", () => {
@@ -1100,11 +1172,13 @@ function bindUIEvents() {
 
   els.audio.addEventListener("play", () => {
     updatePauseButtonState();
+    syncWaveformState();
     persistRadioSession();
   });
 
   els.audio.addEventListener("pause", () => {
     updatePauseButtonState();
+    syncWaveformState();
     persistRadioSession();
   });
 
@@ -1116,6 +1190,7 @@ function bindUIEvents() {
 
   window.addEventListener("beforeunload", persistRadioSession);
   window.addEventListener("pagehide", persistRadioSession);
+  bindPlaybackUnlockEvents();
 
   supabaseClient.auth.onAuthStateChange(() => {
     refreshAuthDependentUI().catch(err => console.error(err));
