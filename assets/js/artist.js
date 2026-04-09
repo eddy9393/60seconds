@@ -249,7 +249,7 @@ async function loadCurrentUserState() {
 async function fetchArtistProfile(userId) {
   const { data, error } = await supabaseClient
     .from("profiles")
-    .select("user_id, artist_name, photo_url, bio, social_link, nationality, created_at, date_of_birth")
+    .select("user_id, artist_name, photo_url, bio, social_link, nationality, created_at, date_of_birth, music_roles, music_role, city, show_role_on_artist_page, show_city_on_artist_page, show_birth_on_artist_page")
     .eq("user_id", userId)
     .maybeSingle();
 

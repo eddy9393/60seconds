@@ -8,6 +8,7 @@ const SKIP_COST = 1;
 const RADIO_SESSION_KEY = "ssfm_radio_session_v2";
 const RADIO_VOLUME_KEY = "ssfm_radio_volume_v2";
 const RADIO_LIKE_KEY = "ssfm_radio_like_v2";
+const DEFAULT_VOLUME = 0.3;
 
 const els = {
   showLoginBtn: document.getElementById("showLoginBtn"),
@@ -151,7 +152,7 @@ function getSavedRadioSession() {
 }
 
 function saveRadioSession(patch = {}) {
-  const next = { ...getSavedRadioSession(), ...patch };
+  const next = { ...getSavedRadioSession(), ...patch, lastUpdatedAt: Date.now(), lastPath: window.location.pathname };
   localStorage.setItem(RADIO_SESSION_KEY, JSON.stringify(next));
   return next;
 }
@@ -161,8 +162,14 @@ function hasStartedRadioToday() {
   return Boolean(session?.isStarted && session?.startedDate === getTodayDateKey());
 }
 
+function getSafeVolume(candidate) {
+  const value = Number(candidate);
+  if (!Number.isFinite(value)) return DEFAULT_VOLUME;
+  return Math.max(0, Math.min(1, value));
+}
+
 function syncRadioVolumeStorage() {
-  localStorage.setItem(RADIO_VOLUME_KEY, String(Number(els.audio.volume) || 0));
+  localStorage.setItem(RADIO_VOLUME_KEY, String(Math.max(0, Math.min(1, Number(els.audio.volume) || 0))));
 }
 
 function persistRadioSession() {
@@ -176,7 +183,7 @@ function persistRadioSession() {
     currentTrackId: currentTrack?.id || null,
     currentIndex: state.current,
     previewOffset,
-    volume: Number(els.audio.volume) || 0,
+    volume: getSafeVolume(els.audio.volume),
     muted: els.audio.muted
   });
   syncRadioVolumeStorage();
@@ -819,8 +826,8 @@ async function bootstrapLiveRadio() {
     return;
   }
 
-  const storedVolume = Number(localStorage.getItem(RADIO_VOLUME_KEY));
-  const safeVolume = Number.isFinite(storedVolume) ? storedVolume : Number(els.volume.value || 0.85);
+  const storedVolume = localStorage.getItem(RADIO_VOLUME_KEY);
+  const safeVolume = getSafeVolume(storedVolume ?? els.volume.value ?? DEFAULT_VOLUME);
   els.volume.value = String(safeVolume);
   els.audio.volume = safeVolume;
   els.audio.muted = safeVolume === 0;
@@ -848,7 +855,10 @@ async function ensureBackgroundPlayback() {
   if (!state.liveBooted || !els.audio.src) return;
 
   if (els.audio.paused) {
-    els.audio.muted = true;
+    const session = getSavedRadioSession();
+    const safeVolume = getSafeVolume(session?.volume ?? localStorage.getItem(RADIO_VOLUME_KEY) ?? DEFAULT_VOLUME);
+    els.audio.volume = safeVolume;
+    els.audio.muted = safeVolume === 0;
     updateVolumeButtonState();
     els.audio.play().catch(() => {});
   }
@@ -880,9 +890,9 @@ async function handleStartRadio() {
     await playTrackAt(nextIndex, randomOffset, false, true);
   }
 
-  if (Number(els.volume.value) > 0) {
-    els.audio.muted = false;
-  }
+  const startVolume = getSafeVolume(els.volume.value);
+  els.audio.volume = startVolume;
+  els.audio.muted = startVolume === 0;
 
   updateVolumeButtonState();
   updatePauseButtonState();
@@ -1020,9 +1030,9 @@ function bindUIEvents() {
   els.likeBtn.onclick = handleLike;
 
   els.volume.addEventListener("input", (e) => {
-    const v = Number(e.target.value);
+    const v = getSafeVolume(e.target.value);
     els.audio.volume = v;
-    els.audio.muted = v === 0 || !state.isLiveActivated;
+    els.audio.muted = v === 0;
     updateVolumeButtonState();
     syncRadioVolumeStorage();
     persistRadioSession();
@@ -1050,7 +1060,11 @@ function bindUIEvents() {
   });
 
   document.addEventListener("visibilitychange", () => {
-    if (!document.hidden && state.isLiveActivated) {
+    if (document.hidden) {
+      persistRadioSession();
+      return;
+    }
+    if (state.isLiveActivated) {
       registerListener().catch(() => {});
     }
     updateListeners().catch(() => {});
@@ -1062,6 +1076,10 @@ function bindUIEvents() {
       registerListener().catch(() => {});
     }
     updateListeners().catch(() => {});
+    ensureBackgroundPlayback();
+  });
+
+  window.addEventListener("pageshow", () => {
     ensureBackgroundPlayback();
   });
 
