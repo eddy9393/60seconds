@@ -811,6 +811,7 @@ function bindEvents() {
   };
 
   els.header.headerAvatarBtn.onclick = () => {
+    
     handleHeaderAvatarAction(els.header.accountProfileLink?.href || "artist.html");
   };
 
