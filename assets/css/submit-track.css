@@ -292,6 +292,7 @@ select {
 }
 
 .account-menu {
+  display: none !important;
   position: absolute;
   top: 52px;
   right: 0;
@@ -1096,9 +1097,14 @@ select {
   }
 
   .header-bar {
-    grid-template-columns: 42px 1fr 42px;
+    grid-template-columns: 90px 1fr 42px;
     min-height: 68px;
-    padding: 6px 8px 2px;
+    padding: 6px 8px 2px 6px;
+  }
+
+  .header-left {
+    justify-content: flex-start;
+    margin-left: -2px;
   }
 
 
@@ -1134,6 +1140,7 @@ select {
   }
 
   .account-menu {
+  display: none !important;
     top: 48px;
     right: 0;
   }
