@@ -85,7 +85,8 @@ const state = {
   dailySecondsEarnedDate: null,
   trackAdvanceLock: false,
   desiredPlayback: false,
-  playbackUnlockBound: false
+  playbackUnlockBound: false,
+  unexpectedPauseTimer: null
 };
 
 const REFRESH_INTERVALS = {
@@ -207,6 +208,27 @@ function syncWaveformState() {
   els.waveformWrap.classList.toggle("is-paused", !isPlaying);
 }
 
+function clearUnexpectedPauseTimer() {
+  if (!state.unexpectedPauseTimer) return;
+  clearTimeout(state.unexpectedPauseTimer);
+  state.unexpectedPauseTimer = null;
+}
+
+function scheduleUnexpectedResume(delay = 180) {
+  clearUnexpectedPauseTimer();
+
+  if (!state.isLiveActivated || !state.desiredPlayback || !els.audio.src) return;
+
+  state.unexpectedPauseTimer = setTimeout(() => {
+    if (!state.isLiveActivated || !state.desiredPlayback || !els.audio.src || !els.audio.paused) return;
+    els.audio.play().then(() => {
+      updatePauseButtonState();
+      syncWaveformState();
+      persistRadioSession();
+    }).catch(() => {});
+  }, delay);
+}
+
 function getDesiredSessionPlayback(session = getSavedRadioSession()) {
   if (!session?.isStarted || session?.startedDate !== getTodayDateKey()) return false;
   if (typeof session.desiredPlaying === "boolean") return session.desiredPlaying;
@@ -243,6 +265,7 @@ async function restoreExactPlaybackState() {
         await els.audio.play();
       } catch (err) {
         console.log("restore play blocked:", err);
+        scheduleUnexpectedResume(260);
       }
     }
   } else if (!els.audio.paused) {
@@ -789,6 +812,7 @@ function playTrackAt(index, previewOffset = 0, countPlay = true, autoplay = stat
 
   setTrackUI(track);
   els.audio.src = track.file_url;
+  els.audio.autoplay = Boolean(autoplay);
   setText(els.elapsedTimeEl, formatTime(safeOffset));
   els.progressFill.style.width = `${previewDuration > 0 ? (safeOffset / previewDuration) * 100 : 0}%`;
 
@@ -807,9 +831,11 @@ function playTrackAt(index, previewOffset = 0, countPlay = true, autoplay = stat
       if (playPromise) {
         playPromise.catch(err => {
           console.log("audio play blocked:", err);
+          scheduleUnexpectedResume(260);
         });
       }
     } else {
+      clearUnexpectedPauseTimer();
       els.audio.pause();
       updatePauseButtonState();
       syncWaveformState();
@@ -1032,9 +1058,14 @@ function handlePauseToggle() {
 
   if (els.audio.paused) {
     state.desiredPlayback = true;
-    els.audio.play().catch(err => console.error("resume error:", err));
+    clearUnexpectedPauseTimer();
+    els.audio.play().catch(err => {
+      console.error("resume error:", err);
+      scheduleUnexpectedResume(260);
+    });
   } else {
     state.desiredPlayback = false;
+    clearUnexpectedPauseTimer();
     els.audio.pause();
   }
 
@@ -1171,6 +1202,7 @@ function bindUIEvents() {
   });
 
   els.audio.addEventListener("play", () => {
+    clearUnexpectedPauseTimer();
     updatePauseButtonState();
     syncWaveformState();
     persistRadioSession();
@@ -1180,6 +1212,9 @@ function bindUIEvents() {
     updatePauseButtonState();
     syncWaveformState();
     persistRadioSession();
+    if (!document.hidden && state.desiredPlayback) {
+      scheduleUnexpectedResume(220);
+    }
   });
 
   els.audio.addEventListener("ended", () => {
@@ -1188,8 +1223,14 @@ function bindUIEvents() {
     });
   });
 
-  window.addEventListener("beforeunload", persistRadioSession);
-  window.addEventListener("pagehide", persistRadioSession);
+  window.addEventListener("beforeunload", () => {
+    clearUnexpectedPauseTimer();
+    persistRadioSession();
+  });
+  window.addEventListener("pagehide", () => {
+    clearUnexpectedPauseTimer();
+    persistRadioSession();
+  });
   bindPlaybackUnlockEvents();
 
   supabaseClient.auth.onAuthStateChange(() => {

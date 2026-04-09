@@ -29,7 +29,9 @@
     lastPersistAt: 0,
     playRequestToken: 0,
     sessionKeyToday: '',
-    unlockEventsBound: false
+    unlockEventsBound: false,
+    unexpectedPauseTimer: null,
+    volumeOpen: false
   };
 
   function todayKey() {
@@ -99,6 +101,34 @@
     state.els.volume.value = String(getSafeVolume(state.audio.volume));
   }
 
+  function clearUnexpectedPauseTimer() {
+    if (!state.unexpectedPauseTimer) return;
+    clearTimeout(state.unexpectedPauseTimer);
+    state.unexpectedPauseTimer = null;
+  }
+
+  function scheduleUnexpectedResume(delay = 180) {
+    clearUnexpectedPauseTimer();
+    if (!state.audio || !state.desiredPlayback || !state.audio.src) return;
+    state.unexpectedPauseTimer = setTimeout(() => {
+      if (!state.audio || !state.desiredPlayback || !state.audio.src || !state.audio.paused) return;
+      state.audio.play().then(() => persistProgress(true)).catch(() => {});
+    }, delay);
+  }
+
+  function setVolumeOpen(open) {
+    state.volumeOpen = Boolean(open);
+    if (!state.els.wrap) return;
+    state.els.wrap.classList.toggle('volume-open', state.volumeOpen);
+    if (state.els.volumePanel) {
+      state.els.volumePanel.setAttribute('aria-hidden', state.volumeOpen ? 'false' : 'true');
+    }
+  }
+
+  function applyBodySpacing() {
+    document.body.classList.add('has-mini-radio-player');
+  }
+
   function persistProgress(force = false) {
     if (!state.audio || !state.currentTrack) return;
     const now = Date.now();
@@ -166,6 +196,7 @@
     });
 
     state.audio.addEventListener('play', () => {
+      clearUnexpectedPauseTimer();
       state.shouldPlay = true;
       updatePlayPauseLabel();
       persistProgress(true);
@@ -175,6 +206,9 @@
       state.shouldPlay = false;
       updatePlayPauseLabel();
       persistProgress(true);
+      if (!document.hidden && state.desiredPlayback) {
+        scheduleUnexpectedResume(220);
+      }
     });
 
     state.audio.addEventListener('ended', () => { nextTrack().catch((err) => console.error(err)); });
@@ -193,6 +227,7 @@
     const safeOffset = Math.max(0, Math.min(previewOffset, Math.max(state.previewDuration - 0.25, 0)));
     const targetTime = state.previewStart + safeOffset;
     state.audio.src = track.file_url;
+    state.audio.autoplay = Boolean(state.desiredPlayback);
     if (state.els.time) state.els.time.textContent = `${formatTime(safeOffset)} / ${formatTime(state.previewDuration)}`;
     await new Promise((resolve) => {
       const onReady = () => {
@@ -225,6 +260,7 @@
         await state.audio.play();
       } catch (err) {
         console.log('mini player autoplay blocked:', err);
+        scheduleUnexpectedResume(260);
         updatePlayPauseLabel();
         persistProgress(true);
       }
@@ -265,6 +301,7 @@
         await state.audio.play();
       } catch (err) {
         console.log('mini player resume blocked:', err);
+        scheduleUnexpectedResume(260);
       }
     } else if (!state.desiredPlayback && !state.audio.paused) {
       state.audio.pause();
@@ -277,7 +314,7 @@
     if (document.getElementById('ssfmMiniPlayerStyles')) return;
     const style = document.createElement('style');
     style.id = 'ssfmMiniPlayerStyles';
-    style.textContent = `.mini-radio-player{position:fixed;left:18px;right:18px;bottom:98px;z-index:115;border-radius:22px;padding:14px 16px;background:linear-gradient(180deg, rgba(20,20,20,0.96), rgba(10,10,10,0.98));border:1px solid rgba(255,255,255,0.08);box-shadow:0 18px 40px rgba(0,0,0,0.38), inset 0 1px 0 rgba(255,255,255,0.04);backdrop-filter:blur(8px);color:#f5f5f5;font-family:'Manrope',sans-serif}.mini-radio-player.hidden{display:none!important}.mini-radio-top{display:flex;flex-direction:column;gap:4px;min-width:0;margin-bottom:10px}.mini-radio-artist,.mini-radio-title{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.mini-radio-artist{font-size:13px;color:#d9d9d9}.mini-radio-title{font-size:15px;font-weight:700;font-family:'Space Grotesk',sans-serif;color:#fff}.mini-radio-controls{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.mini-radio-btn{min-height:40px;border-radius:999px;border:1px solid rgba(255,255,255,0.14);background:linear-gradient(180deg, rgba(255,255,255,0.12), rgba(255,255,255,0.04)), linear-gradient(180deg, rgba(10,10,10,0.86), rgba(10,10,10,0.92));color:#f5f5f5;padding:0 14px;display:inline-flex;align-items:center;gap:8px;font-size:14px;font-weight:600;cursor:pointer;box-shadow:inset 0 1px 0 rgba(255,255,255,0.08),0 10px 22px rgba(0,0,0,0.24)}.mini-radio-btn .mini-player-icon{font-size:14px;line-height:1;color:#d4af37}.mini-radio-btn.is-liked .mini-player-icon{color:#fff}.mini-radio-volume{display:flex;align-items:center;gap:8px;min-width:120px;flex:1 1 140px}.mini-radio-volume input[type=range]{width:100%;accent-color:#d4af37}.mini-radio-time{font-size:12px;color:#bfbfbf;white-space:nowrap;margin-left:auto}@media (min-width:901px){.mini-radio-player{left:auto;right:24px;bottom:24px;width:min(420px,calc(100vw - 120px))}}`;
+    style.textContent = `.has-mini-radio-player{padding-bottom:calc(var(--mobile-bottom-nav-height, 86px) + 92px + env(safe-area-inset-bottom, 0px)) !important;}.mini-radio-player{position:fixed;left:12px;right:12px;bottom:calc(var(--mobile-bottom-nav-height,86px) + env(safe-area-inset-bottom,0px) - 1px);z-index:115;border-radius:18px 18px 0 0;padding:10px 12px 8px;background:linear-gradient(180deg, rgba(20,20,20,0.97), rgba(10,10,10,0.99));border:1px solid rgba(255,255,255,0.08);border-bottom:0;box-shadow:0 -8px 24px rgba(0,0,0,0.28), inset 0 1px 0 rgba(255,255,255,0.04);backdrop-filter:blur(8px);color:#f5f5f5;font-family:'Manrope',sans-serif}.mini-radio-player.hidden{display:none!important}.mini-radio-top{display:flex;flex-direction:column;gap:2px;min-width:0;margin-bottom:8px}.mini-radio-artist,.mini-radio-title{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.mini-radio-artist{font-size:12px;color:#d9d9d9}.mini-radio-title{font-size:14px;font-weight:700;font-family:'Space Grotesk',sans-serif;color:#fff}.mini-radio-controls{display:flex;align-items:center;gap:8px;flex-wrap:nowrap}.mini-radio-btn{min-height:34px;border-radius:999px;border:1px solid rgba(255,255,255,0.14);background:linear-gradient(180deg, rgba(255,255,255,0.12), rgba(255,255,255,0.04)), linear-gradient(180deg, rgba(10,10,10,0.86), rgba(10,10,10,0.92));color:#f5f5f5;padding:0 12px;display:inline-flex;align-items:center;gap:7px;font-size:13px;font-weight:600;cursor:pointer;box-shadow:inset 0 1px 0 rgba(255,255,255,0.08),0 10px 22px rgba(0,0,0,0.18)}.mini-radio-btn .mini-player-icon{font-size:13px;line-height:1;color:#d4af37}.mini-radio-btn.is-liked .mini-player-icon{color:#fff}.mini-radio-btn.mini-radio-icon-btn{width:34px;min-width:34px;padding:0;justify-content:center}.mini-radio-btn.mini-radio-icon-btn .mini-player-icon{font-size:14px}.mini-radio-volume-wrap{position:relative;margin-left:auto}.mini-radio-volume-panel{position:absolute;right:0;bottom:42px;width:138px;padding:10px 12px;border-radius:14px;border:1px solid rgba(255,255,255,0.1);background:rgba(10,10,10,0.96);box-shadow:0 16px 28px rgba(0,0,0,0.32);opacity:0;pointer-events:none;transform:translateY(8px);transition:opacity .16s ease, transform .16s ease}.mini-radio-player.volume-open .mini-radio-volume-panel{opacity:1;pointer-events:auto;transform:translateY(0)}.mini-radio-volume-panel input[type=range]{width:100%;accent-color:#d4af37}.mini-radio-time{font-size:11px;color:#bfbfbf;white-space:nowrap;min-width:72px;text-align:right}@media (min-width:901px){.has-mini-radio-player{padding-bottom:0 !important}.mini-radio-player{left:auto;right:24px;bottom:24px;width:min(420px,calc(100vw - 120px));border-radius:22px;border-bottom:1px solid rgba(255,255,255,0.08);padding:14px 16px}.mini-radio-top{gap:4px;margin-bottom:10px}.mini-radio-title{font-size:15px}.mini-radio-artist{font-size:13px}.mini-radio-btn{min-height:40px;padding:0 14px;font-size:14px}.mini-radio-btn.mini-radio-icon-btn{width:40px;min-width:40px}.mini-radio-time{font-size:12px}.mini-radio-volume-panel{bottom:48px;width:148px}}`;
     document.head.appendChild(style);
   }
 
@@ -285,15 +322,18 @@
     injectStyles();
     const wrap = document.createElement('div');
     wrap.className = 'mini-radio-player hidden';
-    wrap.innerHTML = '<div class="mini-radio-top"><div id="miniRadioArtist" class="mini-radio-artist">—</div><div id="miniRadioTitle" class="mini-radio-title">—</div></div><div class="mini-radio-controls"><button id="miniRadioLike" class="mini-radio-btn" type="button"><span class="mini-player-icon">♥</span><span>Like</span></button><button id="miniRadioPause" class="mini-radio-btn" type="button"><span class="mini-player-icon">▶</span><span>Play</span></button><div class="mini-radio-volume"><span class="mini-player-icon">🔊</span><input id="miniRadioVolume" type="range" min="0" max="1" step="0.01" value="0.3"></div><div id="miniRadioTime" class="mini-radio-time">0:00 / 1:00</div></div>';
+    wrap.innerHTML = '<div class="mini-radio-top"><div id="miniRadioArtist" class="mini-radio-artist">—</div><div id="miniRadioTitle" class="mini-radio-title">—</div></div><div class="mini-radio-controls"><button id="miniRadioLike" class="mini-radio-btn" type="button"><span class="mini-player-icon">♥</span><span>Like</span></button><button id="miniRadioPause" class="mini-radio-btn" type="button"><span class="mini-player-icon">▶</span><span>Play</span></button><div class="mini-radio-volume-wrap"><button id="miniRadioVolumeToggle" class="mini-radio-btn mini-radio-icon-btn" type="button" aria-label="Volume"><span class="mini-player-icon">🔊</span></button><div id="miniRadioVolumePanel" class="mini-radio-volume-panel" aria-hidden="true"><input id="miniRadioVolume" type="range" min="0" max="1" step="0.01" value="0.3"></div></div><div id="miniRadioTime" class="mini-radio-time">0:00 / 1:00</div></div>';
     document.body.appendChild(wrap);
     state.els.wrap = wrap;
     state.els.artist = wrap.querySelector('#miniRadioArtist');
     state.els.title = wrap.querySelector('#miniRadioTitle');
     state.els.likeBtn = wrap.querySelector('#miniRadioLike');
     state.els.pauseBtn = wrap.querySelector('#miniRadioPause');
+    state.els.volumeToggle = wrap.querySelector('#miniRadioVolumeToggle');
+    state.els.volumePanel = wrap.querySelector('#miniRadioVolumePanel');
     state.els.volume = wrap.querySelector('#miniRadioVolume');
     state.els.time = wrap.querySelector('#miniRadioTime');
+    applyBodySpacing();
     state.liked = localStorage.getItem(LIKE_KEY) === '1';
     updateLikeLabel();
     state.els.likeBtn.addEventListener('click', () => {
@@ -306,13 +346,19 @@
       if (state.audio.paused) {
         state.desiredPlayback = true;
         state.shouldPlay = true;
-        try { await state.audio.play(); } catch (err) { console.log(err); }
+        clearUnexpectedPauseTimer();
+        try { await state.audio.play(); } catch (err) { console.log(err); scheduleUnexpectedResume(260); }
       } else {
         state.desiredPlayback = false;
         state.shouldPlay = false;
+        clearUnexpectedPauseTimer();
         state.audio.pause();
       }
       persistProgress(true);
+    });
+    state.els.volumeToggle.addEventListener('click', (e) => {
+      e.stopPropagation();
+      setVolumeOpen(!state.volumeOpen);
     });
     state.els.volume.addEventListener('input', (e) => {
       const value = getSafeVolume(e.target.value);
@@ -320,6 +366,22 @@
       state.audio.volume = value;
       state.audio.muted = value === 0;
       persistProgress(true);
+    });
+
+    document.addEventListener('click', (event) => {
+      if (!state.volumeOpen) return;
+      if (event.target.closest('.mini-radio-volume-wrap')) return;
+      setVolumeOpen(false);
+    });
+
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape') setVolumeOpen(false);
+    });
+  }
+
+  function scheduleResumeBurst() {
+    [0, 180, 600, 1400].forEach((delay) => {
+      setTimeout(() => { attemptResumeFromSession(false).catch(() => {}); }, delay);
     });
   }
 
@@ -352,35 +414,36 @@
 
     await playTrackAt(index, Number(session.previewOffset) || 0, state.desiredPlayback);
     state.els.wrap.classList.remove('hidden');
+    setVolumeOpen(false);
     updatePlayPauseLabel();
     updateLikeLabel();
 
-    window.addEventListener('focus', () => { attemptResumeFromSession(false).catch(() => {}); });
-    window.addEventListener('pageshow', () => { attemptResumeFromSession(false).catch(() => {}); });
+    window.addEventListener('focus', () => { scheduleResumeBurst(); });
+    window.addEventListener('pageshow', () => { scheduleResumeBurst(); });
     document.addEventListener('visibilitychange', () => {
       if (document.hidden) {
         persistProgress(true);
         return;
       }
-      attemptResumeFromSession(false).catch(() => {});
+      scheduleResumeBurst();
     });
 
     if (!state.unlockEventsBound) {
       state.unlockEventsBound = true;
       const resumeIfNeeded = () => {
         if (!state.audio || !state.desiredPlayback || !state.audio.paused) return;
-        state.audio.play().then(() => persistProgress(true)).catch(() => {});
+        state.audio.play().then(() => persistProgress(true)).catch(() => { scheduleUnexpectedResume(260); });
       };
       ['touchstart', 'pointerdown', 'click'].forEach((eventName) => {
         document.addEventListener(eventName, resumeIfNeeded, { passive: true });
       });
     }
 
-    window.addEventListener('beforeunload', () => persistProgress(true));
-    window.addEventListener('pagehide', () => persistProgress(true));
+    window.addEventListener('beforeunload', () => { clearUnexpectedPauseTimer(); persistProgress(true); });
+    window.addEventListener('pagehide', () => { clearUnexpectedPauseTimer(); persistProgress(true); });
     window.addEventListener('storage', (event) => {
       if (event.key !== SESSION_KEY && event.key !== VOLUME_KEY) return;
-      attemptResumeFromSession(false).catch(() => {});
+      scheduleResumeBurst();
     });
   }
 
