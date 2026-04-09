@@ -161,6 +161,29 @@
     return next;
   }
 
+
+  async function awardListeningSecond() {
+    try {
+      const { data: sessionData, error: sessionError } = await supabaseClient.auth.getSession();
+      if (sessionError || !sessionData?.session?.user) return false;
+
+      const { data, error } = await supabaseClient.rpc('award_listening_second_v2', {});
+      if (error || !data) {
+        console.error('mini player awardListeningSecond error:', error);
+        return false;
+      }
+      return Boolean(data.success);
+    } catch (err) {
+      console.error('mini player awardListeningSecond catch:', err);
+      return false;
+    }
+  }
+
+  async function advanceAfterTrackCompletion() {
+    await awardListeningSecond();
+    await nextTrack();
+  }
+
   async function loadTracks() {
     const { data, error } = await supabaseClient
       .from('tracks')
@@ -196,7 +219,7 @@
       const clamped = Math.min(elapsed, state.previewDuration);
       if (state.els.time) state.els.time.textContent = `${formatTime(clamped)} / ${formatTime(state.previewDuration)}`;
       persistProgress();
-      if (elapsed >= state.previewDuration) nextTrack().catch((err) => console.error(err));
+      if (elapsed >= state.previewDuration) advanceAfterTrackCompletion().catch((err) => console.error(err));
     });
 
     state.audio.addEventListener('play', () => {
@@ -215,7 +238,7 @@
       }
     });
 
-    state.audio.addEventListener('ended', () => { nextTrack().catch((err) => console.error(err)); });
+    state.audio.addEventListener('ended', () => { advanceAfterTrackCompletion().catch((err) => console.error(err)); });
   }
 
   async function playTrackAt(index, previewOffset = 0, autoplay = state.desiredPlayback) {
