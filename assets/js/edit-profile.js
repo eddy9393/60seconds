@@ -1,3 +1,24 @@
+
+function applyRuntimeCurrencySnapshot() {
+  try {
+    const raw = localStorage.getItem("ssfm_profile_runtime_state");
+    if (!raw) return;
+    const data = JSON.parse(raw);
+    if (typeof data.coins !== "undefined" && els.header?.currencyValue) {
+      els.header.currencyValue.textContent = String(Math.max(0, Math.floor(Number(data.coins) || 0)));
+    }
+  } catch {}
+}
+
+window.addEventListener("storage", (event) => {
+  if (event.key === "ssfm_profile_runtime_state") {
+    applyRuntimeCurrencySnapshot();
+  }
+});
+window.addEventListener("ssfm:coins-updated", () => {
+  applyRuntimeCurrencySnapshot();
+});
+
 const supabaseClient = window.supabase.createClient(
   "https://rgoutegbcpjytplqcwze.supabase.co",
   "sb_publishable_255qyDKS77nMU0pbedfa_A_3hdgtEHh"

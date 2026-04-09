@@ -84,6 +84,7 @@ const state = {
   dailySecondsEarned: 0,
   dailySecondsEarnedDate: null,
   trackAdvanceLock: false,
+  rewardedTrackId: null,
   desiredPlayback: false,
   playbackUnlockBound: false,
   unexpectedPauseTimer: null
@@ -340,6 +341,21 @@ function setCurrency(value = 0) {
 
 function updateCurrencyVisibility(user) {
   setHidden(els.currencyBadge, !user);
+}
+
+
+function broadcastCurrencyUpdate(coins, dailySecondsEarned = state.dailySecondsEarned) {
+  try {
+    const payload = {
+      coins: Number(coins) || 0,
+      daily_seconds_earned: Number(dailySecondsEarned) || 0,
+      updatedAt: Date.now()
+    };
+    localStorage.setItem("ssfm_profile_runtime_state", JSON.stringify(payload));
+    window.dispatchEvent(new CustomEvent("ssfm:coins-updated", { detail: payload }));
+  } catch (err) {
+    console.error("broadcastCurrencyUpdate error:", err);
+  }
 }
 
 function updateConceptVisibility() {
@@ -621,6 +637,7 @@ async function awardListeningSecond() {
 
   setCurrency(state.currentCoins);
   updateEarnSecondsProgress();
+  broadcastCurrencyUpdate(state.currentCoins, state.dailySecondsEarned);
   return true;
 }
 
@@ -1018,7 +1035,16 @@ async function handleStartRadio() {
 
 async function advanceAfterTrackCompletion() {
   if (state.trackAdvanceLock) return;
+
+  const currentTrack = state.tracks[state.current] || null;
+  const currentTrackId = currentTrack?.id || null;
+
+  if (currentTrackId && state.rewardedTrackId === currentTrackId) return;
+
   state.trackAdvanceLock = true;
+  if (currentTrackId) {
+    state.rewardedTrackId = currentTrackId;
+  }
 
   try {
     await awardListeningSecond();

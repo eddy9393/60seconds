@@ -38,7 +38,9 @@
     sessionKeyToday: '',
     unlockEventsBound: false,
     unexpectedPauseTimer: null,
-    volumeOpen: false
+    volumeOpen: false,
+    trackAdvanceLock: false,
+    rewardedTrackId: null
   };
 
   function todayKey() {
@@ -60,6 +62,38 @@
     if (!session.isStarted || session.startedDate !== state.sessionKeyToday) return false;
     if (typeof session.desiredPlaying === 'boolean') return session.desiredPlaying;
     return session.isPlaying !== false;
+  }
+
+
+  function updateHeaderCurrencyUi(coins) {
+    const valueEl = document.getElementById('currencyValue');
+    const badgeEl = document.getElementById('currencyBadge');
+    if (badgeEl) badgeEl.classList.remove('hidden');
+    if (valueEl) valueEl.textContent = String(Math.max(0, Math.floor(Number(coins) || 0)));
+  }
+
+  function broadcastCurrencyUpdate(coins, dailySecondsEarned) {
+    try {
+      const payload = {
+        coins: Number(coins) || 0,
+        daily_seconds_earned: Number(dailySecondsEarned) || 0,
+        updatedAt: Date.now()
+      };
+      localStorage.setItem('ssfm_profile_runtime_state', JSON.stringify(payload));
+      updateHeaderCurrencyUi(payload.coins);
+      window.dispatchEvent(new CustomEvent('ssfm:coins-updated', { detail: payload }));
+    } catch (err) {
+      console.error('mini player broadcastCurrencyUpdate error:', err);
+    }
+  }
+
+  function applyStoredCurrencySnapshot() {
+    try {
+      const raw = localStorage.getItem('ssfm_profile_runtime_state');
+      if (!raw) return;
+      const data = JSON.parse(raw);
+      updateHeaderCurrencyUi(data.coins);
+    } catch {}
   }
 
   function formatTime(seconds) {
@@ -172,6 +206,11 @@
         console.error('mini player awardListeningSecond error:', error);
         return false;
       }
+
+      if (typeof data.coins !== 'undefined') {
+        broadcastCurrencyUpdate(data.coins, data.daily_seconds_earned);
+      }
+
       return Boolean(data.success);
     } catch (err) {
       console.error('mini player awardListeningSecond catch:', err);
@@ -180,8 +219,22 @@
   }
 
   async function advanceAfterTrackCompletion() {
-    await awardListeningSecond();
-    await nextTrack();
+    if (state.trackAdvanceLock) return;
+
+    const currentTrackId = state.currentTrack?.id || null;
+    if (currentTrackId && state.rewardedTrackId === currentTrackId) return;
+
+    state.trackAdvanceLock = true;
+    if (currentTrackId) {
+      state.rewardedTrackId = currentTrackId;
+    }
+
+    try {
+      await awardListeningSecond();
+      await nextTrack();
+    } finally {
+      state.trackAdvanceLock = false;
+    }
   }
 
   async function loadTracks() {
@@ -242,6 +295,7 @@
   }
 
   async function playTrackAt(index, previewOffset = 0, autoplay = state.desiredPlayback) {
+    state.rewardedTrackId = null;
     const track = state.tracks[index];
     if (!track || !state.audio) return;
     const requestToken = ++state.playRequestToken;
@@ -379,6 +433,7 @@
     state.els.volume = wrap.querySelector('#miniRadioVolume');
     state.els.time = wrap.querySelector('#miniRadioTime');
     applyBodySpacing();
+    applyStoredCurrencySnapshot();
     state.liked = localStorage.getItem(LIKE_KEY) === '1';
     updateLikeLabel();
     state.els.likeBtn.addEventListener('click', () => {
