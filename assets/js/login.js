@@ -1,4 +1,4 @@
-const { getSupabaseClient } = window.SSFMApp;
+const { getSupabaseClient, buildStandardShellEls, applyStandardMenuState, fetchProfileByUserId, fetchTrackByUserId, getCurrentUserSafe } = window.SSFMApp;
 const supabaseClient = getSupabaseClient();
 
 const els = {
@@ -15,17 +15,7 @@ const els = {
     authKicker: document.getElementById("authKicker")
   },
 
-  desktopNav: {
-    profileLink: document.getElementById("desktopProfileLink"),
-    notificationsLink: document.getElementById("desktopNotificationsLink"),
-    trackLink: document.getElementById("desktopTrackLink")
-  },
-
-  mobileNav: {
-    profileLink: document.getElementById("mobileProfileLink"),
-    notificationsLink: document.getElementById("mobileNotificationsLink"),
-    trackLink: document.getElementById("mobileTrackLink")
-  }
+  shell: buildStandardShellEls()
 };
 
 const state = {
@@ -91,47 +81,22 @@ function renderAuthMode() {
   setText(els.form.authModeToggle, "Sign up");
 }
 
-function setLoggedOutMenu() {
-  setHidden(els.desktopNav.profileLink, true);
-  setHidden(els.desktopNav.notificationsLink, true);
-  setHidden(els.desktopNav.trackLink, true);
-
-  setHidden(els.mobileNav.profileLink, true);
-  setHidden(els.mobileNav.notificationsLink, true);
-  setHidden(els.mobileNav.trackLink, true);
-}
-
-function setLoggedInMenu() {
-  setHidden(els.desktopNav.profileLink, false);
-  setHidden(els.desktopNav.notificationsLink, false);
-  setHidden(els.desktopNav.trackLink, false);
-
-  setHidden(els.mobileNav.profileLink, false);
-  setHidden(els.mobileNav.notificationsLink, false);
-  setHidden(els.mobileNav.trackLink, false);
-}
-
 async function syncMenuVisibility() {
   try {
-    const { data, error } = await supabaseClient.auth.getSession();
-
-    if (error) {
-      setLoggedOutMenu();
+    const user = await getCurrentUserSafe();
+    if (!user) {
+      applyStandardMenuState(els.shell, null, null, null);
       return null;
     }
-
-    const user = data?.session?.user || null;
-
-    if (user) {
-      setLoggedInMenu();
-      return user;
-    }
-
-    setLoggedOutMenu();
-    return null;
+    const [profile, track] = await Promise.all([
+      fetchProfileByUserId(user.id, 'user_id, artist_name'),
+      fetchTrackByUserId(user.id, 'id, user_id')
+    ]);
+    applyStandardMenuState(els.shell, user, profile, track);
+    return user;
   } catch (err) {
     console.error("syncMenuVisibility error:", err);
-    setLoggedOutMenu();
+    applyStandardMenuState(els.shell, null, null, null);
     return null;
   }
 }
@@ -232,7 +197,7 @@ function bindEvents() {
 
 async function initPage() {
   renderAuthMode();
-  setLoggedOutMenu();
+  applyStandardMenuState(els.shell, null, null, null);
   bindEvents();
   await redirectIfAlreadyLoggedIn();
 }

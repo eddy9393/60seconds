@@ -1,4 +1,4 @@
-const { getSupabaseClient, getProfileHref: sharedGetProfileHref, bindRuntimeCurrencySync, applyRuntimeCurrencySnapshotToElement } = window.SSFMApp;
+const { getSupabaseClient, getProfileHref: sharedGetProfileHref, bindRuntimeCurrencySync, applyRuntimeCurrencySnapshotToElement, getCurrentUserSafe } = window.SSFMApp;
 const supabaseClient = getSupabaseClient();
 
 const COUNTRY_OPTIONS = [

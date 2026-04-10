@@ -1,4 +1,4 @@
-const { getSupabaseClient, getFlagEmoji: sharedGetFlagEmoji, getFlagMarkup: sharedGetFlagMarkup, getProfileHref: sharedGetProfileHref } = window.SSFMApp;
+const { getSupabaseClient, getFlagEmoji: sharedGetFlagEmoji, getFlagMarkup: sharedGetFlagMarkup, getProfileHref: sharedGetProfileHref, closeStandardHeaderPanels, setStandardHeaderAvatar, handleStandardHeaderAvatarAction, applyStandardMenuState, setStandardLoggedOutState, setStandardLoggedInState, bindStandardHeaderEvents, getCurrentUserSafe } = window.SSFMApp;
 const supabaseClient = getSupabaseClient();
 
 const DAILY_SECONDS_LIMIT = 10;
@@ -526,20 +526,8 @@ function normalizeDailySecondsState(profile) {
 }
 
 
-function isMobileHeaderMenuMode() {
-  return window.matchMedia("(max-width: 768px)").matches;
-}
-
 function handleHeaderAvatarAction(profileHref) {
-  const menuEl = els.accountMenu;
-  if (isMobileHeaderMenuMode() && menuEl) {
-    menuEl.classList.toggle("hidden");
-    return;
-  }
-  if (menuEl) {
-    menuEl.classList.add("hidden");
-  }
-  window.location.href = profileHref || "artist.html";
+  handleStandardHeaderAvatarAction({ header: { accountMenu: els.accountMenu } }, profileHref);
 }
 
 function updateJoinButtonHref() {
@@ -594,7 +582,7 @@ function updateVolumeButtonState() {
 }
 
 function closeHeaderPanels() {
-  setHidden(els.accountMenu, true);
+  closeStandardHeaderPanels({ header: { accountMenu: els.accountMenu } });
   els.volumeControl.classList.remove("open");
 }
 
@@ -651,62 +639,48 @@ function updateInteractiveControls() {
 }
 
 function applyMenuState(user, profile, track) {
-  const isLoggedIn = Boolean(user);
-  const hasProfile = Boolean(profile);
-  const hasTrack = Boolean(track);
-  const profileHref = getProfileHref(profile);
-
-  setHidden(els.desktopLoginLink, isLoggedIn);
-  setHidden(els.mobileLoginLink, isLoggedIn);
-  setHidden(els.desktopLogoutBtn, !isLoggedIn);
-
-  setHidden(els.desktopProfileLink, !isLoggedIn);
-  setHidden(els.mobileProfileLink, !isLoggedIn);
-
-  setHidden(els.desktopNotificationsLink, !isLoggedIn);
-  setHidden(els.mobileNotificationsLink, !isLoggedIn);
-
-  setHidden(els.desktopTrackLink, !isLoggedIn || !hasProfile);
-  setHidden(els.mobileTrackLink, !isLoggedIn || !hasProfile);
-
-  els.desktopProfileLink.href = profileHref;
-  els.mobileProfileLink.href = profileHref;
-  els.accountProfileLink.href = profileHref;
-
-  setHidden(els.accountProfileLink, !isLoggedIn);
-
-  els.desktopTrackLink.setAttribute("data-track-mode", hasTrack ? "edit" : "submit");
-  els.mobileTrackLink.setAttribute("data-track-mode", hasTrack ? "edit" : "submit");
-
+  applyStandardMenuState({
+    header: { accountProfileLink: els.accountProfileLink },
+    desktopNav: {
+      loginLink: els.desktopLoginLink,
+      logoutBtn: els.desktopLogoutBtn,
+      profileLink: els.desktopProfileLink,
+      notificationsLink: els.desktopNotificationsLink,
+      trackLink: els.desktopTrackLink
+    },
+    mobileNav: {
+      loginLink: els.mobileLoginLink,
+      profileLink: els.mobileProfileLink,
+      notificationsLink: els.mobileNotificationsLink,
+      trackLink: els.mobileTrackLink
+    }
+  }, user, profile, track);
   els.submitTrackBtn.textContent = "Tune";
   updateJoinButtonHref();
 }
 
 function setHeaderAvatar(photoUrl, artistName) {
-  if (photoUrl) {
-    els.headerAvatarImage.src = photoUrl;
-    setHidden(els.headerAvatarImage, false);
-    setHidden(els.headerAvatarFallback, true);
-    return;
-  }
-
-  setHidden(els.headerAvatarImage, true);
-  setHidden(els.headerAvatarFallback, false);
-  els.headerAvatarFallback.textContent = (artistName || "A").charAt(0).toUpperCase();
+  setStandardHeaderAvatar({ header: { headerAvatarImage: els.headerAvatarImage, headerAvatarFallback: els.headerAvatarFallback } }, photoUrl, artistName);
 }
 
 function setLoggedOutView() {
   closeHeaderPanels();
+  setStandardLoggedOutState({
+    header: {
+      showLoginBtn: els.showLoginBtn,
+      headerAvatarBtn: els.headerAvatarBtn,
+      headerAvatarImage: els.headerAvatarImage,
+      headerAvatarFallback: els.headerAvatarFallback,
+      accountMenu: els.accountMenu,
+      accountProfileLink: els.accountProfileLink,
+      currencyBadge: els.currencyBadge,
+      currencyValue: els.currencyValue
+    },
+    desktopNav: { loginLink: els.desktopLoginLink, logoutBtn: els.desktopLogoutBtn, profileLink: els.desktopProfileLink, notificationsLink: els.desktopNotificationsLink, trackLink: els.desktopTrackLink },
+    mobileNav: { loginLink: els.mobileLoginLink, profileLink: els.mobileProfileLink, notificationsLink: els.mobileNotificationsLink, trackLink: els.mobileTrackLink }
+  });
 
   setHidden(els.submitTrackBtn, true);
-  setHidden(els.showLoginBtn, false);
-  setHidden(els.headerAvatarBtn, true);
-  setHidden(els.headerAvatarImage, true);
-  setHidden(els.headerAvatarFallback, true);
-
-  els.headerAvatarImage.src = "";
-  setHidden(els.accountProfileLink, true);
-  els.accountProfileLink.href = "javascript:void(0)";
 
   state.currentProfileData = null;
   state.currentTrackData = null;
@@ -729,16 +703,12 @@ function setLoggedOutView() {
 
 function setLoggedInView() {
   setHidden(els.submitTrackBtn, true);
-  setHidden(els.showLoginBtn, true);
-  setHidden(els.headerAvatarBtn, false);
-  setHidden(els.accountMenu, true);
+  setStandardLoggedInState({ header: { showLoginBtn: els.showLoginBtn, headerAvatarBtn: els.headerAvatarBtn, accountMenu: els.accountMenu, currencyBadge: els.currencyBadge, currencyValue: els.currencyValue } }, { coins: state.currentCoins });
   updateCurrencyVisibility(state.currentUser || true);
 }
 
 async function getSessionUser() {
-  const { data, error } = await supabaseClient.auth.getSession();
-  if (error) throw error;
-  return data?.session?.user || null;
+  return getCurrentUserSafe();
 }
 
 async function loadMyProfile(userId) {

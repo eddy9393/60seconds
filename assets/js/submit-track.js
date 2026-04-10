@@ -1,4 +1,4 @@
-const { getSupabaseClient, getProfileHref: sharedGetProfileHref, bindRuntimeCurrencySync, applyRuntimeCurrencySnapshotToElement } = window.SSFMApp;
+const { getSupabaseClient, getProfileHref: sharedGetProfileHref, bindRuntimeCurrencySync, applyRuntimeCurrencySnapshotToElement, closeStandardHeaderPanels, setStandardHeaderAvatar, handleStandardHeaderAvatarAction, applyStandardMenuState, setStandardLoggedOutState, setStandardLoggedInState, bindStandardHeaderEvents, getCurrentUserSafe } = window.SSFMApp;
 const supabaseClient = getSupabaseClient();
 
 const GENRE_OPTIONS = [
@@ -143,7 +143,7 @@ function formatTime(seconds) {
 }
 
 function closeHeaderPanels() {
-  setHidden(els.header.accountMenu, true);
+  closeStandardHeaderPanels(els);
 }
 
 
@@ -231,33 +231,12 @@ function updateAiDetailsVisibility() {
 }
 
 function setHeaderAvatar(photoUrl, artistName) {
-  if (photoUrl) {
-    els.header.headerAvatarImage.src = photoUrl;
-    setHidden(els.header.headerAvatarImage, false);
-    setHidden(els.header.headerAvatarFallback, true);
-    return;
-  }
-
-  setHidden(els.header.headerAvatarImage, true);
-  setHidden(els.header.headerAvatarFallback, false);
-  setText(els.header.headerAvatarFallback, (artistName || "A").charAt(0).toUpperCase());
+  setStandardHeaderAvatar(els, photoUrl, artistName);
 }
 
-
-function isMobileHeaderMenuMode() {
-  return window.matchMedia("(max-width: 768px)").matches;
-}
 
 function handleHeaderAvatarAction(profileHref) {
-  const menuEl = els.header.accountMenu;
-  if (isMobileHeaderMenuMode() && menuEl) {
-    menuEl.classList.toggle("hidden");
-    return;
-  }
-  if (menuEl) {
-    menuEl.classList.add("hidden");
-  }
-  window.location.href = profileHref || "artist.html";
+  handleStandardHeaderAvatarAction(els, profileHref);
 }
 
 function applyMenuState(user, profile, track) {
@@ -324,10 +303,7 @@ function setLoggedOutView() {
 }
 
 function setLoggedInHeader() {
-  setHidden(els.header.showLoginBtn, true);
-  setHidden(els.header.headerAvatarBtn, false);
-  setHidden(els.header.accountMenu, true);
-  setHidden(els.header.currencyBadge, false);
+  setStandardLoggedInState(els, { coins: state.currentProfileData?.coins || 0 });
 }
 
 function setPageMode(track) {
@@ -823,29 +799,12 @@ async function handleClipPlay() {
 }
 
 function bindEvents() {
-  els.header.showLoginBtn.onclick = () => {
-    closeHeaderPanels();
-  };
-
-  els.header.headerAvatarBtn.onclick = () => {
-    
-    handleHeaderAvatarAction(els.header.accountProfileLink?.href || "artist.html");
-  };
-
-  if (els.header.accountProfileLink) {
-    els.header.accountProfileLink.onclick = () => {
-      setHidden(els.header.accountMenu, true);
-    };
-  }
-
-  if (els.header.accountNotificationsLink) {
-    els.header.accountNotificationsLink.onclick = () => {
-      setHidden(els.header.accountMenu, true);
-    };
-  }
-
-  els.header.logoutBtn.onclick = handleLogout;
-  els.desktopNav.logoutBtn.onclick = handleLogout;
+  bindStandardHeaderEvents(els, {
+    onLoginClick: () => {
+      window.location.href = "login.html";
+    },
+    onLogout: handleLogout
+  });
   els.form.saveTrackBtn.onclick = handleSaveTrack;
 
   document.querySelectorAll('input[name="aiUsage"]').forEach((input) => {
@@ -864,23 +823,11 @@ function bindEvents() {
   els.clip.previewAudio.addEventListener("ended", stopPreviewPlayback);
 
   document.addEventListener("click", (e) => {
-    const insideHeaderRight = e.target.closest(".header-right");
-    const isAvatarButton = e.target.closest("#headerAvatarBtn");
     const insideFeelingsDropdown = e.target.closest("#feelingsDropdown");
-
-    if (!insideHeaderRight && !isAvatarButton) {
-      setHidden(els.header.accountMenu, true);
-    }
 
     if (!insideFeelingsDropdown && els.form.feelingsDropdownMenu) {
       els.form.feelingsDropdownMenu.classList.add("hidden");
       els.form.feelingsToggleBtn?.setAttribute("aria-expanded", "false");
-    }
-  });
-
-  document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape") {
-      setHidden(els.header.accountMenu, true);
     }
   });
 

@@ -103,6 +103,198 @@
     return userResponse.data?.user || null;
   }
 
+
+
+  function buildStandardShellEls(doc = document) {
+    return {
+      header: {
+        showLoginBtn: doc.getElementById('showLoginBtn'),
+        headerAvatarBtn: doc.getElementById('headerAvatarBtn'),
+        headerAvatarImage: doc.getElementById('headerAvatarImage'),
+        headerAvatarFallback: doc.getElementById('headerAvatarFallback'),
+        accountMenu: doc.getElementById('accountMenu'),
+        accountProfileLink: doc.getElementById('accountProfileLink'),
+        accountNotificationsLink: doc.getElementById('accountNotificationsLink'),
+        logoutBtn: doc.getElementById('logout'),
+        currencyBadge: doc.getElementById('currencyBadge'),
+        currencyValue: doc.getElementById('currencyValue')
+      },
+      desktopNav: {
+        loginLink: doc.getElementById('desktopLoginLink'),
+        logoutBtn: doc.getElementById('desktopLogoutBtn'),
+        profileLink: doc.getElementById('desktopProfileLink'),
+        notificationsLink: doc.getElementById('desktopNotificationsLink'),
+        trackLink: doc.getElementById('desktopTrackLink')
+      },
+      mobileNav: {
+        loginLink: doc.getElementById('mobileLoginLink'),
+        profileLink: doc.getElementById('mobileProfileLink'),
+        notificationsLink: doc.getElementById('mobileNotificationsLink'),
+        trackLink: doc.getElementById('mobileTrackLink')
+      }
+    };
+  }
+
+  function closeStandardHeaderPanels(els, extraCloser) {
+    setHidden(els?.header?.accountMenu, true);
+    if (typeof extraCloser === 'function') extraCloser();
+  }
+
+  function setStandardHeaderAvatar(els, photoUrl, artistName) {
+    const imageEl = els?.header?.headerAvatarImage;
+    const fallbackEl = els?.header?.headerAvatarFallback;
+    if (!imageEl || !fallbackEl) return;
+    if (photoUrl) {
+      imageEl.src = photoUrl;
+      setHidden(imageEl, false);
+      setHidden(fallbackEl, true);
+      return;
+    }
+    setHidden(imageEl, true);
+    setHidden(fallbackEl, false);
+    setText(fallbackEl, String(artistName || 'A').charAt(0).toUpperCase() || 'A');
+  }
+
+  function isMobileHeaderMenuMode() {
+    return window.matchMedia('(max-width: 768px)').matches;
+  }
+
+  function handleStandardHeaderAvatarAction(els, profileHref, options = {}) {
+    const menuEl = els?.header?.accountMenu;
+    if (isMobileHeaderMenuMode() && menuEl) {
+      menuEl.classList.toggle('hidden');
+      return;
+    }
+    if (menuEl) menuEl.classList.add('hidden');
+    if (typeof options.navigate === 'function') {
+      options.navigate(profileHref || 'artist.html');
+      return;
+    }
+    window.location.href = profileHref || 'artist.html';
+  }
+
+  function applyStandardMenuState(els, user, profile, track, options = {}) {
+    const isLoggedIn = Boolean(user);
+    const hasProfile = Boolean(profile);
+    const hasTrack = Boolean(track);
+    const profileHref = options.profileHref || getProfileHref(profile);
+    const trackHref = options.trackHref || 'submit-track.html';
+
+    setHidden(els?.desktopNav?.loginLink, isLoggedIn);
+    setHidden(els?.mobileNav?.loginLink, isLoggedIn);
+    setHidden(els?.desktopNav?.logoutBtn, !isLoggedIn);
+
+    setHidden(els?.desktopNav?.profileLink, !isLoggedIn);
+    setHidden(els?.mobileNav?.profileLink, !isLoggedIn);
+
+    setHidden(els?.desktopNav?.notificationsLink, !isLoggedIn);
+    setHidden(els?.mobileNav?.notificationsLink, !isLoggedIn);
+
+    setHidden(els?.desktopNav?.trackLink, !isLoggedIn || !hasProfile);
+    setHidden(els?.mobileNav?.trackLink, !isLoggedIn || !hasProfile);
+
+    if (els?.desktopNav?.profileLink) els.desktopNav.profileLink.href = profileHref;
+    if (els?.mobileNav?.profileLink) els.mobileNav.profileLink.href = profileHref;
+    if (els?.header?.accountProfileLink) els.header.accountProfileLink.href = profileHref;
+    setHidden(els?.header?.accountProfileLink, !isLoggedIn);
+
+    if (els?.desktopNav?.trackLink) {
+      els.desktopNav.trackLink.href = trackHref;
+      els.desktopNav.trackLink.setAttribute('data-track-mode', hasTrack ? 'edit' : 'submit');
+    }
+    if (els?.mobileNav?.trackLink) {
+      els.mobileNav.trackLink.href = trackHref;
+      els.mobileNav.trackLink.setAttribute('data-track-mode', hasTrack ? 'edit' : 'submit');
+    }
+
+    if (els?.header?.accountNotificationsLink && options.notificationsHref) {
+      els.header.accountNotificationsLink.href = options.notificationsHref;
+      setHidden(els.header.accountNotificationsLink, !isLoggedIn || options.hideAccountNotifications === true);
+    }
+  }
+
+  function setStandardLoggedOutState(els, options = {}) {
+    closeStandardHeaderPanels(els, options.closeExtraPanels);
+    applyStandardMenuState(els, null, null, null, options);
+    setHidden(els?.header?.showLoginBtn, false);
+    setHidden(els?.header?.headerAvatarBtn, true);
+    setHidden(els?.header?.headerAvatarImage, true);
+    setHidden(els?.header?.headerAvatarFallback, true);
+    if (els?.header?.headerAvatarImage) els.header.headerAvatarImage.src = '';
+    if (els?.header?.accountProfileLink) els.header.accountProfileLink.href = 'javascript:void(0)';
+    setHidden(els?.header?.currencyBadge, true);
+    setCurrencyText(els?.header?.currencyValue, 0);
+  }
+
+  function setStandardLoggedInState(els, options = {}) {
+    setHidden(els?.header?.showLoginBtn, true);
+    setHidden(els?.header?.headerAvatarBtn, false);
+    setHidden(els?.header?.accountMenu, true);
+    setHidden(els?.header?.currencyBadge, false);
+    if (typeof options.coins !== 'undefined') setCurrencyText(els?.header?.currencyValue, options.coins, els?.header?.currencyBadge);
+  }
+
+  async function fetchProfileByUserId(userId, selectSql = '*') {
+    if (!userId) return null;
+    const supabaseClient = getSupabaseClient();
+    const { data, error } = await supabaseClient.from('profiles').select(selectSql).eq('user_id', userId).maybeSingle();
+    if (error) throw error;
+    return data || null;
+  }
+
+  async function fetchTrackByUserId(userId, selectSql = '*') {
+    if (!userId) return null;
+    const supabaseClient = getSupabaseClient();
+    const { data, error } = await supabaseClient.from('tracks').select(selectSql).eq('user_id', userId).maybeSingle();
+    if (error) throw error;
+    return data || null;
+  }
+
+  function bindStandardHeaderEvents(els, options = {}) {
+    const closeAll = () => closeStandardHeaderPanels(els, options.closeExtraPanels);
+    if (els?.header?.showLoginBtn && typeof options.onLoginClick === 'function') {
+      els.header.showLoginBtn.onclick = () => {
+        closeAll();
+        options.onLoginClick();
+      };
+    }
+    if (els?.header?.headerAvatarBtn) {
+      els.header.headerAvatarBtn.onclick = () => {
+        if (typeof options.beforeAvatarAction === 'function') options.beforeAvatarAction();
+        handleStandardHeaderAvatarAction(els, els?.header?.accountProfileLink?.href || 'artist.html', { navigate: options.navigate });
+      };
+    }
+    if (els?.header?.accountProfileLink) {
+      els.header.accountProfileLink.onclick = () => setHidden(els.header.accountMenu, true);
+    }
+    if (els?.header?.accountNotificationsLink) {
+      els.header.accountNotificationsLink.onclick = () => setHidden(els.header.accountMenu, true);
+    }
+    if (els?.header?.logoutBtn && typeof options.onLogout === 'function') {
+      els.header.logoutBtn.onclick = options.onLogout;
+    }
+    if (els?.desktopNav?.logoutBtn && typeof options.onLogout === 'function') {
+      els.desktopNav.logoutBtn.onclick = options.onLogout;
+    }
+    document.addEventListener('click', (event) => {
+      const target = event.target;
+      const isHeaderMenu = target.closest('#accountMenu');
+      const isAvatarButton = target.closest('#headerAvatarBtn');
+      const isLoginButton = target.closest('#showLoginBtn');
+      if (!isHeaderMenu && !isAvatarButton && !isLoginButton) setHidden(els?.header?.accountMenu, true);
+      if (typeof options.isExtraPanelTarget === 'function' && !options.isExtraPanelTarget(target) && !isLoginButton) {
+        if (typeof options.closeExtraPanels === 'function') options.closeExtraPanels();
+      }
+    });
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape') {
+        setHidden(els?.header?.accountMenu, true);
+        if (typeof options.closeExtraPanels === 'function') options.closeExtraPanels();
+      }
+    });
+  }
+
+
   window.SSFMApp = Object.assign(window.SSFMApp || {}, {
     config,
     COUNTRY_TO_ISO,
@@ -118,6 +310,17 @@
     getProfileHref,
     getFlagEmoji,
     getFlagMarkup,
-    getCurrentUserSafe
+    getCurrentUserSafe,
+    buildStandardShellEls,
+    closeStandardHeaderPanels,
+    setStandardHeaderAvatar,
+    isMobileHeaderMenuMode,
+    handleStandardHeaderAvatarAction,
+    applyStandardMenuState,
+    setStandardLoggedOutState,
+    setStandardLoggedInState,
+    fetchProfileByUserId,
+    fetchTrackByUserId,
+    bindStandardHeaderEvents
   });
 })();

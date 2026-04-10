@@ -1,4 +1,4 @@
-const { getSupabaseClient, getFlagEmoji: sharedGetFlagEmoji, getProfileHref: sharedGetProfileHref, bindRuntimeCurrencySync, applyRuntimeCurrencySnapshotToElement } = window.SSFMApp;
+const { getSupabaseClient, getFlagEmoji: sharedGetFlagEmoji, getProfileHref: sharedGetProfileHref, bindRuntimeCurrencySync, applyRuntimeCurrencySnapshotToElement, closeStandardHeaderPanels, setStandardHeaderAvatar, handleStandardHeaderAvatarAction, applyStandardMenuState, setStandardLoggedOutState, setStandardLoggedInState, bindStandardHeaderEvents, getCurrentUserSafe } = window.SSFMApp;
 const supabaseClient = getSupabaseClient();
 
 
@@ -112,20 +112,11 @@ function setArtistStatus(message = "", isError = false) {
 }
 
 function closeHeaderPanels() {
-  setHidden(els.header.accountMenu, true);
+  closeStandardHeaderPanels(els);
 }
 
 function setHeaderAvatar(photoUrl, artistName) {
-  if (photoUrl) {
-    els.header.headerAvatarImage.src = photoUrl;
-    setHidden(els.header.headerAvatarImage, false);
-    setHidden(els.header.headerAvatarFallback, true);
-    return;
-  }
-
-  setHidden(els.header.headerAvatarImage, true);
-  setHidden(els.header.headerAvatarFallback, false);
-  setText(els.header.headerAvatarFallback, (artistName || "A").charAt(0).toUpperCase());
+  setStandardHeaderAvatar(els, photoUrl, artistName);
 }
 
 
@@ -140,63 +131,16 @@ function getProfileHref(profile) {
 }
 
 
-function isMobileHeaderMenuMode() {
-  return window.matchMedia("(max-width: 768px)").matches;
-}
-
 function handleHeaderAvatarAction(profileHref) {
-  const menuEl = els.header.accountMenu;
-  if (isMobileHeaderMenuMode() && menuEl) {
-    menuEl.classList.toggle("hidden");
-    return;
-  }
-  if (menuEl) {
-    menuEl.classList.add("hidden");
-  }
-  window.location.href = profileHref || "artist.html";
+  handleStandardHeaderAvatarAction(els, profileHref);
 }
 
 function applyMenuState(user, profile, track) {
-  const isLoggedIn = Boolean(user);
-  const hasProfile = Boolean(profile);
-  const hasTrack = Boolean(track);
-
-  setHidden(els.desktopNav.loginLink, isLoggedIn);
-  setHidden(els.mobileNav.loginLink, isLoggedIn);
-  setHidden(els.desktopNav.logoutBtn, !isLoggedIn);
-
-  setHidden(els.desktopNav.profileLink, !isLoggedIn);
-  setHidden(els.mobileNav.profileLink, !isLoggedIn);
-
-  setHidden(els.desktopNav.notificationsLink, !isLoggedIn);
-  setHidden(els.mobileNav.notificationsLink, !isLoggedIn);
-
-  setHidden(els.desktopNav.trackLink, !isLoggedIn || !hasProfile);
-  setHidden(els.mobileNav.trackLink, !isLoggedIn || !hasProfile);
-
-  const profileHref = getProfileHref(profile);
-
-  els.desktopNav.profileLink.href = profileHref;
-  els.mobileNav.profileLink.href = profileHref;
-  els.header.accountProfileLink.href = profileHref;
-
-  setHidden(els.header.accountProfileLink, !isLoggedIn);
-
-  els.desktopNav.trackLink.setAttribute("data-track-mode", hasTrack ? "edit" : "submit");
-  els.mobileNav.trackLink.setAttribute("data-track-mode", hasTrack ? "edit" : "submit");
+  applyStandardMenuState(els, user, profile, track);
 }
 
 function setLoggedOutHeader() {
-  closeHeaderPanels();
-  setHidden(els.header.showLoginBtn, false);
-  setHidden(els.header.headerAvatarBtn, true);
-  setHidden(els.header.headerAvatarImage, true);
-  setHidden(els.header.headerAvatarFallback, true);
-  els.header.headerAvatarImage.src = "";
-  setHidden(els.header.accountProfileLink, true);
-  els.header.accountProfileLink.href = "javascript:void(0)";
-  setHidden(els.header.currencyBadge, true);
-  setCurrency(0);
+  setStandardLoggedOutState(els);
   state.currentUserId = null;
   state.currentProfileData = null;
   state.currentTrackData = null;
@@ -204,10 +148,7 @@ function setLoggedOutHeader() {
 }
 
 function setLoggedInHeader() {
-  setHidden(els.header.showLoginBtn, true);
-  setHidden(els.header.headerAvatarBtn, false);
-  setHidden(els.header.accountMenu, true);
-  setHidden(els.header.currencyBadge, false);
+  setStandardLoggedInState(els, { coins: state.currentProfileData?.coins || 0 });
 }
 
 async function handleLogout() {

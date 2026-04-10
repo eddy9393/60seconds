@@ -1,4 +1,4 @@
-const { getSupabaseClient, getProfileHref: sharedGetProfileHref, bindRuntimeCurrencySync, applyRuntimeCurrencySnapshotToElement } = window.SSFMApp;
+const { getSupabaseClient, getProfileHref: sharedGetProfileHref, bindRuntimeCurrencySync, applyRuntimeCurrencySnapshotToElement, closeStandardHeaderPanels, setStandardHeaderAvatar, handleStandardHeaderAvatarAction, applyStandardMenuState, setStandardLoggedOutState, setStandardLoggedInState, bindStandardHeaderEvents, fetchProfileByUserId, fetchTrackByUserId, getCurrentUserSafe } = window.SSFMApp;
 const supabaseClient = getSupabaseClient();
 
 const els = {
@@ -42,7 +42,7 @@ function setHidden(element, hidden) {
 }
 
 function closeHeaderPanels() {
-  setHidden(els.header.accountMenu, true);
+  closeStandardHeaderPanels(els);
 }
 
 function setCurrency(value) {
@@ -70,97 +70,32 @@ function getProfileHref(profile) {
 }
 
 
-function isMobileHeaderMenuMode() {
-  return window.matchMedia("(max-width: 768px)").matches;
-}
-
 function handleHeaderAvatarAction(profileHref) {
-  const menuEl = els.header.accountMenu;
-  if (isMobileHeaderMenuMode() && menuEl) {
-    menuEl.classList.toggle("hidden");
-    return;
-  }
-  if (menuEl) {
-    menuEl.classList.add("hidden");
-  }
-  window.location.href = profileHref || "artist.html";
+  handleStandardHeaderAvatarAction(els, profileHref);
 }
 
 function applyMenuState(user, profile, track) {
-  const isLoggedIn = Boolean(user);
-  const hasProfile = Boolean(profile);
-  const hasTrack = Boolean(track);
-
-  setHidden(els.desktopNav.loginLink, isLoggedIn);
-  setHidden(els.mobileNav.loginLink, isLoggedIn);
-  setHidden(els.desktopNav.logoutBtn, !isLoggedIn);
-
-  setHidden(els.desktopNav.profileLink, !isLoggedIn);
-  setHidden(els.mobileNav.profileLink, !isLoggedIn);
-
-  setHidden(els.desktopNav.notificationsLink, !isLoggedIn);
-  setHidden(els.mobileNav.notificationsLink, !isLoggedIn);
-
-  setHidden(els.desktopNav.trackLink, !isLoggedIn || !hasProfile);
-  setHidden(els.mobileNav.trackLink, !isLoggedIn || !hasProfile);
-
-  const profileHref = getProfileHref(profile);
-
-  els.desktopNav.profileLink.href = profileHref;
-  els.mobileNav.profileLink.href = profileHref;
-  els.header.accountProfileLink.href = profileHref;
-
-  setHidden(els.header.accountProfileLink, !isLoggedIn);
-  setHidden(els.header.accountNotificationsLink, true);
-
-  els.desktopNav.trackLink.setAttribute("data-track-mode", hasTrack ? "edit" : "submit");
-  els.mobileNav.trackLink.setAttribute("data-track-mode", hasTrack ? "edit" : "submit");
+  applyStandardMenuState(els, user, profile, track, { hideAccountNotifications: true });
 }
 
 function setLoggedOutView() {
-  closeHeaderPanels();
-  setHidden(els.header.showLoginBtn, false);
-  setHidden(els.header.headerAvatarBtn, true);
-  setHidden(els.header.headerAvatarImage, true);
-  setHidden(els.header.headerAvatarFallback, true);
-  els.header.headerAvatarImage.src = "";
-  setHidden(els.header.accountProfileLink, true);
-  els.header.accountProfileLink.href = "javascript:void(0)";
-  setHidden(els.header.currencyBadge, true);
-  setCurrency(0);
-
+  setStandardLoggedOutState(els);
   state.currentProfileData = null;
   state.currentTrackData = null;
-
   applyMenuState(null, null, null);
 }
 
 function setLoggedInView() {
-  setHidden(els.header.showLoginBtn, true);
-  setHidden(els.header.headerAvatarBtn, false);
-  setHidden(els.header.accountMenu, true);
-  setHidden(els.header.currencyBadge, false);
+  setStandardLoggedInState(els, { coins: state.currentProfileData?.coins || 0 });
 }
 
 function setHeaderAvatar(photoUrl, artistName) {
-  if (photoUrl) {
-    els.header.headerAvatarImage.src = photoUrl;
-    setHidden(els.header.headerAvatarImage, false);
-    setHidden(els.header.headerAvatarFallback, true);
-    return;
-  }
-
-  setHidden(els.header.headerAvatarImage, true);
-  setHidden(els.header.headerAvatarFallback, false);
-  els.header.headerAvatarFallback.textContent = (artistName || "A").charAt(0).toUpperCase();
+  setStandardHeaderAvatar(els, photoUrl, artistName);
 }
 
 async function loadMyProfile(userId) {
-  const { data, error } = await supabaseClient
-    .from("profiles")
-    .select("artist_name, photo_url, user_id, coins")
-    .eq("user_id", userId)
-    .maybeSingle();
+  const data = await fetchProfileByUserId(userId, "artist_name, photo_url, user_id, coins");
+  const error = null;
 
   if (error || !data) {
     state.currentProfileData = null;
@@ -194,14 +129,7 @@ async function loadMyTrack(userId) {
 
 async function refreshAuthUI() {
   try {
-    const { data, error } = await supabaseClient.auth.getSession();
-
-    if (error) {
-      setLoggedOutView();
-      return null;
-    }
-
-    const user = data?.session?.user || null;
+    const user = await getCurrentUserSafe();
 
     if (user) {
       setLoggedInView();
@@ -245,46 +173,11 @@ async function handleLogout() {
 }
 
 function bindEvents() {
-  els.header.showLoginBtn.onclick = () => {
-    closeHeaderPanels();
-  };
-
-  els.header.headerAvatarBtn.onclick = () => {
-    
-    handleHeaderAvatarAction(els.header.accountProfileLink?.href || "artist.html");
-  };
-
-  if (els.header.accountProfileLink) {
-    els.header.accountProfileLink.onclick = () => {
-      setHidden(els.header.accountMenu, true);
-    };
-  }
-
-  if (els.header.accountNotificationsLink) {
-    els.header.accountNotificationsLink.onclick = () => {
-      setHidden(els.header.accountMenu, true);
-    };
-  }
-
-  els.desktopNav.logoutBtn.onclick = async () => {
-    await handleLogout();
-  };
-
-  els.header.logoutBtn.onclick = handleLogout;
-
-  document.addEventListener("click", (e) => {
-    const insideHeaderRight = e.target.closest(".header-right");
-    const isAvatarButton = e.target.closest("#headerAvatarBtn");
-
-    if (!insideHeaderRight && !isAvatarButton) {
-      setHidden(els.header.accountMenu, true);
-    }
-  });
-
-  document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape") {
-      setHidden(els.header.accountMenu, true);
-    }
+  bindStandardHeaderEvents(els, {
+    onLoginClick: () => {
+      window.location.href = "login.html";
+    },
+    onLogout: handleLogout
   });
 
   supabaseClient.auth.onAuthStateChange(() => {
