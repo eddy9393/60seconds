@@ -476,7 +476,7 @@ function renderArtistProfile(profile, isOwnPage, hasOwnTrack) {
   const displayName = profile?.artist_name || "Unknown Artist";
 
   setText(els.page.artistName, displayName);
-  setText(els.page.submissionTitle, "Track");
+  setText(els.page.submissionTitle, "Tune");
 
   if (profile?.photo_url) {
     els.page.artistPhoto.src = profile.photo_url;
@@ -494,7 +494,7 @@ function renderArtistProfile(profile, isOwnPage, hasOwnTrack) {
   if (profile?.nationality) {
     const nationalityPill = document.createElement("div");
     nationalityPill.className = "meta-pill";
-    nationalityPill.textContent = profile.nationality;
+    nationalityPill.textContent = getFlagEmoji(profile.nationality) || profile.nationality;
     els.page.artistMeta.appendChild(nationalityPill);
   }
 
@@ -581,7 +581,7 @@ function buildTrackCard(track) {
         <div class="track-title">${escapeHtml(track.title || "Untitled Track")}</div>
         <div class="track-subtitle">${escapeHtml(track.artist || "Artist")}</div>
       </div>
-      <div class="track-status">Approved</div>
+      <div class="track-status">${allowFullTrack ? "Full track" : `${formatTime(previewDuration)} tune`}</div>
     </div>
 
     <div class="track-player">
@@ -668,7 +668,7 @@ function resetArtistPageShell() {
   setHidden(els.page.tracksWrap, true);
   setHidden(els.page.noTracksBox, true);
   els.page.tracksWrap.innerHTML = "";
-  setText(els.page.submissionTitle, "Track");
+  setText(els.page.submissionTitle, "Tune");
 }
 
 async function loadViewedArtistPage(userId) {
@@ -676,7 +676,7 @@ async function loadViewedArtistPage(userId) {
 
   if (!userId) {
     setText(els.page.artistName, "Artist not found");
-    setText(els.page.submissionTitle, "Track");
+    setText(els.page.submissionTitle, "Tune");
     setHidden(els.page.noTracksBox, true);
     setHidden(els.page.tracksWrap, true);
     setArtistStatus("No artist user_id was provided in the URL.", true);

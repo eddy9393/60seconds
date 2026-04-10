@@ -221,22 +221,21 @@ function populateGenreSelects() {
 }
 
 function renderFeelingOptions(selectedValues = []) {
-  if (!els.form.feelingsDropdownMenu) return;
-  els.form.feelingsDropdownMenu.innerHTML = "";
+  const container = els.form.feelingsDropdownMenu || els.form.feelingsGrid;
+  if (!container) return;
+  container.innerHTML = "";
 
   FEELING_OPTIONS.forEach((feeling) => {
     const label = document.createElement("label");
-    label.className = "feeling-dropdown-option";
+    label.className = els.form.feelingsDropdownMenu ? "feeling-dropdown-option" : "check-card";
     label.innerHTML = `
       <input type="checkbox" class="feeling-checkbox" value="${escapeHtml(feeling)}">
       <span>${escapeHtml(feeling)}</span>
     `;
-
     const checkbox = label.querySelector("input");
     checkbox.checked = selectedValues.includes(feeling);
     checkbox.addEventListener("change", () => enforceFeelingLimit(checkbox));
-
-    els.form.feelingsDropdownMenu.appendChild(label);
+    container.appendChild(label);
   });
 
   updateFeelingsCounter();

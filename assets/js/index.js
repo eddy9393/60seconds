@@ -9,6 +9,7 @@ const RADIO_SESSION_KEY = "ssfm_radio_session_v2";
 const RADIO_VOLUME_KEY = "ssfm_radio_volume_v2";
 const RADIO_LIKE_KEY = "ssfm_radio_like_v2";
 const DEFAULT_VOLUME = 0.3;
+const COUNTRY_TO_ISO = {"Aruba": "AW", "Afghanistan": "AF", "Angola": "AO", "Anguilla": "AI", "Åland Islands": "AX", "Albania": "AL", "Andorra": "AD", "United Arab Emirates": "AE", "Argentina": "AR", "Armenia": "AM", "American Samoa": "AS", "Antarctica": "AQ", "French Southern Territories": "TF", "Antigua and Barbuda": "AG", "Australia": "AU", "Austria": "AT", "Azerbaijan": "AZ", "Burundi": "BI", "Belgium": "BE", "Benin": "BJ", "Bonaire, Sint Eustatius and Saba": "BQ", "Burkina Faso": "BF", "Bangladesh": "BD", "Bulgaria": "BG", "Bahrain": "BH", "Bahamas": "BS", "Bosnia and Herzegovina": "BA", "Saint Barthélemy": "BL", "Belarus": "BY", "Belize": "BZ", "Bermuda": "BM", "Bolivia, Plurinational State of": "BO", "Brazil": "BR", "Barbados": "BB", "Brunei Darussalam": "BN", "Bhutan": "BT", "Bouvet Island": "BV", "Botswana": "BW", "Central African Republic": "CF", "Canada": "CA", "Cocos (Keeling) Islands": "CC", "Switzerland": "CH", "Chile": "CL", "China": "CN", "Côte d'Ivoire": "CI", "Cameroon": "CM", "Congo, The Democratic Republic of the": "CD", "Congo": "CG", "Cook Islands": "CK", "Colombia": "CO", "Comoros": "KM", "Cabo Verde": "CV", "Costa Rica": "CR", "Cuba": "CU", "Curaçao": "CW", "Christmas Island": "CX", "Cayman Islands": "KY", "Cyprus": "CY", "Czechia": "CZ", "Germany": "DE", "Djibouti": "DJ", "Dominica": "DM", "Denmark": "DK", "Dominican Republic": "DO", "Algeria": "DZ", "Ecuador": "EC", "Egypt": "EG", "Eritrea": "ER", "Western Sahara": "EH", "Spain": "ES", "Estonia": "EE", "Ethiopia": "ET", "Finland": "FI", "Fiji": "FJ", "Falkland Islands (Malvinas)": "FK", "France": "FR", "Faroe Islands": "FO", "Micronesia, Federated States of": "FM", "Gabon": "GA", "United Kingdom": "GB", "Georgia": "GE", "Guernsey": "GG", "Ghana": "GH", "Gibraltar": "GI", "Guinea": "GN", "Guadeloupe": "GP", "Gambia": "GM", "Guinea-Bissau": "GW", "Equatorial Guinea": "GQ", "Greece": "GR", "Grenada": "GD", "Greenland": "GL", "Guatemala": "GT", "French Guiana": "GF", "Guam": "GU", "Guyana": "GY", "Hong Kong": "HK", "Heard Island and McDonald Islands": "HM", "Honduras": "HN", "Croatia": "HR", "Haiti": "HT", "Hungary": "HU", "Indonesia": "ID", "Isle of Man": "IM", "India": "IN", "British Indian Ocean Territory": "IO", "Ireland": "IE", "Iran, Islamic Republic of": "IR", "Iraq": "IQ", "Iceland": "IS", "Israel": "IL", "Italy": "IT", "Jamaica": "JM", "Jersey": "JE", "Jordan": "JO", "Japan": "JP", "Kazakhstan": "KZ", "Kenya": "KE", "Kyrgyzstan": "KG", "Cambodia": "KH", "Kiribati": "KI", "Saint Kitts and Nevis": "KN", "Korea, Republic of": "KR", "Kuwait": "KW", "Lao People's Democratic Republic": "LA", "Lebanon": "LB", "Liberia": "LR", "Libya": "LY", "Saint Lucia": "LC", "Liechtenstein": "LI", "Sri Lanka": "LK", "Lesotho": "LS", "Lithuania": "LT", "Luxembourg": "LU", "Latvia": "LV", "Macao": "MO", "Saint Martin (French part)": "MF", "Morocco": "MA", "Monaco": "MC", "Moldova, Republic of": "MD", "Madagascar": "MG", "Maldives": "MV", "Mexico": "MX", "Marshall Islands": "MH", "North Macedonia": "MK", "Mali": "ML", "Malta": "MT", "Myanmar": "MM", "Montenegro": "ME", "Mongolia": "MN", "Northern Mariana Islands": "MP", "Mozambique": "MZ", "Mauritania": "MR", "Montserrat": "MS", "Martinique": "MQ", "Mauritius": "MU", "Malawi": "MW", "Malaysia": "MY", "Mayotte": "YT", "Namibia": "NA", "New Caledonia": "NC", "Niger": "NE", "Norfolk Island": "NF", "Nigeria": "NG", "Nicaragua": "NI", "Niue": "NU", "Netherlands": "NL", "Norway": "NO", "Nepal": "NP", "Nauru": "NR", "New Zealand": "NZ", "Oman": "OM", "Pakistan": "PK", "Panama": "PA", "Pitcairn": "PN", "Peru": "PE", "Philippines": "PH", "Palau": "PW", "Papua New Guinea": "PG", "Poland": "PL", "Puerto Rico": "PR", "Korea, Democratic People's Republic of": "KP", "Portugal": "PT", "Paraguay": "PY", "Palestine, State of": "PS", "French Polynesia": "PF", "Qatar": "QA", "Réunion": "RE", "Romania": "RO", "Russian Federation": "RU", "Rwanda": "RW", "Saudi Arabia": "SA", "Sudan": "SD", "Senegal": "SN", "Singapore": "SG", "South Georgia and the South Sandwich Islands": "GS", "Saint Helena, Ascension and Tristan da Cunha": "SH", "Svalbard and Jan Mayen": "SJ", "Solomon Islands": "SB", "Sierra Leone": "SL", "El Salvador": "SV", "San Marino": "SM", "Somalia": "SO", "Saint Pierre and Miquelon": "PM", "Serbia": "RS", "South Sudan": "SS", "Sao Tome and Principe": "ST", "Suriname": "SR", "Slovakia": "SK", "Slovenia": "SI", "Sweden": "SE", "Eswatini": "SZ", "Sint Maarten (Dutch part)": "SX", "Seychelles": "SC", "Syrian Arab Republic": "SY", "Turks and Caicos Islands": "TC", "Chad": "TD", "Togo": "TG", "Thailand": "TH", "Tajikistan": "TJ", "Tokelau": "TK", "Turkmenistan": "TM", "Timor-Leste": "TL", "Tonga": "TO", "Trinidad and Tobago": "TT", "Tunisia": "TN", "Türkiye": "TR", "Tuvalu": "TV", "Taiwan, Province of China": "TW", "Tanzania, United Republic of": "TZ", "Uganda": "UG", "Ukraine": "UA", "United States Minor Outlying Islands": "UM", "Uruguay": "UY", "United States": "US", "Uzbekistan": "UZ", "Holy See (Vatican City State)": "VA", "Saint Vincent and the Grenadines": "VC", "Venezuela, Bolivarian Republic of": "VE", "Virgin Islands, British": "VG", "Virgin Islands, U.S.": "VI", "Viet Nam": "VN", "Vanuatu": "VU", "Wallis and Futuna": "WF", "Samoa": "WS", "Yemen": "YE", "South Africa": "ZA", "Zambia": "ZM", "Zimbabwe": "ZW", "Czech Republic": "CZ", "Russia": "RU", "South Korea": "KR", "North Korea": "KP", "Taiwan": "TW", "Vietnam": "VN", "Syria": "SY", "Laos": "LA", "Palestine": "PS", "Bolivia": "BO", "Venezuela": "VE", "Moldova": "MD", "Tanzania": "TZ", "Brunei": "BN", "Democratic Republic of the Congo": "CD", "Micronesia": "FM", "Turkey": "TR", "Vatican City": "VA"};
 
 const els = {
   showLoginBtn: document.getElementById("showLoginBtn"),
@@ -100,7 +101,7 @@ const state = {
 
 const REFRESH_INTERVALS = {
   listenerHeartbeat: 15000,
-  listenerCount: 10000,
+  listenerCount: 5000,
   tracksReload: 30000
 };
 
@@ -323,6 +324,19 @@ function formatTime(seconds) {
   const mins = Math.floor(seconds / 60);
   const secs = Math.floor(seconds % 60).toString().padStart(2, "0");
   return `${mins}:${secs}`;
+}
+
+
+function getFlagEmoji(countryName) {
+  const iso = COUNTRY_TO_ISO[String(countryName || "").trim()];
+  if (!iso) return "";
+  return iso.toUpperCase().replace(/./g, (char) => String.fromCodePoint(127397 + char.charCodeAt(0)));
+}
+
+function getFlagMarkup(countryName) {
+  const flag = getFlagEmoji(countryName);
+  if (!flag) return "";
+  return `<span class="artist-flag" aria-label="${escapeHtml(countryName)}">${flag}</span>`;
 }
 
 function escapeHtml(str) {
@@ -962,7 +976,7 @@ async function refreshAuthDependentUI() {
 async function loadTracksFromSupabase() {
   const { data, error } = await supabaseClient
     .from("tracks")
-    .select("id, title, artist, file_url, user_id, play_count, status, created_at, preview_start_seconds, preview_duration_seconds, genre_primary, genre_secondary")
+    .select("id, title, artist, file_url, user_id, play_count, status, created_at, preview_start_seconds, preview_duration_seconds, genre_primary, genre_secondary, nationality")
     .eq("status", "approved")
     .order("created_at", { ascending: false });
 
@@ -982,8 +996,32 @@ async function loadTracksFromSupabase() {
     preview_start_seconds: track.preview_start_seconds,
     preview_duration_seconds: track.preview_duration_seconds,
     genre_primary: track.genre_primary || null,
-    genre_secondary: track.genre_secondary || null
+    genre_secondary: track.genre_secondary || null,
+    nationality: track.nationality || null
   }));
+}
+
+
+async function loadTrackNationalities() {
+  try {
+    const userIds = Array.from(new Set(state.tracks.map((track) => track.user_id).filter(Boolean)));
+    if (!userIds.length) return;
+
+    const { data, error } = await supabaseClient
+      .from("public_artist_profiles")
+      .select("user_id, nationality")
+      .in("user_id", userIds);
+
+    if (error || !data) return;
+
+    const nationalityByUserId = new Map(data.map((row) => [String(row.user_id), row.nationality || null]));
+    state.tracks = state.tracks.map((track) => ({
+      ...track,
+      nationality: track.nationality || nationalityByUserId.get(String(track.user_id || "")) || null
+    }));
+  } catch (err) {
+    console.error("loadTrackNationalities error:", err);
+  }
 }
 
 function renderArtist(track) {
@@ -992,14 +1030,14 @@ function renderArtist(track) {
   if (track.user_id) {
     els.artistEl.outerHTML = `
       <a id="artist" class="artist-link" href="artist.html?user_id=${encodeURIComponent(track.user_id)}">
-        ${escapeHtml(track.artist)}
+        ${escapeHtml(track.artist)} ${getFlagMarkup(track.nationality)}
       </a>
     `;
     els.artistEl = document.getElementById("artist");
     return;
   }
 
-  els.artistEl.outerHTML = `<span id="artist">${escapeHtml(track.artist)}</span>`;
+  els.artistEl.outerHTML = `<span id="artist">${escapeHtml(track.artist)} ${getFlagMarkup(track.nationality)}</span>`;
   els.artistEl = document.getElementById("artist");
 }
 
@@ -1184,6 +1222,7 @@ async function updateListeners() {
 
 async function bootstrapLiveRadio() {
   await loadTracksFromSupabase();
+  await loadTrackNationalities();
 
   if (!state.tracks.length) {
     setEmptyRadioState();
