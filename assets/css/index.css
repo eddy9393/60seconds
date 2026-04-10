@@ -835,10 +835,20 @@ img {
   font-weight: 400;
 }
 
-.artist-link {
+.artist-link,
+.artist-link:hover,
+.artist-link:focus,
+.artist-link:active {
   color: var(--gold);
-  text-decoration: none;
-  border-bottom: 1px solid rgba(212,175,55,0.32);
+  text-decoration: none !important;
+  border-bottom: 0 !important;
+  box-shadow: none !important;
+}
+
+.artist-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .artist-link:hover {
@@ -2110,10 +2120,16 @@ img {
 .artist-flag {
   display: inline-flex;
   align-items: center;
-  margin-left: 8px;
+  margin-left: 0;
+  margin-right: 0;
   font-size: 16px;
   line-height: 1;
   vertical-align: middle;
+  flex: 0 0 auto;
+}
+
+.artist-name-text {
+  display: inline-block;
 }
 
 
