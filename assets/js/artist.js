@@ -380,6 +380,12 @@ function bindRadioNavigationPause() {
   });
 }
 
+function bindMiniRadioConflictHandling() {
+  window.addEventListener('ssfm:radio-started', () => {
+    stopCurrentAudio();
+  });
+}
+
 function stopCurrentAudio() {
   if (state.currentPreviewInterval) {
     clearInterval(state.currentPreviewInterval);
@@ -689,6 +695,7 @@ async function refreshWholePage() {
 
 function bindEvents() {
   bindRadioNavigationPause();
+  bindMiniRadioConflictHandling();
 
   els.header.showLoginBtn.onclick = () => {
     closeHeaderPanels();

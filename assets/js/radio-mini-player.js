@@ -44,7 +44,8 @@
     unexpectedPauseTimer: null,
     volumeOpen: false,
     trackAdvanceLock: false,
-    rewardedTrackId: null
+    rewardedTrackId: null,
+    isAdvancingTrack: false
   };
 
   function todayKey() {
@@ -117,6 +118,12 @@
   function getPreviewDuration(track) {
     const value = Number(track && track.preview_duration_seconds);
     return Number.isFinite(value) && value > 0 ? value : 60;
+  }
+
+  function notifyRadioStarted() {
+    try {
+      window.dispatchEvent(new CustomEvent('ssfm:radio-started', { detail: { source: 'mini-player', trackId: state.currentTrack?.id || null } }));
+    } catch {}
   }
 
   function getSafeVolume(candidate) {
@@ -233,14 +240,21 @@
     if (currentTrackId && state.rewardedTrackId === currentTrackId) return;
 
     state.trackAdvanceLock = true;
+    state.isAdvancingTrack = true;
+    clearUnexpectedPauseTimer();
+
     if (currentTrackId) {
       state.rewardedTrackId = currentTrackId;
     }
 
     try {
+      if (state.audio && !state.audio.paused) {
+        try { state.audio.pause(); } catch {}
+      }
       await awardListeningSecond();
       await nextTrack();
     } finally {
+      state.isAdvancingTrack = false;
       state.trackAdvanceLock = false;
     }
   }
@@ -280,12 +294,21 @@
       const clamped = Math.min(elapsed, state.previewDuration);
       if (state.els.time) state.els.time.textContent = `${formatTime(clamped)} / ${formatTime(state.previewDuration)}`;
       persistProgress();
-      if (elapsed >= state.previewDuration) advanceAfterTrackCompletion().catch((err) => console.error(err));
+      if (elapsed >= Math.max(0, state.previewDuration - 0.05)) {
+        if (!state.trackAdvanceLock) {
+          try {
+            state.audio.currentTime = Math.min(state.audio.currentTime || 0, state.previewStart + state.previewDuration);
+          } catch {}
+          advanceAfterTrackCompletion().catch((err) => console.error(err));
+        }
+      }
     });
 
     state.audio.addEventListener('play', () => {
+      state.isAdvancingTrack = false;
       clearUnexpectedPauseTimer();
       state.shouldPlay = true;
+      notifyRadioStarted();
       updatePlayPauseLabel();
       persistProgress(true);
     });
@@ -294,16 +317,21 @@
       state.shouldPlay = false;
       updatePlayPauseLabel();
       persistProgress(true);
-      if (!document.hidden && state.desiredPlayback) {
+      if (!state.isAdvancingTrack && !document.hidden && state.desiredPlayback) {
         scheduleUnexpectedResume(220);
       }
     });
 
-    state.audio.addEventListener('ended', () => { advanceAfterTrackCompletion().catch((err) => console.error(err)); });
+    state.audio.addEventListener('ended', () => {
+      if (!state.trackAdvanceLock) {
+        advanceAfterTrackCompletion().catch((err) => console.error(err));
+      }
+    });
   }
 
   async function playTrackAt(index, previewOffset = 0, autoplay = state.desiredPlayback) {
     state.rewardedTrackId = null;
+    state.isAdvancingTrack = false;
     const track = state.tracks[index];
     if (!track || !state.audio) return;
     const requestToken = ++state.playRequestToken;
