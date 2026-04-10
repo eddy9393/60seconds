@@ -838,7 +838,7 @@ img {
 .artist-link {
   color: var(--gold);
   text-decoration: none;
-  border-bottom: none;
+  border-bottom: 1px solid rgba(212,175,55,0.32);
 }
 
 .artist-link:hover {
@@ -2128,5 +2128,25 @@ img {
     background-position: center top, center top, center top !important;
     background-repeat: no-repeat, no-repeat, no-repeat !important;
     background-attachment: scroll, scroll, scroll !important;
+  }
+}
+
+
+@media (max-width: 768px) {
+  body {
+    background-size: cover, auto, 100% auto !important;
+    background-position: center top, center top, center top !important;
+    background-repeat: no-repeat, no-repeat, no-repeat !important;
+    background-attachment: scroll, scroll, scroll !important;
+  }
+}
+
+@supports (-webkit-touch-callout: none) {
+  @media (max-width: 768px) {
+    body {
+      background-size: cover, auto, cover !important;
+      background-position: center top, center top, center top !important;
+      background-attachment: scroll, scroll, scroll !important;
+    }
   }
 }
