@@ -43,11 +43,15 @@ const els = {
   radioShell: document.getElementById("radioShell"),
   titleEl: document.getElementById("title"),
   artistWrapEl: document.getElementById("artistWrap"),
+  artistEl: document.getElementById("artist"),
+  trackGenreEl: document.getElementById("trackGenre"),
   likeBtn: document.getElementById("likeBtn"),
   pauseBtn: document.getElementById("pauseBtn"),
   skipBtn: document.getElementById("skip"),
   featureNoteEl: document.getElementById("featureNote"),
   conceptSectionEl: document.getElementById("conceptSection"),
+  newsFeedSectionEl: document.getElementById("newsFeedSection"),
+  newsFeedListEl: document.getElementById("newsFeedList"),
   volume: document.getElementById("volume"),
   volumeBtn: document.getElementById("volumeBtn"),
   volumeControl: document.getElementById("volumeControl"),
@@ -87,7 +91,11 @@ const state = {
   rewardedTrackId: null,
   desiredPlayback: false,
   playbackUnlockBound: false,
-  unexpectedPauseTimer: null
+  unexpectedPauseTimer: null,
+  newsFeedItems: [],
+  newsFeedIndex: 0,
+  newsFeedTimer: null,
+  newsFeedRefreshTimer: null
 };
 
 const REFRESH_INTERVALS = {
@@ -105,6 +113,163 @@ function setText(el, value) {
   if (!el) return;
   el.textContent = value;
 }
+
+
+function clearNewsFeedTimers() {
+  if (state.newsFeedTimer) {
+    clearInterval(state.newsFeedTimer);
+    state.newsFeedTimer = null;
+  }
+  if (state.newsFeedRefreshTimer) {
+    clearInterval(state.newsFeedRefreshTimer);
+    state.newsFeedRefreshTimer = null;
+  }
+}
+
+function getTrackGenreLabel(track) {
+  const primary = String(track?.genre_primary || "").trim();
+  const secondary = String(track?.genre_secondary || "").trim();
+  return primary || secondary || "";
+}
+
+function setTrackGenre(track) {
+  const label = getTrackGenreLabel(track);
+  if (!els.trackGenreEl) return;
+  setText(els.trackGenreEl, label);
+  setHidden(els.trackGenreEl, !label);
+}
+
+function escapeFeedHtml(value) {
+  return escapeHtml(value || "");
+}
+
+function buildNewsFeedText(item) {
+  if (!item) return "";
+  if (item.type === "join") {
+    return `<strong>${escapeFeedHtml(item.name)}</strong> just joined 60 Seconds`;
+  }
+  if (item.type === "approved_track") {
+    return `<strong>${escapeFeedHtml(item.name)}</strong> has an approved tune live now`;
+  }
+  return `<strong>${escapeFeedHtml(item.name)}</strong> supported 10 artists today`;
+}
+
+function renderNewsFeedSlice() {
+  if (!els.newsFeedListEl) return;
+
+  if (!state.currentUser || !state.newsFeedItems.length) {
+    els.newsFeedListEl.innerHTML = '<div class="news-feed-item news-feed-empty">No community updates yet.</div>';
+    return;
+  }
+
+  const items = [];
+  const count = Math.min(3, state.newsFeedItems.length);
+
+  for (let i = 0; i < count; i += 1) {
+    const item = state.newsFeedItems[(state.newsFeedIndex + i) % state.newsFeedItems.length];
+    items.push(`<div class="news-feed-item">${buildNewsFeedText(item)}</div>`);
+  }
+
+  els.newsFeedListEl.innerHTML = items.join("");
+}
+
+function advanceNewsFeed() {
+  if (!els.newsFeedListEl || state.newsFeedItems.length <= 3) return;
+  els.newsFeedListEl.classList.add("is-shifting");
+
+  setTimeout(() => {
+    state.newsFeedIndex = (state.newsFeedIndex + 1) % state.newsFeedItems.length;
+    renderNewsFeedSlice();
+    els.newsFeedListEl.classList.remove("is-shifting");
+  }, 360);
+}
+
+async function loadNewsFeed() {
+  if (!state.currentUser) {
+    clearNewsFeedTimers();
+    state.newsFeedItems = [];
+    state.newsFeedIndex = 0;
+    setHidden(els.newsFeedSectionEl, true);
+    return;
+  }
+
+  try {
+    const todayKey = getTodayDateKey();
+
+    const [profilesRes, approvedTracksRes, supportersRes] = await Promise.all([
+      supabaseClient
+        .from("profiles")
+        .select("artist_name, created_at, user_id")
+        .not("artist_name", "is", null)
+        .order("created_at", { ascending: false })
+        .limit(12),
+      supabaseClient
+        .from("tracks")
+        .select("title, artist, user_id, created_at, status")
+        .eq("status", "approved")
+        .order("created_at", { ascending: false })
+        .limit(12),
+      supabaseClient
+        .from("profiles")
+        .select("artist_name, daily_seconds_earned, daily_seconds_earned_date, user_id")
+        .eq("daily_seconds_earned", 10)
+        .eq("daily_seconds_earned_date", todayKey)
+        .limit(12)
+    ]);
+
+    const items = [];
+
+    (profilesRes.data || []).forEach((profile) => {
+      const name = String(profile.artist_name || "").trim();
+      if (!name) return;
+      items.push({
+        type: "join",
+        name,
+        sortTime: new Date(profile.created_at || 0).getTime() || 0
+      });
+    });
+
+    (approvedTracksRes.data || []).forEach((track) => {
+      const name = String(track.artist || "").trim();
+      if (!name) return;
+      items.push({
+        type: "approved_track",
+        name,
+        sortTime: new Date(track.created_at || 0).getTime() || 0
+      });
+    });
+
+    (supportersRes.data || []).forEach((profile) => {
+      const name = String(profile.artist_name || "").trim();
+      if (!name) return;
+      items.push({
+        type: "support_today",
+        name,
+        sortTime: Date.now() - 1000
+      });
+    });
+
+    state.newsFeedItems = items
+      .sort((a, b) => (b.sortTime || 0) - (a.sortTime || 0))
+      .slice(0, 18);
+
+    state.newsFeedIndex = 0;
+    setHidden(els.newsFeedSectionEl, false);
+    renderNewsFeedSlice();
+
+    clearNewsFeedTimers();
+    if (state.newsFeedItems.length > 3) {
+      state.newsFeedTimer = setInterval(advanceNewsFeed, 5000);
+    }
+    state.newsFeedRefreshTimer = setInterval(() => {
+      loadNewsFeed().catch((err) => console.error("loadNewsFeed refresh error:", err));
+    }, 60000);
+  } catch (err) {
+    console.error("loadNewsFeed error:", err);
+    setHidden(els.newsFeedSectionEl, true);
+  }
+}
+
 
 function formatNumber(value) {
   return Number(value || 0).toLocaleString();
@@ -512,6 +677,8 @@ function setLoggedOutView() {
   updateInteractiveControls();
   updateCurrencyVisibility(null);
   setCurrency(0);
+  setHidden(els.newsFeedSectionEl, true);
+  clearNewsFeedTimers();
   updateJoinButtonHref();
 }
 
@@ -662,6 +829,7 @@ async function refreshAuthUI() {
 
     applyMenuState(user, profile, tune);
     updateInteractiveControls();
+    await loadNewsFeed();
     updateJoinButtonHref();
     return user;
   } catch (err) {
@@ -750,7 +918,7 @@ async function refreshAuthDependentUI() {
 async function loadTracksFromSupabase() {
   const { data, error } = await supabaseClient
     .from("tracks")
-    .select("id, title, artist, file_url, user_id, play_count, status, created_at, preview_start_seconds, preview_duration_seconds")
+    .select("id, title, artist, file_url, user_id, play_count, status, created_at, preview_start_seconds, preview_duration_seconds, genre_primary, genre_secondary")
     .eq("status", "approved")
     .order("created_at", { ascending: false });
 
@@ -768,26 +936,33 @@ async function loadTracksFromSupabase() {
     user_id: track.user_id || null,
     play_count: track.play_count || 0,
     preview_start_seconds: track.preview_start_seconds,
-    preview_duration_seconds: track.preview_duration_seconds
+    preview_duration_seconds: track.preview_duration_seconds,
+    genre_primary: track.genre_primary || null,
+    genre_secondary: track.genre_secondary || null
   }));
 }
 
 function renderArtist(track) {
+  if (!els.artistEl) return;
+
   if (track.user_id) {
-    els.artistWrapEl.innerHTML = `
-      <a class="artist-link" href="artist.html?user_id=${encodeURIComponent(track.user_id)}">
+    els.artistEl.outerHTML = `
+      <a id="artist" class="artist-link" href="artist.html?user_id=${encodeURIComponent(track.user_id)}">
         ${escapeHtml(track.artist)}
       </a>
     `;
+    els.artistEl = document.getElementById("artist");
     return;
   }
 
-  els.artistWrapEl.innerHTML = `<span>${escapeHtml(track.artist)}</span>`;
+  els.artistEl.outerHTML = `<span id="artist">${escapeHtml(track.artist)}</span>`;
+  els.artistEl = document.getElementById("artist");
 }
 
 function setTrackUI(track) {
   setText(els.titleEl, track.title || "Untitled");
   renderArtist(track);
+  setTrackGenre(track);
 
   state.currentPreviewStart = getTrackPreviewStart(track);
   state.currentPreviewDuration = getTrackPreviewDuration(track);
@@ -826,7 +1001,11 @@ function chooseNextTrackIndex() {
 
 function setEmptyRadioState() {
   setText(els.titleEl, "No live tunes yet");
-  els.artistWrapEl.innerHTML = `<span>Check back soon</span>`;
+  if (els.artistEl) {
+    els.artistEl.outerHTML = `<span id="artist">Check back soon</span>`;
+    els.artistEl = document.getElementById("artist");
+  }
+  setTrackGenre(null);
   els.progressFill.style.width = "0%";
   setText(els.elapsedTimeEl, "0:00");
   setText(els.durationTimeEl, "1:00");
