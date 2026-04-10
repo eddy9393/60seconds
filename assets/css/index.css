@@ -2166,3 +2166,21 @@ img {
     }
   }
 }
+
+
+.artist-inline {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: var(--gold);
+  text-decoration: none !important;
+  border-bottom: 0 !important;
+  box-shadow: none !important;
+}
+
+.artist-flag {
+  display: inline-flex;
+  align-items: center;
+  line-height: 1;
+}
