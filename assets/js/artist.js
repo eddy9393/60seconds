@@ -758,7 +758,7 @@ async function safeRefreshWholePage() {
 
   refreshWholePagePromise = (async () => {
     try {
-      await safeRefreshWholePage();
+      await refreshWholePage();
     } finally {
       refreshWholePagePromise = null;
     }
