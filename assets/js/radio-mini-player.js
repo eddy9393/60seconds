@@ -3,7 +3,14 @@
   if (pageName === 'index.html' || pageName === '') return;
   if (!window.supabase) return;
 
-  const supabaseClient = window.SSFMApp.getSupabaseClient();
+
+  const { getSupabaseClient, setCurrencyText } = window.SSFMApp || {};
+  const supabaseClient = typeof getSupabaseClient === 'function'
+    ? getSupabaseClient()
+    : window.supabase.createClient(
+        "https://rgoutegbcpjytplqcwze.supabase.co",
+        "sb_publishable_255qyDKS77nMU0pbedfa_A_3hdgtEHh"
+      );
 
   const SESSION_KEY = 'ssfm_radio_session_v2';
   const VOLUME_KEY = 'ssfm_radio_volume_v2';
@@ -65,6 +72,10 @@
   function updateHeaderCurrencyUi(coins) {
     const valueEl = document.getElementById('currencyValue');
     const badgeEl = document.getElementById('currencyBadge');
+    if (typeof setCurrencyText === 'function') {
+      setCurrencyText(valueEl, coins, badgeEl);
+      return;
+    }
     if (badgeEl) badgeEl.classList.remove('hidden');
     if (valueEl) valueEl.textContent = String(Math.max(0, Math.floor(Number(coins) || 0)));
   }

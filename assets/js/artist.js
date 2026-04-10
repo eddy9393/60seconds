@@ -1,5 +1,10 @@
-const { getFlagEmoji, getProfileHref } = window.SSFMApp;
-const supabaseClient = window.SSFMApp.getSupabaseClient();
+const { getSupabaseClient, getFlagEmoji: sharedGetFlagEmoji, getProfileHref: sharedGetProfileHref, bindRuntimeCurrencySync, applyRuntimeCurrencySnapshotToElement } = window.SSFMApp;
+const supabaseClient = getSupabaseClient();
+
+
+function getFlagEmoji(countryName) {
+  return sharedGetFlagEmoji(countryName);
+}
 
 const els = {
   header: {
@@ -125,24 +130,14 @@ function setHeaderAvatar(photoUrl, artistName) {
 
 
 function applyRuntimeCurrencySnapshot() {
-  try {
-    const raw = localStorage.getItem("ssfm_profile_runtime_state");
-    if (!raw) return;
-    const data = JSON.parse(raw);
-    if (typeof data.coins !== "undefined" && els.header?.currencyValue) {
-      els.header.currencyValue.textContent = String(Math.max(0, Math.floor(Number(data.coins) || 0)));
-    }
-  } catch {}
+  applyRuntimeCurrencySnapshotToElement(els.header?.currencyValue, els.header?.currencyBadge);
 }
 
-window.addEventListener("storage", (event) => {
-  if (event.key === "ssfm_profile_runtime_state") {
-    applyRuntimeCurrencySnapshot();
-  }
-});
-window.addEventListener("ssfm:coins-updated", () => {
-  applyRuntimeCurrencySnapshot();
-});
+bindRuntimeCurrencySync(els.header?.currencyValue, els.header?.currencyBadge);
+
+function getProfileHref(profile) {
+  return sharedGetProfileHref(profile);
+}
 
 
 function isMobileHeaderMenuMode() {

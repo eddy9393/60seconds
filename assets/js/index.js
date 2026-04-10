@@ -1,5 +1,5 @@
-const { getFlagMarkup, getProfileHref } = window.SSFMApp;
-const supabaseClient = window.SSFMApp.getSupabaseClient();
+const { getSupabaseClient, getFlagEmoji: sharedGetFlagEmoji, getFlagMarkup: sharedGetFlagMarkup, getProfileHref: sharedGetProfileHref } = window.SSFMApp;
+const supabaseClient = getSupabaseClient();
 
 const DAILY_SECONDS_LIMIT = 10;
 const SKIP_COST = 1;
@@ -322,6 +322,14 @@ function formatTime(seconds) {
 }
 
 
+function getFlagEmoji(countryName) {
+  return sharedGetFlagEmoji(countryName);
+}
+
+function getFlagMarkup(countryName) {
+  return sharedGetFlagMarkup(countryName).replace('aria-hidden="true"', `aria-label="${escapeHtml(countryName)}"`);
+}
+
 function escapeHtml(str) {
   return String(str || "")
     .replaceAll("&", "&amp;")
@@ -588,6 +596,10 @@ function updateVolumeButtonState() {
 function closeHeaderPanels() {
   setHidden(els.accountMenu, true);
   els.volumeControl.classList.remove("open");
+}
+
+function getProfileHref(profile) {
+  return sharedGetProfileHref(profile);
 }
 
 function resetLike() {

@@ -1,25 +1,10 @@
+const { getSupabaseClient, getProfileHref: sharedGetProfileHref, bindRuntimeCurrencySync, applyRuntimeCurrencySnapshotToElement } = window.SSFMApp;
+const supabaseClient = getSupabaseClient();
+
 
 function applyRuntimeCurrencySnapshot() {
-  try {
-    const raw = localStorage.getItem("ssfm_profile_runtime_state");
-    if (!raw) return;
-    const data = JSON.parse(raw);
-    if (typeof data.coins !== "undefined" && els.header?.currencyValue) {
-      els.header.currencyValue.textContent = String(Math.max(0, Math.floor(Number(data.coins) || 0)));
-    }
-  } catch {}
+  applyRuntimeCurrencySnapshotToElement(els.header?.currencyValue, els.header?.currencyBadge);
 }
-
-window.addEventListener("storage", (event) => {
-  if (event.key === "ssfm_profile_runtime_state") {
-    applyRuntimeCurrencySnapshot();
-  }
-});
-window.addEventListener("ssfm:coins-updated", () => {
-  applyRuntimeCurrencySnapshot();
-});
-
-const supabaseClient = window.SSFMApp.getSupabaseClient();
 
 const COUNTRY_OPTIONS = [
   "Afghanistan","Albania","Algeria","Andorra","Angola","Antigua and Barbuda","Argentina","Armenia","Australia","Austria",
@@ -106,6 +91,8 @@ const els = {
     status: document.getElementById("status")
   }
 };
+
+bindRuntimeCurrencySync(els.header?.currencyValue, els.header?.currencyBadge);
 
 const state = { currentProfile: null, roleValues: ['none'] };
 function setHidden(element, hidden) { if (element) element.classList.toggle('hidden', hidden); }

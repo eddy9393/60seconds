@@ -1,4 +1,5 @@
-const supabaseClient = window.SSFMApp.getSupabaseClient();
+const { getSupabaseClient, getProfileHref: sharedGetProfileHref, bindRuntimeCurrencySync, applyRuntimeCurrencySnapshotToElement } = window.SSFMApp;
+const supabaseClient = getSupabaseClient();
 
 const els = {
   header: {
@@ -59,31 +60,13 @@ function setCurrency(value) {
 
 
 function applyRuntimeCurrencySnapshot() {
-  try {
-    const raw = localStorage.getItem("ssfm_profile_runtime_state");
-    if (!raw) return;
-    const data = JSON.parse(raw);
-    if (typeof data.coins !== "undefined" && els.header?.currencyValue) {
-      els.header.currencyValue.textContent = String(Math.max(0, Math.floor(Number(data.coins) || 0)));
-    }
-  } catch {}
+  applyRuntimeCurrencySnapshotToElement(els.header?.currencyValue, els.header?.currencyBadge);
 }
 
-window.addEventListener("storage", (event) => {
-  if (event.key === "ssfm_profile_runtime_state") {
-    applyRuntimeCurrencySnapshot();
-  }
-});
-window.addEventListener("ssfm:coins-updated", () => {
-  applyRuntimeCurrencySnapshot();
-});
+bindRuntimeCurrencySync(els.header?.currencyValue, els.header?.currencyBadge);
 
 function getProfileHref(profile) {
-  if (!profile) return "join.html";
-  if (profile?.user_id) {
-    return `artist.html?user_id=${encodeURIComponent(profile.user_id)}`;
-  }
-  return "join.html";
+  return sharedGetProfileHref(profile);
 }
 
 

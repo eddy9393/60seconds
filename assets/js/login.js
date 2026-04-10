@@ -1,4 +1,5 @@
-const supabaseClient = window.SSFMApp.getSupabaseClient();
+const { getSupabaseClient } = window.SSFMApp;
+const supabaseClient = getSupabaseClient();
 
 const els = {
   form: {
