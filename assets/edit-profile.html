@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Edit Profile - 60 Seconds FM</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Manrope:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/edit-profile.css">
+</head>
+<body>
+  <aside class="desktop-side-nav" aria-label="Desktop navigation">
+    <div class="desktop-side-nav-panel">
+      <nav class="desktop-side-links">
+        <a class="desktop-nav-link" href="index.html" aria-label="Radio">
+          <span class="desktop-nav-icon" aria-hidden="true">
+            <span class="nav-icon-mask" style="--icon-url: url('/icons/radio.png');"></span>
+          </span>
+          <span class="desktop-nav-label">Radio</span>
+        </a>
+
+        <a id="desktopProfileLink" class="desktop-nav-link hidden active" href="edit-profile.html" aria-label="Profile">
+          <span class="desktop-nav-icon" aria-hidden="true">
+            <span class="nav-icon-mask" style="--icon-url: url('/icons/profile.png');"></span>
+          </span>
+          <span class="desktop-nav-label">Profile</span>
+        </a>
+
+        <a id="desktopNotificationsLink" class="desktop-nav-link hidden" href="notifications.html" aria-label="Notifications">
+          <span class="desktop-nav-icon" aria-hidden="true">
+            <span class="nav-icon-mask" style="--icon-url: url('/icons/notifications.png');"></span>
+          </span>
+          <span class="desktop-nav-label">Notifications</span>
+        </a>
+
+        <a id="desktopTrackLink" class="desktop-nav-link hidden" href="submit-track.html" aria-label="Track">
+          <span class="desktop-nav-icon" aria-hidden="true">
+            <span class="nav-icon-mask" style="--icon-url: url('/icons/track.png');"></span>
+          </span>
+          <span class="desktop-nav-label">Track</span>
+        </a>
+      </nav>
+
+      <div class="desktop-side-bottom">
+        <a id="desktopLoginLink" class="desktop-nav-link" href="login.html" aria-label="Login">
+          <span class="desktop-nav-icon" aria-hidden="true">
+            <span class="nav-icon-mask" style="--icon-url: url('/icons/login.png');"></span>
+          </span>
+          <span class="desktop-nav-label">Login</span>
+        </a>
+
+        <button id="desktopLogoutBtn" class="desktop-nav-button hidden" type="button" aria-label="Logout">
+          <span class="desktop-nav-icon" aria-hidden="true">
+            <span class="nav-icon-mask" style="--icon-url: url('/icons/logout.png');"></span>
+          </span>
+          <span class="desktop-nav-label">Logout</span>
+        </button>
+      </div>
+    </div>
+  </aside>
+
+  <div class="mobile-bottom-nav-wrap">
+    <nav class="mobile-bottom-nav" aria-label="Mobile navigation">
+      <a class="mobile-nav-link" href="index.html" aria-label="Radio">
+        <span class="mobile-nav-icon" aria-hidden="true">
+          <span class="nav-icon-mask" style="--icon-url: url('/icons/radio.png');"></span>
+        </span>
+        <span class="mobile-nav-label">Radio</span>
+      </a>
+
+      <a id="mobileProfileLink" class="mobile-nav-link hidden active" href="edit-profile.html" aria-label="Profile">
+        <span class="mobile-nav-icon" aria-hidden="true">
+          <span class="nav-icon-mask" style="--icon-url: url('/icons/profile.png');"></span>
+        </span>
+        <span class="mobile-nav-label">Profile</span>
+      </a>
+
+      <a id="mobileNotificationsLink" class="mobile-nav-link hidden" href="notifications.html" aria-label="Notifications">
+        <span class="mobile-nav-icon" aria-hidden="true">
+          <span class="nav-icon-mask" style="--icon-url: url('/icons/notifications.png');"></span>
+        </span>
+        <span class="mobile-nav-label">Notifications</span>
+      </a>
+
+      <a id="mobileTrackLink" class="mobile-nav-link hidden" href="submit-track.html" aria-label="Track">
+        <span class="mobile-nav-icon" aria-hidden="true">
+          <span class="nav-icon-mask" style="--icon-url: url('/icons/track.png');"></span>
+        </span>
+        <span class="mobile-nav-label">Track</span>
+      </a>
+
+      <a id="mobileLoginLink" class="mobile-nav-link" href="login.html" aria-label="Login">
+        <span class="mobile-nav-icon" aria-hidden="true">
+          <span class="nav-icon-mask" style="--icon-url: url('/icons/login.png');"></span>
+        </span>
+        <span class="mobile-nav-label">Login</span>
+      </a>
+    </nav>
+  </div>
+
+  <div class="header-wrap">
+    <header class="header-bar">
+      <div class="header-left">
+        <div id="currencyBadge" class="currency-badge hidden" aria-label="Seconds balance">
+          <img src="coin.png" alt="" class="currency-badge-icon" />
+          <span id="currencyValue" class="currency-badge-value">0</span>
+        </div>
+      </div>
+
+      <div class="header-center">
+        <a href="index.html" class="header-logo-link" aria-label="60 Seconds FM home">
+          <img src="logo.png" alt="60 Seconds FM" class="header-logo" />
+        </a>
+      </div>
+
+      <div class="header-right">
+        <button id="showLoginBtn" class="header-icon-btn" type="button" aria-label="Log in">
+          <span class="person-icon" aria-hidden="true"></span>
+        </button>
+
+        <button id="headerAvatarBtn" class="header-avatar-btn hidden" type="button" aria-label="Open account menu">
+          <img id="headerAvatarImage" class="hidden" src="" alt="Profile photo" />
+          <div id="headerAvatarFallback" class="header-avatar-fallback hidden">A</div>
+        </button>
+
+        <div id="accountMenu" class="account-menu hidden">
+          <div class="account-menu-actions">
+            <a id="accountProfileLink" class="metal-btn account-menu-link hidden" href="edit-profile.html">Profile</a>
+            <button id="logout" class="metal-btn" type="button"><span class="icon">⎋</span>Log out</button>
+          </div>
+        </div>
+      </div>
+    </header>
+  </div>
+
+  <div class="site-shell">
+    <div class="auth-panel-wrap">
+      <div id="authBox" class="auth-box hidden">
+        <h3>Log in</h3>
+
+        <div class="auth-inputs">
+          <input id="email" type="email" placeholder="Email" autocomplete="email" />
+          <input id="password" type="password" placeholder="Password" autocomplete="current-password" />
+        </div>
+
+        <div class="auth-row">
+          <button id="signup" class="metal-btn" type="button"><span class="icon">✦</span>Sign up</button>
+          <button id="login" class="metal-btn" type="button"><span class="icon">↳</span>Log in</button>
+        </div>
+      </div>
+
+      <div id="userBox" class="hidden">
+        <a id="profileLink" href="#" title="Open artist page" class="hidden"></a>
+      </div>
+
+      <div id="authMessage" class="auth-message"></div>
+    </div>
+
+    <main class="page-wrap">
+      <section class="hero-card">
+        <div class="section-kicker">Profile Settings</div>
+        <h1 class="page-title">Edit Your Artist Profile</h1>
+        <p class="page-note">
+          Update your artist details, profile photo and preferences while keeping your public profile current.
+        </p>
+      </section>
+
+      <section class="panel-card">
+        <div id="loginRequiredBox" class="notice-box hidden">
+          You need to be logged in before editing your artist profile.
+        </div>
+
+        <div id="profileMissingBox" class="notice-box hidden">
+          You do not have an artist profile yet.
+          <div class="sub-link-row" style="margin-top: 12px;">
+            <a class="ghost-link" href="join.html">Create Artist Profile</a>
+          </div>
+        </div>
+
+        <div class="form-grid hidden" id="editFormWrap">
+          <div class="field-group">
+            <label class="field-label" for="artistName">(Artist)name</label>
+            <input id="artistName" class="field-input" type="text" placeholder="Enter your (artist)name" />
+          </div>
+
+          <div class="field-group">
+            <label class="field-label" for="bio">Short Bio</label>
+            <textarea id="bio" class="field-textarea" placeholder="Tell listeners something about yourself"></textarea>
+          </div>
+
+          <div class="field-group">
+            <label class="field-label" for="nationality">Nationality</label>
+            <select id="nationality" class="field-select">
+              <option value="">Select your nationality</option>
+            </select>
+          </div>
+
+          <div class="field-group field-group-wide">
+            <label class="field-label">Musical role</label>
+            <div id="musicRolesWrap" class="role-list"></div>
+            <button id="addRoleBtn" class="ghost-link add-role-btn" type="button">+ Add role</button>
+            <div class="form-meta">Optional. Choose one or more roles. Select none if you do not want to show a role.</div>
+          </div>
+
+          <div class="field-group">
+            <label class="field-label" for="city">City</label>
+            <input id="city" class="field-input" type="text" placeholder="Your city" />
+          </div>
+
+          <div class="field-group">
+            <label class="field-label" for="dateOfBirth">Date of Birth</label>
+            <input id="dateOfBirth" class="field-input" type="date" />
+          </div>
+
+          <div class="field-group toggle-field-group">
+            <label class="field-label" for="showRoleOnArtistPage">Show role on artist page</label>
+            <label class="toggle-switch" for="showRoleOnArtistPage">
+              <input id="showRoleOnArtistPage" type="checkbox" />
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+
+          <div class="field-group toggle-field-group">
+            <label class="field-label" for="showCityOnArtistPage">Show city on artist page</label>
+            <label class="toggle-switch" for="showCityOnArtistPage">
+              <input id="showCityOnArtistPage" type="checkbox" />
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+
+          <div class="field-group toggle-field-group">
+            <label class="field-label" for="showBirthOnArtistPage">Show date of birth on artist page</label>
+            <label class="toggle-switch" for="showBirthOnArtistPage">
+              <input id="showBirthOnArtistPage" type="checkbox" />
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+
+          <div class="field-group">
+            <label class="field-label" for="socialLink">Social / Streaming Link</label>
+            <input id="socialLink" class="field-input" type="text" placeholder="https://..." />
+          </div>
+
+          <div class="field-group">
+            <label class="field-label" for="photoFile">Artist Photo</label>
+            <input id="photoFile" class="field-file" type="file" accept="image/jpeg,image/png,image/webp" />
+            <div class="form-meta">Accepted: JPG, PNG or WebP. Leave empty to keep your current photo.</div>
+          </div>
+
+          <div class="field-group">
+            <label class="field-label">Promotions</label>
+            <label class="checkbox-row" for="wantsPromotions">
+              <input id="wantsPromotions" type="checkbox" />
+              <span class="checkbox-copy">Keep me updated on promotions and platform updates.</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="action-row hidden" id="actionRow">
+          <button id="saveProfileBtn" class="submit-link" type="button">Save Profile</button>
+        </div>
+
+        <div id="status" class="status-box"></div>
+
+        <div class="sub-link-row">
+          <a class="ghost-link" href="index.html">Back to homepage</a>
+          <a class="ghost-link" id="viewArtistLink" href="#">View artist page</a>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="assets/js/edit-profile.js"></script>
+  <script src="assets/js/radio-mini-player.js"></script>
+</body>
+</html>

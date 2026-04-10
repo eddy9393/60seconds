@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>60seconds Admin</title>
+
+  <style>
+    :root {
+      --bg: #0b0b0b;
+      --card: #151515;
+      --card-2: rgba(255,255,255,0.02);
+      --text: #ffffff;
+      --muted: #b9b9b9;
+      --muted-2: #888;
+      --gold: #d4af37;
+      --gold-light: #f4d77a;
+      --danger: #ff8a8a;
+      --border: rgba(255,255,255,0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at top, rgba(212, 175, 55, 0.08), transparent 28%),
+        linear-gradient(180deg, #090909 0%, #0b0b0b 100%);
+      color: var(--text);
+      font-family: Arial, sans-serif;
+      padding: 30px 20px 60px;
+      text-align: center;
+    }
+
+    h1 {
+      color: var(--gold);
+      margin: 0 0 10px;
+      letter-spacing: 0.3px;
+    }
+
+    .top-links {
+      margin-bottom: 20px;
+    }
+
+    .top-links a {
+      display: inline-block;
+      margin: 0 6px;
+      color: var(--gold);
+      text-decoration: none;
+      border: 1px solid rgba(255, 215, 0, 0.4);
+      padding: 10px 16px;
+      border-radius: 999px;
+      transition: transform 0.15s ease, opacity 0.15s ease, background 0.15s ease;
+    }
+
+    .top-links a:hover {
+      transform: translateY(-1px);
+      background: rgba(255, 215, 0, 0.06);
+    }
+
+    .card {
+      background: var(--card);
+      border-radius: 20px;
+      padding: 24px;
+      max-width: 960px;
+      margin: 20px auto;
+      text-align: left;
+      border: 1px solid rgba(255,255,255,0.04);
+      box-shadow: 0 18px 40px rgba(0,0,0,0.28);
+    }
+
+    .track {
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 18px;
+      margin-bottom: 16px;
+      background: var(--card-2);
+    }
+
+    .track:last-child {
+      margin-bottom: 0;
+    }
+
+    .track h3 {
+      margin: 0 0 8px;
+      color: var(--gold);
+      font-size: 20px;
+      line-height: 1.2;
+    }
+
+    .track p {
+      margin: 6px 0;
+      color: #ddd;
+      line-height: 1.5;
+      word-break: break-word;
+    }
+
+    .meta {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    audio {
+      width: 100%;
+      margin: 14px 0 12px;
+    }
+
+    button {
+      padding: 12px 18px;
+      border-radius: 999px;
+      border: none;
+      cursor: pointer;
+      margin-right: 8px;
+      font-weight: bold;
+      transition: transform 0.15s ease, filter 0.15s ease, opacity 0.15s ease;
+    }
+
+    button:hover:not(:disabled) {
+      transform: translateY(-1px);
+      filter: brightness(1.03);
+    }
+
+    button:disabled {
+      opacity: 0.7;
+      cursor: default;
+      transform: none;
+    }
+
+    .gold {
+      background:
+        linear-gradient(180deg, #fff5c9 0%, #f4d77a 20%, #d4af37 52%, #b98816 75%, #7c5a11 100%);
+      color: black;
+      box-shadow:
+        inset 0 2px 0 rgba(255,255,255,0.35),
+        inset 0 -2px 4px rgba(90,50,0,0.22),
+        0 10px 20px rgba(0,0,0,0.22);
+    }
+
+    #status,
+    #debug {
+      max-width: 960px;
+      margin: 12px auto;
+      min-height: 20px;
+    }
+
+    #status {
+      color: #ddd;
+      font-size: 15px;
+    }
+
+    #debug {
+      color: var(--muted-2);
+      font-size: 13px;
+    }
+
+    .empty {
+      color: #999;
+      text-align: center;
+      padding: 20px 0;
+    }
+
+    .locked {
+      max-width: 700px;
+      margin: 40px auto;
+      background: var(--card);
+      border-radius: 20px;
+      padding: 30px;
+      text-align: center;
+      border: 1px solid rgba(255,255,255,0.04);
+      box-shadow: 0 18px 40px rgba(0,0,0,0.28);
+    }
+
+    .locked h2 {
+      color: var(--gold);
+      margin-top: 0;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .loading-card {
+      max-width: 960px;
+      margin: 20px auto;
+      background: var(--card);
+      border-radius: 20px;
+      padding: 24px;
+      border: 1px solid rgba(255,255,255,0.04);
+      box-shadow: 0 18px 40px rgba(0,0,0,0.28);
+    }
+
+    .loading-text {
+      color: var(--muted);
+    }
+
+    @media (max-width: 680px) {
+      body {
+        padding: 24px 14px 44px;
+      }
+
+      .card,
+      .loading-card,
+      .locked {
+        padding: 18px;
+      }
+
+      .top-links a {
+        margin: 4px;
+      }
+
+      .track h3 {
+        font-size: 18px;
+      }
+
+      button {
+        width: 100%;
+        margin-right: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <h1>60seconds Admin</h1>
+
+  <div class="top-links">
+    <a href="index.html">Homepage</a>
+    <a href="join.html">Join page</a>
+  </div>
+
+  <div id="lockedBox" class="locked hidden">
+    <h2>Access denied</h2>
+    <p>You do not have permission to view this admin page.</p>
+    <p>Please log in with the admin account.</p>
+  </div>
+
+  <div id="loadingBox" class="loading-card">
+    <div class="loading-text">Checking admin access...</div>
+  </div>
+
+  <div id="adminApp" class="hidden">
+    <div id="status">Loading pending tracks...</div>
+    <div id="debug"></div>
+
+    <div class="card">
+      <div id="trackList"></div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <script>
+    const ADMIN_EMAIL = "kroonstadt.earvin@gmail.com";
+
+    const supabaseClient = window.supabase.createClient(
+      "https://rgoutegbcpjytplqcwze.supabase.co",
+      "sb_publishable_255qyDKS77nMU0pbedfa_A_3hdgtEHh"
+    );
+
+    const statusEl = document.getElementById("status");
+    const debugEl = document.getElementById("debug");
+    const trackListEl = document.getElementById("trackList");
+    const lockedBoxEl = document.getElementById("lockedBox");
+    const adminAppEl = document.getElementById("adminApp");
+    const loadingBoxEl = document.getElementById("loadingBox");
+
+    let currentUser = null;
+    let isApproving = false;
+    let hasInitialized = false;
+
+    function setStatus(msg, isError = false) {
+      statusEl.textContent = msg;
+      statusEl.style.color = isError ? "#ff8a8a" : "#ddd";
+      console.log(msg);
+    }
+
+    function setDebug(msg) {
+      debugEl.textContent = msg;
+      console.log("DEBUG:", msg);
+    }
+
+    function showLoading(message = "Loading...") {
+      loadingBoxEl.classList.remove("hidden");
+      loadingBoxEl.innerHTML = `<div class="loading-text">${escapeHtml(message)}</div>`;
+      lockedBoxEl.classList.add("hidden");
+      adminAppEl.classList.add("hidden");
+    }
+
+    function showLocked() {
+      loadingBoxEl.classList.add("hidden");
+      lockedBoxEl.classList.remove("hidden");
+      adminAppEl.classList.add("hidden");
+    }
+
+    function showAdmin() {
+      loadingBoxEl.classList.add("hidden");
+      lockedBoxEl.classList.add("hidden");
+      adminAppEl.classList.remove("hidden");
+    }
+
+    function isAdminUser(user) {
+      return Boolean(
+        user &&
+        user.email &&
+        user.email.toLowerCase() === ADMIN_EMAIL.toLowerCase()
+      );
+    }
+
+    async function getFastSessionUser() {
+      const { data, error } = await supabaseClient.auth.getSession();
+
+      if (error) {
+        setDebug("getSession error: " + error.message);
+        return null;
+      }
+
+      return data?.session?.user || null;
+    }
+
+    async function validateUserFallback() {
+      const { data, error } = await supabaseClient.auth.getUser();
+
+      if (error) {
+        setDebug("getUser error: " + error.message);
+        return null;
+      }
+
+      return data?.user || null;
+    }
+
+    async function checkAdminAccess() {
+      setDebug("Checking logged-in user...");
+
+      let user = await getFastSessionUser();
+
+      if (!user) {
+        setDebug("No session user found, checking with getUser...");
+        user = await validateUserFallback();
+      }
+
+      currentUser = user;
+
+      if (!user) {
+        showLocked();
+        return false;
+      }
+
+      if (!isAdminUser(user)) {
+        showLocked();
+        return false;
+      }
+
+      showAdmin();
+      return true;
+    }
+
+    async function loadPendingTracks() {
+      if (!currentUser || !isAdminUser(currentUser)) {
+        showLocked();
+        return;
+      }
+
+      setStatus("Loading pending tracks...");
+      setDebug("Loading pending tracks from Supabase...");
+
+      const { data, error } = await supabaseClient
+        .from("tracks")
+        .select("id, title, artist, file_url, status, created_at")
+        .eq("status", "pending")
+        .order("created_at", { ascending: false });
+
+      if (error) {
+        setStatus("Error loading tracks: " + error.message, true);
+        return;
+      }
+
+      renderTracks(data || []);
+    }
+
+    function renderTracks(tracks) {
+      trackListEl.innerHTML = "";
+
+      if (!tracks.length) {
+        trackListEl.innerHTML = `<div class="empty">No pending tracks right now.</div>`;
+        setStatus("No pending tracks found.");
+        return;
+      }
+
+      setStatus(`${tracks.length} pending track(s) found.`);
+
+      tracks.forEach(track => {
+        const createdAt = track.created_at
+          ? new Date(track.created_at).toLocaleString()
+          : "Unknown";
+
+        const div = document.createElement("div");
+        div.className = "track";
+        div.innerHTML = `
+          <h3>${escapeHtml(track.title || "Untitled")}</h3>
+          <p><strong>Artist:</strong> ${escapeHtml(track.artist || "Unknown")}</p>
+          <p><strong>Status:</strong> ${escapeHtml(track.status || "Unknown")}</p>
+          <p><strong>ID:</strong> ${escapeHtml(track.id)}</p>
+          <p class="meta"><strong>Submitted:</strong> ${escapeHtml(createdAt)}</p>
+          <audio controls preload="none" src="${escapeHtml(track.file_url || "")}"></audio>
+          <div>
+            <button class="gold" data-id="${escapeHtml(track.id)}" data-action="approve">Approve</button>
+          </div>
+        `;
+        trackListEl.appendChild(div);
+      });
+
+      wireButtons();
+    }
+
+    function wireButtons() {
+      const buttons = document.querySelectorAll("button[data-action='approve']");
+
+      buttons.forEach(button => {
+        button.addEventListener("click", async () => {
+          if (isApproving) return;
+
+          const id = button.getAttribute("data-id");
+          await approveTrack(id, button);
+        });
+      });
+    }
+
+    async function approveTrack(trackId, buttonEl) {
+      if (!trackId) return;
+
+      isApproving = true;
+
+      const originalText = buttonEl ? buttonEl.textContent : "Approve";
+
+      if (buttonEl) {
+        buttonEl.disabled = true;
+        buttonEl.textContent = "Approving...";
+      }
+
+      setStatus("Approving track...");
+      setDebug("Updating status to approved for track " + trackId);
+
+      const { error } = await supabaseClient
+        .from("tracks")
+        .update({ status: "approved" })
+        .eq("id", trackId);
+
+      if (error) {
+        setStatus("Approve failed: " + error.message, true);
+
+        if (buttonEl) {
+          buttonEl.disabled = false;
+          buttonEl.textContent = originalText;
+        }
+
+        isApproving = false;
+        return;
+      }
+
+      setStatus("Track approved ✅");
+      await loadPendingTracks();
+      isApproving = false;
+    }
+
+    function escapeHtml(str) {
+      return String(str ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    async function init() {
+      showLoading("Checking admin access...");
+
+      const hasAccess = await checkAdminAccess();
+
+      if (!hasAccess) {
+        console.log("Admin access denied");
+        hasInitialized = true;
+        return;
+      }
+
+      await loadPendingTracks();
+      hasInitialized = true;
+    }
+
+    supabaseClient.auth.onAuthStateChange(async (_event, session) => {
+      const user = session?.user || null;
+      currentUser = user;
+
+      if (!hasInitialized) return;
+
+      if (!user || !isAdminUser(user)) {
+        showLocked();
+        return;
+      }
+
+      showAdmin();
+      await loadPendingTracks();
+    });
+
+    init();
+  </script>
+
+  <script src="assets/js/radio-mini-player.js"></script>
+</body>
+</html>
