@@ -370,6 +370,16 @@ function pauseSharedRadioPlayback() {
   }
 }
 
+function bindRadioNavigationPause() {
+  const radioLinks = Array.from(document.querySelectorAll('a[href="index.html"], a[href="/"]'));
+
+  radioLinks.forEach((link) => {
+    link.addEventListener('click', () => {
+      stopCurrentAudio();
+    });
+  });
+}
+
 function stopCurrentAudio() {
   if (state.currentPreviewInterval) {
     clearInterval(state.currentPreviewInterval);
@@ -678,6 +688,8 @@ async function refreshWholePage() {
 }
 
 function bindEvents() {
+  bindRadioNavigationPause();
+
   els.header.showLoginBtn.onclick = () => {
     closeHeaderPanels();
   };
