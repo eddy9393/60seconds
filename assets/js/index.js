@@ -245,7 +245,7 @@ async function loadNewsFeed() {
       supabaseClient
         .from("public_artist_profiles")
         .select("artist_name, daily_seconds_earned, daily_seconds_earned_date, user_id, photo_url")
-        .gte("daily_seconds_earned", 10)
+        .gte("daily_seconds_earned", DAILY_SECONDS_LIMIT)
         .eq("daily_seconds_earned_date", todayKey)
         .limit(12),
       supabaseClient
@@ -864,8 +864,8 @@ async function awardListeningSecond() {
   updateEarnSecondsProgress();
   broadcastCurrencyUpdate(state.currentCoins, state.dailySecondsEarned);
 
-  if (state.dailySecondsEarned >= 10) {
-    loadNewsFeed().catch((err) => console.error("loadNewsFeed after award error:", err));
+  if (state.dailySecondsEarned >= DAILY_SECONDS_LIMIT) {
+    await loadNewsFeed().catch((err) => console.error("loadNewsFeed threshold refresh error:", err));
   }
 
   return true;
@@ -1034,13 +1034,15 @@ function renderArtist(track) {
 
   if (track.user_id) {
     els.artistEl.outerHTML = `
-      <a id="artist" class="artist-link" href="artist.html?user_id=${encodeURIComponent(track.user_id)}">${escapeHtml(track.artist)}${getFlagMarkup(track.nationality)}</a>
+      <a id="artist" class="artist-link" href="artist.html?user_id=${encodeURIComponent(track.user_id)}">
+        ${escapeHtml(track.artist)} ${getFlagMarkup(track.nationality)}
+      </a>
     `;
     els.artistEl = document.getElementById("artist");
     return;
   }
 
-  els.artistEl.outerHTML = `<span id="artist">${escapeHtml(track.artist)}${getFlagMarkup(track.nationality)}</span>`;
+  els.artistEl.outerHTML = `<span id="artist">${escapeHtml(track.artist)} ${getFlagMarkup(track.nationality)}</span>`;
   els.artistEl = document.getElementById("artist");
 }
 
