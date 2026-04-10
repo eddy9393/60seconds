@@ -244,9 +244,8 @@ async function loadNewsFeed() {
         .limit(12),
       supabaseClient
         .from("public_artist_profiles")
-        .select("artist_name, user_id, photo_url, hit_daily_support_goal, hit_daily_support_goal_date")
-        .eq("hit_daily_support_goal", true)
-        .eq("hit_daily_support_goal_date", todayKey)
+        .select("artist_name, user_id, photo_url, hit_daily_support_goal, hit_daily_support_goal_date, daily_seconds_earned, daily_seconds_earned_date")
+        .or(`and(hit_daily_support_goal.eq.true,hit_daily_support_goal_date.eq.${todayKey}),and(daily_seconds_earned.gte.${DAILY_SECONDS_LIMIT},daily_seconds_earned_date.eq.${todayKey})`)
         .limit(12),
       supabaseClient
         .from("public_artist_profiles")
@@ -1042,7 +1041,7 @@ function renderArtist(track) {
     return;
   }
 
-  els.artistEl.outerHTML = `<span id="artist">${escapeHtml(track.artist)} ${getFlagMarkup(track.nationality)}</span>`;
+  els.artistEl.outerHTML = `<span id="artist" class="artist-inline">${getFlagMarkup(track.nationality)}<span class="artist-name-text">${escapeHtml(track.artist)}</span></span>`;
   els.artistEl = document.getElementById("artist");
 }
 
