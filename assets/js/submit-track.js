@@ -1,7 +1,4 @@
-const supabaseClient = window.supabase.createClient(
-  "https://rgoutegbcpjytplqcwze.supabase.co",
-  "sb_publishable_255qyDKS77nMU0pbedfa_A_3hdgtEHh"
-);
+const supabaseClient = window.SSFMApp.getSupabaseClient();
 
 const GENRE_OPTIONS = [
   "Afrobeats", "Alternative", "Ambient", "Amapiano", "Classical", "Country",

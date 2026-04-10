@@ -19,10 +19,7 @@ window.addEventListener("ssfm:coins-updated", () => {
   applyRuntimeCurrencySnapshot();
 });
 
-const supabaseClient = window.supabase.createClient(
-  "https://rgoutegbcpjytplqcwze.supabase.co",
-  "sb_publishable_255qyDKS77nMU0pbedfa_A_3hdgtEHh"
-);
+const supabaseClient = window.SSFMApp.getSupabaseClient();
 
 const COUNTRY_OPTIONS = [
   "Afghanistan","Albania","Algeria","Andorra","Angola","Antigua and Barbuda","Argentina","Armenia","Australia","Austria",

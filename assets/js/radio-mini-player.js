@@ -3,10 +3,7 @@
   if (pageName === 'index.html' || pageName === '') return;
   if (!window.supabase) return;
 
-  const supabaseClient = window.supabase.createClient(
-    "https://rgoutegbcpjytplqcwze.supabase.co",
-    "sb_publishable_255qyDKS77nMU0pbedfa_A_3hdgtEHh"
-  );
+  const supabaseClient = window.SSFMApp.getSupabaseClient();
 
   const SESSION_KEY = 'ssfm_radio_session_v2';
   const VOLUME_KEY = 'ssfm_radio_volume_v2';
