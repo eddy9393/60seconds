@@ -302,7 +302,7 @@ async function fetchArtistProfile(userId) {
 async function fetchApprovedTracks(userId) {
   const { data, error } = await supabaseClient
     .from("tracks")
-    .select("id, title, artist, file_url, created_at, status, user_id, preview_start_seconds, preview_duration_seconds, genre_primary, genre_secondary, feeling_tags")
+    .select("id, title, artist, file_url, created_at, status, user_id, preview_start_seconds, preview_duration_seconds, genre_primary, genre_secondary, feeling_tags, artist_page_full_track")
     .eq("user_id", userId)
     .eq("status", "approved")
     .order("created_at", { ascending: false });
@@ -567,6 +567,7 @@ function buildTrackCard(track) {
   const createdAtLabel = formatDate(track.created_at);
   const previewStart = Math.max(0, Number(track.preview_start_seconds || 0));
   const previewDuration = Math.max(1, Math.min(60, Number(track.preview_duration_seconds || 60)));
+  const allowFullTrack = Boolean(track.artist_page_full_track);
   const genrePills = [];
 
   if (track.genre_primary) genrePills.push(track.genre_primary);
@@ -593,7 +594,7 @@ function buildTrackCard(track) {
       </div>
 
       <div class="track-meta-row">
-        <div class="mini-pill">Preview: ${formatTime(previewStart)} - ${formatTime(previewStart + previewDuration)}</div>
+        <div class="mini-pill">${allowFullTrack ? "Playback: Full track" : `Preview: ${formatTime(previewStart)} - ${formatTime(previewStart + previewDuration)}`}</div>
         ${createdAtLabel ? `<div class="mini-pill">Submitted: ${escapeHtml(createdAtLabel)}</div>` : ""}
         ${genrePills.map((genre) => `<div class="mini-pill">Genre: ${escapeHtml(genre)}</div>`).join("")}
         ${feelingTags.map((tag) => `<div class="mini-pill">#${escapeHtml(tag)}</div>`).join("")}
@@ -627,18 +628,22 @@ function buildTrackCard(track) {
       state.currentProgressBar = progressBar;
       state.currentTimeLabel = timeLabel;
 
-      audio.currentTime = previewStart;
+      const playbackStart = allowFullTrack ? 0 : previewStart;
+      audio.currentTime = playbackStart;
       await audio.play();
       playBtn.textContent = "❚❚";
 
       state.currentPreviewInterval = setInterval(() => {
-        const elapsed = Math.max(0, audio.currentTime - previewStart);
-        const percent = Math.min((elapsed / previewDuration) * 100, 100);
+        const elapsed = Math.max(0, audio.currentTime - playbackStart);
+        const activeDuration = allowFullTrack
+          ? Math.max(1, Math.floor(audio.duration || 0))
+          : previewDuration;
+        const percent = Math.min((elapsed / activeDuration) * 100, 100);
 
         progressBar.style.width = `${percent}%`;
         timeLabel.textContent = formatTime(elapsed);
 
-        if (audio.currentTime >= previewStart + previewDuration) {
+        if (!allowFullTrack && audio.currentTime >= previewStart + previewDuration) {
           stopCurrentAudio();
         }
       }, 120);

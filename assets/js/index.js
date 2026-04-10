@@ -1158,11 +1158,15 @@ async function registerListener() {
 
 async function updateListeners() {
   try {
+    if (state.isLiveActivated) {
+      await registerListener();
+    }
+
     const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000).toISOString();
 
     const { count, error } = await supabaseClient
       .from("listeners")
-      .select("*", { count: "exact", head: true })
+      .select("id", { count: "exact", head: true })
       .gt("last_seen", fiveMinutesAgo);
 
     if (error) {

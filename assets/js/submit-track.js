@@ -65,7 +65,11 @@ const els = {
     genrePrimaryInput: document.getElementById("genrePrimary"),
     genreSecondaryInput: document.getElementById("genreSecondary"),
     feelingsGrid: document.getElementById("feelingsGrid"),
+    feelingsDropdown: document.getElementById("feelingsDropdown"),
+    feelingsToggleBtn: document.getElementById("feelingsToggleBtn"),
+    feelingsDropdownMenu: document.getElementById("feelingsDropdownMenu"),
     feelingsCounter: document.getElementById("feelingsCounter"),
+    artistPageFullTrackInput: document.getElementById("artistPageFullTrack"),
     aiDetailsWrap: document.getElementById("aiDetailsWrap"),
     aiDetailsInput: document.getElementById("aiDetails"),
     rightsConfirmedInput: document.getElementById("rightsConfirmed"),
@@ -177,6 +181,12 @@ function getSelectedFeelings() {
   return Array.from(document.querySelectorAll(".feeling-checkbox:checked")).map((el) => el.value);
 }
 
+function updateFeelingsDropdownButton() {
+  if (!els.form.feelingsToggleBtn) return;
+  const selected = getSelectedFeelings();
+  els.form.feelingsToggleBtn.textContent = selected.length ? selected.join(", ") : "Select up to 2 feelings";
+}
+
 function getSelectedAiUsage() {
   const selected = document.querySelector('input[name="aiUsage"]:checked');
   return selected ? selected.value : "";
@@ -185,6 +195,7 @@ function getSelectedAiUsage() {
 function updateFeelingsCounter() {
   const selected = getSelectedFeelings();
   setText(els.form.feelingsCounter, `${selected.length} / 2 selected`);
+  updateFeelingsDropdownButton();
 }
 
 function enforceFeelingLimit(changedInput) {
@@ -210,11 +221,12 @@ function populateGenreSelects() {
 }
 
 function renderFeelingOptions(selectedValues = []) {
-  els.form.feelingsGrid.innerHTML = "";
+  if (!els.form.feelingsDropdownMenu) return;
+  els.form.feelingsDropdownMenu.innerHTML = "";
 
   FEELING_OPTIONS.forEach((feeling) => {
     const label = document.createElement("label");
-    label.className = "check-card";
+    label.className = "feeling-dropdown-option";
     label.innerHTML = `
       <input type="checkbox" class="feeling-checkbox" value="${escapeHtml(feeling)}">
       <span>${escapeHtml(feeling)}</span>
@@ -224,7 +236,7 @@ function renderFeelingOptions(selectedValues = []) {
     checkbox.checked = selectedValues.includes(feeling);
     checkbox.addEventListener("change", () => enforceFeelingLimit(checkbox));
 
-    els.form.feelingsGrid.appendChild(label);
+    els.form.feelingsDropdownMenu.appendChild(label);
   });
 
   updateFeelingsCounter();
@@ -471,6 +483,9 @@ function fillTrackForm(track) {
 
   els.form.aiDetailsInput.value = track?.ai_details || "";
   els.form.rightsConfirmedInput.checked = Boolean(track?.rights_confirmed);
+  if (els.form.artistPageFullTrackInput) {
+    els.form.artistPageFullTrackInput.checked = Boolean(track?.artist_page_full_track);
+  }
   updateAiDetailsVisibility();
 
   const previewStart = Number(track?.preview_start_seconds || 0);
@@ -511,7 +526,7 @@ async function loadMyProfile(userId) {
 async function loadMyTrack(userId) {
   const { data, error } = await supabaseClient
     .from("tracks")
-    .select("id, user_id, title, artist, file_url, status, created_at, genre_primary, genre_secondary, feeling_tags, ai_usage, ai_details, rights_confirmed, preview_start_seconds, preview_duration_seconds")
+    .select("id, user_id, title, artist, file_url, status, created_at, genre_primary, genre_secondary, feeling_tags, ai_usage, ai_details, rights_confirmed, preview_start_seconds, preview_duration_seconds, artist_page_full_track")
     .eq("user_id", userId)
     .order("created_at", { ascending: false })
     .limit(1)
@@ -621,6 +636,7 @@ async function handleSaveTrack() {
   const aiUsage = getSelectedAiUsage();
   const aiDetails = els.form.aiDetailsInput.value.trim();
   const rightsConfirmed = els.form.rightsConfirmedInput.checked;
+  const artistPageFullTrack = Boolean(els.form.artistPageFullTrackInput?.checked);
 
   if (!state.currentUser) {
     setStatus("You must be logged in before submitting a track.", true);
@@ -711,7 +727,8 @@ async function handleSaveTrack() {
       ai_details: aiUsage === "partial" ? (aiDetails || null) : null,
       rights_confirmed: rightsConfirmed,
       preview_start_seconds: safePreviewStart,
-      preview_duration_seconds: effectivePreviewDuration
+      preview_duration_seconds: effectivePreviewDuration,
+      artist_page_full_track: artistPageFullTrack
     };
 
     if (state.currentTrackData?.id) {
@@ -857,6 +874,12 @@ function bindEvents() {
   });
 
   els.form.trackFileInput.addEventListener("change", handleTrackFileChange);
+  if (els.form.feelingsToggleBtn) {
+    els.form.feelingsToggleBtn.addEventListener("click", () => {
+      els.form.feelingsDropdownMenu.classList.toggle("hidden");
+      els.form.feelingsToggleBtn.setAttribute("aria-expanded", String(!els.form.feelingsDropdownMenu.classList.contains("hidden")));
+    });
+  }
   els.clip.clipStartSlider.addEventListener("input", handleClipSliderInput);
   els.clip.clipPlayBtn.addEventListener("click", handleClipPlay);
   els.clip.previewAudio.addEventListener("ended", stopPreviewPlayback);
@@ -864,9 +887,15 @@ function bindEvents() {
   document.addEventListener("click", (e) => {
     const insideHeaderRight = e.target.closest(".header-right");
     const isAvatarButton = e.target.closest("#headerAvatarBtn");
+    const insideFeelingsDropdown = e.target.closest("#feelingsDropdown");
 
     if (!insideHeaderRight && !isAvatarButton) {
       setHidden(els.header.accountMenu, true);
+    }
+
+    if (!insideFeelingsDropdown && els.form.feelingsDropdownMenu) {
+      els.form.feelingsDropdownMenu.classList.add("hidden");
+      els.form.feelingsToggleBtn?.setAttribute("aria-expanded", "false");
     }
   });
 
