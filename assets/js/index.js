@@ -245,7 +245,7 @@ async function loadNewsFeed() {
       supabaseClient
         .from("public_artist_profiles")
         .select("artist_name, daily_seconds_earned, daily_seconds_earned_date, user_id, photo_url")
-        .eq("daily_seconds_earned", 10)
+        .gte("daily_seconds_earned", 10)
         .eq("daily_seconds_earned_date", todayKey)
         .limit(12),
       supabaseClient
@@ -334,9 +334,7 @@ function getFlagEmoji(countryName) {
 }
 
 function getFlagMarkup(countryName) {
-  const flag = getFlagEmoji(countryName);
-  if (!flag) return "";
-  return `<span class="artist-flag" aria-hidden="true">${flag}</span>`;
+  return "";
 }
 
 function escapeHtml(str) {
@@ -856,6 +854,8 @@ async function awardListeningSecond() {
     return false;
   }
 
+  const previousDailySecondsEarned = Number(state.dailySecondsEarned) || 0;
+
   state.currentCoins = Number(data.coins) || 0;
   state.dailySecondsEarned = Number(data.daily_seconds_earned) || 0;
   state.dailySecondsEarnedDate = getTodayDateKey();
@@ -863,6 +863,11 @@ async function awardListeningSecond() {
   setCurrency(state.currentCoins);
   updateEarnSecondsProgress();
   broadcastCurrencyUpdate(state.currentCoins, state.dailySecondsEarned);
+
+  if (state.dailySecondsEarned >= 10 || previousDailySecondsEarned < 10) {
+    loadNewsFeed().catch((err) => console.error("loadNewsFeed after reward error:", err));
+  }
+
   return true;
 }
 
@@ -1027,19 +1032,17 @@ async function loadTrackNationalities() {
 function renderArtist(track) {
   if (!els.artistEl) return;
 
-  const artistLabel = `${getFlagMarkup(track.nationality)}<span class="artist-name-text">${escapeHtml(track.artist)}</span>`;
-
   if (track.user_id) {
     els.artistEl.outerHTML = `
       <a id="artist" class="artist-link" href="artist.html?user_id=${encodeURIComponent(track.user_id)}">
-        ${artistLabel}
+        ${escapeHtml(track.artist)}
       </a>
     `;
     els.artistEl = document.getElementById("artist");
     return;
   }
 
-  els.artistEl.outerHTML = `<span id="artist">${artistLabel}</span>`;
+  els.artistEl.outerHTML = `<span id="artist">${escapeHtml(track.artist)}</span>`;
   els.artistEl = document.getElementById("artist");
 }
 
