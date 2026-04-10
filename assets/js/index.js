@@ -334,7 +334,9 @@ function getFlagEmoji(countryName) {
 }
 
 function getFlagMarkup(countryName) {
-  return "";
+  const flag = getFlagEmoji(countryName);
+  if (!flag) return "";
+  return `<span class="artist-flag" aria-label="${escapeHtml(countryName)}">${flag}</span>`;
 }
 
 function escapeHtml(str) {
@@ -854,8 +856,6 @@ async function awardListeningSecond() {
     return false;
   }
 
-  const previousDailySecondsEarned = Number(state.dailySecondsEarned) || 0;
-
   state.currentCoins = Number(data.coins) || 0;
   state.dailySecondsEarned = Number(data.daily_seconds_earned) || 0;
   state.dailySecondsEarnedDate = getTodayDateKey();
@@ -864,8 +864,8 @@ async function awardListeningSecond() {
   updateEarnSecondsProgress();
   broadcastCurrencyUpdate(state.currentCoins, state.dailySecondsEarned);
 
-  if (state.dailySecondsEarned >= 10 || previousDailySecondsEarned < 10) {
-    loadNewsFeed().catch((err) => console.error("loadNewsFeed after reward error:", err));
+  if (state.dailySecondsEarned >= 10) {
+    loadNewsFeed().catch((err) => console.error("loadNewsFeed after award error:", err));
   }
 
   return true;
@@ -1034,15 +1034,13 @@ function renderArtist(track) {
 
   if (track.user_id) {
     els.artistEl.outerHTML = `
-      <a id="artist" class="artist-link" href="artist.html?user_id=${encodeURIComponent(track.user_id)}">
-        ${escapeHtml(track.artist)}
-      </a>
+      <a id="artist" class="artist-link" href="artist.html?user_id=${encodeURIComponent(track.user_id)}">${escapeHtml(track.artist)}${getFlagMarkup(track.nationality)}</a>
     `;
     els.artistEl = document.getElementById("artist");
     return;
   }
 
-  els.artistEl.outerHTML = `<span id="artist">${escapeHtml(track.artist)}</span>`;
+  els.artistEl.outerHTML = `<span id="artist">${escapeHtml(track.artist)}${getFlagMarkup(track.nationality)}</span>`;
   els.artistEl = document.getElementById("artist");
 }
 
