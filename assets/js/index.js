@@ -155,24 +155,29 @@ function getNewsFeedInitial(name) {
 function getNewsFeedActorMarkup(item) {
   const href = getNewsFeedProfileHref(item);
   const safeName = escapeFeedHtml(item?.name || "Artist");
-  const avatar = item?.photo_url
-    ? `<img class="news-feed-avatar" src="${escapeFeedHtml(item.photo_url)}" alt="${safeName}" />`
-    : `<span class="news-feed-avatar-fallback">${escapeFeedHtml(getNewsFeedInitial(item?.name))}</span>`;
+  return `<a class="news-feed-actor" href="${href}"><span class="news-feed-name">${safeName}</span></a>`;
+}
 
-  return `<a class="news-feed-actor" href="${href}">${avatar}<span class="news-feed-name">${safeName}</span></a>`;
+function getNewsFeedAvatarMarkup(item) {
+  const safeName = escapeFeedHtml(item?.name || "Artist");
+  if (item?.photo_url) {
+    return `<a class="news-feed-item-avatar" href="${getNewsFeedProfileHref(item)}"><img class="news-feed-avatar" src="${escapeFeedHtml(item.photo_url)}" alt="${safeName}" /></a>`;
+  }
+  return `<a class="news-feed-item-avatar" href="${getNewsFeedProfileHref(item)}"><span class="news-feed-avatar-fallback">${escapeFeedHtml(getNewsFeedInitial(item?.name))}</span></a>`;
 }
 
 function buildNewsFeedText(item) {
   if (!item) return "";
   const actor = getNewsFeedActorMarkup(item);
+  const avatar = getNewsFeedAvatarMarkup(item);
 
   if (item.type === "join") {
-    return `${actor}<span class="news-feed-copy"> just joined 60 Seconds</span>`;
+    return `${avatar}<div class="news-feed-item-body"><span class="news-feed-copy">${actor} just joined 60 Seconds</span></div>`;
   }
   if (item.type === "approved_track") {
-    return `<span class="news-feed-copy"><span class="news-feed-track">${escapeFeedHtml(item.track_title || "Untitled")}</span> by ${actor} <span>is live!</span></span>`;
+    return `${avatar}<div class="news-feed-item-body"><span class="news-feed-copy"><span class="news-feed-track">${escapeFeedHtml(item.track_title || "Untitled")}</span> by ${actor} is live!</span></div>`;
   }
-  return `${actor}<span class="news-feed-copy"> supported 10 artists today</span>`;
+  return `${avatar}<div class="news-feed-item-body"><span class="news-feed-copy">${actor} supported 10 artists today</span></div>`;
 }
 
 function renderNewsFeedSlice() {
@@ -183,26 +188,32 @@ function renderNewsFeedSlice() {
     return;
   }
 
-  const items = [];
-  const count = Math.min(3, state.newsFeedItems.length);
+  const repeated = [];
+  const source = state.newsFeedItems.slice(0, Math.min(state.newsFeedItems.length, 12));
+  const copies = Math.max(3, Math.ceil(9 / Math.max(source.length, 1)));
 
-  for (let i = 0; i < count; i += 1) {
-    const item = state.newsFeedItems[(state.newsFeedIndex + i) % state.newsFeedItems.length];
-    items.push(`<div class="news-feed-item">${buildNewsFeedText(item)}</div>`);
+  for (let copyIndex = 0; copyIndex < copies; copyIndex += 1) {
+    source.forEach((item) => {
+      repeated.push(`<div class="news-feed-item">${buildNewsFeedText(item)}</div>`);
+    });
   }
 
-  els.newsFeedListEl.innerHTML = items.join("");
+  els.newsFeedListEl.innerHTML = repeated.join("");
 }
 
 function advanceNewsFeed() {
-  if (!els.newsFeedListEl || state.newsFeedItems.length <= 3) return;
-  els.newsFeedListEl.classList.add("is-shifting");
+  if (!els.newsFeedListEl || state.newsFeedItems.length <= 1) return;
 
-  setTimeout(() => {
-    state.newsFeedIndex = (state.newsFeedIndex + 1) % state.newsFeedItems.length;
-    renderNewsFeedSlice();
-    els.newsFeedListEl.classList.remove("is-shifting");
-  }, 360);
+  const firstItem = els.newsFeedListEl.querySelector(".news-feed-item");
+  if (!firstItem) return;
+
+  const itemHeight = firstItem.offsetHeight || 56;
+  const totalSourceItems = Math.min(state.newsFeedItems.length, 12);
+  const totalCycleHeight = itemHeight * totalSourceItems;
+
+  state.newsFeedIndex += 0.2;
+  const translateY = -(state.newsFeedIndex % totalCycleHeight);
+  els.newsFeedListEl.style.transform = `translateY(${translateY}px)`;
 }
 
 async function loadNewsFeed() {
@@ -219,7 +230,7 @@ async function loadNewsFeed() {
 
     const [profilesRes, approvedTracksRes, supportersRes, trackArtistsRes] = await Promise.all([
       supabaseClient
-        .from("profiles")
+        .from("public_artist_profiles")
         .select("artist_name, created_at, user_id, photo_url")
         .not("artist_name", "is", null)
         .order("created_at", { ascending: false })
@@ -231,13 +242,13 @@ async function loadNewsFeed() {
         .order("created_at", { ascending: false })
         .limit(12),
       supabaseClient
-        .from("profiles")
+        .from("public_artist_profiles")
         .select("artist_name, daily_seconds_earned, daily_seconds_earned_date, user_id, photo_url")
         .eq("daily_seconds_earned", 10)
         .eq("daily_seconds_earned_date", todayKey)
         .limit(12),
       supabaseClient
-        .from("profiles")
+        .from("public_artist_profiles")
         .select("user_id, photo_url")
         .limit(100)
     ]);
@@ -291,8 +302,8 @@ async function loadNewsFeed() {
     renderNewsFeedSlice();
 
     clearNewsFeedTimers();
-    if (state.newsFeedItems.length > 3) {
-      state.newsFeedTimer = setInterval(advanceNewsFeed, 10000);
+    if (state.newsFeedItems.length > 1) {
+      state.newsFeedTimer = setInterval(advanceNewsFeed, 40);
     }
     state.newsFeedRefreshTimer = setInterval(() => {
       loadNewsFeed().catch((err) => console.error("loadNewsFeed refresh error:", err));
