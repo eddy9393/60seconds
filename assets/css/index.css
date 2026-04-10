@@ -838,7 +838,10 @@ img {
 .artist-link {
   color: var(--gold);
   text-decoration: none;
-  border-bottom: 1px solid rgba(212,175,55,0.32);
+  border-bottom: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .artist-link:hover {
@@ -2108,7 +2111,13 @@ img {
 }
 
 .artist-flag {
-  display: none !important;
+  display: inline-block !important;
+  line-height: 1;
+  font-size: 0.95em;
+}
+
+.artist-name-text {
+  line-height: 1;
 }
 
 
