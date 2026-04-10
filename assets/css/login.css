@@ -548,8 +548,8 @@ img {
       linear-gradient(180deg, rgba(7, 7, 7, 0.50) 0%, rgba(7, 7, 7, 0.76) 42%, rgba(7, 7, 7, 0.86) 100%),
       radial-gradient(circle at top, rgba(212, 175, 55, 0.12), transparent 26%),
       url("../../bg-mobile-final-1080x1920.webp");
-    background-size: cover, auto, 100% auto;
-    background-position: center top, center top, center top;
+    background-size: cover, auto, cover;
+    background-position: center top, center top, center center;
     background-repeat: no-repeat, no-repeat, no-repeat;
     background-attachment: scroll, scroll, scroll;
   }
