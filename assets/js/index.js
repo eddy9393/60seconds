@@ -976,7 +976,7 @@ async function refreshAuthDependentUI() {
 async function loadTracksFromSupabase() {
   const { data, error } = await supabaseClient
     .from("tracks")
-    .select("id, title, artist, file_url, user_id, play_count, status, created_at, preview_start_seconds, preview_duration_seconds, genre_primary, genre_secondary, nationality")
+    .select("id, title, artist, file_url, user_id, play_count, status, created_at, preview_start_seconds, preview_duration_seconds, genre_primary, genre_secondary")
     .eq("status", "approved")
     .order("created_at", { ascending: false });
 
@@ -997,7 +997,7 @@ async function loadTracksFromSupabase() {
     preview_duration_seconds: track.preview_duration_seconds,
     genre_primary: track.genre_primary || null,
     genre_secondary: track.genre_secondary || null,
-    nationality: track.nationality || null
+    nationality: null
   }));
 }
 
