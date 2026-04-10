@@ -143,15 +143,36 @@ function escapeFeedHtml(value) {
   return escapeHtml(value || "");
 }
 
+function getNewsFeedProfileHref(item) {
+  if (!item?.user_id) return "javascript:void(0)";
+  return `artist.html?user_id=${encodeURIComponent(item.user_id)}`;
+}
+
+function getNewsFeedInitial(name) {
+  return String(name || "A").trim().charAt(0).toUpperCase() || "A";
+}
+
+function getNewsFeedActorMarkup(item) {
+  const href = getNewsFeedProfileHref(item);
+  const safeName = escapeFeedHtml(item?.name || "Artist");
+  const avatar = item?.photo_url
+    ? `<img class="news-feed-avatar" src="${escapeFeedHtml(item.photo_url)}" alt="${safeName}" />`
+    : `<span class="news-feed-avatar-fallback">${escapeFeedHtml(getNewsFeedInitial(item?.name))}</span>`;
+
+  return `<a class="news-feed-actor" href="${href}">${avatar}<span class="news-feed-name">${safeName}</span></a>`;
+}
+
 function buildNewsFeedText(item) {
   if (!item) return "";
+  const actor = getNewsFeedActorMarkup(item);
+
   if (item.type === "join") {
-    return `<strong>${escapeFeedHtml(item.name)}</strong> just joined 60 Seconds`;
+    return `${actor}<span class="news-feed-copy"> just joined 60 Seconds</span>`;
   }
   if (item.type === "approved_track") {
-    return `<strong>${escapeFeedHtml(item.name)}</strong> has an approved tune live now`;
+    return `<span class="news-feed-copy"><span class="news-feed-track">${escapeFeedHtml(item.track_title || "Untitled")}</span> by ${actor} <span>is live!</span></span>`;
   }
-  return `<strong>${escapeFeedHtml(item.name)}</strong> supported 10 artists today`;
+  return `${actor}<span class="news-feed-copy"> supported 10 artists today</span>`;
 }
 
 function renderNewsFeedSlice() {
@@ -196,10 +217,10 @@ async function loadNewsFeed() {
   try {
     const todayKey = getTodayDateKey();
 
-    const [profilesRes, approvedTracksRes, supportersRes] = await Promise.all([
+    const [profilesRes, approvedTracksRes, supportersRes, trackArtistsRes] = await Promise.all([
       supabaseClient
         .from("profiles")
-        .select("artist_name, created_at, user_id")
+        .select("artist_name, created_at, user_id, photo_url")
         .not("artist_name", "is", null)
         .order("created_at", { ascending: false })
         .limit(12),
@@ -211,13 +232,18 @@ async function loadNewsFeed() {
         .limit(12),
       supabaseClient
         .from("profiles")
-        .select("artist_name, daily_seconds_earned, daily_seconds_earned_date, user_id")
+        .select("artist_name, daily_seconds_earned, daily_seconds_earned_date, user_id, photo_url")
         .eq("daily_seconds_earned", 10)
         .eq("daily_seconds_earned_date", todayKey)
-        .limit(12)
+        .limit(12),
+      supabaseClient
+        .from("profiles")
+        .select("user_id, photo_url")
+        .limit(100)
     ]);
 
     const items = [];
+    const photoByUserId = new Map((trackArtistsRes.data || []).map((profile) => [String(profile.user_id || ""), profile.photo_url || ""]));
 
     (profilesRes.data || []).forEach((profile) => {
       const name = String(profile.artist_name || "").trim();
@@ -225,6 +251,8 @@ async function loadNewsFeed() {
       items.push({
         type: "join",
         name,
+        user_id: profile.user_id || null,
+        photo_url: profile.photo_url || "",
         sortTime: new Date(profile.created_at || 0).getTime() || 0
       });
     });
@@ -235,6 +263,9 @@ async function loadNewsFeed() {
       items.push({
         type: "approved_track",
         name,
+        user_id: track.user_id || null,
+        track_title: track.title || "Untitled",
+        photo_url: photoByUserId.get(String(track.user_id || "")) || "",
         sortTime: new Date(track.created_at || 0).getTime() || 0
       });
     });
@@ -245,6 +276,8 @@ async function loadNewsFeed() {
       items.push({
         type: "support_today",
         name,
+        user_id: profile.user_id || null,
+        photo_url: profile.photo_url || "",
         sortTime: Date.now() - 1000
       });
     });
@@ -259,7 +292,7 @@ async function loadNewsFeed() {
 
     clearNewsFeedTimers();
     if (state.newsFeedItems.length > 3) {
-      state.newsFeedTimer = setInterval(advanceNewsFeed, 5000);
+      state.newsFeedTimer = setInterval(advanceNewsFeed, 10000);
     }
     state.newsFeedRefreshTimer = setInterval(() => {
       loadNewsFeed().catch((err) => console.error("loadNewsFeed refresh error:", err));
