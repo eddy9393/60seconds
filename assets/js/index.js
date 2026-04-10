@@ -334,9 +334,7 @@ function getFlagEmoji(countryName) {
 }
 
 function getFlagMarkup(countryName) {
-  const flag = getFlagEmoji(countryName);
-  if (!flag) return "";
-  return `<span class="artist-flag" aria-label="${escapeHtml(countryName)}">${flag}</span>`;
+  return "";
 }
 
 function escapeHtml(str) {
@@ -1030,14 +1028,14 @@ function renderArtist(track) {
   if (track.user_id) {
     els.artistEl.outerHTML = `
       <a id="artist" class="artist-link" href="artist.html?user_id=${encodeURIComponent(track.user_id)}">
-        ${escapeHtml(track.artist)} ${getFlagMarkup(track.nationality)}
+        ${escapeHtml(track.artist)}
       </a>
     `;
     els.artistEl = document.getElementById("artist");
     return;
   }
 
-  els.artistEl.outerHTML = `<span id="artist">${escapeHtml(track.artist)} ${getFlagMarkup(track.nationality)}</span>`;
+  els.artistEl.outerHTML = `<span id="artist">${escapeHtml(track.artist)}</span>`;
   els.artistEl = document.getElementById("artist");
 }
 

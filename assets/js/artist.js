@@ -60,6 +60,8 @@ const state = {
   currentPreviewInterval: null
 };
 
+let refreshWholePagePromise = null;
+
 function setHidden(element, hidden) {
   if (!element) return;
   element.classList.toggle("hidden", hidden);
@@ -751,6 +753,20 @@ async function refreshWholePage() {
   setArtistStatus("No artist user_id was provided in the URL.", true);
 }
 
+async function safeRefreshWholePage() {
+  if (refreshWholePagePromise) return refreshWholePagePromise;
+
+  refreshWholePagePromise = (async () => {
+    try {
+      await safeRefreshWholePage();
+    } finally {
+      refreshWholePagePromise = null;
+    }
+  })();
+
+  return refreshWholePagePromise;
+}
+
 function bindEvents() {
   els.header.showLoginBtn.onclick = () => {
     closeHeaderPanels();
@@ -791,8 +807,10 @@ function bindEvents() {
     }
   });
 
-  supabaseClient.auth.onAuthStateChange(() => {
-    refreshWholePage().catch((err) => {
+  supabaseClient.auth.onAuthStateChange((event) => {
+    if (event === "INITIAL_SESSION") return;
+
+    safeRefreshWholePage().catch((err) => {
       console.error(err);
       setArtistStatus("The page could not be refreshed correctly.", true);
     });
