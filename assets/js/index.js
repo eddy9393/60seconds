@@ -244,9 +244,9 @@ async function loadNewsFeed() {
         .limit(12),
       supabaseClient
         .from("public_artist_profiles")
-        .select("artist_name, daily_seconds_earned, daily_seconds_earned_date, user_id, photo_url")
-        .gte("daily_seconds_earned", DAILY_SECONDS_LIMIT)
-        .eq("daily_seconds_earned_date", todayKey)
+        .select("artist_name, user_id, photo_url, hit_daily_support_goal, hit_daily_support_goal_date")
+        .eq("hit_daily_support_goal", true)
+        .eq("hit_daily_support_goal_date", todayKey)
         .limit(12),
       supabaseClient
         .from("public_artist_profiles")
@@ -1035,7 +1035,7 @@ function renderArtist(track) {
   if (track.user_id) {
     els.artistEl.outerHTML = `
       <a id="artist" class="artist-link" href="artist.html?user_id=${encodeURIComponent(track.user_id)}">
-        ${escapeHtml(track.artist)} ${getFlagMarkup(track.nationality)}
+        ${getFlagMarkup(track.nationality)}<span class="artist-name-text">${escapeHtml(track.artist)}</span>
       </a>
     `;
     els.artistEl = document.getElementById("artist");
