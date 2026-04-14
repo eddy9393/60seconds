@@ -142,6 +142,9 @@ async function handleAuthSubmit(event) {
       const { data, error } = await supabaseClient.auth.signUp({
         email,
         password
+        options: {
+        emailRedirectTo: "https://www.60seconds.fm/login.html"
+      }
       });
 
       if (error) {
