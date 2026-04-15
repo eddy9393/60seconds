@@ -3,71 +3,54 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Notifications — 60 Seconds FM</title>
-
+  <title>Liked — 60 Seconds FM</title>
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Manrope:wght@300;400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="assets/css/notifications.css">
+  <link rel="stylesheet" href="assets/css/liked.css">
 </head>
 <body>
   <aside class="desktop-side-nav" aria-label="Desktop navigation">
     <div class="desktop-side-nav-panel">
       <nav class="desktop-side-links">
         <a class="desktop-nav-link" href="index.html" aria-label="Radio">
-          <span class="desktop-nav-icon" aria-hidden="true">
-            <span class="nav-icon-mask" style="--icon-url: url('/icons/radio.png');"></span>
-          </span>
+          <span class="desktop-nav-icon" aria-hidden="true"><span class="nav-icon-mask" style="--icon-url: url('/icons/radio.png');"></span></span>
           <span class="desktop-nav-label">Radio</span>
         </a>
 
         <a id="desktopProfileLink" class="desktop-nav-link hidden" href="join.html" aria-label="Profile">
-          <span class="desktop-nav-icon" aria-hidden="true">
-            <span class="nav-icon-mask" style="--icon-url: url('/icons/profile.png');"></span>
-          </span>
+          <span class="desktop-nav-icon" aria-hidden="true"><span class="nav-icon-mask" style="--icon-url: url('/icons/profile.png');"></span></span>
           <span class="desktop-nav-label">Profile</span>
         </a>
 
-        <a id="desktopNotificationsLink" class="desktop-nav-link hidden active" href="notifications.html" aria-label="Notifications">
-          <span class="desktop-nav-icon" aria-hidden="true">
-            <span class="nav-icon-mask" style="--icon-url: url('/icons/nonotifications.png');"></span>
-          </span>
+        <a id="desktopNotificationsLink" class="desktop-nav-link hidden" href="notifications.html" aria-label="Notifications">
+          <span class="desktop-nav-icon" aria-hidden="true"><span class="nav-icon-mask" style="--icon-url: url('/icons/nonotifications.png');"></span></span>
           <span class="desktop-nav-label">Notifications</span>
         </a>
 
-
-        <a id="desktopLikedLink" class="desktop-nav-link hidden" href="liked.html" aria-label="Liked">
-          <span class="desktop-nav-icon" aria-hidden="true">
-            <span class="nav-icon-mask" style="--icon-url: url('/icons/like.png');"></span>
-          </span>
+        <a id="desktopLikedLink" class="desktop-nav-link hidden active" href="liked.html" aria-label="Liked">
+          <span class="desktop-nav-icon" aria-hidden="true"><span class="nav-icon-mask" style="--icon-url: url('/icons/like.png');"></span></span>
           <span class="desktop-nav-label">Liked</span>
         </a>
 
         <a id="desktopStatsLink" class="desktop-nav-link hidden" href="statistics.html" aria-label="Statistics">
-          <span class="desktop-nav-icon" aria-hidden="true">
-            <span class="nav-icon-mask" style="--icon-url: url('/icons/stats.png');"></span>
-          </span>
+          <span class="desktop-nav-icon" aria-hidden="true"><span class="nav-icon-mask" style="--icon-url: url('/icons/stats.png');"></span></span>
           <span class="desktop-nav-label">Statistics</span>
         </a>
 
         <a id="desktopTrackLink" class="desktop-nav-link hidden" href="submit-track.html" aria-label="Tune">
-          <span class="desktop-nav-icon" aria-hidden="true">
-            <span class="nav-icon-mask" style="--icon-url: url('/icons/track.png');"></span>
-          </span>
+          <span class="desktop-nav-icon" aria-hidden="true"><span class="nav-icon-mask" style="--icon-url: url('/icons/track.png');"></span></span>
           <span class="desktop-nav-label">Tune</span>
         </a>
       </nav>
 
       <div class="desktop-side-bottom">
         <a id="desktopLoginLink" class="desktop-nav-link" href="login.html" aria-label="Login">
-          <span class="desktop-nav-icon" aria-hidden="true">
-            <span class="nav-icon-mask" style="--icon-url: url('/icons/login.png');"></span>
-          </span>
+          <span class="desktop-nav-icon" aria-hidden="true"><span class="nav-icon-mask" style="--icon-url: url('/icons/login.png');"></span></span>
           <span class="desktop-nav-label">Login</span>
         </a>
 
         <button id="desktopLogoutBtn" class="desktop-nav-button hidden" type="button" aria-label="Logout">
-          <span class="desktop-nav-icon" aria-hidden="true">
-            <span class="nav-icon-mask" style="--icon-url: url('/icons/logout.png');"></span>
-          </span>
+          <span class="desktop-nav-icon" aria-hidden="true"><span class="nav-icon-mask" style="--icon-url: url('/icons/logout.png');"></span></span>
           <span class="desktop-nav-label">Logout</span>
         </button>
       </div>
@@ -77,45 +60,32 @@
   <div class="mobile-bottom-nav-wrap">
     <nav class="mobile-bottom-nav" aria-label="Mobile navigation">
       <a class="mobile-nav-link" href="index.html" aria-label="Radio">
-        <span class="mobile-nav-icon" aria-hidden="true">
-          <span class="nav-icon-mask" style="--icon-url: url('/icons/radio.png');"></span>
-        </span>
+        <span class="mobile-nav-icon" aria-hidden="true"><span class="nav-icon-mask" style="--icon-url: url('/icons/radio.png');"></span></span>
         <span class="mobile-nav-label">Radio</span>
       </a>
 
       <a id="mobileProfileLink" class="mobile-nav-link hidden" href="join.html" aria-label="Profile">
-        <span class="mobile-nav-icon" aria-hidden="true">
-          <span class="nav-icon-mask" style="--icon-url: url('/icons/profile.png');"></span>
-        </span>
+        <span class="mobile-nav-icon" aria-hidden="true"><span class="nav-icon-mask" style="--icon-url: url('/icons/profile.png');"></span></span>
         <span class="mobile-nav-label">Profile</span>
       </a>
 
-      <a id="mobileNotificationsLink" class="mobile-nav-link hidden active" href="notifications.html" aria-label="Notifications">
-        <span class="mobile-nav-icon" aria-hidden="true">
-          <span class="nav-icon-mask" style="--icon-url: url('/icons/nonotifications.png');"></span>
-        </span>
+      <a id="mobileNotificationsLink" class="mobile-nav-link hidden" href="notifications.html" aria-label="Notifications">
+        <span class="mobile-nav-icon" aria-hidden="true"><span class="nav-icon-mask" style="--icon-url: url('/icons/nonotifications.png');"></span></span>
         <span class="mobile-nav-label">Notifications</span>
       </a>
 
-
-      <a id="mobileLikedLink" class="mobile-nav-link hidden" href="liked.html" aria-label="Liked">
-        <span class="mobile-nav-icon" aria-hidden="true">
-          <span class="nav-icon-mask" style="--icon-url: url('/icons/like.png');"></span>
-        </span>
+      <a id="mobileLikedLink" class="mobile-nav-link hidden active" href="liked.html" aria-label="Liked">
+        <span class="mobile-nav-icon" aria-hidden="true"><span class="nav-icon-mask" style="--icon-url: url('/icons/like.png');"></span></span>
         <span class="mobile-nav-label">Liked</span>
       </a>
 
       <a id="mobileTrackLink" class="mobile-nav-link hidden" href="submit-track.html" aria-label="Tune">
-        <span class="mobile-nav-icon" aria-hidden="true">
-          <span class="nav-icon-mask" style="--icon-url: url('/icons/track.png');"></span>
-        </span>
+        <span class="mobile-nav-icon" aria-hidden="true"><span class="nav-icon-mask" style="--icon-url: url('/icons/track.png');"></span></span>
         <span class="mobile-nav-label">Tune</span>
       </a>
 
       <a id="mobileLoginLink" class="mobile-nav-link" href="login.html" aria-label="Login">
-        <span class="mobile-nav-icon" aria-hidden="true">
-          <span class="nav-icon-mask" style="--icon-url: url('/icons/login.png');"></span>
-        </span>
+        <span class="mobile-nav-icon" aria-hidden="true"><span class="nav-icon-mask" style="--icon-url: url('/icons/login.png');"></span></span>
         <span class="mobile-nav-label">Login</span>
       </a>
     </nav>
@@ -129,23 +99,17 @@
           <span id="currencyValue" class="currency-badge-value">0</span>
         </div>
       </div>
-
       <div class="header-center">
         <a href="index.html" class="header-logo-link" aria-label="60 Seconds FM home">
           <img src="logo.png" alt="60 Seconds FM" class="header-logo" />
         </a>
       </div>
-
       <div class="header-right">
-        <a id="showLoginBtn" class="header-icon-btn" href="login.html" aria-label="Login">
-          <span class="person-icon" aria-hidden="true"></span>
-        </a>
-
+        <a id="showLoginBtn" class="header-icon-btn" href="login.html" aria-label="Login"><span class="person-icon" aria-hidden="true"></span></a>
         <button id="headerAvatarBtn" class="header-avatar-btn hidden" type="button" aria-label="Open account menu">
           <img id="headerAvatarImage" class="hidden" src="" alt="Profile photo" />
           <div id="headerAvatarFallback" class="header-avatar-fallback hidden">A</div>
         </button>
-
         <div id="accountMenu" class="account-menu hidden">
           <div class="account-menu-actions">
             <a id="accountProfileLink" class="metal-btn account-menu-link hidden" href="javascript:void(0)">Profile</a>
@@ -157,25 +121,42 @@
   </div>
 
   <div class="site-shell">
-    <main class="page-wrap">
-      <h1 class="page-title">Notifications</h1>
-      <p class="page-subtitle">Stay updated with your activity</p>
+    <main class="page-wrap liked-page">
+      <div class="section-kicker">Liked Tunes</div>
+      <h1 class="page-title">Your liked collection</h1>
+      <p class="page-subtitle">A clean playlist-style view of the tunes you’ve liked on 60 Seconds FM.</p>
 
-      <div class="empty-card">
-        <div class="empty-icon">🔔</div>
-        <div class="empty-title">No notifications yet</div>
-        <div class="empty-text">
-          When something happens, you'll see it here.
-        </div>
+      <div id="likedLoginRequired" class="empty-card hidden">
+        <div class="empty-icon">♥</div>
+        <div class="empty-title">Log in to view your liked tunes</div>
+        <div class="empty-text">Your likes are saved to your session on this device.</div>
+        <a href="login.html" class="gold-btn">Login</a>
+      </div>
+
+      <div id="likedEmptyState" class="empty-card hidden">
+        <div class="empty-icon">♪</div>
+        <div class="empty-title">No liked tunes yet</div>
+        <div class="empty-text">Start exploring the radio and save the tunes you want to come back to.</div>
         <a href="index.html" class="back-link">← Back to Radio</a>
       </div>
+
+      <section id="likedListWrap" class="playlist-card hidden">
+        <div class="playlist-header">
+          <div>#</div>
+          <div>Title</div>
+          <div>Artist</div>
+          <div>Genres</div>
+          <div>Action</div>
+        </div>
+        <div id="likedList" class="playlist-list"></div>
+      </section>
     </main>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="assets/js/config.js"></script>
   <script src="assets/js/app.js"></script>
-  <script src="assets/js/notifications.js"></script>
+  <script src="assets/js/liked.js"></script>
   <script src="assets/js/radio-mini-player.js"></script>
 </body>
 </html>
