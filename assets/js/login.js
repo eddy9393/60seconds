@@ -141,10 +141,10 @@ async function handleAuthSubmit(event) {
     if (state.authMode === "signup") {
       const { data, error } = await supabaseClient.auth.signUp({
         email,
-        password
+        password,
         options: {
-        emailRedirectTo: "https://www.60seconds.fm/login.html"
-      }
+          emailRedirectTo: "https://www.60seconds.fm/login.html"
+        }
       });
 
       if (error) {
