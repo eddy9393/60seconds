@@ -764,7 +764,7 @@ img {
   color: var(--danger);
 }
 
-.tunes-grid {
+.tracks-grid {
   display: grid;
   gap: 18px;
 }
