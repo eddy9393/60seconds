@@ -36,6 +36,8 @@ const els = {
     logoutBtn: document.getElementById("desktopLogoutBtn"),
     profileLink: document.getElementById("desktopProfileLink"),
     notificationsLink: document.getElementById("desktopNotificationsLink"),
+    likedLink: document.getElementById("desktopLikedLink"),
+    statsLink: document.getElementById("desktopStatsLink"),
     trackLink: document.getElementById("desktopTrackLink")
   },
 
@@ -43,6 +45,7 @@ const els = {
     loginLink: document.getElementById("mobileLoginLink"),
     profileLink: document.getElementById("mobileProfileLink"),
     notificationsLink: document.getElementById("mobileNotificationsLink"),
+    likedLink: document.getElementById("mobileLikedLink"),
     trackLink: document.getElementById("mobileTrackLink")
   },
 

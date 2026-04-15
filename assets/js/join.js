@@ -1,4 +1,4 @@
-const { getSupabaseClient, getProfileHref: sharedGetProfileHref, bindRuntimeCurrencySync, applyRuntimeCurrencySnapshotToElement, getCurrentUserSafe } = window.SSFMApp;
+const { getSupabaseClient, getProfileHref: sharedGetProfileHref, bindRuntimeCurrencySync, applyRuntimeCurrencySnapshotToElement, getCurrentUserSafe, applyStandardMenuState } = window.SSFMApp;
 const supabaseClient = getSupabaseClient();
 
 const COUNTRY_OPTIONS = [
@@ -39,11 +39,14 @@ const els = {
   desktopLogoutBtn: document.getElementById("desktopLogoutBtn"),
   desktopProfileLink: document.getElementById("desktopProfileLink"),
   desktopNotificationsLink: document.getElementById("desktopNotificationsLink"),
+  desktopLikedLink: document.getElementById("desktopLikedLink"),
+  desktopStatsLink: document.getElementById("desktopStatsLink"),
   desktopTrackLink: document.getElementById("desktopTrackLink"),
 
   mobileLoginLink: document.getElementById("mobileLoginLink"),
   mobileProfileLink: document.getElementById("mobileProfileLink"),
   mobileNotificationsLink: document.getElementById("mobileNotificationsLink"),
+  mobileLikedLink: document.getElementById("mobileLikedLink"),
   mobileTrackLink: document.getElementById("mobileTrackLink"),
 
   email: document.getElementById("email"),
@@ -162,38 +165,29 @@ function fillProfileForm(profile) {
 }
 
 function applyMenuState(user, profile, track) {
-  const isLoggedIn = Boolean(user);
-  const hasProfile = hasCompletedArtistProfile(profile);
-  const hasTrack = Boolean(track);
   const profileHref = getProfileHref(profile);
 
-  setHidden(els.desktopLoginLink, isLoggedIn);
-  setHidden(els.mobileLoginLink, isLoggedIn);
-  setHidden(els.desktopLogoutBtn, !isLoggedIn);
+  applyStandardMenuState({
+    header: { accountProfileLink: els.accountProfileLink },
+    desktopNav: {
+      loginLink: els.desktopLoginLink,
+      logoutBtn: els.desktopLogoutBtn,
+      profileLink: els.desktopProfileLink,
+      notificationsLink: els.desktopNotificationsLink,
+      likedLink: els.desktopLikedLink,
+      statsLink: els.desktopStatsLink,
+      trackLink: els.desktopTrackLink
+    },
+    mobileNav: {
+      loginLink: els.mobileLoginLink,
+      profileLink: els.mobileProfileLink,
+      notificationsLink: els.mobileNotificationsLink,
+      likedLink: els.mobileLikedLink,
+      trackLink: els.mobileTrackLink
+    }
+  }, user, profile, track, { profileHref });
 
-  setHidden(els.desktopProfileLink, !isLoggedIn);
-  setHidden(els.mobileProfileLink, !isLoggedIn);
-
-  setHidden(els.desktopNotificationsLink, !isLoggedIn);
-  setHidden(els.mobileNotificationsLink, !isLoggedIn);
-
-  setHidden(els.desktopTrackLink, !isLoggedIn || !hasProfile);
-  setHidden(els.mobileTrackLink, !isLoggedIn || !hasProfile);
-
-  if (els.desktopProfileLink) els.desktopProfileLink.href = profileHref;
-  if (els.mobileProfileLink) els.mobileProfileLink.href = profileHref;
-  if (els.accountProfileLink) els.accountProfileLink.href = profileHref;
   if (els.existingArtistPageLink) els.existingArtistPageLink.href = profileHref;
-
-  setHidden(els.accountProfileLink, !isLoggedIn);
-
-  if (els.desktopTrackLink) {
-    els.desktopTrackLink.setAttribute("data-track-mode", hasTrack ? "edit" : "submit");
-  }
-
-  if (els.mobileTrackLink) {
-    els.mobileTrackLink.setAttribute("data-track-mode", hasTrack ? "edit" : "submit");
-  }
 }
 
 function setLoggedOutView() {

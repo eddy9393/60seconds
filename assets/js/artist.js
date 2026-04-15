@@ -27,6 +27,8 @@ const els = {
     logoutBtn: document.getElementById("desktopLogoutBtn"),
     profileLink: document.getElementById("desktopProfileLink"),
     notificationsLink: document.getElementById("desktopNotificationsLink"),
+    likedLink: document.getElementById("desktopLikedLink"),
+    statsLink: document.getElementById("desktopStatsLink"),
     trackLink: document.getElementById("desktopTrackLink")
   },
 
@@ -34,6 +36,7 @@ const els = {
     loginLink: document.getElementById("mobileLoginLink"),
     profileLink: document.getElementById("mobileProfileLink"),
     notificationsLink: document.getElementById("mobileNotificationsLink"),
+    likedLink: document.getElementById("mobileLikedLink"),
     trackLink: document.getElementById("mobileTrackLink")
   },
 
@@ -45,6 +48,7 @@ const els = {
     artistBio: document.getElementById("artistBio"),
     socialLinkBtn: document.getElementById("socialLinkBtn"),
     editProfileBtn: document.getElementById("editProfileBtn"),
+    viewStatisticsBtn: document.getElementById("viewStatisticsBtn"),
     submitTrackBtn: document.getElementById("submitTrackBtn"),
     submissionTitle: document.getElementById("submissionTitle"),
     artistStatus: document.getElementById("artistStatus"),
@@ -520,11 +524,13 @@ function renderArtistProfile(profile, isOwnPage, hasOwnTrack) {
   }
 
   setHidden(els.page.editProfileBtn, !isOwnPage || !state.currentProfileData);
+  setHidden(els.page.viewStatisticsBtn, !isOwnPage || !state.currentProfileData);
 
   if (isOwnPage && state.currentProfileData) {
     setHidden(els.page.submitTrackBtn, false);
     setText(els.page.submitTrackBtn, state.currentTrackData ? "Edit Your Track" : "Submit Your Tune");
     els.page.submitTrackBtn.href = "submit-track.html";
+    if (els.page.viewStatisticsBtn) els.page.viewStatisticsBtn.href = "statistics.html";
   } else {
     setHidden(els.page.submitTrackBtn, true);
   }

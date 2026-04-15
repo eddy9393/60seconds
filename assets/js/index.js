@@ -23,11 +23,14 @@ const els = {
   desktopLogoutBtn: document.getElementById("desktopLogoutBtn"),
   desktopProfileLink: document.getElementById("desktopProfileLink"),
   desktopNotificationsLink: document.getElementById("desktopNotificationsLink"),
+  desktopLikedLink: document.getElementById("desktopLikedLink"),
+  desktopStatsLink: document.getElementById("desktopStatsLink"),
   desktopTrackLink: document.getElementById("desktopTrackLink"),
 
   mobileLoginLink: document.getElementById("mobileLoginLink"),
   mobileProfileLink: document.getElementById("mobileProfileLink"),
   mobileNotificationsLink: document.getElementById("mobileNotificationsLink"),
+  mobileLikedLink: document.getElementById("mobileLikedLink"),
   mobileTrackLink: document.getElementById("mobileTrackLink"),
 
   logoutBtn: document.getElementById("logout"),
@@ -683,12 +686,15 @@ function applyMenuState(user, profile, track) {
       logoutBtn: els.desktopLogoutBtn,
       profileLink: els.desktopProfileLink,
       notificationsLink: els.desktopNotificationsLink,
+      likedLink: els.desktopLikedLink,
+      statsLink: els.desktopStatsLink,
       trackLink: els.desktopTrackLink
     },
     mobileNav: {
       loginLink: els.mobileLoginLink,
       profileLink: els.mobileProfileLink,
       notificationsLink: els.mobileNotificationsLink,
+      likedLink: els.mobileLikedLink,
       trackLink: els.mobileTrackLink
     }
   }, user, profile, track);
@@ -713,8 +719,8 @@ function setLoggedOutView() {
       currencyBadge: els.currencyBadge,
       currencyValue: els.currencyValue
     },
-    desktopNav: { loginLink: els.desktopLoginLink, logoutBtn: els.desktopLogoutBtn, profileLink: els.desktopProfileLink, notificationsLink: els.desktopNotificationsLink, trackLink: els.desktopTrackLink },
-    mobileNav: { loginLink: els.mobileLoginLink, profileLink: els.mobileProfileLink, notificationsLink: els.mobileNotificationsLink, trackLink: els.mobileTrackLink }
+    desktopNav: { loginLink: els.desktopLoginLink, logoutBtn: els.desktopLogoutBtn, profileLink: els.desktopProfileLink, notificationsLink: els.desktopNotificationsLink, likedLink: els.desktopLikedLink, statsLink: els.desktopStatsLink, trackLink: els.desktopTrackLink },
+    mobileNav: { loginLink: els.mobileLoginLink, profileLink: els.mobileProfileLink, notificationsLink: els.mobileNotificationsLink, likedLink: els.mobileLikedLink, trackLink: els.mobileTrackLink }
   });
 
   setHidden(els.submitTrackBtn, true);

@@ -50,12 +50,15 @@ const els = {
     logoutBtn: document.getElementById("desktopLogoutBtn"),
     profileLink: document.getElementById("desktopProfileLink"),
     notificationsLink: document.getElementById("desktopNotificationsLink"),
+    likedLink: document.getElementById("desktopLikedLink"),
+    statsLink: document.getElementById("desktopStatsLink"),
     trackLink: document.getElementById("desktopTrackLink")
   },
   mobileNav: {
     loginLink: document.getElementById("mobileLoginLink"),
     profileLink: document.getElementById("mobileProfileLink"),
     notificationsLink: document.getElementById("mobileNotificationsLink"),
+    likedLink: document.getElementById("mobileLikedLink"),
     trackLink: document.getElementById("mobileTrackLink")
   },
   auth: {
@@ -123,7 +126,7 @@ function handleHeaderAvatarAction(profileHref) {
   window.location.href = profileHref || "artist.html";
 }
 
-function applyMenuState(user, profile) { const isLoggedIn = Boolean(user); const hasProfile = Boolean(profile && String(profile.artist_name || '').trim()); setHidden(els.desktopNav.loginLink, isLoggedIn); setHidden(els.mobileNav.loginLink, isLoggedIn); setHidden(els.desktopNav.logoutBtn, !isLoggedIn); setHidden(els.desktopNav.profileLink, !isLoggedIn); setHidden(els.mobileNav.profileLink, !isLoggedIn); setHidden(els.desktopNav.notificationsLink, !isLoggedIn); setHidden(els.mobileNav.notificationsLink, !isLoggedIn); setHidden(els.desktopNav.trackLink, !isLoggedIn || !hasProfile); setHidden(els.mobileNav.trackLink, !isLoggedIn || !hasProfile); setHidden(els.header.accountProfileLink, !isLoggedIn); setHidden(els.header.accountNotificationsLink, true); }
+function applyMenuState(user, profile) { const isLoggedIn = Boolean(user); const hasProfile = Boolean(profile && String(profile.artist_name || '').trim()); setHidden(els.desktopNav.loginLink, isLoggedIn); setHidden(els.mobileNav.loginLink, isLoggedIn); setHidden(els.desktopNav.logoutBtn, !isLoggedIn); setHidden(els.desktopNav.profileLink, !isLoggedIn); setHidden(els.mobileNav.profileLink, !isLoggedIn); setHidden(els.desktopNav.notificationsLink, !isLoggedIn); setHidden(els.mobileNav.notificationsLink, !isLoggedIn); setHidden(els.desktopNav.likedLink, !isLoggedIn); setHidden(els.mobileNav.likedLink, !isLoggedIn); setHidden(els.desktopNav.statsLink, !isLoggedIn || !hasProfile); setHidden(els.desktopNav.trackLink, !isLoggedIn || !hasProfile); setHidden(els.mobileNav.trackLink, true); setHidden(els.header.accountProfileLink, !isLoggedIn); setHidden(els.header.accountNotificationsLink, true); }
 function setLoggedOutView() { closeMenus(); setHidden(els.auth.userBox, true); setHidden(els.header.showLoginBtn, false); setHidden(els.header.headerAvatarBtn, true); setHidden(els.header.headerAvatarImage, true); setHidden(els.header.headerAvatarFallback, true); setHidden(els.header.currencyBadge, true); setCurrency(0); els.header.headerAvatarImage.src = ''; setHidden(els.page.loginRequiredBox, false); setHidden(els.page.profileMissingBox, true); setHidden(els.page.editFormWrap, true); setHidden(els.page.actionRow, true); els.page.viewArtistLink.href = '#'; state.currentProfile = null; applyMenuState(null, null); }
 function setLoggedInView() { setHidden(els.auth.authBox, true); setHidden(els.auth.userBox, false); setHidden(els.header.showLoginBtn, true); setHidden(els.header.headerAvatarBtn, false);
   setHidden(els.header.accountMenu, true); setHidden(els.header.currencyBadge, false); setHidden(els.page.loginRequiredBox, true); }

@@ -116,6 +116,30 @@
 
 
 
+
+  const UNREAD_NOTIFICATIONS_KEY = 'ssfm_has_unread_notifications_v1';
+
+  function setNavIcon(linkEl, iconPath) {
+    if (!linkEl) return;
+    const mask = linkEl.querySelector('.nav-icon-mask');
+    if (!mask) return;
+    mask.style.setProperty('--icon-url', `url('${iconPath}')`);
+  }
+
+  function hasUnreadNotifications() {
+    return localStorage.getItem(UNREAD_NOTIFICATIONS_KEY) === '1';
+  }
+
+  function setUnreadNotificationsFlag(hasUnread) {
+    localStorage.setItem(UNREAD_NOTIFICATIONS_KEY, hasUnread ? '1' : '0');
+  }
+
+  function updateNotificationIcons(els) {
+    const iconPath = hasUnreadNotifications() ? '/icons/notifications.png' : '/icons/nonotifications.png';
+    setNavIcon(els?.desktopNav?.notificationsLink, iconPath);
+    setNavIcon(els?.mobileNav?.notificationsLink, iconPath);
+  }
+
   function buildStandardShellEls(doc = document) {
     return {
       header: {
@@ -135,12 +159,16 @@
         logoutBtn: doc.getElementById('desktopLogoutBtn'),
         profileLink: doc.getElementById('desktopProfileLink'),
         notificationsLink: doc.getElementById('desktopNotificationsLink'),
+        likedLink: doc.getElementById('desktopLikedLink'),
+        statsLink: doc.getElementById('desktopStatsLink'),
         trackLink: doc.getElementById('desktopTrackLink')
       },
       mobileNav: {
         loginLink: doc.getElementById('mobileLoginLink'),
         profileLink: doc.getElementById('mobileProfileLink'),
         notificationsLink: doc.getElementById('mobileNotificationsLink'),
+        likedLink: doc.getElementById('mobileLikedLink'),
+        statsLink: doc.getElementById('mobileStatsLink'),
         trackLink: doc.getElementById('mobileTrackLink')
       }
     };
@@ -201,13 +229,23 @@
     setHidden(els?.desktopNav?.notificationsLink, !isLoggedIn);
     setHidden(els?.mobileNav?.notificationsLink, !isLoggedIn);
 
+    setHidden(els?.desktopNav?.likedLink, !isLoggedIn);
+    setHidden(els?.mobileNav?.likedLink, !isLoggedIn);
+
+    setHidden(els?.desktopNav?.statsLink, !isLoggedIn || !hasProfile);
+    setHidden(els?.mobileNav?.statsLink, true);
+
     setHidden(els?.desktopNav?.trackLink, !isLoggedIn || !hasProfile);
-    setHidden(els?.mobileNav?.trackLink, !isLoggedIn || !hasProfile);
+    setHidden(els?.mobileNav?.trackLink, true);
 
     if (els?.desktopNav?.profileLink) els.desktopNav.profileLink.href = profileHref;
     if (els?.mobileNav?.profileLink) els.mobileNav.profileLink.href = profileHref;
     if (els?.header?.accountProfileLink) els.header.accountProfileLink.href = profileHref;
     setHidden(els?.header?.accountProfileLink, !isLoggedIn);
+
+    if (els?.desktopNav?.likedLink) els.desktopNav.likedLink.href = options.likedHref || 'liked.html';
+    if (els?.mobileNav?.likedLink) els.mobileNav.likedLink.href = options.likedHref || 'liked.html';
+    if (els?.desktopNav?.statsLink) els.desktopNav.statsLink.href = options.statsHref || 'statistics.html';
 
     if (els?.desktopNav?.trackLink) {
       els.desktopNav.trackLink.href = trackHref;
@@ -222,6 +260,8 @@
       els.header.accountNotificationsLink.href = options.notificationsHref;
       setHidden(els.header.accountNotificationsLink, !isLoggedIn || options.hideAccountNotifications === true);
     }
+
+    updateNotificationIcons(els);
   }
 
   function setStandardLoggedOutState(els, options = {}) {
@@ -333,6 +373,9 @@
     fetchProfileByUserId,
     fetchTrackByUserId,
     bindStandardHeaderEvents,
-    hasCompletedArtistProfile
+    hasCompletedArtistProfile,
+    hasUnreadNotifications,
+    setUnreadNotificationsFlag,
+    updateNotificationIcons
   });
 })();
