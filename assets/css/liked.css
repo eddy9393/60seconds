@@ -162,14 +162,7 @@
   }
 }
 
-
 @media (min-width: 901px) {
-  .playlist-actions {
-    justify-content: flex-start;
-    padding-left: 10px;
-  }
-
-  .playlist-open {
-    margin-left: -6px;
-  }
+  .playlist-actions { justify-content: flex-start; padding-left: 10px; }
+  .playlist-open { margin-left: -6px; }
 }
