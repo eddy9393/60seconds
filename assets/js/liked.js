@@ -69,7 +69,7 @@ function renderRows(rows) {
       </div>
       <div>${genres.length ? genres.map((genre) => `<span class="playlist-pill">${escapeHtml(genre)}</span>`).join(" ") : `<span class="playlist-pill">No genre yet</span>`}</div>
       <div class="playlist-actions">
-        <a class="playlist-open" href="artist.html?user_id=${encodeURIComponent(track.user_id)}">Visit artist</a>
+        <a class="playlist-open" href="artist.html?user_id=${encodeURIComponent(track.user_id)}">Go To Artist</a>
       </div>
     `;
     els.page.list.appendChild(row);
