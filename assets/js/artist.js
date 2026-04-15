@@ -25,14 +25,14 @@ const els = {
     logoutBtn: document.getElementById("desktopLogoutBtn"),
     profileLink: document.getElementById("desktopProfileLink"),
     notificationsLink: document.getElementById("desktopNotificationsLink"),
-    tuneLink: document.getElementById("desktopTuneLink")
+    trackLink: document.getElementById("desktopTrackLink")
   },
 
   mobileNav: {
     loginLink: document.getElementById("mobileLoginLink"),
     profileLink: document.getElementById("mobileProfileLink"),
     notificationsLink: document.getElementById("mobileNotificationsLink"),
-    tuneLink: document.getElementById("mobileTuneLink")
+    trackLink: document.getElementById("mobileTrackLink")
   },
 
   page: {
@@ -43,17 +43,17 @@ const els = {
     artistBio: document.getElementById("artistBio"),
     socialLinkBtn: document.getElementById("socialLinkBtn"),
     editProfileBtn: document.getElementById("editProfileBtn"),
-    submitTuneBtn: document.getElementById("submitTuneBtn"),
+    submitTrackBtn: document.getElementById("submitTrackBtn"),
     submissionTitle: document.getElementById("submissionTitle"),
     artistStatus: document.getElementById("artistStatus"),
-    tunesWrap: document.getElementById("tunesWrap"),
-    noTunesBox: document.getElementById("noTunesBox")
+    tracksWrap: document.getElementById("tracksWrap"),
+    noTracksBox: document.getElementById("noTracksBox")
   }
 };
 
 const state = {
   currentProfileData: null,
-  currentTuneData: null,
+  currentTrackData: null,
   viewedArtistUserId: null,
   currentUserId: null,
   currentAudio: null,
@@ -135,15 +135,15 @@ function handleHeaderAvatarAction(profileHref) {
   handleStandardHeaderAvatarAction(els, profileHref);
 }
 
-function applyMenuState(user, profile, tune) {
-  applyStandardMenuState(els, user, profile, tune);
+function applyMenuState(user, profile, track) {
+  applyStandardMenuState(els, user, profile, track);
 }
 
 function setLoggedOutHeader() {
   setStandardLoggedOutState(els);
   state.currentUserId = null;
   state.currentProfileData = null;
-  state.currentTuneData = null;
+  state.currentTrackData = null;
   applyMenuState(null, null, null);
 }
 
@@ -190,23 +190,23 @@ async function loadCurrentUserState() {
     .eq("user_id", user.id)
     .maybeSingle();
 
-  const tunePromise = supabaseClient
-    .from("tunes")
+  const trackPromise = supabaseClient
+    .from("tracks")
     .select("id, user_id, title, status, created_at, preview_start_seconds, preview_duration_seconds")
     .eq("user_id", user.id)
     .order("created_at", { ascending: false })
     .limit(1)
     .maybeSingle();
 
-  const [{ data: profileData }, { data: tuneData }] = await Promise.all([profilePromise, tunePromise]);
+  const [{ data: profileData }, { data: trackData }] = await Promise.all([profilePromise, trackPromise]);
 
   state.currentProfileData = profileData || null;
-  state.currentTuneData = tuneData || null;
+  state.currentTrackData = trackData || null;
 
   setLoggedInHeader();
   setCurrency(state.currentProfileData?.coins || 0);
   setHeaderAvatar(state.currentProfileData?.photo_url || "", state.currentProfileData?.artist_name || "A");
-  applyMenuState(user, state.currentProfileData, state.currentTuneData);
+  applyMenuState(user, state.currentProfileData, state.currentTrackData);
 
   return user;
 }
@@ -225,16 +225,16 @@ async function fetchArtistProfile(userId) {
   return data || null;
 }
 
-async function fetchApprovedTunes(userId) {
+async function fetchApprovedTracks(userId) {
   const { data, error } = await supabaseClient
-    .from("tunes")
-    .select("id, title, artist, file_url, created_at, status, user_id, preview_start_seconds, preview_duration_seconds, genre_primary, genre_secondary, feeling_tags, artist_page_full_tune")
+    .from("tracks")
+    .select("id, title, artist, file_url, created_at, status, user_id, preview_start_seconds, preview_duration_seconds, genre_primary, genre_secondary, feeling_tags, artist_page_full_track")
     .eq("user_id", userId)
     .eq("status", "approved")
     .order("created_at", { ascending: false });
 
   if (error) {
-    throw new Error("Could not load approved tune: " + error.message);
+    throw new Error("Could not load approved track: " + error.message);
   }
 
   return data || [];
@@ -414,7 +414,7 @@ function stopCurrentAudio() {
   state.currentTimeLabel = null;
 }
 
-function renderArtistProfile(profile, isOwnPage, hasOwnTune) {
+function renderArtistProfile(profile, isOwnPage, hasOwnTrack) {
   const displayName = profile?.artist_name || "Unknown Artist";
 
   setText(els.page.artistName, displayName);
@@ -494,39 +494,39 @@ function renderArtistProfile(profile, isOwnPage, hasOwnTune) {
   setHidden(els.page.editProfileBtn, !isOwnPage || !state.currentProfileData);
 
   if (isOwnPage && state.currentProfileData) {
-    setHidden(els.page.submitTuneBtn, false);
-    setText(els.page.submitTuneBtn, state.currentTuneData ? "Edit Your Tune" : "Submit Your Tune");
-    els.page.submitTuneBtn.href = "submit-tune.html";
+    setHidden(els.page.submitTrackBtn, false);
+    setText(els.page.submitTrackBtn, state.currentTrackData ? "Edit Your Track" : "Submit Your Track");
+    els.page.submitTrackBtn.href = "submit-track.html";
   } else {
-    setHidden(els.page.submitTuneBtn, true);
+    setHidden(els.page.submitTrackBtn, true);
   }
 }
 
-function buildTuneCard(tune) {
+function buildTrackCard(track) {
   const card = document.createElement("article");
-  card.className = "tune-card";
+  card.className = "track-card";
 
-  const createdAtLabel = formatDate(tune.created_at);
-  const previewStart = Math.max(0, Number(tune.preview_start_seconds || 0));
-  const previewDuration = Math.max(1, Math.min(60, Number(tune.preview_duration_seconds || 60)));
-  const allowFullTune = Boolean(tune.artist_page_full_tune);
+  const createdAtLabel = formatDate(track.created_at);
+  const previewStart = Math.max(0, Number(track.preview_start_seconds || 0));
+  const previewDuration = Math.max(1, Math.min(60, Number(track.preview_duration_seconds || 60)));
+  const allowFullTrack = Boolean(track.artist_page_full_track);
   const genrePills = [];
 
-  if (tune.genre_primary) genrePills.push(tune.genre_primary);
-  if (tune.genre_secondary) genrePills.push(tune.genre_secondary);
+  if (track.genre_primary) genrePills.push(track.genre_primary);
+  if (track.genre_secondary) genrePills.push(track.genre_secondary);
 
-  const feelingTags = Array.isArray(tune.feeling_tags) ? tune.feeling_tags : [];
+  const feelingTags = Array.isArray(track.feeling_tags) ? track.feeling_tags : [];
 
   card.innerHTML = `
-    <div class="tune-top">
+    <div class="track-top">
       <div>
-        <div class="tune-title">${escapeHtml(tune.title || "Untitled Tune")}</div>
-        <div class="tune-subtitle">${escapeHtml(tune.artist || "Artist")}</div>
+        <div class="track-title">${escapeHtml(track.title || "Untitled Track")}</div>
+        <div class="track-subtitle">${escapeHtml(track.artist || "Artist")}</div>
       </div>
-      <div class="tune-status">${allowFullTune ? "Full tune" : `${formatTime(previewDuration)} tune`}</div>
+      <div class="track-status">${allowFullTrack ? "Full track" : `${formatTime(previewDuration)} tune`}</div>
     </div>
 
-    <div class="tune-player">
+    <div class="track-player">
       <div class="player-row">
         <button class="player-btn" type="button" aria-label="Play preview">▶</button>
         <div class="progress-wrap">
@@ -535,8 +535,8 @@ function buildTuneCard(tune) {
         <div class="player-time">0:00</div>
       </div>
 
-      <div class="tune-meta-row">
-        <div class="mini-pill">${allowFullTune ? "Playback: Full tune" : `Preview: ${formatTime(previewStart)} - ${formatTime(previewStart + previewDuration)}`}</div>
+      <div class="track-meta-row">
+        <div class="mini-pill">${allowFullTrack ? "Playback: Full track" : `Preview: ${formatTime(previewStart)} - ${formatTime(previewStart + previewDuration)}`}</div>
         ${createdAtLabel ? `<div class="mini-pill">Submitted: ${escapeHtml(createdAtLabel)}</div>` : ""}
         ${genrePills.map((genre) => `<div class="mini-pill">Genre: ${escapeHtml(genre)}</div>`).join("")}
         ${feelingTags.map((tag) => `<div class="mini-pill">#${escapeHtml(tag)}</div>`).join("")}
@@ -548,7 +548,7 @@ function buildTuneCard(tune) {
   const progressBar = card.querySelector(".progress-bar");
   const timeLabel = card.querySelector(".player-time");
 
-  const audio = new Audio(tune.file_url);
+  const audio = new Audio(track.file_url);
   audio.preload = "metadata";
 
   playBtn.addEventListener("click", async () => {
@@ -570,14 +570,14 @@ function buildTuneCard(tune) {
       state.currentProgressBar = progressBar;
       state.currentTimeLabel = timeLabel;
 
-      const playbackStart = allowFullTune ? 0 : previewStart;
+      const playbackStart = allowFullTrack ? 0 : previewStart;
       audio.currentTime = playbackStart;
       await audio.play();
       playBtn.textContent = "❚❚";
 
       state.currentPreviewInterval = setInterval(() => {
         const elapsed = Math.max(0, audio.currentTime - playbackStart);
-        const activeDuration = allowFullTune
+        const activeDuration = allowFullTrack
           ? Math.max(1, Math.floor(audio.duration || 0))
           : previewDuration;
         const percent = Math.min((elapsed / activeDuration) * 100, 100);
@@ -585,7 +585,7 @@ function buildTuneCard(tune) {
         progressBar.style.width = `${percent}%`;
         timeLabel.textContent = formatTime(elapsed);
 
-        if (!allowFullTune && audio.currentTime >= previewStart + previewDuration) {
+        if (!allowFullTrack && audio.currentTime >= previewStart + previewDuration) {
           stopCurrentAudio();
         }
       }, 120);
@@ -607,9 +607,9 @@ function buildTuneCard(tune) {
 
 function resetArtistPageShell() {
   setArtistStatus("");
-  setHidden(els.page.tunesWrap, true);
-  setHidden(els.page.noTunesBox, true);
-  els.page.tunesWrap.innerHTML = "";
+  setHidden(els.page.tracksWrap, true);
+  setHidden(els.page.noTracksBox, true);
+  els.page.tracksWrap.innerHTML = "";
   setText(els.page.submissionTitle, "Tune");
 }
 
@@ -617,10 +617,10 @@ async function loadViewedArtistPage(userId) {
   state.viewedArtistUserId = userId;
 
   if (!userId) {
-    setText(els.page.artistName, "Artist not found");
+    setText(els.page.artistName, "");
     setText(els.page.submissionTitle, "Tune");
-    setHidden(els.page.noTunesBox, true);
-    setHidden(els.page.tunesWrap, true);
+    setHidden(els.page.noTracksBox, true);
+    setHidden(els.page.tracksWrap, true);
     setArtistStatus("No artist user_id was provided in the URL.", true);
     return;
   }
@@ -631,43 +631,43 @@ async function loadViewedArtistPage(userId) {
   try {
     profile = await fetchArtistProfile(userId);
   } catch (err) {
-    setText(els.page.artistName, "Artist not found");
+    setText(els.page.artistName, "");
     setArtistStatus(err.message || "Could not load artist profile.", true);
     return;
   }
 
   if (!profile) {
-    setText(els.page.artistName, "Artist not found");
-    setArtistStatus("This artist profile does not exist.", true);
+    setText(els.page.artistName, "");
+    setArtistStatus(".", true);
     return;
   }
 
   const isOwnPage = Boolean(state.currentUserId && state.currentUserId === userId);
-  const hasOwnTune = Boolean(state.currentTuneData);
+  const hasOwnTrack = Boolean(state.currentTrackData);
 
-  renderArtistProfile(profile, isOwnPage, hasOwnTune);
+  renderArtistProfile(profile, isOwnPage, hasOwnTrack);
 
-  let approvedTunes;
+  let approvedTracks;
   try {
-    approvedTunes = await fetchApprovedTunes(userId);
+    approvedTracks = await fetchApprovedTracks(userId);
   } catch (err) {
-    setArtistStatus(err.message || "Could not load approved tune.", true);
+    setArtistStatus(err.message || "Could not load approved track.", true);
     return;
   }
 
-  if (!approvedTunes.length) {
-    setHidden(els.page.noTunesBox, false);
-    setHidden(els.page.tunesWrap, true);
+  if (!approvedTracks.length) {
+    setHidden(els.page.noTracksBox, false);
+    setHidden(els.page.tracksWrap, true);
     return;
   }
 
-  els.page.tunesWrap.innerHTML = "";
-  approvedTunes.forEach((tune) => {
-    els.page.tunesWrap.appendChild(buildTuneCard(tune));
+  els.page.tracksWrap.innerHTML = "";
+  approvedTracks.forEach((track) => {
+    els.page.tracksWrap.appendChild(buildTrackCard(track));
   });
 
-  setHidden(els.page.tunesWrap, false);
-  setHidden(els.page.noTunesBox, true);
+  setHidden(els.page.tracksWrap, false);
+  setHidden(els.page.noTracksBox, true);
 }
 
 async function refreshWholePage() {
@@ -689,7 +689,7 @@ async function refreshWholePage() {
     return;
   }
 
-  setText(els.page.artistName, "Artist not found");
+  setText(els.page.artistName, "");
   setArtistStatus("No artist user_id was provided in the URL.", true);
 }
 
@@ -755,3 +755,19 @@ initPage().catch((err) => {
   console.error("initPage error:", err);
   setArtistStatus("The page could not be loaded correctly.", true);
 });
+
+
+function showEmptyArtistState() {
+  const container = document.getElementById("artist-container");
+  if (!container) return;
+
+  container.innerHTML = `
+    <div style="text-align:center;padding:80px 20px;">
+      <h2>Create your artist profile</h2>
+      <p>Start sharing your music with the world.</p>
+      <button onclick="window.location.href='/edit-profile.html'">
+        Create artist profile
+      </button>
+    </div>
+  `;
+}

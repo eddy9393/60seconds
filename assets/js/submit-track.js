@@ -36,14 +36,14 @@ const els = {
     logoutBtn: document.getElementById("desktopLogoutBtn"),
     profileLink: document.getElementById("desktopProfileLink"),
     notificationsLink: document.getElementById("desktopNotificationsLink"),
-    tuneLink: document.getElementById("desktopTuneLink")
+    trackLink: document.getElementById("desktopTrackLink")
   },
 
   mobileNav: {
     loginLink: document.getElementById("mobileLoginLink"),
     profileLink: document.getElementById("mobileProfileLink"),
     notificationsLink: document.getElementById("mobileNotificationsLink"),
-    tuneLink: document.getElementById("mobileTuneLink")
+    trackLink: document.getElementById("mobileTrackLink")
   },
 
   page: {
@@ -51,15 +51,15 @@ const els = {
     note: document.getElementById("pageNote"),
     loginRequiredBox: document.getElementById("loginRequiredBox"),
     profileRequiredBox: document.getElementById("profileRequiredBox"),
-    tuneStatusBox: document.getElementById("tuneStatusBox"),
+    trackStatusBox: document.getElementById("trackStatusBox"),
     formWrap: document.getElementById("formWrap"),
     status: document.getElementById("status"),
     backToArtistPageLink: document.getElementById("backToArtistPageLink")
   },
 
   form: {
-    tuneTitleInput: document.getElementById("tuneTitle"),
-    tuneFileInput: document.getElementById("tuneFile"),
+    trackTitleInput: document.getElementById("trackTitle"),
+    trackFileInput: document.getElementById("trackFile"),
     genrePrimaryInput: document.getElementById("genrePrimary"),
     genreSecondaryInput: document.getElementById("genreSecondary"),
     feelingsGrid: document.getElementById("feelingsGrid"),
@@ -67,11 +67,11 @@ const els = {
     feelingsToggleBtn: document.getElementById("feelingsToggleBtn"),
     feelingsDropdownMenu: document.getElementById("feelingsDropdownMenu"),
     feelingsCounter: document.getElementById("feelingsCounter"),
-    artistPageFullTuneInput: document.getElementById("artistPageFullTune"),
+    artistPageFullTrackInput: document.getElementById("artistPageFullTrack"),
     aiDetailsWrap: document.getElementById("aiDetailsWrap"),
     aiDetailsInput: document.getElementById("aiDetails"),
     rightsConfirmedInput: document.getElementById("rightsConfirmed"),
-    saveTuneBtn: document.getElementById("saveTuneBtn")
+    saveTrackBtn: document.getElementById("saveTrackBtn")
   },
 
   clip: {
@@ -83,7 +83,7 @@ const els = {
     clipStartLabel: document.getElementById("clipStartLabel"),
     clipEndLabel: document.getElementById("clipEndLabel"),
     clipDurationLabel: document.getElementById("clipDurationLabel"),
-    fullTuneDurationLabel: document.getElementById("fullTuneDurationLabel"),
+    fullTrackDurationLabel: document.getElementById("fullTrackDurationLabel"),
     clipPlayBtn: document.getElementById("clipPlayBtn"),
     clipProgressFill: document.getElementById("clipProgressFill"),
     clipCurrentTime: document.getElementById("clipCurrentTime")
@@ -92,10 +92,10 @@ const els = {
 
 const state = {
   currentProfileData: null,
-  currentTuneData: null,
+  currentTrackData: null,
   currentUser: null,
   previewObjectUrl: null,
-  previewTuneDuration: 0,
+  previewTrackDuration: 0,
   previewStartSeconds: 0,
   previewPlayTimer: null
 };
@@ -239,10 +239,10 @@ function handleHeaderAvatarAction(profileHref) {
   handleStandardHeaderAvatarAction(els, profileHref);
 }
 
-function applyMenuState(user, profile, tune) {
+function applyMenuState(user, profile, track) {
   const isLoggedIn = Boolean(user);
   const hasProfile = Boolean(profile);
-  const hasTune = Boolean(tune);
+  const hasTrack = Boolean(track);
 
   setHidden(els.desktopNav.loginLink, isLoggedIn);
   setHidden(els.mobileNav.loginLink, isLoggedIn);
@@ -254,8 +254,8 @@ function applyMenuState(user, profile, tune) {
   setHidden(els.desktopNav.notificationsLink, !isLoggedIn);
   setHidden(els.mobileNav.notificationsLink, !isLoggedIn);
 
-  setHidden(els.desktopNav.tuneLink, !isLoggedIn || !hasProfile);
-  setHidden(els.mobileNav.tuneLink, !isLoggedIn || !hasProfile);
+  setHidden(els.desktopNav.trackLink, !isLoggedIn || !hasProfile);
+  setHidden(els.mobileNav.trackLink, !isLoggedIn || !hasProfile);
 
   const profileHref = getProfileHref(profile);
 
@@ -265,8 +265,8 @@ function applyMenuState(user, profile, tune) {
 
   setHidden(els.header.accountProfileLink, !isLoggedIn);
 
-  els.desktopNav.tuneLink.setAttribute("data-tune-mode", hasTune ? "edit" : "submit");
-  els.mobileNav.tuneLink.setAttribute("data-tune-mode", hasTune ? "edit" : "submit");
+  els.desktopNav.trackLink.setAttribute("data-track-mode", hasTrack ? "edit" : "submit");
+  els.mobileNav.trackLink.setAttribute("data-track-mode", hasTrack ? "edit" : "submit");
 
   if (hasProfile && profile.user_id) {
     const artistUrl = `artist.html?user_id=${encodeURIComponent(profile.user_id)}`;
@@ -292,11 +292,11 @@ function setLoggedOutView() {
 
   setHidden(els.page.loginRequiredBox, false);
   setHidden(els.page.profileRequiredBox, true);
-  setHidden(els.page.tuneStatusBox, true);
+  setHidden(els.page.trackStatusBox, true);
   setHidden(els.page.formWrap, true);
 
   state.currentProfileData = null;
-  state.currentTuneData = null;
+  state.currentTrackData = null;
   state.currentUser = null;
 
   applyMenuState(null, null, null);
@@ -306,8 +306,8 @@ function setLoggedInHeader() {
   setStandardLoggedInState(els, { coins: state.currentProfileData?.coins || 0 });
 }
 
-function setPageMode(tune) {
-  const isEdit = Boolean(tune);
+function setPageMode(track) {
+  const isEdit = Boolean(track);
 
   setText(els.page.title, "Enter The Radio");
   setText(
@@ -317,39 +317,39 @@ function setPageMode(tune) {
       : "Submit your 60 second preview and join the next wave."
   );
 
-  setText(els.form.saveTuneBtn, isEdit ? "Save Tune Changes" : "Submit Your Tune");
+  setText(els.form.saveTrackBtn, isEdit ? "Save Track Changes" : "Submit Your Track");
 }
 
-function renderTuneStatus(tune) {
-  if (!tune) {
-    setHidden(els.page.tuneStatusBox, true);
-    els.page.tuneStatusBox.innerHTML = "";
+function renderTrackStatus(track) {
+  if (!track) {
+    setHidden(els.page.trackStatusBox, true);
+    els.page.trackStatusBox.innerHTML = "";
     return;
   }
 
-  setHidden(els.page.tuneStatusBox, false);
+  setHidden(els.page.trackStatusBox, false);
 
-  let title = "Tune status";
+  let title = "Track status";
   let titleClass = "";
-  let copy = "Your tune is saved.";
+  let copy = "Your track is saved.";
 
-  if (tune.status === "pending") {
-    title = "⏳ Your tune is under review";
+  if (track.status === "pending") {
+    title = "⏳ Your track is under review";
     titleClass = "pending";
     copy = "Your submission is waiting for admin approval. If you upload a new file later, it will go back into review before it can go live again.";
-  } else if (tune.status === "approved") {
-    title = "✅ Your tune is live";
+  } else if (track.status === "approved") {
+    title = "✅ Your track is live";
     titleClass = "approved";
-    copy = "Your tune is approved and can play on the radio. If you upload a new file later, it will require a new admin approval before going live again.";
-  } else if (tune.status === "rejected") {
-    title = "❌ Your tune was not approved";
+    copy = "Your track is approved and can play on the radio. If you upload a new file later, it will require a new admin approval before going live again.";
+  } else if (track.status === "rejected") {
+    title = "❌ Your track was not approved";
     titleClass = "rejected";
     copy = "You can update your submission and try again. Uploading a new file will send it back for review.";
   }
 
-  els.page.tuneStatusBox.innerHTML = `
-    <div class="tune-status-title ${titleClass}">${title}</div>
-    <div class="tune-status-copy">${copy}</div>
+  els.page.trackStatusBox.innerHTML = `
+    <div class="track-status-title ${titleClass}">${title}</div>
+    <div class="track-status-copy">${copy}</div>
   `;
 }
 
@@ -366,10 +366,10 @@ function stopPreviewPlayback() {
 }
 
 function updateClipUi() {
-  const effectiveDuration = Math.min(60, Math.max(1, Math.floor(state.previewTuneDuration || 0)));
-  const maxStart = Math.max(0, Math.floor(state.previewTuneDuration - effectiveDuration));
+  const effectiveDuration = Math.min(60, Math.max(1, Math.floor(state.previewTrackDuration || 0)));
+  const maxStart = Math.max(0, Math.floor(state.previewTrackDuration - effectiveDuration));
   const start = Math.min(Math.max(0, Number(state.previewStartSeconds) || 0), maxStart);
-  const end = Math.min(start + effectiveDuration, Math.floor(state.previewTuneDuration || 0));
+  const end = Math.min(start + effectiveDuration, Math.floor(state.previewTrackDuration || 0));
 
   els.clip.clipStartSlider.max = String(maxStart);
   els.clip.clipStartSlider.value = String(start);
@@ -377,10 +377,10 @@ function updateClipUi() {
   setText(els.clip.clipStartLabel, formatTime(start));
   setText(els.clip.clipEndLabel, formatTime(end));
   setText(els.clip.clipDurationLabel, `${effectiveDuration} sec`);
-  setText(els.clip.fullTuneDurationLabel, `Full tune: ${formatTime(state.previewTuneDuration)}`);
+  setText(els.clip.fullTrackDurationLabel, `Full track: ${formatTime(state.previewTrackDuration)}`);
 
-  const widthPercent = state.previewTuneDuration > 0 ? (effectiveDuration / state.previewTuneDuration) * 100 : 100;
-  const leftPercent = state.previewTuneDuration > 0 ? (start / state.previewTuneDuration) * 100 : 0;
+  const widthPercent = state.previewTrackDuration > 0 ? (effectiveDuration / state.previewTrackDuration) * 100 : 100;
+  const leftPercent = state.previewTrackDuration > 0 ? (start / state.previewTrackDuration) * 100 : 0;
 
   els.clip.clipSelection.style.width = `${Math.max(widthPercent, 8)}%`;
   els.clip.clipSelection.style.left = `${leftPercent}%`;
@@ -392,26 +392,26 @@ function updateClipUi() {
 function loadPreviewSource(sourceUrl, preferredStart = 0) {
   stopPreviewPlayback();
 
-  state.previewTuneDuration = 0;
+  state.previewTrackDuration = 0;
   state.previewStartSeconds = Math.max(0, Number(preferredStart) || 0);
 
   els.clip.previewAudio.src = sourceUrl;
   els.clip.previewAudio.load();
 
   els.clip.previewAudio.onloadedmetadata = () => {
-    state.previewTuneDuration = Number.isFinite(els.clip.previewAudio.duration)
+    state.previewTrackDuration = Number.isFinite(els.clip.previewAudio.duration)
       ? Math.floor(els.clip.previewAudio.duration)
       : 0;
 
-    if (!state.previewTuneDuration || state.previewTuneDuration <= 0) {
+    if (!state.previewTrackDuration || state.previewTrackDuration <= 0) {
       setHidden(els.clip.clipTool, true);
       setHidden(els.clip.clipToolPlaceholder, false);
-      setText(els.clip.clipToolPlaceholder, "This tune could not be analysed for preview selection.");
+      setText(els.clip.clipToolPlaceholder, "This track could not be analysed for preview selection.");
       return;
     }
 
-    const effectiveDuration = Math.min(60, state.previewTuneDuration);
-    const maxStart = Math.max(0, state.previewTuneDuration - effectiveDuration);
+    const effectiveDuration = Math.min(60, state.previewTrackDuration);
+    const maxStart = Math.max(0, state.previewTrackDuration - effectiveDuration);
     state.previewStartSeconds = Math.min(state.previewStartSeconds, maxStart);
 
     updateClipUi();
@@ -420,40 +420,40 @@ function loadPreviewSource(sourceUrl, preferredStart = 0) {
   els.clip.previewAudio.onerror = () => {
     setHidden(els.clip.clipTool, true);
     setHidden(els.clip.clipToolPlaceholder, false);
-    setText(els.clip.clipToolPlaceholder, "The preview tool could not load this tune.");
+    setText(els.clip.clipToolPlaceholder, "The preview tool could not load this track.");
   };
 }
 
-function fillTuneForm(tune) {
-  els.form.tuneTitleInput.value = tune?.title || "";
-  els.form.genrePrimaryInput.value = tune?.genre_primary || "";
-  els.form.genreSecondaryInput.value = tune?.genre_secondary || "";
+function fillTrackForm(track) {
+  els.form.trackTitleInput.value = track?.title || "";
+  els.form.genrePrimaryInput.value = track?.genre_primary || "";
+  els.form.genreSecondaryInput.value = track?.genre_secondary || "";
 
-  renderFeelingOptions(Array.isArray(tune?.feeling_tags) ? tune.feeling_tags : []);
+  renderFeelingOptions(Array.isArray(track?.feeling_tags) ? track.feeling_tags : []);
 
-  const aiUsage = tune?.ai_usage || "";
+  const aiUsage = track?.ai_usage || "";
   document.querySelectorAll('input[name="aiUsage"]').forEach((input) => {
     input.checked = input.value === aiUsage;
   });
 
-  els.form.aiDetailsInput.value = tune?.ai_details || "";
-  els.form.rightsConfirmedInput.checked = Boolean(tune?.rights_confirmed);
-  if (els.form.artistPageFullTuneInput) {
-    els.form.artistPageFullTuneInput.checked = Boolean(tune?.artist_page_full_tune);
+  els.form.aiDetailsInput.value = track?.ai_details || "";
+  els.form.rightsConfirmedInput.checked = Boolean(track?.rights_confirmed);
+  if (els.form.artistPageFullTrackInput) {
+    els.form.artistPageFullTrackInput.checked = Boolean(track?.artist_page_full_track);
   }
   updateAiDetailsVisibility();
 
-  const previewStart = Number(tune?.preview_start_seconds || 0);
+  const previewStart = Number(track?.preview_start_seconds || 0);
 
-  if (tune?.file_url) {
-    loadPreviewSource(tune.file_url, previewStart);
+  if (track?.file_url) {
+    loadPreviewSource(track.file_url, previewStart);
     return;
   }
 
   stopPreviewPlayback();
   setHidden(els.clip.clipTool, true);
   setHidden(els.clip.clipToolPlaceholder, false);
-  setText(els.clip.clipToolPlaceholder, "Upload or load a tune first to choose your 60 second radio preview.");
+  setText(els.clip.clipToolPlaceholder, "Upload or load a track first to choose your 60 second radio preview.");
 }
 
 async function loadMyProfile(userId) {
@@ -478,27 +478,27 @@ async function loadMyProfile(userId) {
   return data;
 }
 
-async function loadMyTune(userId) {
+async function loadMyTrack(userId) {
   const { data, error } = await supabaseClient
-    .from("tunes")
-    .select("id, user_id, title, artist, file_url, status, created_at, genre_primary, genre_secondary, feeling_tags, ai_usage, ai_details, rights_confirmed, preview_start_seconds, preview_duration_seconds, artist_page_full_tune")
+    .from("tracks")
+    .select("id, user_id, title, artist, file_url, status, created_at, genre_primary, genre_secondary, feeling_tags, ai_usage, ai_details, rights_confirmed, preview_start_seconds, preview_duration_seconds, artist_page_full_track")
     .eq("user_id", userId)
     .order("created_at", { ascending: false })
     .limit(1)
     .maybeSingle();
 
   if (error || !data) {
-    state.currentTuneData = null;
+    state.currentTrackData = null;
     return null;
   }
 
-  state.currentTuneData = data;
+  state.currentTrackData = data;
   return data;
 }
 
-async function uploadTuneIfNeeded(userId, file) {
+async function uploadTrackIfNeeded(userId, file) {
   if (!file) {
-    return state.currentTuneData?.file_url || "";
+    return state.currentTrackData?.file_url || "";
   }
 
   const cleanName = file.name.replace(/\s+/g, "-");
@@ -506,19 +506,19 @@ async function uploadTuneIfNeeded(userId, file) {
 
   const { error } = await supabaseClient
     .storage
-    .from("tunes")
+    .from("tracks")
     .upload(filePath, file, {
       cacheControl: "3600",
       upsert: false
     });
 
   if (error) {
-    throw new Error("Tune upload failed: " + error.message);
+    throw new Error("Track upload failed: " + error.message);
   }
 
   const { data } = supabaseClient
     .storage
-    .from("tunes")
+    .from("tracks")
     .getPublicUrl(filePath);
 
   return data.publicUrl;
@@ -552,7 +552,7 @@ async function refreshPageState() {
 
   if (!user) {
     setLoggedOutView();
-    fillTuneForm(null);
+    fillTrackForm(null);
     setPageMode(null);
     setStatus("");
     return;
@@ -562,39 +562,39 @@ async function refreshPageState() {
   setLoggedInHeader();
 
   const profile = await loadMyProfile(user.id);
-  const tune = await loadMyTune(user.id);
+  const track = await loadMyTrack(user.id);
 
-  applyMenuState(user, profile, tune);
-  setPageMode(tune);
-  renderTuneStatus(tune);
+  applyMenuState(user, profile, track);
+  setPageMode(track);
+  renderTrackStatus(track);
 
   if (!profile) {
     setHidden(els.page.loginRequiredBox, true);
     setHidden(els.page.profileRequiredBox, false);
     setHidden(els.page.formWrap, true);
-    fillTuneForm(tune);
+    fillTrackForm(track);
     return;
   }
 
   setHidden(els.page.loginRequiredBox, true);
   setHidden(els.page.profileRequiredBox, true);
   setHidden(els.page.formWrap, false);
-  fillTuneForm(tune);
+  fillTrackForm(track);
 }
 
-async function handleSaveTune() {
-  const title = els.form.tuneTitleInput.value.trim();
-  const file = els.form.tuneFileInput.files[0];
+async function handleSaveTrack() {
+  const title = els.form.trackTitleInput.value.trim();
+  const file = els.form.trackFileInput.files[0];
   const genrePrimary = els.form.genrePrimaryInput.value.trim();
   const genreSecondary = els.form.genreSecondaryInput.value.trim();
   const feelingTags = getSelectedFeelings();
   const aiUsage = getSelectedAiUsage();
   const aiDetails = els.form.aiDetailsInput.value.trim();
   const rightsConfirmed = els.form.rightsConfirmedInput.checked;
-  const artistPageFullTune = Boolean(els.form.artistPageFullTuneInput?.checked);
+  const artistPageFullTrack = Boolean(els.form.artistPageFullTrackInput?.checked);
 
   if (!state.currentUser) {
-    setStatus("You must be logged in before submitting a tune.", true);
+    setStatus("You must be logged in before submitting a track.", true);
     return;
   }
 
@@ -604,7 +604,7 @@ async function handleSaveTune() {
   }
 
   if (!title) {
-    setStatus("Please enter your tune title.", true);
+    setStatus("Please enter your track title.", true);
     return;
   }
 
@@ -624,7 +624,7 @@ async function handleSaveTune() {
   }
 
   if (!aiUsage) {
-    setStatus("Please select how AI was used for this tune.", true);
+    setStatus("Please select how AI was used for this track.", true);
     return;
   }
 
@@ -633,40 +633,40 @@ async function handleSaveTune() {
     return;
   }
 
-  if (!state.currentTuneData && !file) {
-    setStatus("Please upload your tune file.", true);
+  if (!state.currentTrackData && !file) {
+    setStatus("Please upload your track file.", true);
     return;
   }
 
   if (!els.clip.previewAudio.src) {
-    setStatus("Please load a tune and choose your 60 second radio preview.", true);
+    setStatus("Please load a track and choose your 60 second radio preview.", true);
     return;
   }
 
-  if (!state.previewTuneDuration || state.previewTuneDuration <= 0) {
-    setStatus("The preview tool could not read the tune duration.", true);
+  if (!state.previewTrackDuration || state.previewTrackDuration <= 0) {
+    setStatus("The preview tool could not read the track duration.", true);
     return;
   }
 
-  els.form.saveTuneBtn.disabled = true;
-  setStatus("Uploading and saving tune...");
+  els.form.saveTrackBtn.disabled = true;
+  setStatus("Uploading and saving track...");
 
   try {
-    const fileUrl = await uploadTuneIfNeeded(state.currentUser.id, file);
+    const fileUrl = await uploadTrackIfNeeded(state.currentUser.id, file);
 
     if (!fileUrl) {
-      setStatus("No valid tune file could be saved.", true);
+      setStatus("No valid track file could be saved.", true);
       return;
     }
 
-    const effectivePreviewDuration = Math.min(60, Math.max(1, Math.floor(state.previewTuneDuration)));
+    const effectivePreviewDuration = Math.min(60, Math.max(1, Math.floor(state.previewTrackDuration)));
     const safePreviewStart = Math.max(0, Math.floor(state.previewStartSeconds || 0));
 
     const isNewFile = Boolean(file);
     const shouldResetStatus = isNewFile;
 
-    const nextStatus = state.currentTuneData
-      ? (shouldResetStatus ? "pending" : (state.currentTuneData.status || "pending"))
+    const nextStatus = state.currentTrackData
+      ? (shouldResetStatus ? "pending" : (state.currentTrackData.status || "pending"))
       : "pending";
 
     const payload = {
@@ -683,36 +683,36 @@ async function handleSaveTune() {
       rights_confirmed: rightsConfirmed,
       preview_start_seconds: safePreviewStart,
       preview_duration_seconds: effectivePreviewDuration,
-      artist_page_full_tune: artistPageFullTune
+      artist_page_full_track: artistPageFullTrack
     };
 
-    if (state.currentTuneData?.id) {
+    if (state.currentTrackData?.id) {
       const { error: updateError } = await supabaseClient
-        .from("tunes")
+        .from("tracks")
         .update(payload)
-        .eq("id", state.currentTuneData.id);
+        .eq("id", state.currentTrackData.id);
 
       if (updateError) {
-        setStatus("Saving tune failed: " + updateError.message, true);
+        setStatus("Saving track failed: " + updateError.message, true);
         return;
       }
     } else {
       const { error: insertError } = await supabaseClient
-        .from("tunes")
+        .from("tracks")
         .insert([payload]);
 
       if (insertError) {
-        setStatus("Saving tune failed: " + insertError.message, true);
+        setStatus("Saving track failed: " + insertError.message, true);
         return;
       }
     }
 
-    els.form.tuneFileInput.value = "";
+    els.form.trackFileInput.value = "";
 
     if (isNewFile) {
-      setStatus("Tune updated successfully. Because you uploaded a new file, it is now pending admin approval again.");
+      setStatus("Track updated successfully. Because you uploaded a new file, it is now pending admin approval again.");
     } else {
-      setStatus("Tune saved successfully.");
+      setStatus("Track saved successfully.");
     }
 
     await refreshPageState();
@@ -723,14 +723,14 @@ async function handleSaveTune() {
     }, 500);
   } catch (err) {
     console.error(err);
-    setStatus(err.message || "Something went wrong while saving your tune.", true);
+    setStatus(err.message || "Something went wrong while saving your track.", true);
   } finally {
-    els.form.saveTuneBtn.disabled = false;
+    els.form.saveTrackBtn.disabled = false;
   }
 }
 
-function handleTuneFileChange() {
-  const file = els.form.tuneFileInput.files[0];
+function handleTrackFileChange() {
+  const file = els.form.trackFileInput.files[0];
   stopPreviewPlayback();
 
   if (state.previewObjectUrl) {
@@ -739,15 +739,15 @@ function handleTuneFileChange() {
   }
 
   if (!file) {
-    if (state.currentTuneData?.file_url) {
+    if (state.currentTrackData?.file_url) {
       loadPreviewSource(
-        state.currentTuneData.file_url,
-        Number(state.currentTuneData.preview_start_seconds || 0)
+        state.currentTrackData.file_url,
+        Number(state.currentTrackData.preview_start_seconds || 0)
       );
     } else {
       setHidden(els.clip.clipTool, true);
       setHidden(els.clip.clipToolPlaceholder, false);
-      setText(els.clip.clipToolPlaceholder, "Upload or load a tune first to choose your 60 second radio preview.");
+      setText(els.clip.clipToolPlaceholder, "Upload or load a track first to choose your 60 second radio preview.");
     }
     return;
   }
@@ -763,11 +763,11 @@ function handleClipSliderInput() {
 }
 
 async function handleClipPlay() {
-  if (!els.clip.previewAudio.src || !state.previewTuneDuration) return;
+  if (!els.clip.previewAudio.src || !state.previewTrackDuration) return;
 
   const start = Math.max(0, Math.floor(state.previewStartSeconds || 0));
-  const duration = Math.min(60, Math.max(1, Math.floor(state.previewTuneDuration)));
-  const end = Math.min(start + duration, state.previewTuneDuration);
+  const duration = Math.min(60, Math.max(1, Math.floor(state.previewTrackDuration)));
+  const end = Math.min(start + duration, state.previewTrackDuration);
 
   try {
     if (!els.clip.previewAudio.paused) {
@@ -805,13 +805,13 @@ function bindEvents() {
     },
     onLogout: handleLogout
   });
-  els.form.saveTuneBtn.onclick = handleSaveTune;
+  els.form.saveTrackBtn.onclick = handleSaveTrack;
 
   document.querySelectorAll('input[name="aiUsage"]').forEach((input) => {
     input.addEventListener("change", updateAiDetailsVisibility);
   });
 
-  els.form.tuneFileInput.addEventListener("change", handleTuneFileChange);
+  els.form.trackFileInput.addEventListener("change", handleTrackFileChange);
   if (els.form.feelingsToggleBtn) {
     els.form.feelingsToggleBtn.addEventListener("click", () => {
       els.form.feelingsDropdownMenu.classList.toggle("hidden");

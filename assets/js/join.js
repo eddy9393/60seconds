@@ -39,12 +39,12 @@ const els = {
   desktopLogoutBtn: document.getElementById("desktopLogoutBtn"),
   desktopProfileLink: document.getElementById("desktopProfileLink"),
   desktopNotificationsLink: document.getElementById("desktopNotificationsLink"),
-  desktopTuneLink: document.getElementById("desktopTuneLink"),
+  desktopTrackLink: document.getElementById("desktopTrackLink"),
 
   mobileLoginLink: document.getElementById("mobileLoginLink"),
   mobileProfileLink: document.getElementById("mobileProfileLink"),
   mobileNotificationsLink: document.getElementById("mobileNotificationsLink"),
-  mobileTuneLink: document.getElementById("mobileTuneLink"),
+  mobileTrackLink: document.getElementById("mobileTrackLink"),
 
   email: document.getElementById("email"),
   password: document.getElementById("password"),
@@ -74,7 +74,7 @@ const els = {
 const state = {
   currentUser: null,
   currentProfileData: null,
-  currentTuneData: null
+  currentTrackData: null
 };
 
 function setHidden(el, hidden) {
@@ -161,10 +161,10 @@ function fillProfileForm(profile) {
   els.acceptedTermsInput.checked = Boolean(profile?.accepted_terms);
 }
 
-function applyMenuState(user, profile, tune) {
+function applyMenuState(user, profile, track) {
   const isLoggedIn = Boolean(user);
   const hasProfile = Boolean(profile);
-  const hasTune = Boolean(tune);
+  const hasTrack = Boolean(track);
   const profileHref = getProfileHref(profile);
 
   setHidden(els.desktopLoginLink, isLoggedIn);
@@ -177,8 +177,8 @@ function applyMenuState(user, profile, tune) {
   setHidden(els.desktopNotificationsLink, !isLoggedIn);
   setHidden(els.mobileNotificationsLink, !isLoggedIn);
 
-  setHidden(els.desktopTuneLink, !isLoggedIn || !hasProfile);
-  setHidden(els.mobileTuneLink, !isLoggedIn || !hasProfile);
+  setHidden(els.desktopTrackLink, !isLoggedIn || !hasProfile);
+  setHidden(els.mobileTrackLink, !isLoggedIn || !hasProfile);
 
   if (els.desktopProfileLink) els.desktopProfileLink.href = profileHref;
   if (els.mobileProfileLink) els.mobileProfileLink.href = profileHref;
@@ -187,19 +187,19 @@ function applyMenuState(user, profile, tune) {
 
   setHidden(els.accountProfileLink, !isLoggedIn);
 
-  if (els.desktopTuneLink) {
-    els.desktopTuneLink.setAttribute("data-tune-mode", hasTune ? "edit" : "submit");
+  if (els.desktopTrackLink) {
+    els.desktopTrackLink.setAttribute("data-track-mode", hasTrack ? "edit" : "submit");
   }
 
-  if (els.mobileTuneLink) {
-    els.mobileTuneLink.setAttribute("data-tune-mode", hasTune ? "edit" : "submit");
+  if (els.mobileTrackLink) {
+    els.mobileTrackLink.setAttribute("data-track-mode", hasTrack ? "edit" : "submit");
   }
 }
 
 function setLoggedOutView() {
   state.currentUser = null;
   state.currentProfileData = null;
-  state.currentTuneData = null;
+  state.currentTrackData = null;
 
   closeHeaderPanels();
 
@@ -232,9 +232,9 @@ function setLoggedInView() {
 function renderPageState() {
   const user = state.currentUser;
   const profile = state.currentProfileData;
-  const tune = state.currentTuneData;
+  const track = state.currentTrackData;
 
-  applyMenuState(user, profile, tune);
+  applyMenuState(user, profile, track);
 
   if (!user) {
     setLoggedOutView();
@@ -285,9 +285,9 @@ async function loadMyProfile(userId) {
   return data;
 }
 
-async function loadMyTune(userId) {
+async function loadMyTrack(userId) {
   const { data, error } = await supabaseClient
-    .from("tunes")
+    .from("tracks")
     .select("id, user_id, title, status, created_at")
     .eq("user_id", userId)
     .order("created_at", { ascending: false })
@@ -295,11 +295,11 @@ async function loadMyTune(userId) {
     .maybeSingle();
 
   if (error || !data) {
-    state.currentTuneData = null;
+    state.currentTrackData = null;
     return null;
   }
 
-  state.currentTuneData = data;
+  state.currentTrackData = data;
   return data;
 }
 
@@ -314,7 +314,7 @@ async function refreshPageState() {
 
   await Promise.all([
     loadMyProfile(user.id),
-    loadMyTune(user.id)
+    loadMyTrack(user.id)
   ]);
 
   renderPageState();
