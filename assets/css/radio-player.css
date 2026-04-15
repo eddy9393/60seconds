@@ -35,8 +35,8 @@
   will-change:transform;
   animation:ssfmMarquee 14s linear infinite;
 }
-.ssfm-mini-player-track,
-.ssfm-mini-player-track-copy {
+.ssfm-mini-player-tune,
+.ssfm-mini-player-tune-copy {
   font-family:'Space Grotesk', sans-serif;
   font-size:15px;
   font-weight:700;
@@ -82,6 +82,6 @@ body.ssfm-has-mini-player { padding-bottom: 124px; }
   body.ssfm-has-mini-player {
     padding-bottom: calc(var(--mobile-bottom-nav-height, 86px) + 116px) !important;
   }
-  .ssfm-mini-player-track,
-  .ssfm-mini-player-track-copy { font-size: 14px; }
+  .ssfm-mini-player-tune,
+  .ssfm-mini-player-tune-copy { font-size: 14px; }
 }

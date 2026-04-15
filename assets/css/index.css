@@ -12,7 +12,7 @@
   --fs-artist: 18px;
   --fs-stat-label: 12px;
   --fs-stat-value: clamp(26px, 4vw, 34px);
-  --fs-track-title: clamp(30px, 5vw, 48px);
+  --fs-tune-title: clamp(30px, 5vw, 48px);
 
   --desktop-rail-width: 86px;
   --desktop-rail-expanded: 320px;
@@ -819,9 +819,9 @@ img {
   }
 }
 
-.track-title {
+.tune-title {
   font-family: 'Space Grotesk', sans-serif;
-  font-size: var(--fs-track-title);
+  font-size: var(--fs-tune-title);
   margin: 0;
   font-weight: 600;
   letter-spacing: 0.5px;
@@ -1417,7 +1417,7 @@ img {
     min-width: 3px;
   }
 
-  .track-title {
+  .tune-title {
     font-size: clamp(21px, 6vw, 30px);
     margin-bottom: 3px;
   }
@@ -1714,7 +1714,7 @@ img {
   gap: 10px;
 }
 
-.track-genre {
+.tune-genre {
   display: inline-flex;
   align-items: center;
   min-height: 28px;
@@ -1809,7 +1809,7 @@ img {
     gap: 8px;
   }
 
-  .track-genre {
+  .tune-genre {
     min-height: 26px;
     padding: 0 10px;
     font-size: 11px;
@@ -1834,7 +1834,7 @@ img {
 
 
 /* v18 title row */
-.track-title-row {
+.tune-title-row {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -1842,7 +1842,7 @@ img {
   flex-wrap: wrap;
 }
 
-.track-title {
+.tune-title {
   margin-bottom: 0;
 }
 
@@ -1928,7 +1928,7 @@ img {
 }
 
 .news-feed-name,
-.news-feed-track {
+.news-feed-tune {
   color: #fff1c0;
   font-weight: 700;
 }
@@ -2084,7 +2084,7 @@ img {
   padding-top: 18px;
 }
 
-.track-title-row {
+.tune-title-row {
   display: grid;
   grid-template-columns: 1fr auto 1fr;
   align-items: center;
@@ -2092,12 +2092,12 @@ img {
   margin: 0 auto;
 }
 
-.track-title-row .track-title {
+.tune-title-row .tune-title {
   grid-column: 2;
   text-align: center;
 }
 
-.track-title-row .track-genre {
+.tune-title-row .tune-genre {
   grid-column: 3;
   justify-self: start;
   margin-left: 18px;
@@ -2108,11 +2108,11 @@ img {
     padding-top: 16px;
   }
 
-  .track-title-row {
+  .tune-title-row {
     width: min(100%, 100%);
   }
 
-  .track-title-row .track-genre {
+  .tune-title-row .tune-genre {
     margin-left: 10px;
   }
 }

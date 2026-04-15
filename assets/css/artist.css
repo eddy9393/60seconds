@@ -764,12 +764,12 @@ img {
   color: var(--danger);
 }
 
-.tracks-grid {
+.tunes-grid {
   display: grid;
   gap: 18px;
 }
 
-.track-card {
+.tune-card {
   padding: 22px;
   background:
     linear-gradient(180deg, rgba(255,255,255,0.045), rgba(255,255,255,0.012)),
@@ -781,7 +781,7 @@ img {
     inset 0 1px 0 rgba(255,255,255,0.04);
 }
 
-.track-top {
+.tune-top {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
@@ -789,7 +789,7 @@ img {
   margin-bottom: 16px;
 }
 
-.track-title {
+.tune-title {
   font-family: 'Space Grotesk', sans-serif;
   font-size: 23px;
   line-height: 1.1;
@@ -797,12 +797,12 @@ img {
   word-break: break-word;
 }
 
-.track-subtitle {
+.tune-subtitle {
   color: #cfcfcf;
   font-size: 14px;
 }
 
-.track-status {
+.tune-status {
   display: inline-flex;
   align-items: center;
   min-height: 34px;
@@ -817,7 +817,7 @@ img {
   white-space: nowrap;
 }
 
-.track-player {
+.tune-player {
   display: grid;
   gap: 14px;
 }
@@ -882,7 +882,7 @@ img {
   box-shadow: 0 0 16px rgba(212,175,55,0.18);
 }
 
-.track-meta-row {
+.tune-meta-row {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
@@ -1064,7 +1064,7 @@ img {
   }
 
   .submission-header,
-  .track-top {
+  .tune-top {
     flex-direction: column;
     align-items: flex-start;
   }
@@ -1217,7 +1217,7 @@ img {
 
 
 /* v22 tune label styling */
-.track-status {
+.tune-status {
   border-color: rgba(255,255,255,0.10);
   background: rgba(255,255,255,0.04);
   color: #d8d8d8;

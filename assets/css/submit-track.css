@@ -606,29 +606,29 @@ select {
   backdrop-filter: blur(6px);
 }
 
-.track-status-box {
+.tune-status-box {
   text-align: left;
 }
 
-.track-status-title {
+.tune-status-title {
   font-weight: 700;
   margin-bottom: 6px;
   font-size: 15px;
 }
 
-.track-status-title.pending {
+.tune-status-title.pending {
   color: #f4d77a;
 }
 
-.track-status-title.approved {
+.tune-status-title.approved {
   color: #9fe3a6;
 }
 
-.track-status-title.rejected {
+.tune-status-title.rejected {
   color: #ff8a8a;
 }
 
-.track-status-copy {
+.tune-status-copy {
   color: #cfcfcf;
   font-size: 13px;
   line-height: 1.6;
