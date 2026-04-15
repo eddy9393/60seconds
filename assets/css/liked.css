@@ -95,7 +95,8 @@
 
 .playlist-actions {
   display: flex;
-  justify-content: flex-end;
+  justify-content: flex-start;
+  padding-left: 8px;
 }
 
 .playlist-open {
@@ -158,5 +159,17 @@
   .playlist-actions {
     justify-content: flex-start;
     padding-left: 28px;
+  }
+}
+
+
+@media (min-width: 901px) {
+  .playlist-actions {
+    justify-content: flex-start;
+    padding-left: 10px;
+  }
+
+  .playlist-open {
+    margin-left: -6px;
   }
 }
