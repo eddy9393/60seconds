@@ -6,7 +6,7 @@
   <title>Enter The Radio - 60 Seconds FM</title>
 
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Manrope:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="assets/css/submit-tune.css">
+  <link rel="stylesheet" href="assets/css/submit-track.css">
 </head>
 <body>
   <aside class="desktop-side-nav" aria-label="Desktop navigation">
@@ -33,9 +33,9 @@
           <span class="desktop-nav-label">Notifications</span>
         </a>
 
-        <a id="desktopTrackLink" class="desktop-nav-link active hidden" href="submit-tune.html" aria-label="Tune">
+        <a id="desktopTrackLink" class="desktop-nav-link active hidden" href="submit-track.html" aria-label="Tune">
           <span class="desktop-nav-icon" aria-hidden="true">
-            <img src="/icons/tune.png" alt="" />
+            <img src="/icons/track.png" alt="" />
           </span>
           <span class="desktop-nav-label">Tune</span>
         </a>
@@ -82,9 +82,9 @@
         <span class="mobile-nav-label">Notifications</span>
       </a>
 
-      <a id="mobileTrackLink" class="mobile-nav-link active hidden" href="submit-tune.html" aria-label="Tune">
+      <a id="mobileTrackLink" class="mobile-nav-link active hidden" href="submit-track.html" aria-label="Tune">
         <span class="mobile-nav-icon" aria-hidden="true">
-          <img src="/icons/tune.png" alt="" />
+          <img src="/icons/track.png" alt="" />
         </span>
         <span class="mobile-nav-label">Tune</span>
       </a>
@@ -151,11 +151,8 @@
           </div>
         </div>
 
-        <div id="profileRequiredBox" class="notice-box hidden">
-          You need to create your artist profile before submitting a tune.
-          <div class="sub-link-row" style="margin-top: 12px;">
-            <a class="ghost-link" href="join.html">Create Artist Profile</a>
-          </div>
+        <div id="profileRequiredBox" class="notice-box hidden" style="text-align:center; padding: 28px;">
+          <a class="gold-btn" href="join.html">Create artist profile</a>
         </div>
 
         <div id="trackStatusBox" class="notice-box tune-status-box hidden"></div>
@@ -310,7 +307,7 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="assets/js/config.js"></script>
   <script src="assets/js/app.js"></script>
-  <script src="assets/js/submit-tune.js"></script>
+  <script src="assets/js/submit-track.js"></script>
   <script src="assets/js/radio-mini-player.js"></script>
 </body>
 </html>
