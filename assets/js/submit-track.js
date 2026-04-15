@@ -317,7 +317,7 @@ function setPageMode(track) {
       : "Submit your 60 second preview and join the next wave."
   );
 
-  setText(els.form.saveTrackBtn, isEdit ? "Save Track Changes" : "Submit Your Track");
+  setText(els.form.saveTrackBtn, isEdit ? "Save Tune Changes" : "Submit Your Tune");
 }
 
 function renderTrackStatus(track) {
@@ -329,20 +329,20 @@ function renderTrackStatus(track) {
 
   setHidden(els.page.trackStatusBox, false);
 
-  let title = "Track status";
+  let title = "Tune status";
   let titleClass = "";
-  let copy = "Your track is saved.";
+  let copy = "Your tune is saved.";
 
   if (track.status === "pending") {
-    title = "⏳ Your track is under review";
+    title = "⏳ Your tune is under review";
     titleClass = "pending";
     copy = "Your submission is waiting for admin approval. If you upload a new file later, it will go back into review before it can go live again.";
   } else if (track.status === "approved") {
-    title = "✅ Your track is live";
+    title = "✅ Your tune is live";
     titleClass = "approved";
     copy = "Your track is approved and can play on the radio. If you upload a new file later, it will require a new admin approval before going live again.";
   } else if (track.status === "rejected") {
-    title = "❌ Your track was not approved";
+    title = "❌ Your tune was not approved";
     titleClass = "rejected";
     copy = "You can update your submission and try again. Uploading a new file will send it back for review.";
   }
@@ -594,7 +594,7 @@ async function handleSaveTrack() {
   const artistPageFullTrack = Boolean(els.form.artistPageFullTrackInput?.checked);
 
   if (!state.currentUser) {
-    setStatus("You must be logged in before submitting a track.", true);
+    setStatus("You must be logged in before submitting a tune.", true);
     return;
   }
 
@@ -604,7 +604,7 @@ async function handleSaveTrack() {
   }
 
   if (!title) {
-    setStatus("Please enter your track title.", true);
+    setStatus("Please enter your tune title.", true);
     return;
   }
 

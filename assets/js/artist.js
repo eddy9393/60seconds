@@ -495,7 +495,7 @@ function renderArtistProfile(profile, isOwnPage, hasOwnTrack) {
 
   if (isOwnPage && state.currentProfileData) {
     setHidden(els.page.submitTrackBtn, false);
-    setText(els.page.submitTrackBtn, state.currentTrackData ? "Edit Your Track" : "Submit Your Track");
+    setText(els.page.submitTrackBtn, state.currentTrackData ? "Edit Your Track" : "Submit Your Tune");
     els.page.submitTrackBtn.href = "submit-track.html";
   } else {
     setHidden(els.page.submitTrackBtn, true);
@@ -605,6 +605,17 @@ function buildTrackCard(track) {
   return card;
 }
 
+
+function showCreateArtistProfileCTA() {
+  const stage = document.querySelector('.artist-stage');
+  if (!stage) return;
+  stage.innerHTML = `
+    <div style="width:100%;display:flex;justify-content:center;align-items:center;padding:80px 20px;">
+      <a href="join.html" class="gold-btn">Create artist profile</a>
+    </div>
+  `;
+}
+
 function resetArtistPageShell() {
   setArtistStatus("");
   setHidden(els.page.tracksWrap, true);
@@ -637,8 +648,7 @@ async function loadViewedArtistPage(userId) {
   }
 
   if (!profile) {
-    setText(els.page.artistName, "");
-    setArtistStatus(".", true);
+    showCreateArtistProfileCTA();
     return;
   }
 
@@ -689,8 +699,13 @@ async function refreshWholePage() {
     return;
   }
 
+  if (user) {
+    showCreateArtistProfileCTA();
+    return;
+  }
+
   setText(els.page.artistName, "");
-  setArtistStatus("No artist user_id was provided in the URL.", true);
+  setArtistStatus("", false);
 }
 
 function bindEvents() {
@@ -755,19 +770,3 @@ initPage().catch((err) => {
   console.error("initPage error:", err);
   setArtistStatus("The page could not be loaded correctly.", true);
 });
-
-
-function showEmptyArtistState() {
-  const container = document.getElementById("artist-container");
-  if (!container) return;
-
-  container.innerHTML = `
-    <div style="text-align:center;padding:80px 20px;">
-      <h2>Create your artist profile</h2>
-      <p>Start sharing your music with the world.</p>
-      <button onclick="window.location.href='/edit-profile.html'">
-        Create artist profile
-      </button>
-    </div>
-  `;
-}
