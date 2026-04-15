@@ -610,8 +610,15 @@ function showCreateArtistProfileCTA() {
   const stage = document.querySelector('.artist-stage');
   if (!stage) return;
   stage.innerHTML = `
-    <div style="width:100%;display:flex;justify-content:center;align-items:center;padding:80px 20px;">
-      <a href="join.html" class="gold-btn">Create artist profile</a>
+    <div class="artist-cta-shell">
+      <div class="artist-cta-card">
+        <div class="artist-cta-kicker">You're one step away</div>
+        <h2 class="artist-cta-title">Create your artist profile</h2>
+        <p class="artist-cta-copy">
+          Unlock your artist page, submit your tune, and start sharing your sound with listeners on 60 Seconds FM.
+        </p>
+        <a href="join.html" class="gold-btn">Create artist profile</a>
+      </div>
     </div>
   `;
 }
