@@ -568,7 +568,7 @@ function buildTrackCard(track) {
       </div>
 
       <div class="tune-action-row">
-        <button class="tune-action-btn tune-like-btn ${isLiked ? "is-liked" : ""} ${ownTrack ? "is-disabled" : ""}" type="button" ${!state.currentUserId or ownTrack ? "disabled" : ""} aria-label="${ownTrack ? "You cannot like your own tune" : "Like this tune"}">
+        <button class="tune-action-btn tune-like-btn ${isLiked ? "is-liked" : ""} ${ownTrack ? "is-disabled" : ""}" type="button" ${(!state.currentUserId || ownTrack) ? "disabled" : ""} aria-label="${ownTrack ? "You cannot like your own tune" : "Like this tune"}">
           <span class="tune-action-icon">♥</span>
           <span>${ownTrack ? "Own tune" : (isLiked ? "Liked" : "Like")}</span>
         </button>
