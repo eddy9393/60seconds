@@ -1,4 +1,4 @@
-const { getSupabaseClient, getProfileHref: sharedGetProfileHref, bindRuntimeCurrencySync, applyRuntimeCurrencySnapshotToElement, closeStandardHeaderPanels, setStandardHeaderAvatar, handleStandardHeaderAvatarAction, applyStandardMenuState, setStandardLoggedOutState, setStandardLoggedInState, bindStandardHeaderEvents, fetchProfileByUserId, fetchTrackByUserId, getCurrentUserSafe } = window.SSFMApp;
+const { getSupabaseClient, getProfileHref: sharedGetProfileHref, bindRuntimeCurrencySync, applyRuntimeCurrencySnapshotToElement, closeStandardHeaderPanels, setStandardHeaderAvatar, handleStandardHeaderAvatarAction, applyStandardMenuState, setStandardLoggedOutState, setStandardLoggedInState, bindStandardHeaderEvents, fetchProfileByUserId, fetchTuneByUserId, getCurrentUserSafe } = window.SSFMApp;
 const supabaseClient = getSupabaseClient();
 
 const els = {
@@ -20,20 +20,20 @@ const els = {
     logoutBtn: document.getElementById("desktopLogoutBtn"),
     profileLink: document.getElementById("desktopProfileLink"),
     notificationsLink: document.getElementById("desktopNotificationsLink"),
-    trackLink: document.getElementById("desktopTrackLink")
+    tuneLink: document.getElementById("desktopTuneLink")
   },
 
   mobileNav: {
     loginLink: document.getElementById("mobileLoginLink"),
     profileLink: document.getElementById("mobileProfileLink"),
     notificationsLink: document.getElementById("mobileNotificationsLink"),
-    trackLink: document.getElementById("mobileTrackLink")
+    tuneLink: document.getElementById("mobileTuneLink")
   }
 };
 
 const state = {
   currentProfileData: null,
-  currentTrackData: null
+  currentTuneData: null
 };
 
 function setHidden(element, hidden) {
@@ -74,14 +74,14 @@ function handleHeaderAvatarAction(profileHref) {
   handleStandardHeaderAvatarAction(els, profileHref);
 }
 
-function applyMenuState(user, profile, track) {
-  applyStandardMenuState(els, user, profile, track, { hideAccountNotifications: true });
+function applyMenuState(user, profile, tune) {
+  applyStandardMenuState(els, user, profile, tune, { hideAccountNotifications: true });
 }
 
 function setLoggedOutView() {
   setStandardLoggedOutState(els);
   state.currentProfileData = null;
-  state.currentTrackData = null;
+  state.currentTuneData = null;
   applyMenuState(null, null, null);
 }
 
@@ -109,9 +109,9 @@ async function loadMyProfile(userId) {
   return data;
 }
 
-async function loadMyTrack(userId) {
+async function loadMyTune(userId) {
   const { data, error } = await supabaseClient
-    .from("tracks")
+    .from("tunes")
     .select("id, user_id, title, status, created_at")
     .eq("user_id", userId)
     .order("created_at", { ascending: false })
@@ -119,11 +119,11 @@ async function loadMyTrack(userId) {
     .maybeSingle();
 
   if (error || !data) {
-    state.currentTrackData = null;
+    state.currentTuneData = null;
     return null;
   }
 
-  state.currentTrackData = data;
+  state.currentTuneData = data;
   return data;
 }
 
@@ -135,9 +135,9 @@ async function refreshAuthUI() {
       setLoggedInView();
 
       const profile = await loadMyProfile(user.id);
-      const track = await loadMyTrack(user.id);
+      const tune = await loadMyTune(user.id);
 
-      applyMenuState(user, profile, track);
+      applyMenuState(user, profile, tune);
       return user;
     }
 

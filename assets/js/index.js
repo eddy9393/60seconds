@@ -23,15 +23,15 @@ const els = {
   desktopLogoutBtn: document.getElementById("desktopLogoutBtn"),
   desktopProfileLink: document.getElementById("desktopProfileLink"),
   desktopNotificationsLink: document.getElementById("desktopNotificationsLink"),
-  desktopTrackLink: document.getElementById("desktopTrackLink"),
+  desktopTuneLink: document.getElementById("desktopTuneLink"),
 
   mobileLoginLink: document.getElementById("mobileLoginLink"),
   mobileProfileLink: document.getElementById("mobileProfileLink"),
   mobileNotificationsLink: document.getElementById("mobileNotificationsLink"),
-  mobileTrackLink: document.getElementById("mobileTrackLink"),
+  mobileTuneLink: document.getElementById("mobileTuneLink"),
 
   logoutBtn: document.getElementById("logout"),
-  submitTrackBtn: document.getElementById("submitTrackBtn"),
+  submitTuneBtn: document.getElementById("submitTuneBtn"),
   joinBtn: document.getElementById("joinBtn"),
 
   audio: document.getElementById("audio"),
@@ -41,7 +41,7 @@ const els = {
   titleEl: document.getElementById("title"),
   artistWrapEl: document.getElementById("artistWrap"),
   artistEl: document.getElementById("artist"),
-  trackGenreEl: document.getElementById("trackGenre"),
+  tuneGenreEl: document.getElementById("tuneGenre"),
   likeBtn: document.getElementById("likeBtn"),
   pauseBtn: document.getElementById("pauseBtn"),
   skipBtn: document.getElementById("skip"),
@@ -70,22 +70,22 @@ const els = {
 };
 
 const state = {
-  tracks: [],
+  tunes: [],
   current: -1,
   liked: false,
   listenerIdentity: null,
   isLiveActivated: false,
   liveBooted: false,
   currentProfileData: null,
-  currentTrackData: null,
+  currentTuneData: null,
   currentPreviewStart: 0,
   currentPreviewDuration: 60,
   currentUser: null,
   currentCoins: 0,
   dailySecondsEarned: 0,
   dailySecondsEarnedDate: null,
-  trackAdvanceLock: false,
-  rewardedTrackId: null,
+  tuneAdvanceLock: false,
+  rewardedTuneId: null,
   desiredPlayback: false,
   playbackUnlockBound: false,
   unexpectedPauseTimer: null,
@@ -98,7 +98,7 @@ const state = {
 const REFRESH_INTERVALS = {
   listenerHeartbeat: 15000,
   listenerCount: 5000,
-  tracksReload: 30000
+  tunesReload: 30000
 };
 
 function setHidden(el, hidden) {
@@ -123,17 +123,17 @@ function clearNewsFeedTimers() {
   }
 }
 
-function getTrackGenreLabel(track) {
-  const primary = String(track?.genre_primary || "").trim();
-  const secondary = String(track?.genre_secondary || "").trim();
+function getTuneGenreLabel(tune) {
+  const primary = String(tune?.genre_primary || "").trim();
+  const secondary = String(tune?.genre_secondary || "").trim();
   return primary || secondary || "";
 }
 
-function setTrackGenre(track) {
-  const label = getTrackGenreLabel(track);
-  if (!els.trackGenreEl) return;
-  setText(els.trackGenreEl, label);
-  setHidden(els.trackGenreEl, !label);
+function setTuneGenre(tune) {
+  const label = getTuneGenreLabel(tune);
+  if (!els.tuneGenreEl) return;
+  setText(els.tuneGenreEl, label);
+  setHidden(els.tuneGenreEl, !label);
 }
 
 function escapeFeedHtml(value) {
@@ -171,8 +171,8 @@ function buildNewsFeedText(item) {
   if (item.type === "join") {
     return `${avatar}<div class="news-feed-item-body"><span class="news-feed-copy">${actor} just joined 60 Seconds</span></div>`;
   }
-  if (item.type === "approved_track") {
-    return `${avatar}<div class="news-feed-item-body"><span class="news-feed-copy"><span class="news-feed-track">${escapeFeedHtml(item.track_title || "Untitled")}</span> by ${actor} is live!</span></div>`;
+  if (item.type === "approved_tune") {
+    return `${avatar}<div class="news-feed-item-body"><span class="news-feed-copy"><span class="news-feed-tune">${escapeFeedHtml(item.tune_title || "Untitled")}</span> by ${actor} is live!</span></div>`;
   }
   return `${avatar}<div class="news-feed-item-body"><span class="news-feed-copy">${actor} supported 10 artists today</span></div>`;
 }
@@ -225,7 +225,7 @@ async function loadNewsFeed() {
   try {
     const todayKey = getTodayDateKey();
 
-    const [profilesRes, approvedTracksRes, supportersRes, trackArtistsRes] = await Promise.all([
+    const [profilesRes, approvedTunesRes, supportersRes, tuneArtistsRes] = await Promise.all([
       supabaseClient
         .from("public_artist_profiles")
         .select("artist_name, created_at, user_id, photo_url")
@@ -233,7 +233,7 @@ async function loadNewsFeed() {
         .order("created_at", { ascending: false })
         .limit(12),
       supabaseClient
-        .from("tracks")
+        .from("tunes")
         .select("title, artist, user_id, created_at, status")
         .eq("status", "approved")
         .order("created_at", { ascending: false })
@@ -250,7 +250,7 @@ async function loadNewsFeed() {
     ]);
 
     const items = [];
-    const photoByUserId = new Map((trackArtistsRes.data || []).map((profile) => [String(profile.user_id || ""), profile.photo_url || ""]));
+    const photoByUserId = new Map((tuneArtistsRes.data || []).map((profile) => [String(profile.user_id || ""), profile.photo_url || ""]));
 
     (profilesRes.data || []).forEach((profile) => {
       const name = String(profile.artist_name || "").trim();
@@ -264,16 +264,16 @@ async function loadNewsFeed() {
       });
     });
 
-    (approvedTracksRes.data || []).forEach((track) => {
-      const name = String(track.artist || "").trim();
+    (approvedTunesRes.data || []).forEach((tune) => {
+      const name = String(tune.artist || "").trim();
       if (!name) return;
       items.push({
-        type: "approved_track",
+        type: "approved_tune",
         name,
-        user_id: track.user_id || null,
-        track_title: track.title || "Untitled",
-        photo_url: photoByUserId.get(String(track.user_id || "")) || "",
-        sortTime: new Date(track.created_at || 0).getTime() || 0
+        user_id: tune.user_id || null,
+        tune_title: tune.title || "Untitled",
+        photo_url: photoByUserId.get(String(tune.user_id || "")) || "",
+        sortTime: new Date(tune.created_at || 0).getTime() || 0
       });
     });
 
@@ -339,13 +339,13 @@ function escapeHtml(str) {
     .replaceAll("'", "&#039;");
 }
 
-function getTrackPreviewStart(track) {
-  const value = Number(track?.preview_start_seconds);
+function getTunePreviewStart(tune) {
+  const value = Number(tune?.preview_start_seconds);
   return Number.isFinite(value) && value >= 0 ? value : 0;
 }
 
-function getTrackPreviewDuration(track) {
-  const value = Number(track?.preview_duration_seconds);
+function getTunePreviewDuration(tune) {
+  const value = Number(tune?.preview_duration_seconds);
   return Number.isFinite(value) && value > 0 ? value : 60;
 }
 
@@ -392,15 +392,15 @@ function syncRadioVolumeStorage() {
 }
 
 function persistRadioSession() {
-  const currentTrack = state.tracks[state.current] || null;
+  const currentTune = state.tunes[state.current] || null;
   const previewOffset = Math.max(0, (els.audio.currentTime || 0) - state.currentPreviewStart);
   saveRadioSession({
     startedDate: getTodayDateKey(),
     isStarted: state.isLiveActivated,
     isPlaying: state.isLiveActivated && !els.audio.paused,
     desiredPlaying: state.isLiveActivated && state.desiredPlayback,
-    currentTrack,
-    currentTrackId: currentTrack?.id || null,
+    currentTune,
+    currentTuneId: currentTune?.id || null,
     currentIndex: state.current,
     previewOffset,
     volume: getSafeVolume(els.audio.volume),
@@ -638,7 +638,7 @@ function updateInteractiveControls() {
   }
 }
 
-function applyMenuState(user, profile, track) {
+function applyMenuState(user, profile, tune) {
   applyStandardMenuState({
     header: { accountProfileLink: els.accountProfileLink },
     desktopNav: {
@@ -646,16 +646,16 @@ function applyMenuState(user, profile, track) {
       logoutBtn: els.desktopLogoutBtn,
       profileLink: els.desktopProfileLink,
       notificationsLink: els.desktopNotificationsLink,
-      trackLink: els.desktopTrackLink
+      tuneLink: els.desktopTuneLink
     },
     mobileNav: {
       loginLink: els.mobileLoginLink,
       profileLink: els.mobileProfileLink,
       notificationsLink: els.mobileNotificationsLink,
-      trackLink: els.mobileTrackLink
+      tuneLink: els.mobileTuneLink
     }
-  }, user, profile, track);
-  els.submitTrackBtn.textContent = "Tune";
+  }, user, profile, tune);
+  els.submitTuneBtn.textContent = "Tune";
   updateJoinButtonHref();
 }
 
@@ -676,20 +676,20 @@ function setLoggedOutView() {
       currencyBadge: els.currencyBadge,
       currencyValue: els.currencyValue
     },
-    desktopNav: { loginLink: els.desktopLoginLink, logoutBtn: els.desktopLogoutBtn, profileLink: els.desktopProfileLink, notificationsLink: els.desktopNotificationsLink, trackLink: els.desktopTrackLink },
-    mobileNav: { loginLink: els.mobileLoginLink, profileLink: els.mobileProfileLink, notificationsLink: els.mobileNotificationsLink, trackLink: els.mobileTrackLink }
+    desktopNav: { loginLink: els.desktopLoginLink, logoutBtn: els.desktopLogoutBtn, profileLink: els.desktopProfileLink, notificationsLink: els.desktopNotificationsLink, tuneLink: els.desktopTuneLink },
+    mobileNav: { loginLink: els.mobileLoginLink, profileLink: els.mobileProfileLink, notificationsLink: els.mobileNotificationsLink, tuneLink: els.mobileTuneLink }
   });
 
-  setHidden(els.submitTrackBtn, true);
+  setHidden(els.submitTuneBtn, true);
 
   state.currentProfileData = null;
-  state.currentTrackData = null;
+  state.currentTuneData = null;
   state.currentUser = null;
   state.currentCoins = 0;
   state.dailySecondsEarned = 0;
   state.dailySecondsEarnedDate = null;
   state.listenerIdentity = null;
-  state.trackAdvanceLock = false;
+  state.tuneAdvanceLock = false;
 
   applyMenuState(null, null, null);
   hideUserStats();
@@ -702,7 +702,7 @@ function setLoggedOutView() {
 }
 
 function setLoggedInView() {
-  setHidden(els.submitTrackBtn, true);
+  setHidden(els.submitTuneBtn, true);
   setStandardLoggedInState({ header: { showLoginBtn: els.showLoginBtn, headerAvatarBtn: els.headerAvatarBtn, accountMenu: els.accountMenu, currencyBadge: els.currencyBadge, currencyValue: els.currencyValue } }, { coins: state.currentCoins });
   updateCurrencyVisibility(state.currentUser || true);
 }
@@ -742,7 +742,7 @@ async function loadMyProfile(userId) {
 
 async function loadMyTune(userId) {
   const { data, error } = await supabaseClient
-    .from("tracks")
+    .from("tunes")
     .select("id, user_id, title, status, created_at")
     .eq("user_id", userId)
     .order("created_at", { ascending: false })
@@ -750,11 +750,11 @@ async function loadMyTune(userId) {
     .maybeSingle();
 
   if (error || !data) {
-    state.currentTrackData = null;
+    state.currentTuneData = null;
     return null;
   }
 
-  state.currentTrackData = data;
+  state.currentTuneData = data;
   return data;
 }
 
@@ -859,7 +859,7 @@ async function refreshAuthUI() {
   }
 }
 
-async function loadTrackStats() {
+async function loadTuneStats() {
   try {
     const user = await getSessionUser();
 
@@ -874,9 +874,9 @@ async function loadTrackStats() {
       { count: approvedCount },
       { count: myApproved }
     ] = await Promise.all([
-      supabaseClient.from("tracks").select("*", { count: "exact", head: true }),
-      supabaseClient.from("tracks").select("*", { count: "exact", head: true }).eq("status", "approved"),
-      supabaseClient.from("tracks").select("*", { count: "exact", head: true }).eq("user_id", user.id).eq("status", "approved")
+      supabaseClient.from("tunes").select("*", { count: "exact", head: true }),
+      supabaseClient.from("tunes").select("*", { count: "exact", head: true }).eq("status", "approved"),
+      supabaseClient.from("tunes").select("*", { count: "exact", head: true }).eq("user_id", user.id).eq("status", "approved")
     ]);
 
     setHidden(els.submittedCardEl, false);
@@ -894,7 +894,7 @@ async function loadTrackStats() {
     setHidden(els.playsCardEl, false);
     setText(els.playsPerDayEl, formatNumber(perDay));
   } catch (err) {
-    console.error("loadTrackStats error:", err);
+    console.error("loadTuneStats error:", err);
   }
 }
 
@@ -907,17 +907,17 @@ async function loadMyTotalPlays() {
       return;
     }
 
-    const { data: myTracks, error } = await supabaseClient
-      .from("tracks")
+    const { data: myTunes, error } = await supabaseClient
+      .from("tunes")
       .select("play_count")
       .eq("user_id", user.id);
 
-    if (error || !myTracks || myTracks.length === 0) {
+    if (error || !myTunes || myTunes.length === 0) {
       setHidden(els.myPlaysCardEl, true);
       return;
     }
 
-    const total = myTracks.reduce((sum, track) => sum + (track.play_count || 0), 0);
+    const total = myTunes.reduce((sum, tune) => sum + (tune.play_count || 0), 0);
 
     setHidden(els.myPlaysCardEl, false);
     setText(els.myTotalPlaysEl, formatNumber(total));
@@ -929,44 +929,44 @@ async function loadMyTotalPlays() {
 async function refreshAuthDependentUI() {
   await refreshAuthUI();
   await Promise.all([
-    loadTrackStats(),
+    loadTuneStats(),
     loadMyTotalPlays()
   ]);
   updateJoinButtonHref();
 }
 
-async function loadTracksFromSupabase() {
+async function loadTunesFromSupabase() {
   const { data, error } = await supabaseClient
-    .from("tracks")
+    .from("tunes")
     .select("id, title, artist, file_url, user_id, play_count, status, created_at, preview_start_seconds, preview_duration_seconds, genre_primary, genre_secondary")
     .eq("status", "approved")
     .order("created_at", { ascending: false });
 
   if (error) {
-    console.error("loadTracksFromSupabase error:", error);
-    state.tracks = [];
+    console.error("loadTunesFromSupabase error:", error);
+    state.tunes = [];
     return;
   }
 
-  state.tracks = (data || []).map(track => ({
-    id: track.id,
-    title: track.title,
-    artist: track.artist,
-    file_url: track.file_url,
-    user_id: track.user_id || null,
-    play_count: track.play_count || 0,
-    preview_start_seconds: track.preview_start_seconds,
-    preview_duration_seconds: track.preview_duration_seconds,
-    genre_primary: track.genre_primary || null,
-    genre_secondary: track.genre_secondary || null,
+  state.tunes = (data || []).map(tune => ({
+    id: tune.id,
+    title: tune.title,
+    artist: tune.artist,
+    file_url: tune.file_url,
+    user_id: tune.user_id || null,
+    play_count: tune.play_count || 0,
+    preview_start_seconds: tune.preview_start_seconds,
+    preview_duration_seconds: tune.preview_duration_seconds,
+    genre_primary: tune.genre_primary || null,
+    genre_secondary: tune.genre_secondary || null,
     nationality: null
   }));
 }
 
 
-async function loadTrackNationalities() {
+async function loadTuneNationalities() {
   try {
-    const userIds = Array.from(new Set(state.tracks.map((track) => track.user_id).filter(Boolean)));
+    const userIds = Array.from(new Set(state.tunes.map((tune) => tune.user_id).filter(Boolean)));
     if (!userIds.length) return;
 
     const { data, error } = await supabaseClient
@@ -977,39 +977,39 @@ async function loadTrackNationalities() {
     if (error || !data) return;
 
     const nationalityByUserId = new Map(data.map((row) => [String(row.user_id), row.nationality || null]));
-    state.tracks = state.tracks.map((track) => ({
-      ...track,
-      nationality: track.nationality || nationalityByUserId.get(String(track.user_id || "")) || null
+    state.tunes = state.tunes.map((tune) => ({
+      ...tune,
+      nationality: tune.nationality || nationalityByUserId.get(String(tune.user_id || "")) || null
     }));
   } catch (err) {
-    console.error("loadTrackNationalities error:", err);
+    console.error("loadTuneNationalities error:", err);
   }
 }
 
-function renderArtist(track) {
+function renderArtist(tune) {
   if (!els.artistEl) return;
 
-  if (track.user_id) {
+  if (tune.user_id) {
     els.artistEl.outerHTML = `
-      <a id="artist" class="artist-link" href="artist.html?user_id=${encodeURIComponent(track.user_id)}">
-        ${getFlagMarkup(track.nationality)}<span class="artist-name-text">${escapeHtml(track.artist)}</span>
+      <a id="artist" class="artist-link" href="artist.html?user_id=${encodeURIComponent(tune.user_id)}">
+        ${getFlagMarkup(tune.nationality)}<span class="artist-name-text">${escapeHtml(tune.artist)}</span>
       </a>
     `;
     els.artistEl = document.getElementById("artist");
     return;
   }
 
-  els.artistEl.outerHTML = `<span id="artist" class="artist-inline">${getFlagMarkup(track.nationality)}<span class="artist-name-text">${escapeHtml(track.artist)}</span></span>`;
+  els.artistEl.outerHTML = `<span id="artist" class="artist-inline">${getFlagMarkup(tune.nationality)}<span class="artist-name-text">${escapeHtml(tune.artist)}</span></span>`;
   els.artistEl = document.getElementById("artist");
 }
 
-function setTrackUI(track) {
-  setText(els.titleEl, track.title || "Untitled");
-  renderArtist(track);
-  setTrackGenre(track);
+function setTuneUI(tune) {
+  setText(els.titleEl, tune.title || "Untitled");
+  renderArtist(tune);
+  setTuneGenre(tune);
 
-  state.currentPreviewStart = getTrackPreviewStart(track);
-  state.currentPreviewDuration = getTrackPreviewDuration(track);
+  state.currentPreviewStart = getTunePreviewStart(tune);
+  state.currentPreviewDuration = getTunePreviewDuration(tune);
 
   setText(els.durationTimeEl, formatTime(state.currentPreviewDuration));
   setText(els.elapsedTimeEl, "0:00");
@@ -1019,26 +1019,26 @@ function setTrackUI(track) {
   updateEarnSecondsProgress();
 }
 
-function incrementPlayCount(track) {
-  if (!track?.id) return;
+function incrementPlayCount(tune) {
+  if (!tune?.id) return;
 
   supabaseClient
-    .from("tracks")
-    .update({ play_count: (track.play_count || 0) + 1 })
-    .eq("id", track.id)
+    .from("tunes")
+    .update({ play_count: (tune.play_count || 0) + 1 })
+    .eq("id", tune.id)
     .then(() => {
-      track.play_count = (track.play_count || 0) + 1;
+      tune.play_count = (tune.play_count || 0) + 1;
     })
     .catch(err => console.error("incrementPlayCount error:", err));
 }
 
-function chooseNextTrackIndex() {
-  if (!state.tracks.length) return -1;
+function chooseNextTuneIndex() {
+  if (!state.tunes.length) return -1;
 
   let next;
   do {
-    next = Math.floor(Math.random() * state.tracks.length);
-  } while (state.tracks.length > 1 && next === state.current);
+    next = Math.floor(Math.random() * state.tunes.length);
+  } while (state.tunes.length > 1 && next === state.current);
 
   return next;
 }
@@ -1049,27 +1049,27 @@ function setEmptyRadioState() {
     els.artistEl.outerHTML = `<span id="artist">Check back soon</span>`;
     els.artistEl = document.getElementById("artist");
   }
-  setTrackGenre(null);
+  setTuneGenre(null);
   els.progressFill.style.width = "0%";
   setText(els.elapsedTimeEl, "0:00");
   setText(els.durationTimeEl, "1:00");
   updateEarnSecondsProgress();
 }
 
-function playTrackAt(index, previewOffset = 0, countPlay = true, autoplay = state.desiredPlayback) {
-  const track = state.tracks[index];
-  if (index < 0 || !track) return;
+function playTuneAt(index, previewOffset = 0, countPlay = true, autoplay = state.desiredPlayback) {
+  const tune = state.tunes[index];
+  if (index < 0 || !tune) return;
 
   state.current = index;
   state.desiredPlayback = Boolean(autoplay);
 
-  const previewStart = getTrackPreviewStart(track);
-  const previewDuration = getTrackPreviewDuration(track);
+  const previewStart = getTunePreviewStart(tune);
+  const previewDuration = getTunePreviewDuration(tune);
   const safeOffset = Math.max(0, Math.min(previewOffset, Math.max(previewDuration - 0.25, 0)));
   const targetStartTime = previewStart + safeOffset;
 
-  setTrackUI(track);
-  els.audio.src = track.file_url;
+  setTuneUI(tune);
+  els.audio.src = tune.file_url;
   els.audio.autoplay = Boolean(autoplay);
   setText(els.elapsedTimeEl, formatTime(safeOffset));
   els.progressFill.style.width = `${previewDuration > 0 ? (safeOffset / previewDuration) * 100 : 0}%`;
@@ -1103,18 +1103,18 @@ function playTrackAt(index, previewOffset = 0, countPlay = true, autoplay = stat
   persistRadioSession();
 
   if (countPlay) {
-    incrementPlayCount(track);
+    incrementPlayCount(tune);
   }
 }
 
-function nextTrack(previewOffset = 0, countPlay = true, autoplay = state.desiredPlayback) {
-  if (!state.tracks.length) {
+function nextTune(previewOffset = 0, countPlay = true, autoplay = state.desiredPlayback) {
+  if (!state.tunes.length) {
     setEmptyRadioState();
     return;
   }
 
-  const nextIndex = chooseNextTrackIndex();
-  playTrackAt(nextIndex, previewOffset, countPlay, autoplay);
+  const nextIndex = chooseNextTuneIndex();
+  playTuneAt(nextIndex, previewOffset, countPlay, autoplay);
 }
 
 async function getListenerIdentity() {
@@ -1183,10 +1183,10 @@ async function updateListeners() {
 }
 
 async function bootstrapLiveRadio() {
-  await loadTracksFromSupabase();
-  await loadTrackNationalities();
+  await loadTunesFromSupabase();
+  await loadTuneNationalities();
 
-  if (!state.tracks.length) {
+  if (!state.tunes.length) {
     setEmptyRadioState();
     await updateListeners();
     return;
@@ -1208,10 +1208,10 @@ async function bootstrapLiveRadio() {
     setHidden(els.startOverlay, true);
     updateConceptVisibility();
 
-    let index = state.tracks.findIndex(track => String(track.id) === String(session.currentTrackId || session.currentTrack?.id || ""));
-    if (index < 0) index = Number.isInteger(session.currentIndex) ? session.currentIndex : chooseNextTrackIndex();
-    if (index < 0) index = chooseNextTrackIndex();
-    await playTrackAt(index, Number(session.previewOffset) || 0, false, state.desiredPlayback);
+    let index = state.tunes.findIndex(tune => String(tune.id) === String(session.currentTuneId || session.currentTune?.id || ""));
+    if (index < 0) index = Number.isInteger(session.currentIndex) ? session.currentIndex : chooseNextTuneIndex();
+    if (index < 0) index = chooseNextTuneIndex();
+    await playTuneAt(index, Number(session.previewOffset) || 0, false, state.desiredPlayback);
   }
 
   state.liveBooted = true;
@@ -1234,18 +1234,18 @@ async function handleStartRadio() {
 
   await registerListener();
   await updateListeners();
-  await loadTrackStats();
+  await loadTuneStats();
   await loadMyTotalPlays();
 
   els.radioShell.classList.remove("pre-live");
   setHidden(els.startOverlay, true);
   updateConceptVisibility();
 
-  if (!els.audio.src && state.tracks.length) {
-    const nextIndex = chooseNextTrackIndex();
-    const previewDuration = nextIndex >= 0 ? getTrackPreviewDuration(state.tracks[nextIndex]) : 60;
+  if (!els.audio.src && state.tunes.length) {
+    const nextIndex = chooseNextTuneIndex();
+    const previewDuration = nextIndex >= 0 ? getTunePreviewDuration(state.tunes[nextIndex]) : 60;
     const randomOffset = Math.floor(Math.random() * Math.max(previewDuration, 1));
-    await playTrackAt(nextIndex, randomOffset, false, true);
+    await playTuneAt(nextIndex, randomOffset, false, true);
   }
 
   const startVolume = getSafeVolume(els.volume.value);
@@ -1261,24 +1261,24 @@ async function handleStartRadio() {
   });
 }
 
-async function advanceAfterTrackCompletion() {
-  if (state.trackAdvanceLock) return;
+async function advanceAfterTuneCompletion() {
+  if (state.tuneAdvanceLock) return;
 
-  const currentTrack = state.tracks[state.current] || null;
-  const currentTrackId = currentTrack?.id || null;
+  const currentTune = state.tunes[state.current] || null;
+  const currentTuneId = currentTune?.id || null;
 
-  if (currentTrackId && state.rewardedTrackId === currentTrackId) return;
+  if (currentTuneId && state.rewardedTuneId === currentTuneId) return;
 
-  state.trackAdvanceLock = true;
-  if (currentTrackId) {
-    state.rewardedTrackId = currentTrackId;
+  state.tuneAdvanceLock = true;
+  if (currentTuneId) {
+    state.rewardedTuneId = currentTuneId;
   }
 
   try {
     await awardListeningSecond();
-    nextTrack(0, true, true);
+    nextTune(0, true, true);
   } finally {
-    state.trackAdvanceLock = false;
+    state.tuneAdvanceLock = false;
   }
 }
 
@@ -1288,7 +1288,7 @@ async function handleSkip() {
 
   els.skipBtn.disabled = true;
 
-  const { data, error } = await supabaseClient.rpc("skip_track_cost");
+  const { data, error } = await supabaseClient.rpc("skip_tune_cost");
 
   if (error || !data) {
     console.error("handleSkip rpc error:", error);
@@ -1306,7 +1306,7 @@ async function handleSkip() {
   }
 
   setCurrency(data.coins);
-  nextTrack(0, true, state.desiredPlayback);
+  nextTune(0, true, state.desiredPlayback);
 }
 
 function handleLike() {
@@ -1471,8 +1471,8 @@ function bindUIEvents() {
     persistRadioSession();
 
     if (previewElapsed >= state.currentPreviewDuration) {
-      advanceAfterTrackCompletion().catch(err => {
-        console.error("advanceAfterTrackCompletion error:", err);
+      advanceAfterTuneCompletion().catch(err => {
+        console.error("advanceAfterTuneCompletion error:", err);
       });
     }
   });
@@ -1494,8 +1494,8 @@ function bindUIEvents() {
   });
 
   els.audio.addEventListener("ended", () => {
-    advanceAfterTrackCompletion().catch(err => {
-      console.error("advanceAfterTrackCompletion error:", err);
+    advanceAfterTuneCompletion().catch(err => {
+      console.error("advanceAfterTuneCompletion error:", err);
     });
   });
 
@@ -1526,9 +1526,9 @@ function bindIntervals() {
   }, REFRESH_INTERVALS.listenerCount);
 
   setInterval(async () => {
-    await loadTracksFromSupabase();
+    await loadTunesFromSupabase();
     await ensureBackgroundPlayback();
-  }, REFRESH_INTERVALS.tracksReload);
+  }, REFRESH_INTERVALS.tunesReload);
 }
 
 

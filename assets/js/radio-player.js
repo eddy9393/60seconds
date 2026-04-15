@@ -54,14 +54,14 @@
       <div class="ssfm-mini-player-label">Radio</div>
       <div class="ssfm-mini-player-marquee">
         <div id="ssfmMiniMarquee" class="ssfm-mini-player-marquee-inner">
-          <span id="ssfmMiniTrack" class="ssfm-mini-player-track">Loading radio…</span>
-          <span id="ssfmMiniTrackCopy" class="ssfm-mini-player-track-copy">Loading radio…</span>
+          <span id="ssfmMiniTune" class="ssfm-mini-player-tune">Loading radio…</span>
+          <span id="ssfmMiniTuneCopy" class="ssfm-mini-player-tune-copy">Loading radio…</span>
         </div>
       </div>
     </div>
     <div class="ssfm-mini-player-actions">
       <input id="ssfmMiniVolume" class="ssfm-mini-volume" type="range" min="0" max="1" step="0.01" value="0.8" aria-label="Volume">
-      <button id="ssfmMiniLike" class="ssfm-mini-btn" type="button" aria-label="Like current track">♥</button>
+      <button id="ssfmMiniLike" class="ssfm-mini-btn" type="button" aria-label="Like current tune">♥</button>
     </div>
     <audio id="ssfmMiniAudio" playsinline crossorigin="anonymous"></audio>
   `;
@@ -72,40 +72,40 @@
     audio: root.querySelector('#ssfmMiniAudio'),
     volume: root.querySelector('#ssfmMiniVolume'),
     like: root.querySelector('#ssfmMiniLike'),
-    track: root.querySelector('#ssfmMiniTrack'),
-    trackCopy: root.querySelector('#ssfmMiniTrackCopy'),
+    tune: root.querySelector('#ssfmMiniTune'),
+    tuneCopy: root.querySelector('#ssfmMiniTuneCopy'),
     marquee: root.querySelector('#ssfmMiniMarquee')
   };
 
   let currentState = readState();
-  let tracks = [];
+  let tunes = [];
 
-  function setTrackText(title, artist) {
+  function setTuneText(title, artist) {
     const text = title && artist ? `${title} — ${artist}` : (title || artist || 'Radio offline');
-    els.track.textContent = text;
-    els.trackCopy.textContent = text;
+    els.tune.textContent = text;
+    els.tuneCopy.textContent = text;
   }
 
   function updateLikeButton() {
     const likes = readLikes();
-    const liked = currentState.currentTrackId && likes.includes(String(currentState.currentTrackId));
+    const liked = currentState.currentTuneId && likes.includes(String(currentState.currentTuneId));
     els.like.classList.toggle('like-active', Boolean(liked));
   }
 
   function syncFromStorage() {
     currentState = readState();
-    const isActive = Boolean(currentState.isActivated && currentState.currentTrackUrl);
+    const isActive = Boolean(currentState.isActivated && currentState.currentTuneUrl);
     root.classList.toggle('hidden', !isActive);
     document.body.classList.toggle('ssfm-has-mini-player', isActive);
     if (!isActive) return;
 
-    setTrackText(currentState.currentTitle, currentState.currentArtist);
+    setTuneText(currentState.currentTitle, currentState.currentArtist);
     els.volume.value = String(typeof currentState.volume === 'number' ? currentState.volume : 0.8);
     updateLikeButton();
   }
 
   function saveProgress() {
-    if (!currentState.currentTrackId) return;
+    if (!currentState.currentTuneId) return;
     const previewStart = Number(currentState.previewStart || 0);
     const previewElapsed = Math.max(0, (els.audio.currentTime || 0) - previewStart);
     writeState({
@@ -115,41 +115,41 @@
     });
   }
 
-  async function loadTracks() {
+  async function loadTunes() {
     const { data, error } = await supabaseClient
-      .from('tracks')
+      .from('tunes')
       .select('id, title, artist, file_url, user_id, preview_start_seconds, preview_duration_seconds')
       .eq('status', 'approved')
       .order('created_at', { ascending: false });
 
     if (error) {
-      console.error('mini player track load error:', error);
-      tracks = [];
+      console.error('mini player tune load error:', error);
+      tunes = [];
       return;
     }
 
-    tracks = Array.isArray(data) ? data : [];
+    tunes = Array.isArray(data) ? data : [];
   }
 
-  function chooseNextTrack() {
-    if (!tracks.length) return null;
-    const currentId = currentState.currentTrackId ? String(currentState.currentTrackId) : null;
-    const pool = tracks.filter((track) => String(track.id) !== currentId);
-    const source = pool.length ? pool : tracks;
+  function chooseNextTune() {
+    if (!tunes.length) return null;
+    const currentId = currentState.currentTuneId ? String(currentState.currentTuneId) : null;
+    const pool = tunes.filter((tune) => String(tune.id) !== currentId);
+    const source = pool.length ? pool : tunes;
     return source[Math.floor(Math.random() * source.length)] || null;
   }
 
-  function applyTrackState(track) {
-    if (!track) return;
+  function applyTuneState(tune) {
+    if (!tune) return;
     currentState = writeState({
       isActivated: true,
-      currentTrackId: track.id,
-      currentTrackUrl: track.file_url,
-      currentTitle: track.title,
-      currentArtist: track.artist,
-      currentUserId: track.user_id || null,
-      previewStart: Number(track.preview_start_seconds || 0),
-      previewDuration: Number(track.preview_duration_seconds || 60),
+      currentTuneId: tune.id,
+      currentTuneUrl: tune.file_url,
+      currentTitle: tune.title,
+      currentArtist: tune.artist,
+      currentUserId: tune.user_id || null,
+      previewStart: Number(tune.preview_start_seconds || 0),
+      previewDuration: Number(tune.preview_duration_seconds || 60),
       previewElapsed: 0,
       isPlaying: true
     });
@@ -159,12 +159,12 @@
   function bindAudio() {
     els.audio.addEventListener('timeupdate', saveProgress);
     els.audio.addEventListener('ended', async () => {
-      const nextTrack = chooseNextTrack();
-      if (!nextTrack) {
+      const nextTune = chooseNextTune();
+      if (!nextTune) {
         writeState({ previewElapsed: 0, isPlaying: false });
         return;
       }
-      applyTrackState(nextTrack);
+      applyTuneState(nextTune);
       await ensurePlayback();
     });
     window.addEventListener('beforeunload', saveProgress);
@@ -179,8 +179,8 @@
     syncFromStorage();
     if (root.classList.contains('hidden')) return;
 
-    if (els.audio.src !== currentState.currentTrackUrl) {
-      els.audio.src = currentState.currentTrackUrl;
+    if (els.audio.src !== currentState.currentTuneUrl) {
+      els.audio.src = currentState.currentTuneUrl;
     }
 
     const previewStart = Number(currentState.previewStart || 0);
@@ -213,9 +213,9 @@
   });
 
   els.like.addEventListener('click', () => {
-    if (!currentState.currentTrackId) return;
+    if (!currentState.currentTuneId) return;
     const likes = new Set(readLikes().map(String));
-    const key = String(currentState.currentTrackId);
+    const key = String(currentState.currentTuneId);
     if (likes.has(key)) likes.delete(key); else likes.add(key);
     writeLikes([...likes]);
     updateLikeButton();
@@ -223,7 +223,7 @@
 
   async function boot() {
     bindAudio();
-    await loadTracks();
+    await loadTunes();
     syncFromStorage();
     if (root.classList.contains('hidden')) return;
     await ensurePlayback();

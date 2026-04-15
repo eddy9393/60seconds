@@ -14,13 +14,7 @@
     if (!supabaseConfig.url || !supabaseConfig.anonKey) {
       throw new Error('Supabase configuration is missing.');
     }
-    cachedSupabaseClient = window.supabase.createClient(supabaseConfig.url, supabaseConfig.anonKey, {
-      auth: {
-        persistSession: true,
-        autoRefreshToken: true,
-        detectSessionInUrl: true
-      }
-    });
+    cachedSupabaseClient = window.supabase.createClient(supabaseConfig.url, supabaseConfig.anonKey);
     return cachedSupabaseClient;
   }
 
@@ -130,13 +124,13 @@
         logoutBtn: doc.getElementById('desktopLogoutBtn'),
         profileLink: doc.getElementById('desktopProfileLink'),
         notificationsLink: doc.getElementById('desktopNotificationsLink'),
-        trackLink: doc.getElementById('desktopTrackLink')
+        tuneLink: doc.getElementById('desktopTuneLink')
       },
       mobileNav: {
         loginLink: doc.getElementById('mobileLoginLink'),
         profileLink: doc.getElementById('mobileProfileLink'),
         notificationsLink: doc.getElementById('mobileNotificationsLink'),
-        trackLink: doc.getElementById('mobileTrackLink')
+        tuneLink: doc.getElementById('mobileTuneLink')
       }
     };
   }
@@ -179,12 +173,12 @@
     window.location.href = profileHref || 'artist.html';
   }
 
-  function applyStandardMenuState(els, user, profile, track, options = {}) {
+  function applyStandardMenuState(els, user, profile, tune, options = {}) {
     const isLoggedIn = Boolean(user);
     const hasProfile = Boolean(profile);
-    const hasTrack = Boolean(track);
+    const hasTune = Boolean(tune);
     const profileHref = options.profileHref || getProfileHref(profile);
-    const trackHref = options.trackHref || 'submit-track.html';
+    const tuneHref = options.tuneHref || 'submit-tune.html';
 
     setHidden(els?.desktopNav?.loginLink, isLoggedIn);
     setHidden(els?.mobileNav?.loginLink, isLoggedIn);
@@ -196,21 +190,21 @@
     setHidden(els?.desktopNav?.notificationsLink, !isLoggedIn);
     setHidden(els?.mobileNav?.notificationsLink, !isLoggedIn);
 
-    setHidden(els?.desktopNav?.trackLink, !isLoggedIn || !hasProfile);
-    setHidden(els?.mobileNav?.trackLink, !isLoggedIn || !hasProfile);
+    setHidden(els?.desktopNav?.tuneLink, !isLoggedIn || !hasProfile);
+    setHidden(els?.mobileNav?.tuneLink, !isLoggedIn || !hasProfile);
 
     if (els?.desktopNav?.profileLink) els.desktopNav.profileLink.href = profileHref;
     if (els?.mobileNav?.profileLink) els.mobileNav.profileLink.href = profileHref;
     if (els?.header?.accountProfileLink) els.header.accountProfileLink.href = profileHref;
     setHidden(els?.header?.accountProfileLink, !isLoggedIn);
 
-    if (els?.desktopNav?.trackLink) {
-      els.desktopNav.trackLink.href = trackHref;
-      els.desktopNav.trackLink.setAttribute('data-track-mode', hasTrack ? 'edit' : 'submit');
+    if (els?.desktopNav?.tuneLink) {
+      els.desktopNav.tuneLink.href = tuneHref;
+      els.desktopNav.tuneLink.setAttribute('data-tune-mode', hasTune ? 'edit' : 'submit');
     }
-    if (els?.mobileNav?.trackLink) {
-      els.mobileNav.trackLink.href = trackHref;
-      els.mobileNav.trackLink.setAttribute('data-track-mode', hasTrack ? 'edit' : 'submit');
+    if (els?.mobileNav?.tuneLink) {
+      els.mobileNav.tuneLink.href = tuneHref;
+      els.mobileNav.tuneLink.setAttribute('data-tune-mode', hasTune ? 'edit' : 'submit');
     }
 
     if (els?.header?.accountNotificationsLink && options.notificationsHref) {
@@ -248,10 +242,10 @@
     return data || null;
   }
 
-  async function fetchTrackByUserId(userId, selectSql = '*') {
+  async function fetchTuneByUserId(userId, selectSql = '*') {
     if (!userId) return null;
     const supabaseClient = getSupabaseClient();
-    const { data, error } = await supabaseClient.from('tracks').select(selectSql).eq('user_id', userId).maybeSingle();
+    const { data, error } = await supabaseClient.from('tunes').select(selectSql).eq('user_id', userId).maybeSingle();
     if (error) throw error;
     return data || null;
   }
@@ -326,7 +320,7 @@
     setStandardLoggedOutState,
     setStandardLoggedInState,
     fetchProfileByUserId,
-    fetchTrackByUserId,
+    fetchTuneByUserId,
     bindStandardHeaderEvents
   });
 })();

@@ -26,9 +26,9 @@
   };
 
   const state = {
-    tracks: [],
+    tunes: [],
     currentIndex: -1,
-    currentTrack: null,
+    currentTune: null,
     previewStart: 0,
     previewDuration: 60,
     shouldPlay: false,
@@ -43,9 +43,9 @@
     unlockEventsBound: false,
     unexpectedPauseTimer: null,
     volumeOpen: false,
-    trackAdvanceLock: false,
-    rewardedTrackId: null,
-    isAdvancingTrack: false
+    tuneAdvanceLock: false,
+    rewardedTuneId: null,
+    isAdvancingTune: false
   };
 
   function todayKey() {
@@ -110,19 +110,19 @@
     return `${Math.floor(safe / 60)}:${String(safe % 60).padStart(2, '0')}`;
   }
 
-  function getPreviewStart(track) {
-    const value = Number(track && track.preview_start_seconds);
+  function getPreviewStart(tune) {
+    const value = Number(tune && tune.preview_start_seconds);
     return Number.isFinite(value) && value >= 0 ? value : 0;
   }
 
-  function getPreviewDuration(track) {
-    const value = Number(track && track.preview_duration_seconds);
+  function getPreviewDuration(tune) {
+    const value = Number(tune && tune.preview_duration_seconds);
     return Number.isFinite(value) && value > 0 ? value : 60;
   }
 
   function notifyRadioStarted() {
     try {
-      window.dispatchEvent(new CustomEvent('ssfm:radio-started', { detail: { source: 'mini-player', trackId: state.currentTrack?.id || null } }));
+      window.dispatchEvent(new CustomEvent('ssfm:radio-started', { detail: { source: 'mini-player', tuneId: state.currentTune?.id || null } }));
     } catch {}
   }
 
@@ -148,8 +148,8 @@
   }
 
   function updateMeta() {
-    if (state.els.artist) state.els.artist.textContent = (state.currentTrack && state.currentTrack.artist) || '—';
-    if (state.els.title) state.els.title.textContent = (state.currentTrack && state.currentTrack.title) || '—';
+    if (state.els.artist) state.els.artist.textContent = (state.currentTune && state.currentTune.artist) || '—';
+    if (state.els.title) state.els.title.textContent = (state.currentTune && state.currentTune.title) || '—';
   }
 
   function syncVolumeUi() {
@@ -183,7 +183,7 @@
   }
 
   function persistProgress(force = false) {
-    if (!state.audio || !state.currentTrack) return;
+    if (!state.audio || !state.currentTune) return;
     const now = Date.now();
     if (!force && now - state.lastPersistAt < STORAGE_SYNC_MS) return;
     state.lastPersistAt = now;
@@ -193,8 +193,8 @@
       isStarted: true,
       isPlaying: !state.audio.paused,
       desiredPlaying: state.desiredPlayback,
-      currentTrack: state.currentTrack,
-      currentTrackId: state.currentTrack.id,
+      currentTune: state.currentTune,
+      currentTuneId: state.currentTune.id,
       currentIndex: state.currentIndex,
       previewOffset,
       volume: getSafeVolume(state.audio.volume),
@@ -203,10 +203,10 @@
     localStorage.setItem(VOLUME_KEY, String(getSafeVolume(state.audio.volume)));
   }
 
-  function chooseNextTrackIndex() {
-    if (!state.tracks.length) return -1;
+  function chooseNextTuneIndex() {
+    if (!state.tunes.length) return -1;
     let next = 0;
-    do { next = Math.floor(Math.random() * state.tracks.length); } while (state.tracks.length > 1 && next === state.currentIndex);
+    do { next = Math.floor(Math.random() * state.tunes.length); } while (state.tunes.length > 1 && next === state.currentIndex);
     return next;
   }
 
@@ -233,18 +233,18 @@
     }
   }
 
-  async function advanceAfterTrackCompletion() {
-    if (state.trackAdvanceLock) return;
+  async function advanceAfterTuneCompletion() {
+    if (state.tuneAdvanceLock) return;
 
-    const currentTrackId = state.currentTrack?.id || null;
-    if (currentTrackId && state.rewardedTrackId === currentTrackId) return;
+    const currentTuneId = state.currentTune?.id || null;
+    if (currentTuneId && state.rewardedTuneId === currentTuneId) return;
 
-    state.trackAdvanceLock = true;
-    state.isAdvancingTrack = true;
+    state.tuneAdvanceLock = true;
+    state.isAdvancingTune = true;
     clearUnexpectedPauseTimer();
 
-    if (currentTrackId) {
-      state.rewardedTrackId = currentTrackId;
+    if (currentTuneId) {
+      state.rewardedTuneId = currentTuneId;
     }
 
     try {
@@ -252,25 +252,25 @@
         try { state.audio.pause(); } catch {}
       }
       await awardListeningSecond();
-      await nextTrack();
+      await nextTune();
     } finally {
-      state.isAdvancingTrack = false;
-      state.trackAdvanceLock = false;
+      state.isAdvancingTune = false;
+      state.tuneAdvanceLock = false;
     }
   }
 
-  async function loadTracks() {
+  async function loadTunes() {
     const { data, error } = await supabaseClient
-      .from('tracks')
+      .from('tunes')
       .select('id, title, artist, file_url, user_id, preview_start_seconds, preview_duration_seconds, status, created_at')
       .eq('status', 'approved')
       .order('created_at', { ascending: false });
     if (error) {
-      console.error('mini player tracks error:', error);
-      state.tracks = [];
+      console.error('mini player tunes error:', error);
+      state.tunes = [];
       return;
     }
-    state.tracks = data || [];
+    state.tunes = data || [];
   }
 
   function attachAudio() {
@@ -295,17 +295,17 @@
       if (state.els.time) state.els.time.textContent = `${formatTime(clamped)} / ${formatTime(state.previewDuration)}`;
       persistProgress();
       if (elapsed >= Math.max(0, state.previewDuration - 0.05)) {
-        if (!state.trackAdvanceLock) {
+        if (!state.tuneAdvanceLock) {
           try {
             state.audio.currentTime = Math.min(state.audio.currentTime || 0, state.previewStart + state.previewDuration);
           } catch {}
-          advanceAfterTrackCompletion().catch((err) => console.error(err));
+          advanceAfterTuneCompletion().catch((err) => console.error(err));
         }
       }
     });
 
     state.audio.addEventListener('play', () => {
-      state.isAdvancingTrack = false;
+      state.isAdvancingTune = false;
       clearUnexpectedPauseTimer();
       state.shouldPlay = true;
       notifyRadioStarted();
@@ -317,33 +317,33 @@
       state.shouldPlay = false;
       updatePlayPauseLabel();
       persistProgress(true);
-      if (!state.isAdvancingTrack && !document.hidden && state.desiredPlayback) {
+      if (!state.isAdvancingTune && !document.hidden && state.desiredPlayback) {
         scheduleUnexpectedResume(220);
       }
     });
 
     state.audio.addEventListener('ended', () => {
-      if (!state.trackAdvanceLock) {
-        advanceAfterTrackCompletion().catch((err) => console.error(err));
+      if (!state.tuneAdvanceLock) {
+        advanceAfterTuneCompletion().catch((err) => console.error(err));
       }
     });
   }
 
-  async function playTrackAt(index, previewOffset = 0, autoplay = state.desiredPlayback) {
-    state.rewardedTrackId = null;
-    state.isAdvancingTrack = false;
-    const track = state.tracks[index];
-    if (!track || !state.audio) return;
+  async function playTuneAt(index, previewOffset = 0, autoplay = state.desiredPlayback) {
+    state.rewardedTuneId = null;
+    state.isAdvancingTune = false;
+    const tune = state.tunes[index];
+    if (!tune || !state.audio) return;
     const requestToken = ++state.playRequestToken;
     state.currentIndex = index;
-    state.currentTrack = track;
-    state.previewStart = getPreviewStart(track);
-    state.previewDuration = getPreviewDuration(track);
+    state.currentTune = tune;
+    state.previewStart = getPreviewStart(tune);
+    state.previewDuration = getPreviewDuration(tune);
     state.desiredPlayback = Boolean(autoplay);
     updateMeta();
     const safeOffset = Math.max(0, Math.min(previewOffset, Math.max(state.previewDuration - 0.25, 0)));
     const targetTime = state.previewStart + safeOffset;
-    state.audio.src = track.file_url;
+    state.audio.src = tune.file_url;
     state.audio.autoplay = Boolean(state.desiredPlayback);
     if (state.els.time) state.els.time.textContent = `${formatTime(safeOffset)} / ${formatTime(state.previewDuration)}`;
     await new Promise((resolve) => {
@@ -363,8 +363,8 @@
       startedDate: state.sessionKeyToday,
       isStarted: true,
       desiredPlaying: state.desiredPlayback,
-      currentTrack: track,
-      currentTrackId: track.id,
+      currentTune: tune,
+      currentTuneId: tune.id,
       currentIndex: index,
       previewOffset: safeOffset,
       volume: getSafeVolume(state.audio.volume),
@@ -389,17 +389,17 @@
     }
   }
 
-  async function nextTrack() {
-    const nextIndex = chooseNextTrackIndex();
+  async function nextTune() {
+    const nextIndex = chooseNextTuneIndex();
     if (nextIndex < 0) return;
-    await playTrackAt(nextIndex, 0, state.desiredPlayback);
+    await playTuneAt(nextIndex, 0, state.desiredPlayback);
   }
 
   async function attemptResumeFromSession(forcePlay = false) {
     if (!state.audio) return;
     const session = loadSession();
     if (!session.isStarted || session.startedDate !== state.sessionKeyToday) return;
-    if (!state.currentTrack) return;
+    if (!state.currentTune) return;
     const desiredOffset = Number(session.previewOffset) || 0;
     const currentOffset = Math.max(0, (state.audio.currentTime || 0) - state.previewStart);
     if (Math.abs(currentOffset - desiredOffset) > 2 && !state.audio.seeking) {
@@ -539,17 +539,17 @@
     state.desiredPlayback = getDesiredPlayback(session);
     state.shouldPlay = state.desiredPlayback;
 
-    await loadTracks();
-    if (!state.tracks.length && !(session.currentTrack && session.currentTrack.file_url)) return;
+    await loadTunes();
+    if (!state.tunes.length && !(session.currentTune && session.currentTune.file_url)) return;
 
-    let index = state.tracks.findIndex((track) => String(track.id) === String(session.currentTrackId || (session.currentTrack && session.currentTrack.id) || ''));
-    if (index < 0 && session.currentTrack && session.currentTrack.file_url) {
-      state.tracks.unshift(session.currentTrack);
+    let index = state.tunes.findIndex((tune) => String(tune.id) === String(session.currentTuneId || (session.currentTune && session.currentTune.id) || ''));
+    if (index < 0 && session.currentTune && session.currentTune.file_url) {
+      state.tunes.unshift(session.currentTune);
       index = 0;
     }
     if (index < 0) index = 0;
 
-    await playTrackAt(index, Number(session.previewOffset) || 0, state.desiredPlayback);
+    await playTuneAt(index, Number(session.previewOffset) || 0, state.desiredPlayback);
     state.els.wrap.classList.remove('hidden');
     updatePlayPauseLabel();
     updateLikeLabel();
