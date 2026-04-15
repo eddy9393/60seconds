@@ -5,7 +5,7 @@ const DAILY_SECONDS_LIMIT = 10;
 const SKIP_COST = 1;
 const RADIO_SESSION_KEY = "ssfm_radio_session_v2";
 const RADIO_VOLUME_KEY = "ssfm_radio_volume_v2";
-const RADIO_LIKE_KEY = "ssfm_radio_like_v2";
+const RADIO_LIKE_KEY = "ssfm_radio_likes_v2";
 const DEFAULT_VOLUME = 0.3;
 const els = {
   showLoginBtn: document.getElementById("showLoginBtn"),
@@ -590,10 +590,47 @@ function getProfileHref(profile) {
   return sharedGetProfileHref(profile);
 }
 
+
+function readLikedTrackIds() {
+  try {
+    const raw = localStorage.getItem(RADIO_LIKE_KEY);
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed.map(String) : [];
+  } catch {
+    return [];
+  }
+}
+
+function writeLikedTrackIds(ids) {
+  localStorage.setItem(RADIO_LIKE_KEY, JSON.stringify(Array.from(new Set((ids || []).map(String)))));
+}
+
+function getCurrentTrackLikeKey() {
+  const track = state.tracks[state.current] || null;
+  return track?.id ? String(track.id) : "";
+}
+
+function isCurrentTrackOwn() {
+  const track = state.tracks[state.current] || null;
+  return Boolean(state.currentUser?.id && track?.user_id && String(state.currentUser.id) === String(track.user_id));
+}
+
 function resetLike() {
-  state.liked = localStorage.getItem(RADIO_LIKE_KEY) === "1";
+  const likeKey = getCurrentTrackLikeKey();
+  const likedIds = readLikedTrackIds();
+  state.liked = Boolean(likeKey && likedIds.includes(String(likeKey)));
+
+  if (isCurrentTrackOwn()) {
+    els.likeBtn.innerHTML = `<span class="icon">♥</span>Own tune`;
+    els.likeBtn.classList.remove("liked");
+    els.likeBtn.classList.add("like-own-disabled");
+    return;
+  }
+
   els.likeBtn.innerHTML = state.liked ? `<span class="icon">♥</span>Liked` : `<span class="icon">♥</span>Like`;
   els.likeBtn.classList.toggle("liked", state.liked);
+  els.likeBtn.classList.remove("like-own-disabled");
 }
 
 function updateEarnSecondsProgress() {
@@ -626,7 +663,7 @@ function updateSkipButtonState() {
 function updateInteractiveControls() {
   const isLoggedIn = Boolean(state.currentUser);
 
-  els.likeBtn.disabled = !isLoggedIn;
+  els.likeBtn.disabled = !isLoggedIn || isCurrentTrackOwn();
   setHidden(els.featureNoteEl, isLoggedIn);
   updateConceptVisibility();
   updateEarnSecondsVisibility();
@@ -1310,19 +1347,23 @@ async function handleSkip() {
 }
 
 function handleLike() {
-  if (!state.currentUser) return;
+  if (!state.currentUser || isCurrentTrackOwn()) return;
 
-  state.liked = !state.liked;
-  localStorage.setItem(RADIO_LIKE_KEY, state.liked ? "1" : "0");
+  const likeKey = getCurrentTrackLikeKey();
+  if (!likeKey) return;
+
+  const likedIds = new Set(readLikedTrackIds());
+
+  state.liked = !likedIds.has(String(likeKey));
 
   if (state.liked) {
-    els.likeBtn.innerHTML = `<span class="icon">♥</span>Liked`;
-    els.likeBtn.classList.add("liked");
-    return;
+    likedIds.add(String(likeKey));
+  } else {
+    likedIds.delete(String(likeKey));
   }
 
-  els.likeBtn.innerHTML = `<span class="icon">♥</span>Like`;
-  els.likeBtn.classList.remove("liked");
+  writeLikedTrackIds([...likedIds]);
+  resetLike();
 }
 
 function handlePauseToggle() {

@@ -14,7 +14,7 @@
 
   const SESSION_KEY = 'ssfm_radio_session_v2';
   const VOLUME_KEY = 'ssfm_radio_volume_v2';
-  const LIKE_KEY = 'ssfm_radio_like_v2';
+  const LIKE_KEY = 'ssfm_radio_likes_v2';
   const DEFAULT_VOLUME = 0.3;
   const STORAGE_SYNC_MS = 1200;
 
@@ -45,7 +45,8 @@
     volumeOpen: false,
     trackAdvanceLock: false,
     rewardedTrackId: null,
-    isAdvancingTrack: false
+    isAdvancingTrack: false,
+    currentUserId: null
   };
 
   function todayKey() {
@@ -69,6 +70,39 @@
     return session.isPlaying !== false;
   }
 
+
+
+  function readLikedTrackIds() {
+    try {
+      const raw = localStorage.getItem(LIKE_KEY);
+      if (!raw) return [];
+      const parsed = JSON.parse(raw);
+      return Array.isArray(parsed) ? parsed.map(String) : [];
+    } catch {
+      return [];
+    }
+  }
+
+  function writeLikedTrackIds(ids) {
+    localStorage.setItem(LIKE_KEY, JSON.stringify(Array.from(new Set((ids || []).map(String)))));
+  }
+
+  function currentTrackLikeKey() {
+    return state.currentTrack?.id ? String(state.currentTrack.id) : '';
+  }
+
+  function isOwnCurrentTrack() {
+    return Boolean(state.currentUserId && state.currentTrack?.user_id && String(state.currentUserId) === String(state.currentTrack.user_id));
+  }
+
+  async function refreshCurrentUserId() {
+    try {
+      const { data } = await supabaseClient.auth.getSession();
+      state.currentUserId = data?.session?.user?.id || null;
+    } catch {
+      state.currentUserId = null;
+    }
+  }
 
   function updateHeaderCurrencyUi(coins) {
     const valueEl = document.getElementById('currencyValue');
@@ -141,10 +175,24 @@
 
   function updateLikeLabel() {
     if (!state.els.likeBtn) return;
+
+    const key = currentTrackLikeKey();
+    state.liked = Boolean(key && readLikedTrackIds().includes(String(key)));
+
+    if (isOwnCurrentTrack()) {
+      state.els.likeBtn.innerHTML = `<span class="mini-player-icon">${MINI_PLAYER_ICONS.heart}</span><span>Own tune</span>`;
+      state.els.likeBtn.classList.remove('is-liked');
+      state.els.likeBtn.classList.add('is-disabled');
+      state.els.likeBtn.disabled = true;
+      return;
+    }
+
     state.els.likeBtn.innerHTML = state.liked
       ? `<span class="mini-player-icon">${MINI_PLAYER_ICONS.heart}</span><span>Liked</span>`
       : `<span class="mini-player-icon">${MINI_PLAYER_ICONS.heart}</span><span>Like</span>`;
     state.els.likeBtn.classList.toggle('is-liked', state.liked);
+    state.els.likeBtn.classList.remove('is-disabled');
+    state.els.likeBtn.disabled = !state.currentUserId;
   }
 
   function updateMeta() {
@@ -341,6 +389,7 @@
     state.previewDuration = getPreviewDuration(track);
     state.desiredPlayback = Boolean(autoplay);
     updateMeta();
+    updateLikeLabel();
     const safeOffset = Math.max(0, Math.min(previewOffset, Math.max(state.previewDuration - 0.25, 0)));
     const targetTime = state.previewStart + safeOffset;
     state.audio.src = track.file_url;
@@ -446,6 +495,7 @@
 .mini-radio-btn.is-liked span{color:#141414!important}
 .mini-radio-btn.is-liked .mini-player-icon{color:#141414!important}
 .mini-radio-btn.like-feedback{transform:scale(1.08)}
+.mini-radio-btn.is-disabled{opacity:.45;filter:grayscale(.35);cursor:not-allowed}
 .mini-radio-volume-wrap{display:inline-flex;align-items:center;gap:7px;min-width:78px;flex:0 0 92px;padding:0 8px;height:32px;border-radius:999px;border:1px solid rgba(255,255,255,0.14);background:linear-gradient(180deg, rgba(255,255,255,0.12), rgba(255,255,255,0.04)), linear-gradient(180deg, rgba(10,10,10,0.86), rgba(10,10,10,0.92));box-shadow:inset 0 1px 0 rgba(255,255,255,0.08),0 10px 22px rgba(0,0,0,0.18);margin-left:auto}
 .mini-radio-volume-icon{width:14px;height:14px;display:inline-flex;align-items:center;justify-content:center;line-height:1;color:#d4af37;flex:0 0 auto}.mini-radio-volume-icon .mini-svg-icon{width:14px;height:14px}
 .mini-radio-volume-wrap input[type=range]{width:100%;min-width:0;margin:0;accent-color:#d4af37;background:transparent}
@@ -470,11 +520,14 @@
     state.els.time = wrap.querySelector('#miniRadioTime');
     applyBodySpacing();
     applyStoredCurrencySnapshot();
-    state.liked = localStorage.getItem(LIKE_KEY) === '1';
     updateLikeLabel();
     state.els.likeBtn.addEventListener('click', () => {
-      state.liked = !state.liked;
-      localStorage.setItem(LIKE_KEY, state.liked ? '1' : '0');
+      if (!state.currentUserId || isOwnCurrentTrack()) return;
+      const key = currentTrackLikeKey();
+      if (!key) return;
+      const likedIds = new Set(readLikedTrackIds());
+      if (likedIds.has(String(key))) likedIds.delete(String(key)); else likedIds.add(String(key));
+      writeLikedTrackIds([...likedIds]);
       updateLikeLabel();
       state.els.likeBtn.classList.add('like-feedback');
       setTimeout(() => { state.els.likeBtn && state.els.likeBtn.classList.remove('like-feedback'); }, 220);
@@ -529,6 +582,7 @@
     const session = loadSession();
     if (!session.isStarted || session.startedDate !== state.sessionKeyToday) return;
 
+    await refreshCurrentUserId();
     injectMarkup();
     attachAudio();
 
@@ -575,6 +629,7 @@
       });
     }
 
+    supabaseClient.auth.onAuthStateChange(async () => { await refreshCurrentUserId(); updateLikeLabel(); });
     window.addEventListener('beforeunload', () => { clearUnexpectedPauseTimer(); persistProgress(true); });
     window.addEventListener('pagehide', () => { clearUnexpectedPauseTimer(); persistProgress(true); });
     window.addEventListener('storage', (event) => {

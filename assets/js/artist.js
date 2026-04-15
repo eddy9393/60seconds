@@ -1,5 +1,7 @@
 const { getSupabaseClient, getFlagEmoji: sharedGetFlagEmoji, getProfileHref: sharedGetProfileHref, bindRuntimeCurrencySync, applyRuntimeCurrencySnapshotToElement, closeStandardHeaderPanels, setStandardHeaderAvatar, handleStandardHeaderAvatarAction, applyStandardMenuState, setStandardLoggedOutState, setStandardLoggedInState, bindStandardHeaderEvents, getCurrentUserSafe } = window.SSFMApp;
 const supabaseClient = getSupabaseClient();
+const SHARED_LIKES_KEY = "ssfm_radio_likes_v2";
+const SHARED_VOLUME_KEY = "ssfm_radio_volume_v2";
 
 
 function getFlagEmoji(countryName) {
@@ -351,6 +353,32 @@ function formatTime(seconds) {
 }
 
 
+function readSharedLikedTrackIds() {
+  try {
+    const raw = localStorage.getItem(SHARED_LIKES_KEY);
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed.map(String) : [];
+  } catch {
+    return [];
+  }
+}
+
+function writeSharedLikedTrackIds(ids) {
+  localStorage.setItem(SHARED_LIKES_KEY, JSON.stringify(Array.from(new Set((ids || []).map(String)))));
+}
+
+function isOwnTrack(track) {
+  return Boolean(state.currentUserId && track?.user_id && String(state.currentUserId) === String(track.user_id));
+}
+
+function getSavedVolume() {
+  const raw = Number(localStorage.getItem(SHARED_VOLUME_KEY) || 0.3);
+  if (!Number.isFinite(raw)) return 0.3;
+  return Math.max(0, Math.min(1, raw));
+}
+
+
 function pauseSharedRadioPlayback() {
   try {
     const raw = localStorage.getItem("ssfm_radio_session_v2");
@@ -517,6 +545,10 @@ function buildTrackCard(track) {
 
   const feelingTags = Array.isArray(track.feeling_tags) ? track.feeling_tags : [];
 
+  const ownTrack = isOwnTrack(track);
+  const likedIds = readSharedLikedTrackIds();
+  const isLiked = likedIds.includes(String(track.id));
+
   card.innerHTML = `
     <div class="tune-top">
       <div>
@@ -535,6 +567,23 @@ function buildTrackCard(track) {
         <div class="player-time">0:00</div>
       </div>
 
+      <div class="tune-action-row">
+        <button class="tune-action-btn tune-like-btn ${isLiked ? "is-liked" : ""} ${ownTrack ? "is-disabled" : ""}" type="button" ${!state.currentUserId or ownTrack ? "disabled" : ""} aria-label="${ownTrack ? "You cannot like your own tune" : "Like this tune"}">
+          <span class="tune-action-icon">♥</span>
+          <span>${ownTrack ? "Own tune" : (isLiked ? "Liked" : "Like")}</span>
+        </button>
+
+        <div class="tune-volume-shell">
+          <button class="tune-action-btn tune-volume-btn" type="button" aria-label="Volume">
+            <span class="tune-action-icon">🔊</span>
+            <span>Volume</span>
+          </button>
+          <div class="tune-volume-popout">
+            <input class="tune-volume-range" type="range" min="0" max="1" step="0.01" value="${getSavedVolume()}" aria-label="Tune volume">
+          </div>
+        </div>
+      </div>
+
       <div class="tune-meta-row">
         <div class="mini-pill">${allowFullTrack ? "Playback: Full track" : `Preview: ${formatTime(previewStart)} - ${formatTime(previewStart + previewDuration)}`}</div>
         ${createdAtLabel ? `<div class="mini-pill">Submitted: ${escapeHtml(createdAtLabel)}</div>` : ""}
@@ -547,9 +596,75 @@ function buildTrackCard(track) {
   const playBtn = card.querySelector(".player-btn");
   const progressBar = card.querySelector(".progress-bar");
   const timeLabel = card.querySelector(".player-time");
+  const likeBtn = card.querySelector(".tune-like-btn");
+  const volumeBtn = card.querySelector(".tune-volume-btn");
+  const volumeShell = card.querySelector(".tune-volume-shell");
+  const volumeRange = card.querySelector(".tune-volume-range");
 
   const audio = new Audio(track.file_url);
   audio.preload = "metadata";
+  audio.volume = getSavedVolume();
+
+  let volumeAutoCloseTimer = null;
+
+  function scheduleVolumeCollapse() {
+    if (!volumeShell) return;
+    if (volumeAutoCloseTimer) clearTimeout(volumeAutoCloseTimer);
+    volumeAutoCloseTimer = setTimeout(() => {
+      volumeShell.classList.remove("is-open");
+    }, 3000);
+  }
+
+  if (likeBtn) {
+    likeBtn.addEventListener("click", () => {
+      if (!state.currentUserId || isOwnTrack(track)) return;
+
+      const likedIdsNow = new Set(readSharedLikedTrackIds());
+      const key = String(track.id);
+
+      if (likedIdsNow.has(key)) {
+        likedIdsNow.delete(key);
+        likeBtn.classList.remove("is-liked");
+        likeBtn.innerHTML = `<span class="tune-action-icon">♥</span><span>Like</span>`;
+      } else {
+        likedIdsNow.add(key);
+        likeBtn.classList.add("is-liked");
+        likeBtn.innerHTML = `<span class="tune-action-icon">♥</span><span>Liked</span>`;
+      }
+
+      writeSharedLikedTrackIds([...likedIdsNow]);
+    });
+  }
+
+  if (volumeBtn && volumeShell && volumeRange) {
+    volumeBtn.addEventListener("click", (event) => {
+      event.stopPropagation();
+      const willOpen = !volumeShell.classList.contains("is-open");
+      document.querySelectorAll(".tune-volume-shell.is-open").forEach((node) => {
+        if (node !== volumeShell) node.classList.remove("is-open");
+      });
+      volumeShell.classList.toggle("is-open", willOpen);
+      if (willOpen) scheduleVolumeCollapse();
+    });
+
+    volumeRange.addEventListener("input", () => {
+      const value = Math.max(0, Math.min(1, Number(volumeRange.value) || 0));
+      audio.volume = value;
+      localStorage.setItem(SHARED_VOLUME_KEY, String(value));
+      scheduleVolumeCollapse();
+    });
+
+    volumeShell.addEventListener("mousemove", () => {
+      if (volumeShell.classList.contains("is-open")) scheduleVolumeCollapse();
+    });
+
+    document.addEventListener("click", (event) => {
+      if (!volumeShell.contains(event.target)) {
+        volumeShell.classList.remove("is-open");
+      }
+    });
+  }
+
 
   playBtn.addEventListener("click", async () => {
     try {
