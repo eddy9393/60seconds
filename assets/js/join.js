@@ -163,7 +163,7 @@ function fillProfileForm(profile) {
 
 function applyMenuState(user, profile, track) {
   const isLoggedIn = Boolean(user);
-  const hasProfile = Boolean(profile);
+  const hasProfile = hasCompletedArtistProfile(profile);
   const hasTrack = Boolean(track);
   const profileHref = getProfileHref(profile);
 

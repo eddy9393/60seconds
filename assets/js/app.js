@@ -98,6 +98,11 @@
     return `<span class="${className}" aria-hidden="true">${flag}</span>`;
   }
 
+  function hasCompletedArtistProfile(profile) {
+    return Boolean(profile && String(profile.artist_name || '').trim());
+  }
+
+
   async function getCurrentUserSafe() {
     const supabaseClient = getSupabaseClient();
     const sessionResponse = await supabaseClient.auth.getSession();
@@ -181,7 +186,7 @@
 
   function applyStandardMenuState(els, user, profile, track, options = {}) {
     const isLoggedIn = Boolean(user);
-    const hasProfile = Boolean(profile);
+    const hasProfile = hasCompletedArtistProfile(profile);
     const hasTrack = Boolean(track);
     const profileHref = options.profileHref || getProfileHref(profile);
     const trackHref = options.trackHref || 'submit-track.html';
@@ -327,6 +332,7 @@
     setStandardLoggedInState,
     fetchProfileByUserId,
     fetchTrackByUserId,
-    bindStandardHeaderEvents
+    bindStandardHeaderEvents,
+    hasCompletedArtistProfile
   });
 })();

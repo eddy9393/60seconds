@@ -241,7 +241,7 @@ function handleHeaderAvatarAction(profileHref) {
 
 function applyMenuState(user, profile, track) {
   const isLoggedIn = Boolean(user);
-  const hasProfile = Boolean(profile);
+  const hasProfile = hasCompletedArtistProfile(profile);
   const hasTrack = Boolean(track);
 
   setHidden(els.desktopNav.loginLink, isLoggedIn);
@@ -568,7 +568,7 @@ async function refreshPageState() {
   setPageMode(track);
   renderTrackStatus(track);
 
-  if (!profile) {
+  if (!hasCompletedArtistProfile(profile)) {
     setHidden(els.page.loginRequiredBox, true);
     setHidden(els.page.profileRequiredBox, false);
     setHidden(els.page.formWrap, true);
