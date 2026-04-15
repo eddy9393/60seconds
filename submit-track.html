@@ -6,7 +6,7 @@
   <title>Enter The Radio - 60 Seconds FM</title>
 
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Manrope:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="assets/css/submit-track.css">
+  <link rel="stylesheet" href="assets/css/submit-tune.css">
 </head>
 <body>
   <aside class="desktop-side-nav" aria-label="Desktop navigation">
@@ -33,11 +33,11 @@
           <span class="desktop-nav-label">Notifications</span>
         </a>
 
-        <a id="desktopTrackLink" class="desktop-nav-link active hidden" href="submit-track.html" aria-label="Track">
+        <a id="desktopTuneLink" class="desktop-nav-link active hidden" href="submit-tune.html" aria-label="Tune">
           <span class="desktop-nav-icon" aria-hidden="true">
-            <img src="/icons/track.png" alt="" />
+            <img src="/icons/tune.png" alt="" />
           </span>
-          <span class="desktop-nav-label">Track</span>
+          <span class="desktop-nav-label">Tune</span>
         </a>
       </nav>
 
@@ -82,11 +82,11 @@
         <span class="mobile-nav-label">Notifications</span>
       </a>
 
-      <a id="mobileTrackLink" class="mobile-nav-link active hidden" href="submit-track.html" aria-label="Track">
+      <a id="mobileTuneLink" class="mobile-nav-link active hidden" href="submit-tune.html" aria-label="Tune">
         <span class="mobile-nav-icon" aria-hidden="true">
-          <img src="/icons/track.png" alt="" />
+          <img src="/icons/tune.png" alt="" />
         </span>
-        <span class="mobile-nav-label">Track</span>
+        <span class="mobile-nav-label">Tune</span>
       </a>
 
       <a id="mobileLoginLink" class="mobile-nav-link" href="login.html" aria-label="Login">
@@ -136,7 +136,7 @@
   <div class="site-shell">
     <main class="page-wrap">
       <section class="hero-card">
-        <div class="section-kicker">Track Submission</div>
+        <div class="section-kicker">Tune Submission</div>
         <h1 id="pageTitle" class="page-title">Enter The Radio</h1>
         <p id="pageNote" class="page-note">
           Submit your 60 second preview and join the next wave.
@@ -145,35 +145,35 @@
 
       <section class="panel-card">
         <div id="loginRequiredBox" class="notice-box hidden">
-          You need to be logged in before submitting a track.
+          You need to be logged in before submitting a tune.
           <div class="sub-link-row" style="margin-top: 12px;">
             <a class="ghost-link" href="login.html">Log in</a>
           </div>
         </div>
 
         <div id="profileRequiredBox" class="notice-box hidden">
-          You need to create your artist profile before submitting a track.
+          You need to create your artist profile before submitting a tune.
           <div class="sub-link-row" style="margin-top: 12px;">
             <a class="ghost-link" href="join.html">Create Artist Profile</a>
           </div>
         </div>
 
-        <div id="trackStatusBox" class="notice-box track-status-box hidden"></div>
+        <div id="tuneStatusBox" class="notice-box tune-status-box hidden"></div>
 
         <div id="formWrap" class="form-grid hidden">
           <div class="field-group">
-            <label class="field-label" for="trackTitle">Track Title</label>
-            <input id="trackTitle" class="field-input" type="text" placeholder="Enter your track title" />
+            <label class="field-label" for="tuneTitle">Tune Title</label>
+            <input id="tuneTitle" class="field-input" type="text" placeholder="Enter your tune title" />
           </div>
 
           <div class="field-group">
-            <label class="field-label" for="trackFile">Track File</label>
-            <input id="trackFile" class="field-file" type="file" accept="audio/*" />
+            <label class="field-label" for="tuneFile">Tune File</label>
+            <input id="tuneFile" class="field-file" type="file" accept="audio/*" />
             <div class="field-help">
-              Upload the full track file. On edit, you can leave this empty to keep your current uploaded file.
+              Upload the full tune file. On edit, you can leave this empty to keep your current uploaded file.
             </div>
             <div class="subtle-note">
-              If you upload a new audio file, your track will go back into review and must be approved again before it can go live on the radio.
+              If you upload a new audio file, your tune will go back into review and must be approved again before it can go live on the radio.
             </div>
           </div>
 
@@ -231,14 +231,14 @@
           <div class="field-group">
             <label class="field-label">Artist Page Playback</label>
             <label class="toggle-row">
-              <span>Allow full track playback on your artist page</span>
+              <span>Allow full tune playback on your artist page</span>
               <span class="switch">
-                <input id="artistPageFullTrack" type="checkbox" />
+                <input id="artistPageFullTune" type="checkbox" />
                 <span class="switch-slider"></span>
               </span>
             </label>
             <div class="subtle-note">
-              If this is off, visitors on your artist page will only hear the selected preview. If it is on, they can listen to the full track there.
+              If this is off, visitors on your artist page will only hear the selected preview. If it is on, they can listen to the full tune there.
             </div>
           </div>
 
@@ -262,7 +262,7 @@
                 <input id="clipStartSlider" class="clip-slider" type="range" min="0" max="0" step="1" value="0" />
                 <div class="clip-meta">
                   <span>Move the selector to choose where the 60 second preview starts.</span>
-                  <span id="fullTrackDurationLabel">Full track: 0:00</span>
+                  <span id="fullTuneDurationLabel">Full tune: 0:00</span>
                 </div>
               </div>
 
@@ -276,7 +276,7 @@
             </div>
 
             <div id="clipToolPlaceholder" class="field-help">
-              Upload or load a track first to choose your 60 second radio preview.
+              Upload or load a tune first to choose your 60 second radio preview.
             </div>
 
             <audio id="previewAudio" preload="metadata" class="hidden"></audio>
@@ -293,7 +293,7 @@
           </div>
 
           <div class="action-row">
-            <button id="saveTrackBtn" class="submit-link" type="button">Submit Your Track</button>
+            <button id="saveTuneBtn" class="submit-link" type="button">Submit Your Tune</button>
           </div>
         </div>
 
@@ -310,7 +310,7 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="assets/js/config.js"></script>
   <script src="assets/js/app.js"></script>
-  <script src="assets/js/submit-track.js"></script>
+  <script src="assets/js/submit-tune.js"></script>
   <script src="assets/js/radio-mini-player.js"></script>
 </body>
 </html>
