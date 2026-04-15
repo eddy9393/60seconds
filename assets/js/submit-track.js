@@ -320,6 +320,16 @@ function setPageMode(track) {
   setText(els.form.saveTrackBtn, isEdit ? "Save Tune Changes" : "Submit Your Tune");
 }
 
+
+function renderProfileRequiredState() {
+  setText(els.page.title, "Create Your Artist Profile");
+  setText(
+    els.page.note,
+    "You're one step away — create your artist profile first to unlock your artist page, submit your tune, and share your sound on 60 Seconds FM."
+  );
+  setStatus("");
+}
+
 function renderTrackStatus(track) {
   if (!track) {
     setHidden(els.page.trackStatusBox, true);
@@ -573,12 +583,14 @@ async function refreshPageState() {
     setHidden(els.page.profileRequiredBox, false);
     setHidden(els.page.formWrap, true);
     fillTrackForm(track);
+    renderProfileRequiredState();
     return;
   }
 
   setHidden(els.page.loginRequiredBox, true);
   setHidden(els.page.profileRequiredBox, true);
   setHidden(els.page.formWrap, false);
+  setPageMode(track);
   fillTrackForm(track);
 }
 
@@ -648,8 +660,10 @@ async function handleSaveTrack() {
     return;
   }
 
+  const originalSaveLabel = els.form.saveTrackBtn.textContent;
   els.form.saveTrackBtn.disabled = true;
-  setStatus("Uploading and saving track...");
+  els.form.saveTrackBtn.textContent = state.currentTrackData?.id ? "Saving..." : "Submitting...";
+  setStatus("Uploading and saving tune...");
 
   try {
     const fileUrl = await uploadTrackIfNeeded(state.currentUser.id, file);
@@ -726,6 +740,7 @@ async function handleSaveTrack() {
     setStatus(err.message || "Something went wrong while saving your track.", true);
   } finally {
     els.form.saveTrackBtn.disabled = false;
+    els.form.saveTrackBtn.textContent = state.currentTrackData?.id ? "Save Tune Changes" : "Submit Your Tune";
   }
 }
 

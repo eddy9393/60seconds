@@ -1,4 +1,4 @@
-const { getSupabaseClient, buildStandardShellEls, applyStandardMenuState, fetchProfileByUserId, fetchTrackByUserId, getCurrentUserSafe } = window.SSFMApp;
+const { getSupabaseClient, buildStandardShellEls, applyStandardMenuState, fetchProfileByUserId, fetchTrackByUserId, getCurrentUserSafe, hasCompletedArtistProfile } = window.SSFMApp;
 const supabaseClient = getSupabaseClient();
 
 const els = {
@@ -92,6 +92,19 @@ function renderAuthMode() {
   setText(els.form.authModeToggle, "Sign up");
 }
 
+
+async function getPostLoginDestination(userId) {
+  if (!userId) return "index.html";
+
+  try {
+    const profile = await fetchProfileByUserId(userId, "user_id, artist_name");
+    return hasCompletedArtistProfile(profile) ? "index.html" : "edit-profile.html?welcome=1";
+  } catch (err) {
+    console.error("getPostLoginDestination error:", err);
+    return "index.html";
+  }
+}
+
 async function syncMenuVisibility() {
   try {
     const user = await getCurrentUserSafe();
@@ -117,7 +130,8 @@ async function redirectIfAlreadyLoggedIn() {
     const user = await syncMenuVisibility();
 
     if (user) {
-      window.location.href = "index.html";
+      const nextUrl = await getPostLoginDestination(user.id);
+      window.location.replace(nextUrl);
     }
   } catch (err) {
     console.error("redirectIfAlreadyLoggedIn error:", err);
@@ -168,7 +182,7 @@ async function handleAuthSubmit(event) {
       if (session?.user) {
         setFeedback("Account created. Redirecting to profile setup...", "success");
         setTimeout(() => {
-          window.location.href = "join.html";
+          window.location.href = "edit-profile.html?welcome=1";
         }, 500);
       } else {
         setFeedback("Account created. Check your email to confirm your sign up.", "success");
@@ -189,8 +203,10 @@ async function handleAuthSubmit(event) {
 
     setFeedback("Login successful. Redirecting...", "success");
 
+    const nextUrl = await getPostLoginDestination((await getCurrentUserSafe())?.id);
+
     setTimeout(() => {
-      window.location.href = "index.html";
+      window.location.href = nextUrl;
     }, 500);
   } catch (err) {
     console.error("auth error:", err);
