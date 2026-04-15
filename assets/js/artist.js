@@ -231,13 +231,10 @@ async function fetchArtistProfile(userId) {
       .eq("user_id", userId)
       .maybeSingle();
 
-    if (!error) {
-      return data || null;
-    }
-
-    console.warn("public_artist_profiles fallback:", error.message);
+    if (!error) return data || null;
+    console.warn("public_artist_profiles read failed, falling back to profiles:", error.message);
   } catch (error) {
-    console.warn("public_artist_profiles query failed:", error?.message || error);
+    console.warn("public_artist_profiles query failed, falling back to profiles:", error?.message || error);
   }
 
   const { data, error } = await supabaseClient
@@ -945,6 +942,5 @@ async function initPage() {
 
 initPage().catch((err) => {
   console.error("initPage error:", err);
-  setText(els.page.artistName, "Artist unavailable");
   setArtistStatus("The page could not be loaded correctly.", true);
 });
