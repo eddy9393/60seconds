@@ -22,6 +22,17 @@ const state = {
   authMode: "login"
 };
 
+function scrubSensitiveUrlParams() {
+  const url = new URL(window.location.href);
+  let changed = false;
+  if (url.searchParams.has('email')) { url.searchParams.delete('email'); changed = true; }
+  if (url.searchParams.has('password')) { url.searchParams.delete('password'); changed = true; }
+  if (changed || window.location.hash.includes('access_token') || window.location.hash.includes('error=')) {
+    window.history.replaceState({}, document.title, `${url.pathname}${url.search}`);
+  }
+}
+
+
 function setHidden(element, hidden) {
   if (!element) return;
   element.classList.toggle("hidden", hidden);
@@ -141,10 +152,10 @@ async function handleAuthSubmit(event) {
     if (state.authMode === "signup") {
       const { data, error } = await supabaseClient.auth.signUp({
         email,
-        password
+        password,
         options: {
-        emailRedirectTo: "https://www.60seconds.fm/login.html"
-      }
+          emailRedirectTo: "https://www.60seconds.fm/confirm.html?next=join.html"
+        }
       });
 
       if (error) {
@@ -199,6 +210,7 @@ function bindEvents() {
 }
 
 async function initPage() {
+  scrubSensitiveUrlParams();
   renderAuthMode();
   applyStandardMenuState(els.shell, null, null, null);
   bindEvents();

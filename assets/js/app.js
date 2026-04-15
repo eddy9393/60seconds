@@ -14,7 +14,13 @@
     if (!supabaseConfig.url || !supabaseConfig.anonKey) {
       throw new Error('Supabase configuration is missing.');
     }
-    cachedSupabaseClient = window.supabase.createClient(supabaseConfig.url, supabaseConfig.anonKey);
+    cachedSupabaseClient = window.supabase.createClient(supabaseConfig.url, supabaseConfig.anonKey, {
+      auth: {
+        persistSession: true,
+        autoRefreshToken: true,
+        detectSessionInUrl: true
+      }
+    });
     return cachedSupabaseClient;
   }
 
