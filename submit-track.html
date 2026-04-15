@@ -33,7 +33,7 @@
           <span class="desktop-nav-label">Notifications</span>
         </a>
 
-        <a id="desktopTuneLink" class="desktop-nav-link active hidden" href="submit-tune.html" aria-label="Tune">
+        <a id="desktopTrackLink" class="desktop-nav-link active hidden" href="submit-tune.html" aria-label="Tune">
           <span class="desktop-nav-icon" aria-hidden="true">
             <img src="/icons/tune.png" alt="" />
           </span>
@@ -82,7 +82,7 @@
         <span class="mobile-nav-label">Notifications</span>
       </a>
 
-      <a id="mobileTuneLink" class="mobile-nav-link active hidden" href="submit-tune.html" aria-label="Tune">
+      <a id="mobileTrackLink" class="mobile-nav-link active hidden" href="submit-tune.html" aria-label="Tune">
         <span class="mobile-nav-icon" aria-hidden="true">
           <img src="/icons/tune.png" alt="" />
         </span>
@@ -158,17 +158,17 @@
           </div>
         </div>
 
-        <div id="tuneStatusBox" class="notice-box tune-status-box hidden"></div>
+        <div id="trackStatusBox" class="notice-box tune-status-box hidden"></div>
 
         <div id="formWrap" class="form-grid hidden">
           <div class="field-group">
-            <label class="field-label" for="tuneTitle">Tune Title</label>
-            <input id="tuneTitle" class="field-input" type="text" placeholder="Enter your tune title" />
+            <label class="field-label" for="trackTitle">Tune Title</label>
+            <input id="trackTitle" class="field-input" type="text" placeholder="Enter your tune title" />
           </div>
 
           <div class="field-group">
-            <label class="field-label" for="tuneFile">Tune File</label>
-            <input id="tuneFile" class="field-file" type="file" accept="audio/*" />
+            <label class="field-label" for="trackFile">Tune File</label>
+            <input id="trackFile" class="field-file" type="file" accept="audio/*" />
             <div class="field-help">
               Upload the full tune file. On edit, you can leave this empty to keep your current uploaded file.
             </div>
@@ -233,7 +233,7 @@
             <label class="toggle-row">
               <span>Allow full tune playback on your artist page</span>
               <span class="switch">
-                <input id="artistPageFullTune" type="checkbox" />
+                <input id="artistPageFullTrack" type="checkbox" />
                 <span class="switch-slider"></span>
               </span>
             </label>
@@ -262,7 +262,7 @@
                 <input id="clipStartSlider" class="clip-slider" type="range" min="0" max="0" step="1" value="0" />
                 <div class="clip-meta">
                   <span>Move the selector to choose where the 60 second preview starts.</span>
-                  <span id="fullTuneDurationLabel">Full tune: 0:00</span>
+                  <span id="fullTrackDurationLabel">Full tune: 0:00</span>
                 </div>
               </div>
 
@@ -293,7 +293,7 @@
           </div>
 
           <div class="action-row">
-            <button id="saveTuneBtn" class="submit-link" type="button">Submit Your Tune</button>
+            <button id="saveTrackBtn" class="submit-link" type="button">Submit Your Tune</button>
           </div>
         </div>
 

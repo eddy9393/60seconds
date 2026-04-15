@@ -242,11 +242,11 @@
   </div>
 
   <div id="adminApp" class="hidden">
-    <div id="status">Loading pending tunes...</div>
+    <div id="status">Loading pending tracks...</div>
     <div id="debug"></div>
 
     <div class="card">
-      <div id="tuneList"></div>
+      <div id="trackList"></div>
     </div>
   </div>
 
@@ -261,7 +261,7 @@
 
     const statusEl = document.getElementById("status");
     const debugEl = document.getElementById("debug");
-    const tuneListEl = document.getElementById("tuneList");
+    const trackListEl = document.getElementById("trackList");
     const lockedBoxEl = document.getElementById("lockedBox");
     const adminAppEl = document.getElementById("adminApp");
     const loadingBoxEl = document.getElementById("loadingBox");
@@ -356,41 +356,41 @@
       return true;
     }
 
-    async function loadPendingTunes() {
+    async function loadPendingTracks() {
       if (!currentUser || !isAdminUser(currentUser)) {
         showLocked();
         return;
       }
 
-      setStatus("Loading pending tunes...");
-      setDebug("Loading pending tunes from Supabase...");
+      setStatus("Loading pending tracks...");
+      setDebug("Loading pending tracks from Supabase...");
 
       const { data, error } = await supabaseClient
-        .from("tunes")
+        .from("tracks")
         .select("id, title, artist, file_url, status, created_at")
         .eq("status", "pending")
         .order("created_at", { ascending: false });
 
       if (error) {
-        setStatus("Error loading tunes: " + error.message, true);
+        setStatus("Error loading tracks: " + error.message, true);
         return;
       }
 
-      renderTunes(data || []);
+      renderTracks(data || []);
     }
 
-    function renderTunes(tunes) {
-      tuneListEl.innerHTML = "";
+    function renderTracks(tracks) {
+      trackListEl.innerHTML = "";
 
-      if (!tunes.length) {
-        tuneListEl.innerHTML = `<div class="empty">No pending tunes right now.</div>`;
-        setStatus("No pending tunes found.");
+      if (!tracks.length) {
+        trackListEl.innerHTML = `<div class="empty">No pending tracks right now.</div>`;
+        setStatus("No pending tracks found.");
         return;
       }
 
-      setStatus(`${tunes.length} pending tune(s) found.`);
+      setStatus(`${tracks.length} pending tune(s) found.`);
 
-      tunes.forEach(tune => {
+      tracks.forEach(tune => {
         const createdAt = tune.created_at
           ? new Date(tune.created_at).toLocaleString()
           : "Unknown";
@@ -408,7 +408,7 @@
             <button class="gold" data-id="${escapeHtml(tune.id)}" data-action="approve">Approve</button>
           </div>
         `;
-        tuneListEl.appendChild(div);
+        trackListEl.appendChild(div);
       });
 
       wireButtons();
@@ -422,13 +422,13 @@
           if (isApproving) return;
 
           const id = button.getAttribute("data-id");
-          await approveTune(id, button);
+          await approveTrack(id, button);
         });
       });
     }
 
-    async function approveTune(tuneId, buttonEl) {
-      if (!tuneId) return;
+    async function approveTrack(trackId, buttonEl) {
+      if (!trackId) return;
 
       isApproving = true;
 
@@ -440,12 +440,12 @@
       }
 
       setStatus("Approving tune...");
-      setDebug("Updating status to approved for tune " + tuneId);
+      setDebug("Updating status to approved for tune " + trackId);
 
       const { error } = await supabaseClient
-        .from("tunes")
+        .from("tracks")
         .update({ status: "approved" })
-        .eq("id", tuneId);
+        .eq("id", trackId);
 
       if (error) {
         setStatus("Approve failed: " + error.message, true);
@@ -460,7 +460,7 @@
       }
 
       setStatus("Tune approved ✅");
-      await loadPendingTunes();
+      await loadPendingTracks();
       isApproving = false;
     }
 
@@ -484,7 +484,7 @@
         return;
       }
 
-      await loadPendingTunes();
+      await loadPendingTracks();
       hasInitialized = true;
     }
 
@@ -500,7 +500,7 @@
       }
 
       showAdmin();
-      await loadPendingTunes();
+      await loadPendingTracks();
     });
 
     init();
