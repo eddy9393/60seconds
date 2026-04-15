@@ -504,7 +504,7 @@ function renderArtistProfile(profile, isOwnPage, hasOwnTrack) {
 
 function buildTrackCard(track) {
   const card = document.createElement("article");
-  card.className = "track-card";
+  card.className = "tune-card";
 
   const createdAtLabel = formatDate(track.created_at);
   const previewStart = Math.max(0, Number(track.preview_start_seconds || 0));
@@ -518,15 +518,15 @@ function buildTrackCard(track) {
   const feelingTags = Array.isArray(track.feeling_tags) ? track.feeling_tags : [];
 
   card.innerHTML = `
-    <div class="track-top">
+    <div class="tune-top">
       <div>
-        <div class="track-title">${escapeHtml(track.title || "Untitled Track")}</div>
-        <div class="track-subtitle">${escapeHtml(track.artist || "Artist")}</div>
+        <div class="tune-title">${escapeHtml(track.title || "Untitled Track")}</div>
+        <div class="tune-subtitle">${escapeHtml(track.artist || "Artist")}</div>
       </div>
-      <div class="track-status">${allowFullTrack ? "Full track" : `${formatTime(previewDuration)} tune`}</div>
+      <div class="tune-status">${allowFullTrack ? "Full track" : `${formatTime(previewDuration)} tune`}</div>
     </div>
 
-    <div class="track-player">
+    <div class="tune-player">
       <div class="player-row">
         <button class="player-btn" type="button" aria-label="Play preview">▶</button>
         <div class="progress-wrap">
@@ -535,7 +535,7 @@ function buildTrackCard(track) {
         <div class="player-time">0:00</div>
       </div>
 
-      <div class="track-meta-row">
+      <div class="tune-meta-row">
         <div class="mini-pill">${allowFullTrack ? "Playback: Full track" : `Preview: ${formatTime(previewStart)} - ${formatTime(previewStart + previewDuration)}`}</div>
         ${createdAtLabel ? `<div class="mini-pill">Submitted: ${escapeHtml(createdAtLabel)}</div>` : ""}
         ${genrePills.map((genre) => `<div class="mini-pill">Genre: ${escapeHtml(genre)}</div>`).join("")}
