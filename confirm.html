@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Confirm Account — 60 Seconds FM</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Manrope:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/login.css">
+</head>
+<body>
+  <div class="site-shell">
+    <main class="auth-page">
+      <section class="auth-card" aria-labelledby="confirmTitle">
+        <div class="auth-kicker">Account Activation</div>
+        <h1 id="confirmTitle" class="auth-title">Confirming your account</h1>
+        <p id="confirmSubtitle" class="auth-subtitle">Please wait while we verify your email link.</p>
+        <div id="feedback" class="auth-feedback" aria-live="polite"></div>
+        <div class="auth-links">
+          <a class="auth-link" href="login.html">Back to Login</a>
+          <a class="auth-link" href="index.html">Back to Radio</a>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="assets/js/config.js"></script>
+  <script src="assets/js/app.js"></script>
+  <script src="assets/js/confirm.js"></script>
+</body>
+</html>
