@@ -96,7 +96,7 @@
 .playlist-actions {
   display: flex;
   justify-content: flex-start;
-  padding-left: 8px;
+  padding-left: 6px;
 }
 
 .playlist-open {
@@ -151,18 +151,14 @@
   }
 }
 
-.playlist-actions {
-  justify-content: flex-start;
-  padding-left: 18px;
-}
+
 @media (min-width: 901px) {
   .playlist-actions {
     justify-content: flex-start;
-    padding-left: 28px;
+    padding-left: 10px;
   }
-}
 
-@media (min-width: 901px) {
-  .playlist-actions { justify-content: flex-start; padding-left: 10px; }
-  .playlist-open { margin-left: -6px; }
+  .playlist-open {
+    margin-left: -8px;
+  }
 }
