@@ -38,10 +38,7 @@ const els = {
     artistName: document.getElementById("statArtistName"),
     coins: document.getElementById("statCoins"),
     dailySeconds: document.getElementById("statDailySeconds"),
-    tuneCount: document.getElementById("statTuneCount"),
-    submittedTunes: document.getElementById("statSubmittedTunes"),
-    estimatedPlays: document.getElementById("statEstimatedPlays"),
-    totalPlays: document.getElementById("statTotalPlays")
+    tuneCount: document.getElementById("statTuneCount")
   }
 };
 
@@ -82,26 +79,15 @@ async function loadPage() {
     return;
   }
 
-  const [
-    { count: submittedCount },
-    { count: approvedCount },
-    { data: myTracks }
-  ] = await Promise.all([
-    supabaseClient.from("tracks").select("*", { count: "exact", head: true }).eq("user_id", user.id),
-    supabaseClient.from("tracks").select("*", { count: "exact", head: true }).eq("status", "approved"),
-    supabaseClient.from("tracks").select("play_count").eq("user_id", user.id)
-  ]);
-
-  const perDay = approvedCount && approvedCount > 0 ? Math.floor(1440 / approvedCount) : 0;
-  const totalPlays = Array.isArray(myTracks) ? myTracks.reduce((sum, row) => sum + (Number(row.play_count) || 0), 0) : 0;
+  const { count } = await supabaseClient
+    .from("tracks")
+    .select("*", { count: "exact", head: true })
+    .eq("user_id", user.id);
 
   els.page.artistName.textContent = profile.artist_name || "—";
   els.page.coins.textContent = String(profile.coins || 0);
   els.page.dailySeconds.textContent = String(profile.daily_seconds_earned || 0);
-  els.page.tuneCount.textContent = String(submittedCount || 0);
-  els.page.submittedTunes.textContent = String(submittedCount || 0);
-  els.page.estimatedPlays.textContent = String(perDay || 0);
-  els.page.totalPlays.textContent = String(totalPlays || 0);
+  els.page.tuneCount.textContent = String(count || 0);
 
   setHidden(els.page.loginRequired, true);
   setHidden(els.page.profileRequired, true);

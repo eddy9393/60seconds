@@ -4,7 +4,7 @@
   if (!window.supabase) return;
 
 
-  const { getSupabaseClient, setCurrencyText, fetchLikedTrackIds, toggleTrackLikeForUser } = window.SSFMApp || {};
+  const { getSupabaseClient, setCurrencyText } = window.SSFMApp || {};
   const supabaseClient = typeof getSupabaseClient === 'function'
     ? getSupabaseClient()
     : window.supabase.createClient(
@@ -46,8 +46,7 @@
     trackAdvanceLock: false,
     rewardedTrackId: null,
     isAdvancingTrack: false,
-    currentUserId: null,
-    likedTrackIds: []
+    currentUserId: null
   };
 
   function todayKey() {
@@ -73,6 +72,21 @@
 
 
 
+  function readLikedTrackIds() {
+    try {
+      const raw = localStorage.getItem(LIKE_KEY);
+      if (!raw) return [];
+      const parsed = JSON.parse(raw);
+      return Array.isArray(parsed) ? parsed.map(String) : [];
+    } catch {
+      return [];
+    }
+  }
+
+  function writeLikedTrackIds(ids) {
+    localStorage.setItem(LIKE_KEY, JSON.stringify(Array.from(new Set((ids || []).map(String)))));
+  }
+
   function currentTrackLikeKey() {
     return state.currentTrack?.id ? String(state.currentTrack.id) : '';
   }
@@ -85,12 +99,8 @@
     try {
       const { data } = await supabaseClient.auth.getSession();
       state.currentUserId = data?.session?.user?.id || null;
-      state.likedTrackIds = state.currentUserId && typeof fetchLikedTrackIds === 'function'
-        ? await fetchLikedTrackIds(state.currentUserId)
-        : [];
     } catch {
       state.currentUserId = null;
-      state.likedTrackIds = [];
     }
   }
 
@@ -167,7 +177,7 @@
     if (!state.els.likeBtn) return;
 
     const key = currentTrackLikeKey();
-    state.liked = Boolean(key && Array.isArray(state.likedTrackIds) && state.likedTrackIds.includes(String(key)));
+    state.liked = Boolean(key && readLikedTrackIds().includes(String(key)));
 
     if (isOwnCurrentTrack()) {
       state.els.likeBtn.innerHTML = `<span class="mini-player-icon">${MINI_PLAYER_ICONS.heart}</span><span>Own tune</span>`;
@@ -511,21 +521,16 @@
     applyBodySpacing();
     applyStoredCurrencySnapshot();
     updateLikeLabel();
-    state.els.likeBtn.addEventListener('click', async () => {
-      if (!state.currentUserId || isOwnCurrentTrack() || typeof toggleTrackLikeForUser !== 'function') return;
+    state.els.likeBtn.addEventListener('click', () => {
+      if (!state.currentUserId || isOwnCurrentTrack()) return;
       const key = currentTrackLikeKey();
       if (!key) return;
-      try {
-        const result = await toggleTrackLikeForUser(state.currentTrack, state.currentUserId);
-        const likedIds = new Set(Array.isArray(state.likedTrackIds) ? state.likedTrackIds : []);
-        if (result.liked) likedIds.add(String(key)); else likedIds.delete(String(key));
-        state.likedTrackIds = [...likedIds];
-        updateLikeLabel();
-        state.els.likeBtn.classList.add('like-feedback');
-        setTimeout(() => { state.els.likeBtn && state.els.likeBtn.classList.remove('like-feedback'); }, 220);
-      } catch (error) {
-        console.error('mini player like error:', error);
-      }
+      const likedIds = new Set(readLikedTrackIds());
+      if (likedIds.has(String(key))) likedIds.delete(String(key)); else likedIds.add(String(key));
+      writeLikedTrackIds([...likedIds]);
+      updateLikeLabel();
+      state.els.likeBtn.classList.add('like-feedback');
+      setTimeout(() => { state.els.likeBtn && state.els.likeBtn.classList.remove('like-feedback'); }, 220);
     });
     state.els.pauseBtn.addEventListener('click', async () => {
       if (!state.audio) return;

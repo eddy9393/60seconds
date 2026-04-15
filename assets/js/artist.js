@@ -1,5 +1,6 @@
-const { getSupabaseClient, getFlagEmoji: sharedGetFlagEmoji, getProfileHref: sharedGetProfileHref, bindRuntimeCurrencySync, applyRuntimeCurrencySnapshotToElement, closeStandardHeaderPanels, setStandardHeaderAvatar, handleStandardHeaderAvatarAction, applyStandardMenuState, setStandardLoggedOutState, setStandardLoggedInState, bindStandardHeaderEvents, getCurrentUserSafe, fetchLikedTrackIds, toggleTrackLikeForUser } = window.SSFMApp;
+const { getSupabaseClient, getFlagEmoji: sharedGetFlagEmoji, getProfileHref: sharedGetProfileHref, bindRuntimeCurrencySync, applyRuntimeCurrencySnapshotToElement, closeStandardHeaderPanels, setStandardHeaderAvatar, handleStandardHeaderAvatarAction, applyStandardMenuState, setStandardLoggedOutState, setStandardLoggedInState, bindStandardHeaderEvents, getCurrentUserSafe } = window.SSFMApp;
 const supabaseClient = getSupabaseClient();
+const SHARED_LIKES_KEY = "ssfm_radio_likes_v2";
 const SHARED_VOLUME_KEY = "ssfm_radio_volume_v2";
 
 
@@ -65,8 +66,7 @@ const state = {
   currentAudioButton: null,
   currentProgressBar: null,
   currentTimeLabel: null,
-  currentPreviewInterval: null,
-  currentLikedTrackIds: []
+  currentPreviewInterval: null
 };
 
 function setHidden(element, hidden) {
@@ -184,7 +184,6 @@ async function loadCurrentUserState() {
   const user = error ? null : data?.session?.user || null;
 
   if (!user) {
-    state.currentLikedTrackIds = [];
     setLoggedOutHeader();
     return null;
   }
@@ -205,13 +204,10 @@ async function loadCurrentUserState() {
     .limit(1)
     .maybeSingle();
 
-  const likedPromise = fetchLikedTrackIds(user.id);
+  const [{ data: profileData }, { data: trackData }] = await Promise.all([profilePromise, trackPromise]);
 
-  const [profileRes, trackRes, likedRes] = await Promise.allSettled([profilePromise, trackPromise, likedPromise]);
-
-  state.currentProfileData = profileRes.status === "fulfilled" ? (profileRes.value?.data || null) : null;
-  state.currentTrackData = trackRes.status === "fulfilled" ? (trackRes.value?.data || null) : null;
-  state.currentLikedTrackIds = likedRes.status === "fulfilled" && Array.isArray(likedRes.value) ? likedRes.value : [];
+  state.currentProfileData = profileData || null;
+  state.currentTrackData = trackData || null;
 
   setLoggedInHeader();
   setCurrency(state.currentProfileData?.coins || 0);
@@ -222,24 +218,9 @@ async function loadCurrentUserState() {
 }
 
 async function fetchArtistProfile(userId) {
-  const sharedSelect = "user_id, artist_name, photo_url, bio, social_link, nationality, created_at, date_of_birth, music_roles, city";
-
-  try {
-    const { data, error } = await supabaseClient
-      .from("public_artist_profiles")
-      .select(sharedSelect)
-      .eq("user_id", userId)
-      .maybeSingle();
-
-    if (!error) return data || null;
-    console.warn("public_artist_profiles read failed, falling back to profiles:", error.message);
-  } catch (error) {
-    console.warn("public_artist_profiles query failed, falling back to profiles:", error?.message || error);
-  }
-
   const { data, error } = await supabaseClient
-    .from("profiles")
-    .select(sharedSelect)
+    .from("public_artist_profiles")
+    .select("user_id, artist_name, photo_url, bio, social_link, nationality, created_at, date_of_birth, music_roles, city")
     .eq("user_id", userId)
     .maybeSingle();
 
@@ -376,15 +357,29 @@ function formatTime(seconds) {
 }
 
 
-function getSavedVolume() {
+function readSharedLikedTrackIds() {
+  try {
+    const raw = localStorage.getItem(SHARED_LIKES_KEY);
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed.map(String) : [];
+  } catch {
+    return [];
+  }
+}
 
-  const raw = Number(localStorage.getItem(SHARED_VOLUME_KEY) || 0.3);
-  if (!Number.isFinite(raw)) return 0.3;
-  return Math.max(0, Math.min(1, raw));
+function writeSharedLikedTrackIds(ids) {
+  localStorage.setItem(SHARED_LIKES_KEY, JSON.stringify(Array.from(new Set((ids || []).map(String)))));
 }
 
 function isOwnTrack(track) {
   return Boolean(state.currentUserId && track?.user_id && String(state.currentUserId) === String(track.user_id));
+}
+
+function getSavedVolume() {
+  const raw = Number(localStorage.getItem(SHARED_VOLUME_KEY) || 0.3);
+  if (!Number.isFinite(raw)) return 0.3;
+  return Math.max(0, Math.min(1, raw));
 }
 
 
@@ -557,7 +552,7 @@ function buildTrackCard(track) {
   const feelingTags = Array.isArray(track.feeling_tags) ? track.feeling_tags : [];
 
   const ownTrack = isOwnTrack(track);
-  const likedIds = Array.isArray(state.currentLikedTrackIds) ? state.currentLikedTrackIds : [];
+  const likedIds = readSharedLikedTrackIds();
   const isLiked = likedIds.includes(String(track.id));
 
   card.innerHTML = `
@@ -627,29 +622,23 @@ function buildTrackCard(track) {
   }
 
   if (likeBtn) {
-    likeBtn.addEventListener("click", async () => {
+    likeBtn.addEventListener("click", () => {
       if (!state.currentUserId || isOwnTrack(track)) return;
 
-      try {
-        const result = await toggleTrackLikeForUser(track, state.currentUserId);
-        const key = String(track.id);
-        const likedIdsNow = new Set(Array.isArray(state.currentLikedTrackIds) ? state.currentLikedTrackIds : []);
+      const likedIdsNow = new Set(readSharedLikedTrackIds());
+      const key = String(track.id);
 
-        if (result.liked) {
-          likedIdsNow.add(key);
-          likeBtn.classList.add("is-liked");
-          likeBtn.innerHTML = `<span class="tune-action-icon">♥</span><span>Liked</span>`;
-        } else {
-          likedIdsNow.delete(key);
-          likeBtn.classList.remove("is-liked");
-          likeBtn.innerHTML = `<span class="tune-action-icon">♥</span><span>Like</span>`;
-        }
-
-        state.currentLikedTrackIds = [...likedIdsNow];
-      } catch (error) {
-        console.error("artist like error:", error);
-        setArtistStatus("Like could not be updated right now.", true);
+      if (likedIdsNow.has(key)) {
+        likedIdsNow.delete(key);
+        likeBtn.classList.remove("is-liked");
+        likeBtn.innerHTML = `<span class="tune-action-icon">♥</span><span>Like</span>`;
+      } else {
+        likedIdsNow.add(key);
+        likeBtn.classList.add("is-liked");
+        likeBtn.innerHTML = `<span class="tune-action-icon">♥</span><span>Liked</span>`;
       }
+
+      writeSharedLikedTrackIds([...likedIdsNow]);
     });
   }
 
@@ -777,17 +766,16 @@ async function loadViewedArtistPage(userId) {
 
   resetArtistPageShell();
 
-  let profile = null;
+  let profile;
   try {
     profile = await fetchArtistProfile(userId);
   } catch (err) {
-    console.error("fetchArtistProfile error:", err);
-    setText(els.page.artistName, "Artist unavailable");
-    setArtistStatus("This artist page could not be loaded right now.", true);
+    setText(els.page.artistName, "");
+    setArtistStatus(err.message || "Could not load artist profile.", true);
     return;
   }
 
-  if (!profile || !String(profile.artist_name || "").trim()) {
+  if (!profile) {
     showCreateArtistProfileCTA();
     return;
   }
@@ -795,45 +783,29 @@ async function loadViewedArtistPage(userId) {
   const isOwnPage = Boolean(state.currentUserId && state.currentUserId === userId);
   const hasOwnTrack = Boolean(state.currentTrackData);
 
-  try {
-    renderArtistProfile(profile, isOwnPage, hasOwnTrack);
-  } catch (err) {
-    console.error("renderArtistProfile error:", err);
-    setText(els.page.artistName, "Artist unavailable");
-    setArtistStatus("This artist page could not be displayed correctly.", true);
-    return;
-  }
+  renderArtistProfile(profile, isOwnPage, hasOwnTrack);
 
-  let approvedTracks = [];
+  let approvedTracks;
   try {
     approvedTracks = await fetchApprovedTracks(userId);
   } catch (err) {
-    console.error("fetchApprovedTracks error:", err);
-    setArtistStatus(err.message || "Could not load approved tune.", true);
-    approvedTracks = [];
+    setArtistStatus(err.message || "Could not load approved track.", true);
+    return;
   }
 
-  try {
-    els.page.tracksWrap.innerHTML = "";
-
-    if (!approvedTracks.length) {
-      setHidden(els.page.noTracksBox, false);
-      setHidden(els.page.tracksWrap, true);
-      return;
-    }
-
-    approvedTracks.forEach((track) => {
-      els.page.tracksWrap.appendChild(buildTrackCard(track));
-    });
-
-    setHidden(els.page.tracksWrap, false);
-    setHidden(els.page.noTracksBox, true);
-  } catch (err) {
-    console.error("track render error:", err);
-    setHidden(els.page.tracksWrap, true);
+  if (!approvedTracks.length) {
     setHidden(els.page.noTracksBox, false);
-    setArtistStatus("The tune section could not be rendered correctly.", true);
+    setHidden(els.page.tracksWrap, true);
+    return;
   }
+
+  els.page.tracksWrap.innerHTML = "";
+  approvedTracks.forEach((track) => {
+    els.page.tracksWrap.appendChild(buildTrackCard(track));
+  });
+
+  setHidden(els.page.tracksWrap, false);
+  setHidden(els.page.noTracksBox, true);
 }
 
 async function refreshWholePage() {
@@ -862,26 +834,6 @@ async function refreshWholePage() {
 
   setText(els.page.artistName, "");
   setArtistStatus("", false);
-}
-
-let artistRefreshInFlight = null;
-
-async function refreshWholePageSafe() {
-  if (artistRefreshInFlight) return artistRefreshInFlight;
-
-  artistRefreshInFlight = (async () => {
-    try {
-      await refreshWholePageSafe();
-    } catch (err) {
-      console.error("refreshWholePageSafe error:", err);
-      setText(els.page.artistName, "Artist unavailable");
-      setArtistStatus("This artist page could not be refreshed correctly.", true);
-    } finally {
-      artistRefreshInFlight = null;
-    }
-  })();
-
-  return artistRefreshInFlight;
 }
 
 function bindEvents() {
@@ -927,9 +879,11 @@ function bindEvents() {
     }
   });
 
-  supabaseClient.auth.onAuthStateChange((event) => {
-    if (event === "INITIAL_SESSION") return;
-    refreshWholePageSafe();
+  supabaseClient.auth.onAuthStateChange(() => {
+    refreshWholePage().catch((err) => {
+      console.error(err);
+      setArtistStatus("The page could not be refreshed correctly.", true);
+    });
   });
 }
 
@@ -937,7 +891,7 @@ async function initPage() {
   applyRuntimeCurrencySnapshot();
 
   bindEvents();
-  await refreshWholePageSafe();
+  await refreshWholePage();
 }
 
 initPage().catch((err) => {
