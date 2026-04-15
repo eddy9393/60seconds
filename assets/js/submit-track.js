@@ -1,4 +1,4 @@
-const { getSupabaseClient, getProfileHref: sharedGetProfileHref, bindRuntimeCurrencySync, applyRuntimeCurrencySnapshotToElement, closeStandardHeaderPanels, setStandardHeaderAvatar, handleStandardHeaderAvatarAction, applyStandardMenuState, setStandardLoggedOutState, setStandardLoggedInState, bindStandardHeaderEvents, getCurrentUserSafe } = window.SSFMApp;
+const { getSupabaseClient, getProfileHref: sharedGetProfileHref, bindRuntimeCurrencySync, applyRuntimeCurrencySnapshotToElement, closeStandardHeaderPanels, setStandardHeaderAvatar, handleStandardHeaderAvatarAction, applyStandardMenuState, setStandardLoggedOutState, setStandardLoggedInState, bindStandardHeaderEvents, getCurrentUserSafe, hasCompletedArtistProfile } = window.SSFMApp;
 const supabaseClient = getSupabaseClient();
 
 const GENRE_OPTIONS = [
