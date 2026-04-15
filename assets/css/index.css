@@ -2184,3 +2184,16 @@ img {
   align-items: center;
   line-height: 1;
 }
+
+
+.like-own-disabled,
+.like-own-disabled:hover {
+  opacity: 0.45;
+  filter: grayscale(0.35);
+  cursor: not-allowed;
+  transform: none;
+}
+
+.like-own-disabled .icon {
+  color: rgba(255,255,255,0.72);
+}
