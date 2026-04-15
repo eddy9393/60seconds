@@ -1259,3 +1259,65 @@ img {
     }
   }
 }
+
+
+.artist-cta-shell {
+  width: 100%;
+  min-height: 62vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 12px;
+}
+
+.artist-cta-card {
+  width: min(720px, 100%);
+  padding: 42px 28px;
+  border-radius: 28px;
+  text-align: center;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.015)),
+    rgba(255,255,255,0.02);
+  border: 1px solid rgba(212,175,55,0.20);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.04),
+    0 18px 40px rgba(0,0,0,0.22);
+}
+
+.artist-cta-kicker {
+  color: var(--gold-2);
+  text-transform: uppercase;
+  letter-spacing: 1.8px;
+  font-size: 12px;
+  font-weight: 700;
+  margin-bottom: 14px;
+}
+
+.artist-cta-title {
+  font-size: clamp(28px, 4.2vw, 42px);
+  line-height: 1.08;
+  margin-bottom: 14px;
+}
+
+.artist-cta-copy {
+  max-width: 540px;
+  margin: 0 auto 24px;
+  color: #d7d7d7;
+  font-size: 15px;
+  line-height: 1.75;
+}
+
+@media (max-width: 700px) {
+  .artist-cta-shell {
+    min-height: 54vh;
+    padding: 24px 8px;
+  }
+
+  .artist-cta-card {
+    padding: 32px 20px;
+  }
+
+  .artist-cta-title {
+    font-size: 30px;
+  }
+}
