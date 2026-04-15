@@ -149,3 +149,14 @@
     justify-content: flex-start;
   }
 }
+
+.playlist-actions {
+  justify-content: flex-start;
+  padding-left: 18px;
+}
+@media (min-width: 901px) {
+  .playlist-actions {
+    justify-content: flex-start;
+    padding-left: 28px;
+  }
+}
