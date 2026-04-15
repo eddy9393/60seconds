@@ -156,19 +156,28 @@
     </header>
   </div>
 
+  
   <div class="site-shell">
-    <main class="page-wrap">
+    <main class="page-wrap notifications-page">
+      <div class="section-kicker">Inbox</div>
       <h1 class="page-title">Notifications</h1>
-      <p class="page-subtitle">Stay updated with your activity</p>
+      <p class="page-subtitle">Updates, rewards, curator messages, and activity around your tunes.</p>
 
-      <div class="empty-card">
+      <div id="notificationsLoginRequired" class="empty-card hidden">
         <div class="empty-icon">🔔</div>
+        <div class="empty-title">Log in to view your notifications</div>
+        <div class="empty-text">Your notifications will appear here once you’re signed in.</div>
+        <a href="login.html" class="gold-btn">Login</a>
+      </div>
+
+      <div id="notificationsEmptyState" class="empty-card hidden">
+        <div class="empty-icon">✦</div>
         <div class="empty-title">No notifications yet</div>
-        <div class="empty-text">
-          When something happens, you'll see it here.
-        </div>
+        <div class="empty-text">When something happens around your account or tunes, you’ll see it here.</div>
         <a href="index.html" class="back-link">← Back to Radio</a>
       </div>
+
+      <section id="notificationsList" class="notifications-list hidden"></section>
     </main>
   </div>
 
@@ -179,3 +188,4 @@
   <script src="assets/js/radio-mini-player.js"></script>
 </body>
 </html>
+
