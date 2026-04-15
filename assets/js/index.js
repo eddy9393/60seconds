@@ -1,4 +1,4 @@
-const { getSupabaseClient, getFlagEmoji: sharedGetFlagEmoji, getFlagMarkup: sharedGetFlagMarkup, getProfileHref: sharedGetProfileHref, closeStandardHeaderPanels, setStandardHeaderAvatar, handleStandardHeaderAvatarAction, applyStandardMenuState, setStandardLoggedOutState, setStandardLoggedInState, bindStandardHeaderEvents, getCurrentUserSafe } = window.SSFMApp;
+const { getSupabaseClient, getFlagEmoji: sharedGetFlagEmoji, getFlagMarkup: sharedGetFlagMarkup, getProfileHref: sharedGetProfileHref, closeStandardHeaderPanels, setStandardHeaderAvatar, handleStandardHeaderAvatarAction, applyStandardMenuState, setStandardLoggedOutState, setStandardLoggedInState, bindStandardHeaderEvents, getCurrentUserSafe, fetchLikedTrackIds, toggleTrackLikeForUser } = window.SSFMApp;
 const supabaseClient = getSupabaseClient();
 
 const DAILY_SECONDS_LIMIT = 10;
@@ -94,6 +94,7 @@ const state = {
   unexpectedPauseTimer: null,
   newsFeedItems: [],
   newsFeedIndex: 0,
+  likedTrackIds: [],
   newsFeedTimer: null,
   newsFeedRefreshTimer: null
 };
@@ -621,7 +622,7 @@ function isCurrentTrackOwn() {
 
 function resetLike() {
   const likeKey = getCurrentTrackLikeKey();
-  const likedIds = readLikedTrackIds();
+  const likedIds = Array.isArray(state.likedTrackIds) ? state.likedTrackIds : [];
   state.liked = Boolean(likeKey && likedIds.includes(String(likeKey)));
 
   if (isCurrentTrackOwn()) {
@@ -733,6 +734,7 @@ function setLoggedOutView() {
   state.dailySecondsEarnedDate = null;
   state.listenerIdentity = null;
   state.trackAdvanceLock = false;
+  state.likedTrackIds = [];
 
   applyMenuState(null, null, null);
   hideUserStats();
@@ -885,10 +887,13 @@ async function refreshAuthUI() {
     setCurrency(state.currentCoins || 0);
     setLoggedInView();
 
-    const [profile, tune] = await Promise.all([
+    const [profile, tune, likedTrackIds] = await Promise.all([
       loadMyProfile(user.id),
-      loadMyTune(user.id)
+      loadMyTune(user.id),
+      fetchLikedTrackIds(user.id)
     ]);
+
+    state.likedTrackIds = likedTrackIds;
 
     applyMenuState(user, profile, tune);
     updateInteractiveControls();
@@ -902,79 +907,12 @@ async function refreshAuthUI() {
   }
 }
 
-async function loadTrackStats() {
-  try {
-    const user = await getSessionUser();
+async function loadTrackStats() { return; }
 
-    if (!user) {
-      setHidden(els.submittedCardEl, true);
-      setHidden(els.playsCardEl, true);
-      return;
-    }
-
-    const [
-      { count: submittedCount },
-      { count: approvedCount },
-      { count: myApproved }
-    ] = await Promise.all([
-      supabaseClient.from("tracks").select("*", { count: "exact", head: true }),
-      supabaseClient.from("tracks").select("*", { count: "exact", head: true }).eq("status", "approved"),
-      supabaseClient.from("tracks").select("*", { count: "exact", head: true }).eq("user_id", user.id).eq("status", "approved")
-    ]);
-
-    setHidden(els.submittedCardEl, false);
-    setText(els.submittedCountEl, formatNumber(submittedCount));
-
-    if (!myApproved || myApproved === 0) {
-      setHidden(els.playsCardEl, true);
-      return;
-    }
-
-    const perDay = approvedCount && approvedCount > 0
-      ? Math.floor(1440 / approvedCount)
-      : 0;
-
-    setHidden(els.playsCardEl, false);
-    setText(els.playsPerDayEl, formatNumber(perDay));
-  } catch (err) {
-    console.error("loadTrackStats error:", err);
-  }
-}
-
-async function loadMyTotalPlays() {
-  try {
-    const user = await getSessionUser();
-
-    if (!user) {
-      setHidden(els.myPlaysCardEl, true);
-      return;
-    }
-
-    const { data: myTracks, error } = await supabaseClient
-      .from("tracks")
-      .select("play_count")
-      .eq("user_id", user.id);
-
-    if (error || !myTracks || myTracks.length === 0) {
-      setHidden(els.myPlaysCardEl, true);
-      return;
-    }
-
-    const total = myTracks.reduce((sum, track) => sum + (track.play_count || 0), 0);
-
-    setHidden(els.myPlaysCardEl, false);
-    setText(els.myTotalPlaysEl, formatNumber(total));
-  } catch (err) {
-    console.error("loadMyTotalPlays error:", err);
-  }
-}
+async function loadMyTotalPlays() { return; }
 
 async function refreshAuthDependentUI() {
   await refreshAuthUI();
-  await Promise.all([
-    loadTrackStats(),
-    loadMyTotalPlays()
-  ]);
   updateJoinButtonHref();
 }
 
@@ -1352,24 +1290,27 @@ async function handleSkip() {
   nextTrack(0, true, state.desiredPlayback);
 }
 
-function handleLike() {
+async function handleLike() {
   if (!state.currentUser || isCurrentTrackOwn()) return;
 
-  const likeKey = getCurrentTrackLikeKey();
-  if (!likeKey) return;
+  const currentTrack = state.tracks[state.current] || null;
+  if (!currentTrack) return;
 
-  const likedIds = new Set(readLikedTrackIds());
+  try {
+    const result = await toggleTrackLikeForUser(currentTrack, state.currentUser.id);
+    const likeKey = getCurrentTrackLikeKey();
+    const likedIds = new Set(Array.isArray(state.likedTrackIds) ? state.likedTrackIds : []);
 
-  state.liked = !likedIds.has(String(likeKey));
+    if (likeKey) {
+      if (result.liked) likedIds.add(String(likeKey));
+      else likedIds.delete(String(likeKey));
+    }
 
-  if (state.liked) {
-    likedIds.add(String(likeKey));
-  } else {
-    likedIds.delete(String(likeKey));
+    state.likedTrackIds = [...likedIds];
+    resetLike();
+  } catch (error) {
+    console.error("handleLike error:", error);
   }
-
-  writeLikedTrackIds([...likedIds]);
-  resetLike();
 }
 
 function handlePauseToggle() {

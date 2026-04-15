@@ -1,6 +1,5 @@
-const { getSupabaseClient, getFlagEmoji: sharedGetFlagEmoji, getProfileHref: sharedGetProfileHref, bindRuntimeCurrencySync, applyRuntimeCurrencySnapshotToElement, closeStandardHeaderPanels, setStandardHeaderAvatar, handleStandardHeaderAvatarAction, applyStandardMenuState, setStandardLoggedOutState, setStandardLoggedInState, bindStandardHeaderEvents, getCurrentUserSafe } = window.SSFMApp;
+const { getSupabaseClient, getFlagEmoji: sharedGetFlagEmoji, getProfileHref: sharedGetProfileHref, bindRuntimeCurrencySync, applyRuntimeCurrencySnapshotToElement, closeStandardHeaderPanels, setStandardHeaderAvatar, handleStandardHeaderAvatarAction, applyStandardMenuState, setStandardLoggedOutState, setStandardLoggedInState, bindStandardHeaderEvents, getCurrentUserSafe, fetchLikedTrackIds, toggleTrackLikeForUser } = window.SSFMApp;
 const supabaseClient = getSupabaseClient();
-const SHARED_LIKES_KEY = "ssfm_radio_likes_v2";
 const SHARED_VOLUME_KEY = "ssfm_radio_volume_v2";
 
 
@@ -66,7 +65,8 @@ const state = {
   currentAudioButton: null,
   currentProgressBar: null,
   currentTimeLabel: null,
-  currentPreviewInterval: null
+  currentPreviewInterval: null,
+  currentLikedTrackIds: []
 };
 
 function setHidden(element, hidden) {
@@ -184,6 +184,7 @@ async function loadCurrentUserState() {
   const user = error ? null : data?.session?.user || null;
 
   if (!user) {
+    state.currentLikedTrackIds = [];
     setLoggedOutHeader();
     return null;
   }
@@ -208,6 +209,7 @@ async function loadCurrentUserState() {
 
   state.currentProfileData = profileData || null;
   state.currentTrackData = trackData || null;
+  state.currentLikedTrackIds = await fetchLikedTrackIds(user.id);
 
   setLoggedInHeader();
   setCurrency(state.currentProfileData?.coins || 0);
@@ -357,26 +359,8 @@ function formatTime(seconds) {
 }
 
 
-function readSharedLikedTrackIds() {
-  try {
-    const raw = localStorage.getItem(SHARED_LIKES_KEY);
-    if (!raw) return [];
-    const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) ? parsed.map(String) : [];
-  } catch {
-    return [];
-  }
-}
-
-function writeSharedLikedTrackIds(ids) {
-  localStorage.setItem(SHARED_LIKES_KEY, JSON.stringify(Array.from(new Set((ids || []).map(String)))));
-}
-
-function isOwnTrack(track) {
-  return Boolean(state.currentUserId && track?.user_id && String(state.currentUserId) === String(track.user_id));
-}
-
 function getSavedVolume() {
+
   const raw = Number(localStorage.getItem(SHARED_VOLUME_KEY) || 0.3);
   if (!Number.isFinite(raw)) return 0.3;
   return Math.max(0, Math.min(1, raw));
@@ -552,7 +536,7 @@ function buildTrackCard(track) {
   const feelingTags = Array.isArray(track.feeling_tags) ? track.feeling_tags : [];
 
   const ownTrack = isOwnTrack(track);
-  const likedIds = readSharedLikedTrackIds();
+  const likedIds = Array.isArray(state.currentLikedTrackIds) ? state.currentLikedTrackIds : [];
   const isLiked = likedIds.includes(String(track.id));
 
   card.innerHTML = `
@@ -622,23 +606,29 @@ function buildTrackCard(track) {
   }
 
   if (likeBtn) {
-    likeBtn.addEventListener("click", () => {
+    likeBtn.addEventListener("click", async () => {
       if (!state.currentUserId || isOwnTrack(track)) return;
 
-      const likedIdsNow = new Set(readSharedLikedTrackIds());
-      const key = String(track.id);
+      try {
+        const result = await toggleTrackLikeForUser(track, state.currentUserId);
+        const key = String(track.id);
+        const likedIdsNow = new Set(Array.isArray(state.currentLikedTrackIds) ? state.currentLikedTrackIds : []);
 
-      if (likedIdsNow.has(key)) {
-        likedIdsNow.delete(key);
-        likeBtn.classList.remove("is-liked");
-        likeBtn.innerHTML = `<span class="tune-action-icon">♥</span><span>Like</span>`;
-      } else {
-        likedIdsNow.add(key);
-        likeBtn.classList.add("is-liked");
-        likeBtn.innerHTML = `<span class="tune-action-icon">♥</span><span>Liked</span>`;
+        if (result.liked) {
+          likedIdsNow.add(key);
+          likeBtn.classList.add("is-liked");
+          likeBtn.innerHTML = `<span class="tune-action-icon">♥</span><span>Liked</span>`;
+        } else {
+          likedIdsNow.delete(key);
+          likeBtn.classList.remove("is-liked");
+          likeBtn.innerHTML = `<span class="tune-action-icon">♥</span><span>Like</span>`;
+        }
+
+        state.currentLikedTrackIds = [...likedIdsNow];
+      } catch (error) {
+        console.error("artist like error:", error);
+        setArtistStatus("Like could not be updated right now.", true);
       }
-
-      writeSharedLikedTrackIds([...likedIdsNow]);
     });
   }
 

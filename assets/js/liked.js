@@ -1,7 +1,6 @@
 
-const { getSupabaseClient, getProfileHref: sharedGetProfileHref, bindRuntimeCurrencySync, applyRuntimeCurrencySnapshotToElement, closeStandardHeaderPanels, setStandardHeaderAvatar, handleStandardHeaderAvatarAction, applyStandardMenuState, setStandardLoggedOutState, setStandardLoggedInState, bindStandardHeaderEvents, fetchProfileByUserId, getCurrentUserSafe } = window.SSFMApp;
+const { getSupabaseClient, bindRuntimeCurrencySync, setStandardHeaderAvatar, applyStandardMenuState, setStandardLoggedOutState, setStandardLoggedInState, bindStandardHeaderEvents, fetchProfileByUserId, getCurrentUserSafe, fetchLikedTrackIds } = window.SSFMApp;
 const supabaseClient = getSupabaseClient();
-const LIKE_KEY = 'ssfm_radio_likes_v2';
 
 const els = {
   header: {
@@ -40,35 +39,18 @@ const els = {
   }
 };
 
-function readLikedTrackIds() {
-  try {
-    const raw = localStorage.getItem(LIKE_KEY);
-    if (!raw) return [];
-    const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) ? parsed.map(String) : [];
-  } catch {
-    return [];
-  }
-}
-
-function getProfileHref(profile) {
-  return sharedGetProfileHref(profile);
-}
-
-function setCurrency(value) {
-  const amount = Number(value);
-  if (!Number.isFinite(amount)) {
-    if (els.header.currencyValue) els.header.currencyValue.textContent = "0";
-    return;
-  }
-  if (els.header.currencyValue) {
-    els.header.currencyValue.textContent = String(Math.max(0, Math.floor(amount)));
-  }
-}
-
 function setHidden(element, hidden) {
   if (!element) return;
   element.classList.toggle("hidden", hidden);
+}
+
+function escapeHtml(value) {
+  return String(value ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
 }
 
 function renderRows(rows) {
@@ -76,20 +58,18 @@ function renderRows(rows) {
   rows.forEach((track, index) => {
     const row = document.createElement("div");
     row.className = "playlist-row";
-    const genres = [track.genre_primary, track.genre_secondary].filter(Boolean).join(" / ") || "—";
+    const genres = [track.genre_primary, track.genre_secondary].filter(Boolean);
     row.innerHTML = `
       <div class="playlist-index">${index + 1}</div>
       <div>
-        <div class="playlist-title">${track.title || "Untitled tune"}</div>
-        <div class="playlist-sub">${track.status || "available"}</div>
+        <div class="playlist-title">${escapeHtml(track.title || "Untitled tune")}</div>
       </div>
       <div>
-        <div class="playlist-title">${track.artist || "Artist"}</div>
-        <div class="playlist-sub">60 Seconds FM</div>
+        <div class="playlist-title">${escapeHtml(track.artist || "Artist")}</div>
       </div>
-      <div><span class="playlist-pill">${genres}</span></div>
+      <div>${genres.length ? genres.map((genre) => `<span class="playlist-pill">${escapeHtml(genre)}</span>`).join(" ") : `<span class="playlist-pill">No genre yet</span>`}</div>
       <div class="playlist-actions">
-        <a class="playlist-open" href="artist.html?user_id=${encodeURIComponent(track.user_id)}">Open artist page</a>
+        <a class="playlist-open" href="artist.html?user_id=${encodeURIComponent(track.user_id)}">Visit artist</a>
       </div>
     `;
     els.page.list.appendChild(row);
@@ -112,7 +92,7 @@ async function loadPage() {
   applyStandardMenuState(els, user, profile, track);
   setStandardHeaderAvatar(els, profile?.photo_url, profile?.artist_name || user.email || "A");
 
-  const likedIds = readLikedTrackIds();
+  const likedIds = await fetchLikedTrackIds(user.id);
   if (!likedIds.length) {
     setHidden(els.page.loginRequired, true);
     setHidden(els.page.emptyState, false);
@@ -122,7 +102,7 @@ async function loadPage() {
 
   const { data, error } = await supabaseClient
     .from("tracks")
-    .select("id, user_id, title, artist, genre_primary, genre_secondary, status")
+    .select("id, user_id, title, artist, genre_primary, genre_secondary")
     .in("id", likedIds);
 
   if (error || !data || !data.length) {

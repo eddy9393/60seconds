@@ -140,6 +140,90 @@
     setNavIcon(els?.mobileNav?.notificationsLink, iconPath);
   }
 
+
+  async function refreshNotificationIndicator(els, userId) {
+    try {
+      if (!userId) {
+        setUnreadNotificationsFlag(false);
+        updateNotificationIcons(els);
+        return 0;
+      }
+      const supabaseClient = getSupabaseClient();
+      const { count, error } = await supabaseClient
+        .from('user_notifications')
+        .select('*', { count: 'exact', head: true })
+        .eq('user_id', userId)
+        .eq('is_read', false);
+      if (error) throw error;
+      const unreadCount = Number(count) || 0;
+      setUnreadNotificationsFlag(unreadCount > 0);
+      updateNotificationIcons(els);
+      return unreadCount;
+    } catch (error) {
+      console.warn('refreshNotificationIndicator warning:', error?.message || error);
+      setUnreadNotificationsFlag(false);
+      updateNotificationIcons(els);
+      return 0;
+    }
+  }
+
+  async function fetchLikedTrackIds(userId) {
+    try {
+      if (!userId) return [];
+      const supabaseClient = getSupabaseClient();
+      const { data, error } = await supabaseClient
+        .from('track_likes')
+        .select('track_id, created_at')
+        .eq('liker_user_id', userId)
+        .order('created_at', { ascending: false });
+      if (error) throw error;
+      return Array.isArray(data) ? data.map((row) => String(row.track_id)).filter(Boolean) : [];
+    } catch (error) {
+      console.warn('fetchLikedTrackIds warning:', error?.message || error);
+      return [];
+    }
+  }
+
+  async function toggleTrackLikeForUser(track, userId) {
+    if (!track?.id || !userId || !track?.user_id || String(track.user_id) === String(userId)) {
+      return { liked: false, changed: false };
+    }
+
+    const supabaseClient = getSupabaseClient();
+    const trackId = String(track.id);
+    const artistUserId = String(track.user_id);
+
+    const { data: existing, error: selectError } = await supabaseClient
+      .from('track_likes')
+      .select('id')
+      .eq('track_id', trackId)
+      .eq('liker_user_id', userId)
+      .maybeSingle();
+
+    if (selectError) throw selectError;
+
+    if (existing?.id) {
+      const { error: deleteError } = await supabaseClient
+        .from('track_likes')
+        .delete()
+        .eq('id', existing.id)
+        .eq('liker_user_id', userId);
+      if (deleteError) throw deleteError;
+      return { liked: false, changed: true };
+    }
+
+    const { error: insertError } = await supabaseClient
+      .from('track_likes')
+      .insert({
+        track_id: trackId,
+        liker_user_id: userId,
+        artist_user_id: artistUserId
+      });
+
+    if (insertError) throw insertError;
+    return { liked: true, changed: true };
+  }
+
   function buildStandardShellEls(doc = document) {
     return {
       header: {
@@ -261,7 +345,12 @@
       setHidden(els.header.accountNotificationsLink, !isLoggedIn || options.hideAccountNotifications === true);
     }
 
-    updateNotificationIcons(els);
+    if (isLoggedIn && user?.id) {
+      refreshNotificationIndicator(els, user.id).catch(() => {});
+    } else {
+      setUnreadNotificationsFlag(false);
+      updateNotificationIcons(els);
+    }
   }
 
   function setStandardLoggedOutState(els, options = {}) {
@@ -376,6 +465,9 @@
     hasCompletedArtistProfile,
     hasUnreadNotifications,
     setUnreadNotificationsFlag,
-    updateNotificationIcons
+    updateNotificationIcons,
+    refreshNotificationIndicator,
+    fetchLikedTrackIds,
+    toggleTrackLikeForUser
   });
 })();
