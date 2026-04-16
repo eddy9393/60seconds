@@ -133,6 +133,35 @@
 
   function setUnreadNotificationsFlag(hasUnread) {
     localStorage.setItem(UNREAD_NOTIFICATIONS_KEY, hasUnread ? '1' : '0');
+    try {
+      updateNotificationIcons(buildStandardShellEls(document));
+    } catch (err) {
+      console.warn('updateNotificationIcons after setUnreadNotificationsFlag failed:', err);
+    }
+  }
+
+  async function syncUnreadNotificationsFlagForUser(userId) {
+    if (!userId) {
+      setUnreadNotificationsFlag(false);
+      return false;
+    }
+
+    try {
+      const { count, error } = await supabaseClient
+        .from('user_notifications')
+        .select('id', { count: 'exact', head: true })
+        .eq('user_id', userId)
+        .eq('is_read', false);
+
+      if (error) throw error;
+
+      const hasUnread = Number(count || 0) > 0;
+      setUnreadNotificationsFlag(hasUnread);
+      return hasUnread;
+    } catch (err) {
+      console.error('syncUnreadNotificationsFlagForUser error:', err);
+      return false;
+    }
   }
 
   function updateNotificationIcons(els) {
@@ -266,6 +295,7 @@
   }
 
   function setStandardLoggedOutState(els, options = {}) {
+    setUnreadNotificationsFlag(false);
     closeStandardHeaderPanels(els, options.closeExtraPanels);
     applyStandardMenuState(els, null, null, null, options);
     setHidden(els?.header?.showLoginBtn, false);
@@ -377,6 +407,7 @@
     hasCompletedArtistProfile,
     hasUnreadNotifications,
     setUnreadNotificationsFlag,
+    syncUnreadNotificationsFlagForUser,
     updateNotificationIcons
   });
 })();

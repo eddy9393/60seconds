@@ -1,4 +1,4 @@
-const { getSupabaseClient, getProfileHref: sharedGetProfileHref, bindRuntimeCurrencySync, applyRuntimeCurrencySnapshotToElement, closeStandardHeaderPanels, setStandardHeaderAvatar, handleStandardHeaderAvatarAction, applyStandardMenuState, setStandardLoggedOutState, setStandardLoggedInState, bindStandardHeaderEvents, fetchProfileByUserId, fetchTrackByUserId, getCurrentUserSafe, setUnreadNotificationsFlag } = window.SSFMApp;
+const { getSupabaseClient, getProfileHref: sharedGetProfileHref, bindRuntimeCurrencySync, applyRuntimeCurrencySnapshotToElement, closeStandardHeaderPanels, setStandardHeaderAvatar, handleStandardHeaderAvatarAction, applyStandardMenuState, setStandardLoggedOutState, setStandardLoggedInState, bindStandardHeaderEvents, fetchProfileByUserId, fetchTrackByUserId, getCurrentUserSafe, setUnreadNotificationsFlag, syncUnreadNotificationsFlagForUser } = window.SSFMApp;
 const supabaseClient = getSupabaseClient();
 
 const els = {
@@ -153,6 +153,41 @@ async function refreshAuthUI() {
   }
 }
 
+async function acknowledgeNotificationsPageVisit(userId) {
+  if (!userId) return false;
+
+  try {
+    const { data, error } = await supabaseClient
+      .from('user_notifications')
+      .select('id')
+      .eq('user_id', userId)
+      .eq('is_read', false)
+      .order('created_at', { ascending: false })
+      .limit(200);
+
+    if (error) throw error;
+
+    const unreadIds = Array.isArray(data) ? data.map((item) => item.id).filter(Boolean) : [];
+
+    if (unreadIds.length > 0) {
+      const { error: updateError } = await supabaseClient
+        .from('user_notifications')
+        .update({ is_read: true })
+        .in('id', unreadIds)
+        .eq('user_id', userId);
+
+      if (updateError) throw updateError;
+    }
+
+    setUnreadNotificationsFlag(false);
+    return true;
+  } catch (err) {
+    console.error('acknowledgeNotificationsPageVisit error:', err);
+    await syncUnreadNotificationsFlagForUser(userId);
+    return false;
+  }
+}
+
 async function handleLogout() {
   els.header.logoutBtn.disabled = true;
   els.desktopNav.logoutBtn.disabled = true;
@@ -198,12 +233,12 @@ async function initPage() {
 
   if (!user) {
     window.location.href = "login.html";
+    return;
   }
+
+  await acknowledgeNotificationsPageVisit(user.id);
 }
 
 initPage().catch((err) => {
   console.error("initPage error:", err);
 });
-
-
-setUnreadNotificationsFlag(false);
