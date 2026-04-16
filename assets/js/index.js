@@ -257,8 +257,9 @@ async function loadNewsFeed() {
         .order("created_at", { ascending: false })
         .limit(24),
       supabaseClient
-        .from("public_artist_profiles")
+        .from("profiles")
         .select("artist_name, user_id, photo_url, daily_seconds_earned, daily_seconds_earned_date")
+        .not("artist_name", "is", null)
         .eq("daily_seconds_earned_date", todayKey)
         .gte("daily_seconds_earned", DAILY_SECONDS_LIMIT)
         .order("daily_seconds_earned", { ascending: false })
@@ -322,7 +323,7 @@ async function loadNewsFeed() {
         name,
         user_id: userId,
         photo_url: profile.photo_url || linkedProfile?.photo_url || "",
-        sortTime: nowMs - 500
+        sortTime: nowMs + dailySeconds
       });
     });
 
