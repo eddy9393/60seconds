@@ -192,17 +192,27 @@ function renderNewsFeedSlice() {
     return;
   }
 
-  const repeated = [];
   const source = state.newsFeedItems.slice(0, Math.min(state.newsFeedItems.length, 12));
-  const copies = Math.max(3, Math.ceil(9 / Math.max(source.length, 1)));
+  const shouldLoop = source.length >= 4;
+  const repeated = [];
 
+  if (!shouldLoop) {
+    els.newsFeedListEl.style.transform = 'translateY(0px)';
+    els.newsFeedListEl.innerHTML = source
+      .map((item) => `<div class="news-feed-item">${buildNewsFeedText(item)}</div>`)
+      .join('');
+    return;
+  }
+
+  const copies = Math.max(3, Math.ceil(9 / source.length));
   for (let copyIndex = 0; copyIndex < copies; copyIndex += 1) {
     source.forEach((item) => {
       repeated.push(`<div class="news-feed-item">${buildNewsFeedText(item)}</div>`);
     });
   }
 
-  els.newsFeedListEl.innerHTML = repeated.join("");
+  els.newsFeedListEl.style.transform = 'translateY(0px)';
+  els.newsFeedListEl.innerHTML = repeated.join('');
 }
 
 function advanceNewsFeed() {
@@ -329,7 +339,7 @@ async function loadNewsFeed() {
     renderNewsFeedSlice();
 
     clearNewsFeedTimers();
-    if (state.newsFeedItems.length > 1) {
+    if (state.newsFeedItems.length >= 4) {
       state.newsFeedTimer = setInterval(advanceNewsFeed, 40);
     }
     state.newsFeedRefreshTimer = setInterval(() => {
