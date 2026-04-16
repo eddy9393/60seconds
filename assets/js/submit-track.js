@@ -560,8 +560,7 @@ async function handleLogout() {
 }
 
 async function refreshPageState() {
-  const { data, error } = await supabaseClient.auth.getSession();
-  const user = error ? null : data?.session?.user || null;
+  const user = await getCurrentUserSafe();
 
   if (!user) {
     setLoggedOutView();

@@ -258,9 +258,7 @@ function renderPageState() {
 }
 
 async function getSessionUser() {
-  const { data, error } = await supabaseClient.auth.getSession();
-  if (error) return null;
-  return data?.session?.user || null;
+  return getCurrentUserSafe();
 }
 
 async function loadMyProfile(userId) {

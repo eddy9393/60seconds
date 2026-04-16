@@ -104,15 +104,45 @@
   }
 
 
+  async function clearInvalidSessionSafe() {
+    try {
+      await getSupabaseClient().auth.signOut({ scope: 'local' });
+    } catch (localErr) {
+      try {
+        await getSupabaseClient().auth.signOut();
+      } catch (signOutErr) {
+        console.warn('clearInvalidSessionSafe signOut failed:', signOutErr || localErr);
+      }
+    }
+
+    try {
+      setUnreadNotificationsFlag(false);
+    } catch (flagErr) {
+      console.warn('clearInvalidSessionSafe flag reset failed:', flagErr);
+    }
+  }
+
   async function getCurrentUserSafe() {
     const supabaseClient = getSupabaseClient();
     const sessionResponse = await supabaseClient.auth.getSession();
     if (sessionResponse.error) throw sessionResponse.error;
+
     const sessionUser = sessionResponse.data?.session?.user || null;
-    if (sessionUser) return sessionUser;
+    if (!sessionUser) return null;
+
     const userResponse = await supabaseClient.auth.getUser();
-    if (userResponse.error) throw userResponse.error;
-    return userResponse.data?.user || null;
+    if (userResponse.error) {
+      await clearInvalidSessionSafe();
+      return null;
+    }
+
+    const verifiedUser = userResponse.data?.user || null;
+    if (!verifiedUser) {
+      await clearInvalidSessionSafe();
+      return null;
+    }
+
+    return verifiedUser;
   }
 
 

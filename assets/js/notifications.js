@@ -31,12 +31,20 @@ const els = {
     notificationsLink: document.getElementById("mobileNotificationsLink"),
     likedLink: document.getElementById("mobileLikedLink"),
     trackLink: document.getElementById("mobileTrackLink")
+  },
+
+  page: {
+    wrap: document.querySelector('.page-wrap'),
+    emptyCard: document.querySelector('.empty-card'),
+    emptyTitle: document.querySelector('.empty-title'),
+    emptyText: document.querySelector('.empty-text')
   }
 };
 
 const state = {
   currentProfileData: null,
-  currentTrackData: null
+  currentTrackData: null,
+  notifications: []
 };
 
 function setHidden(element, hidden) {
@@ -61,7 +69,6 @@ function setCurrency(value) {
   }
 }
 
-
 function applyRuntimeCurrencySnapshot() {
   applyRuntimeCurrencySnapshotToElement(els.header?.currencyValue, els.header?.currencyBadge);
 }
@@ -71,7 +78,6 @@ bindRuntimeCurrencySync(els.header?.currencyValue, els.header?.currencyBadge);
 function getProfileHref(profile) {
   return sharedGetProfileHref(profile);
 }
-
 
 function handleHeaderAvatarAction(profileHref) {
   handleStandardHeaderAvatarAction(els, profileHref);
@@ -85,6 +91,7 @@ function setLoggedOutView() {
   setStandardLoggedOutState(els);
   state.currentProfileData = null;
   state.currentTrackData = null;
+  state.notifications = [];
   applyMenuState(null, null, null);
 }
 
@@ -98,9 +105,8 @@ function setHeaderAvatar(photoUrl, artistName) {
 
 async function loadMyProfile(userId) {
   const data = await fetchProfileByUserId(userId, "artist_name, photo_url, user_id, coins");
-  const error = null;
 
-  if (error || !data) {
+  if (!data) {
     state.currentProfileData = null;
     setHeaderAvatar("", "•");
     return null;
@@ -153,36 +159,132 @@ async function refreshAuthUI() {
   }
 }
 
-async function acknowledgeNotificationsPageVisit(userId) {
+function getNotificationListHost() {
+  let host = document.getElementById('notificationsList');
+  if (host) return host;
+
+  host = document.createElement('section');
+  host.id = 'notificationsList';
+  host.className = 'notifications-list';
+  if (els.page.emptyCard?.parentNode) {
+    els.page.emptyCard.parentNode.insertBefore(host, els.page.emptyCard);
+  } else if (els.page.wrap) {
+    els.page.wrap.appendChild(host);
+  }
+  return host;
+}
+
+function escapeHtml(value) {
+  return String(value ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+function formatNotificationDate(value) {
+  if (!value) return '';
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return '';
+  return new Intl.DateTimeFormat('en-GB', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit'
+  }).format(date);
+}
+
+function getNotificationEmoji(type) {
+  switch (String(type || '').trim()) {
+    case 'welcome_bonus':
+      return '🎉';
+    case 'tune_uploaded':
+      return '📤';
+    case 'tune_approved':
+      return '✅';
+    case 'tune_liked':
+      return '❤️';
+    default:
+      return '🔔';
+  }
+}
+
+function renderNotifications(items) {
+  const host = getNotificationListHost();
+  if (!host) return;
+
+  if (!Array.isArray(items) || items.length === 0) {
+    host.innerHTML = '';
+    setHidden(host, true);
+    if (els.page.emptyTitle) els.page.emptyTitle.textContent = 'No notifications yet';
+    if (els.page.emptyText) els.page.emptyText.textContent = "When something happens, you'll see it here.";
+    setHidden(els.page.emptyCard, false);
+    return;
+  }
+
+  setHidden(els.page.emptyCard, true);
+  setHidden(host, false);
+  host.innerHTML = items.map((item) => {
+    const reward = Number(item.reward_seconds || 0);
+    const rewardMarkup = reward > 0
+      ? `<div class="notification-reward">+${reward} Seconds</div>`
+      : '';
+
+    return `
+      <article class="notification-card${item.is_read ? '' : ' unread'}">
+        <div class="notification-icon" aria-hidden="true">${getNotificationEmoji(item.type)}</div>
+        <div class="notification-content">
+          <div class="notification-topline">
+            <h2 class="notification-title">${escapeHtml(item.title || 'Notification')}</h2>
+            <time class="notification-time" datetime="${escapeHtml(item.created_at || '')}">${escapeHtml(formatNotificationDate(item.created_at))}</time>
+          </div>
+          <p class="notification-body">${escapeHtml(item.body || '')}</p>
+          ${rewardMarkup}
+        </div>
+      </article>
+    `;
+  }).join('');
+}
+
+async function fetchNotifications(userId) {
+  const { data, error } = await supabaseClient
+    .from('user_notifications')
+    .select('id, type, title, body, reward_seconds, related_track_id, related_user_id, created_at, is_read')
+    .eq('user_id', userId)
+    .order('created_at', { ascending: false })
+    .limit(100);
+
+  if (error) throw error;
+  state.notifications = Array.isArray(data) ? data : [];
+  return state.notifications;
+}
+
+async function acknowledgeNotifications(notifications, userId) {
   if (!userId) return false;
+  const unreadIds = Array.isArray(notifications)
+    ? notifications.filter((item) => item && item.is_read === false).map((item) => item.id).filter(Boolean)
+    : [];
 
   try {
-    const { data, error } = await supabaseClient
-      .from('user_notifications')
-      .select('id')
-      .eq('user_id', userId)
-      .eq('is_read', false)
-      .order('created_at', { ascending: false })
-      .limit(200);
-
-    if (error) throw error;
-
-    const unreadIds = Array.isArray(data) ? data.map((item) => item.id).filter(Boolean) : [];
-
     if (unreadIds.length > 0) {
-      const { error: updateError } = await supabaseClient
+      const { error } = await supabaseClient
         .from('user_notifications')
         .update({ is_read: true })
         .in('id', unreadIds)
         .eq('user_id', userId);
 
-      if (updateError) throw updateError;
+      if (error) throw error;
+
+      state.notifications = state.notifications.map((item) => unreadIds.includes(item.id) ? { ...item, is_read: true } : item);
+      renderNotifications(state.notifications);
     }
 
     setUnreadNotificationsFlag(false);
     return true;
   } catch (err) {
-    console.error('acknowledgeNotificationsPageVisit error:', err);
+    console.error('acknowledgeNotifications error:', err);
     await syncUnreadNotificationsFlagForUser(userId);
     return false;
   }
@@ -236,9 +338,14 @@ async function initPage() {
     return;
   }
 
-  await acknowledgeNotificationsPageVisit(user.id);
+  const notifications = await fetchNotifications(user.id);
+  renderNotifications(notifications);
+  await acknowledgeNotifications(notifications, user.id);
 }
 
 initPage().catch((err) => {
   console.error("initPage error:", err);
+  renderNotifications([]);
+  if (els.page.emptyTitle) els.page.emptyTitle.textContent = 'Could not load notifications';
+  if (els.page.emptyText) els.page.emptyText.textContent = 'Please refresh the page and try again.';
 });
