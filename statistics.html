@@ -137,70 +137,66 @@
       </div>
 
       <section id="statsWrap" class="stats-dashboard hidden">
-        <section class="stats-hero-panel">
-          <div class="stats-hero-copy">
-            <div class="section-kicker">Artist Statistics</div>
-            <h1 class="page-title">Your momentum at a glance</h1>
-            <p class="page-subtitle">A cleaner overview of how your profile and tune are performing inside 60 Seconds FM.</p>
+        <section class="stats-hero-flow">
+          <div class="section-kicker">Artist Statistics</div>
+          <h1 class="page-title">Your momentum at a glance</h1>
+          <p class="page-subtitle">A cleaner overview of how your profile and tune are performing inside 60 Seconds FM.</p>
 
-            <div class="artist-identity-strip">
-              <div class="artist-identity-avatar-wrap">
-                <img id="statArtistPhoto" class="artist-identity-avatar hidden" src="" alt="Artist avatar" />
-                <div id="statArtistPhotoFallback" class="artist-identity-avatar-fallback">A</div>
+          <div class="artist-identity-strip">
+            <div class="artist-identity-avatar-wrap">
+              <img id="statArtistPhoto" class="artist-identity-avatar hidden" src="" alt="Artist avatar" />
+              <div id="statArtistPhotoFallback" class="artist-identity-avatar-fallback">A</div>
+            </div>
+            <div class="artist-identity-copy">
+              <div id="statArtistName" class="artist-name-xl">—</div>
+              <div class="artist-meta-line">
+                <span id="statRoles">Artist</span>
+                <span class="meta-dot">•</span>
+                <span id="statLocation">No location yet</span>
               </div>
-              <div class="artist-identity-copy">
-                <div id="statArtistName" class="artist-name-xl">—</div>
-                <div class="artist-meta-line">
-                  <span id="statRoles">Artist</span>
-                  <span class="meta-dot">•</span>
-                  <span id="statLocation">No location yet</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="stats-hero-rail">
-            <div class="hero-metric">
-              <span class="hero-metric-label">Seconds balance</span>
-              <strong id="statCoins" class="hero-metric-value">0</strong>
-            </div>
-            <div class="hero-metric">
-              <span class="hero-metric-label">Earned today</span>
-              <strong id="statDailySeconds" class="hero-metric-value">0</strong>
-            </div>
-            <div class="hero-metric">
-              <span class="hero-metric-label">Submitted tunes</span>
-              <strong id="statTuneCount" class="hero-metric-value">0</strong>
-            </div>
-            <div class="hero-metric">
-              <span class="hero-metric-label">Total plays</span>
-              <strong id="statTotalPlays" class="hero-metric-value">0</strong>
             </div>
           </div>
         </section>
 
-        <section class="stats-story-grid">
-          <article class="story-panel story-panel--performance">
-            <div class="story-panel-top">
-              <div>
-                <div class="story-eyebrow">Performance</div>
-                <h2 class="story-title">Tune reach</h2>
-              </div>
-              <div class="story-badge">Live stats</div>
-            </div>
+        <section class="stats-metric-ribbon" aria-label="Statistics overview">
+          <div class="hero-metric">
+            <span class="hero-metric-label">Seconds balance</span>
+            <strong id="statCoins" class="hero-metric-value">0</strong>
+          </div>
+          <div class="hero-metric">
+            <span class="hero-metric-label">Earned today</span>
+            <strong id="statDailySeconds" class="hero-metric-value">0</strong>
+          </div>
+          <div class="hero-metric">
+            <span class="hero-metric-label">Submitted tunes</span>
+            <strong id="statTuneCount" class="hero-metric-value">0</strong>
+          </div>
+          <div class="hero-metric">
+            <span class="hero-metric-label">Total plays</span>
+            <strong id="statTotalPlays" class="hero-metric-value">0</strong>
+          </div>
+        </section>
 
-            <div class="story-feature">
-              <div class="story-feature-label">Estimated plays / day</div>
-              <div id="statEstimatedPlays" class="story-feature-value">0</div>
+        <section class="stats-flow-layout">
+          <article class="stats-flow-block">
+            <div class="story-eyebrow">Performance</div>
+            <h2 class="story-title">Tune reach</h2>
+            <p class="flow-intro">Keep an eye on how often your tune can rotate and how your submissions are moving through the station.</p>
+
+            <div class="flow-highlight-row">
+              <div>
+                <div class="story-feature-label">Estimated plays / day</div>
+                <div id="statEstimatedPlays" class="story-feature-value">0</div>
+              </div>
               <p class="story-feature-note">Estimated from the amount of approved tunes currently rotating on the station.</p>
             </div>
 
-            <div class="story-inline-metrics">
-              <div class="inline-metric">
+            <div class="stats-line-list">
+              <div class="stats-line-item">
                 <span class="inline-metric-label">Approved tunes</span>
                 <strong id="statApprovedTuneCount">0</strong>
               </div>
-              <div class="inline-metric">
+              <div class="stats-line-item">
                 <span class="inline-metric-label">Pending tunes</span>
                 <strong id="statPendingTuneCount">0</strong>
               </div>
@@ -209,15 +205,12 @@
             <div id="statTrackSummary" class="story-summary">No tune submitted yet.</div>
           </article>
 
-          <article class="story-panel story-panel--profile">
-            <div class="story-panel-top">
-              <div>
-                <div class="story-eyebrow">Profile context</div>
-                <h2 class="story-title">How your artist page looks</h2>
-              </div>
-            </div>
+          <article class="stats-flow-block stats-flow-block--profile">
+            <div class="story-eyebrow">Profile context</div>
+            <h2 class="story-title">How your artist page feels</h2>
+            <p class="flow-intro">This is the information visitors will connect to when they land on your artist identity inside 60 Seconds FM.</p>
 
-            <div class="profile-details-list">
+            <div class="stats-detail-grid">
               <div class="profile-detail-row">
                 <span class="profile-detail-label">City</span>
                 <span id="statCity" class="profile-detail-value">—</span>
@@ -237,10 +230,13 @@
               </div>
             </div>
 
-            <div id="statBio" class="profile-bio">No artist bio added yet.</div>
+            <div class="profile-bio-wrap">
+              <div class="story-feature-label">Bio</div>
+              <div id="statBio" class="profile-bio">No artist bio added yet.</div>
+            </div>
           </article>
         </section>
-      </section>
+      </section></section>
     </main>
   </div>
 
