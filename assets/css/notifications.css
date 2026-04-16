@@ -1005,3 +1005,165 @@ a {
     white-space: normal;
   }
 }
+
+
+.notifications-list {
+  display: grid;
+  gap: 16px;
+  margin-top: 24px;
+}
+
+.notification-card {
+  --swipe-x: 0px;
+  position: relative;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 16px;
+  align-items: start;
+  text-align: left;
+  padding: 20px 22px;
+  border-radius: 24px;
+  border: 1px solid rgba(255,255,255,0.1);
+  background: linear-gradient(180deg, rgba(18,18,18,0.95), rgba(10,10,10,0.92));
+  box-shadow: 0 18px 42px rgba(0,0,0,0.28);
+  transform: translateX(var(--swipe-x));
+  transition: transform 0.18s ease, opacity 0.18s ease, box-shadow 0.18s ease;
+  overflow: hidden;
+}
+
+.notification-card.unread {
+  border-color: rgba(212,175,55,0.4);
+  box-shadow: 0 18px 42px rgba(0,0,0,0.28), 0 0 0 1px rgba(212,175,55,0.16) inset;
+}
+
+.notification-card.is-deleting {
+  opacity: 0.45;
+  pointer-events: none;
+}
+
+.notification-card.is-swiping {
+  transition: none;
+}
+
+.notification-card.swipe-delete-ready {
+  box-shadow: 0 18px 42px rgba(0,0,0,0.28), 0 0 0 1px rgba(255,90,90,0.22) inset;
+}
+
+.notification-swipe-hint {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 110px;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(180deg, rgba(140,14,14,0.96), rgba(93,6,6,0.96));
+  color: #fff;
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+.notification-card .notification-icon {
+  width: 52px;
+  height: 52px;
+  border-radius: 16px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  background: rgba(212,175,55,0.12);
+  border: 1px solid rgba(212,175,55,0.18);
+}
+
+.notification-content {
+  min-width: 0;
+}
+
+.notification-topline {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 8px;
+}
+
+.notification-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
+.notification-time {
+  color: rgba(255,255,255,0.62);
+  font-size: 0.9rem;
+  white-space: nowrap;
+}
+
+.notification-body {
+  margin: 0;
+  color: rgba(255,255,255,0.86);
+  line-height: 1.55;
+}
+
+.notification-reward {
+  margin-top: 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: rgba(212,175,55,0.12);
+  border: 1px solid rgba(212,175,55,0.22);
+  color: #f4d77a;
+  font-weight: 700;
+}
+
+.notification-delete-btn {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 28px;
+  height: 28px;
+  border: 0;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.08);
+  color: rgba(255,255,255,0.86);
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.16s ease, transform 0.16s ease;
+}
+
+.notification-delete-btn:hover {
+  background: rgba(255,255,255,0.16);
+  transform: scale(1.05);
+}
+
+@media (max-width: 768px) {
+  .notification-card {
+    grid-template-columns: 44px 1fr;
+    gap: 12px;
+    padding: 18px 18px;
+  }
+
+  .notification-swipe-hint {
+    display: flex;
+  }
+
+  .notification-delete-btn {
+    display: none;
+  }
+
+  .notification-topline {
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .notification-time {
+    white-space: normal;
+  }
+}
