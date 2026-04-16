@@ -98,7 +98,7 @@ async function getPostLoginDestination(userId) {
 
   try {
     const profile = await fetchProfileByUserId(userId, "user_id, artist_name");
-    return hasCompletedArtistProfile(profile) ? "index.html" : "edit-profile.html?welcome=1";
+    return hasCompletedArtistProfile(profile) ? "index.html" : "join.html?welcome=1";
   } catch (err) {
     console.error("getPostLoginDestination error:", err);
     return "index.html";
@@ -168,7 +168,7 @@ async function handleAuthSubmit(event) {
         email,
         password,
         options: {
-          emailRedirectTo: "https://www.60seconds.fm/confirm.html?next=join.html"
+          emailRedirectTo: "https://www.60seconds.fm/confirm.html?next=join.html%3Fwelcome%3D1"
         }
       });
 
@@ -182,7 +182,7 @@ async function handleAuthSubmit(event) {
       if (session?.user) {
         setFeedback("Account created. Redirecting to profile setup...", "success");
         setTimeout(() => {
-          window.location.href = "edit-profile.html?welcome=1";
+          window.location.href = "join.html?welcome=1";
         }, 500);
       } else {
         setFeedback("Account created. Check your email to confirm your sign up.", "success");

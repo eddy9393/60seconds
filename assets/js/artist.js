@@ -403,7 +403,7 @@ function pauseSharedRadioPlayback() {
 }
 
 function bindRadioNavigationPause() {
-  const radioLinks = Array.from(document.querySelectorAll('a[href="index.html"], a[href="/"]'));
+  const radioLinks = Array.from(document.querySelectorAll('a[href="index.html"], a[href="index.html"]'));
 
   radioLinks.forEach((link) => {
     link.addEventListener('click', () => {
