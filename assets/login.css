@@ -548,8 +548,8 @@ img {
       linear-gradient(180deg, rgba(7, 7, 7, 0.50) 0%, rgba(7, 7, 7, 0.76) 42%, rgba(7, 7, 7, 0.86) 100%),
       radial-gradient(circle at top, rgba(212, 175, 55, 0.12), transparent 26%),
       url("../../bg-mobile-final-1080x1920.webp");
-    background-size: cover, auto, cover;
-    background-position: center top, center top, center center;
+    background-size: cover, auto, 100% auto;
+    background-position: center top, center top, center top;
     background-repeat: no-repeat, no-repeat, no-repeat;
     background-attachment: scroll, scroll, scroll;
   }
@@ -712,5 +712,117 @@ img {
     min-height: 42px;
     border-radius: 14px;
     font-size: 14px;
+  }
+}
+
+
+/* v10 unified mobile header + upward account menu */
+@media (max-width: 768px) {
+  .header-wrap .site-shell > header,
+  .header-wrap .site-header,
+  .header-wrap header {
+    grid-template-columns: 72px 1fr 72px;
+    gap: 8px;
+  }
+
+  .header-left {
+    justify-content: flex-start;
+  }
+
+  .header-center {
+    justify-content: center;
+  }
+
+  .header-right {
+    justify-content: flex-end;
+  }
+
+  .header-logo-link {
+    width: 100%;
+    justify-content: center;
+    transform: none;
+  }
+
+  .header-logo {
+    width: min(150px, 46vw);
+    margin: 0 auto;
+  }
+
+  .account-menu {
+    top: auto;
+    bottom: 50px;
+    right: 0;
+    min-width: 180px;
+    padding: 8px;
+  }
+
+  .account-menu-actions {
+    gap: 6px;
+  }
+
+  .account-menu .metal-btn,
+  .account-menu .account-menu-link {
+    min-height: 42px;
+    border-radius: 14px;
+    font-size: 14px;
+  }
+}
+
+
+/* v11 mobile account menu visibility fix */
+@media (max-width: 768px) {
+  .header-right {
+    overflow: visible;
+  }
+
+  .account-menu {
+    top: 50px;
+    bottom: auto;
+    right: 0;
+    left: auto;
+    min-width: 176px;
+    max-width: min(220px, calc(100vw - 20px));
+    transform: none;
+  }
+}
+
+
+/* v13 remove notifications shortcut from avatar popup */
+#accountNotificationsLink {
+  display: none !important;
+}
+
+
+/* v22 mobile background force */
+@media (max-width: 768px) {
+  body {
+    background:
+      linear-gradient(180deg, rgba(7, 7, 7, 0.46) 0%, rgba(7, 7, 7, 0.72) 45%, rgba(7, 7, 7, 0.84) 100%),
+      radial-gradient(circle at top, rgba(212, 175, 55, 0.14), transparent 30%),
+      url("../../bg-mobile-final-1080x1920.webp") !important;
+    background-size: cover, auto, 100% auto !important;
+    background-position: center top, center top, center top !important;
+    background-repeat: no-repeat, no-repeat, no-repeat !important;
+    background-attachment: scroll, scroll, scroll !important;
+  }
+}
+
+
+@media (max-width: 768px) {
+  body {
+    background-size: cover, auto, 100% auto !important;
+    background-position: center top, center top, center top !important;
+    background-repeat: no-repeat, no-repeat, no-repeat !important;
+    background-attachment: scroll, scroll, scroll !important;
+  }
+}
+
+@supports (-webkit-touch-callout: none) {
+  @media (max-width: 768px) {
+    body {
+      background-size: cover, auto, cover !important;
+      background-position: center top, center top, center top !important;
+      background-attachment: scroll, scroll, scroll !important;
+    }
   }
 }
