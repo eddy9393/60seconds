@@ -198,13 +198,12 @@ async function initPage() {
 
   if (!user) {
     window.location.href = "login.html";
-    return;
   }
-
-  setUnreadNotificationsFlag(false);
 }
 
 initPage().catch((err) => {
   console.error("initPage error:", err);
 });
 
+
+setUnreadNotificationsFlag(false);
