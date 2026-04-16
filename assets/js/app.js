@@ -196,7 +196,7 @@
   }
 
   function updateNotificationIcons(els) {
-    const iconPath = hasUnreadNotifications() ? '/icons/notifications.png' : '/icons/nonotifications.png';
+    const iconPath = hasUnreadNotifications() ? 'icons/notifications.png' : 'icons/nonotifications.png';
     setNavIcon(els?.desktopNav?.notificationsLink, iconPath);
     setNavIcon(els?.mobileNav?.notificationsLink, iconPath);
   }

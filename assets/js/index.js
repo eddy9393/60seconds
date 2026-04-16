@@ -104,6 +104,10 @@ const REFRESH_INTERVALS = {
   tracksReload: 30000
 };
 
+const NEWS_FEED_JOIN_WINDOW_MS = 7 * 24 * 60 * 60 * 1000;
+const NEWS_FEED_TRACK_WINDOW_MS = 30 * 24 * 60 * 60 * 1000;
+const NEWS_FEED_SUPPORT_WINDOW_MS = 3 * 24 * 60 * 60 * 1000;
+
 function setHidden(el, hidden) {
   if (!el) return;
   el.classList.toggle("hidden", hidden);
@@ -227,6 +231,7 @@ async function loadNewsFeed() {
 
   try {
     const todayKey = getTodayDateKey();
+    const nowMs = Date.now();
 
     const [profilesRes, approvedTracksRes, supportersRes, trackArtistsRes] = await Promise.all([
       supabaseClient
@@ -234,67 +239,90 @@ async function loadNewsFeed() {
         .select("artist_name, created_at, user_id, photo_url")
         .not("artist_name", "is", null)
         .order("created_at", { ascending: false })
-        .limit(12),
+        .limit(24),
       supabaseClient
         .from("tracks")
         .select("title, artist, user_id, created_at, status")
         .eq("status", "approved")
         .order("created_at", { ascending: false })
-        .limit(12),
+        .limit(24),
       supabaseClient
         .from("public_artist_profiles")
         .select("artist_name, user_id, photo_url, hit_daily_support_goal, hit_daily_support_goal_date, daily_seconds_earned, daily_seconds_earned_date")
         .or(`and(hit_daily_support_goal.eq.true,hit_daily_support_goal_date.eq.${todayKey}),and(daily_seconds_earned.gte.${DAILY_SECONDS_LIMIT},daily_seconds_earned_date.eq.${todayKey})`)
-        .limit(12),
+        .limit(24),
       supabaseClient
         .from("public_artist_profiles")
-        .select("user_id, photo_url")
-        .limit(100)
+        .select("user_id, artist_name, photo_url")
+        .not("artist_name", "is", null)
+        .limit(200)
     ]);
 
     const items = [];
-    const photoByUserId = new Map((trackArtistsRes.data || []).map((profile) => [String(profile.user_id || ""), profile.photo_url || ""]));
+    const profileByUserId = new Map(
+      (trackArtistsRes.data || [])
+        .filter((profile) => String(profile?.user_id || "").trim() && String(profile?.artist_name || "").trim())
+        .map((profile) => [String(profile.user_id || ""), profile])
+    );
 
     (profilesRes.data || []).forEach((profile) => {
-      const name = String(profile.artist_name || "").trim();
-      if (!name) return;
+      const userId = String(profile?.user_id || "").trim();
+      const name = String(profile?.artist_name || "").trim();
+      const createdAtMs = new Date(profile?.created_at || 0).getTime() || 0;
+      if (!userId || !name || !createdAtMs) return;
+      if ((nowMs - createdAtMs) > NEWS_FEED_JOIN_WINDOW_MS) return;
       items.push({
         type: "join",
         name,
-        user_id: profile.user_id || null,
+        user_id: userId,
         photo_url: profile.photo_url || "",
-        sortTime: new Date(profile.created_at || 0).getTime() || 0
+        sortTime: createdAtMs
       });
     });
 
     (approvedTracksRes.data || []).forEach((track) => {
-      const name = String(track.artist || "").trim();
-      if (!name) return;
+      const userId = String(track?.user_id || "").trim();
+      const linkedProfile = profileByUserId.get(userId);
+      const createdAtMs = new Date(track?.created_at || 0).getTime() || 0;
+      const name = String(linkedProfile?.artist_name || track?.artist || "").trim();
+      if (!userId || !linkedProfile || !name || !createdAtMs) return;
+      if ((nowMs - createdAtMs) > NEWS_FEED_TRACK_WINDOW_MS) return;
       items.push({
         type: "approved_track",
         name,
-        user_id: track.user_id || null,
+        user_id: userId,
         track_title: track.title || "Untitled",
-        photo_url: photoByUserId.get(String(track.user_id || "")) || "",
-        sortTime: new Date(track.created_at || 0).getTime() || 0
+        photo_url: linkedProfile.photo_url || "",
+        sortTime: createdAtMs
       });
     });
 
     (supportersRes.data || []).forEach((profile) => {
-      const name = String(profile.artist_name || "").trim();
-      if (!name) return;
+      const userId = String(profile?.user_id || "").trim();
+      const linkedProfile = profileByUserId.get(userId);
+      const name = String(linkedProfile?.artist_name || profile?.artist_name || "").trim();
+      if (!userId || !linkedProfile || !name) return;
       items.push({
         type: "support_today",
         name,
-        user_id: profile.user_id || null,
-        photo_url: profile.photo_url || "",
-        sortTime: Date.now() - 1000
+        user_id: userId,
+        photo_url: linkedProfile.photo_url || profile.photo_url || "",
+        sortTime: nowMs - 1000
       });
     });
 
-    state.newsFeedItems = items
+    const deduped = [];
+    const seen = new Set();
+    items
       .sort((a, b) => (b.sortTime || 0) - (a.sortTime || 0))
-      .slice(0, 18);
+      .forEach((item) => {
+        const key = `${item.type}:${item.user_id || ""}:${item.track_title || ""}`;
+        if (seen.has(key)) return;
+        seen.add(key);
+        deduped.push(item);
+      });
+
+    state.newsFeedItems = deduped.slice(0, 18);
 
     state.newsFeedIndex = 0;
     setHidden(els.newsFeedSectionEl, false);
@@ -312,6 +340,7 @@ async function loadNewsFeed() {
     setHidden(els.newsFeedSectionEl, true);
   }
 }
+
 
 
 function formatNumber(value) {
