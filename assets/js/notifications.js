@@ -44,7 +44,8 @@ const els = {
 const state = {
   currentProfileData: null,
   currentTrackData: null,
-  notifications: []
+  notifications: [],
+  deletingIds: new Set()
 };
 
 function setHidden(element, hidden) {
@@ -233,7 +234,9 @@ function renderNotifications(items) {
       : '';
 
     return `
-      <article class="notification-card${item.is_read ? '' : ' unread'}">
+      <article class="notification-card${item.is_read ? '' : ' unread'}" data-notification-id="${escapeHtml(item.id || '')}">
+        <button class="notification-delete-btn" type="button" aria-label="Delete notification" data-delete-id="${escapeHtml(item.id || '')}">×</button>
+        <div class="notification-swipe-hint" aria-hidden="true">Delete</div>
         <div class="notification-icon" aria-hidden="true">${getNotificationEmoji(item.type)}</div>
         <div class="notification-content">
           <div class="notification-topline">
@@ -246,6 +249,112 @@ function renderNotifications(items) {
       </article>
     `;
   }).join('');
+
+  bindNotificationInteractions();
+}
+
+
+function isTouchViewport() {
+  return window.matchMedia('(max-width: 768px)').matches;
+}
+
+async function deleteNotification(notificationId) {
+  if (!notificationId || state.deletingIds.has(notificationId)) return;
+  const user = await getCurrentUserSafe();
+  if (!user) {
+    window.location.href = 'login.html';
+    return;
+  }
+
+  state.deletingIds.add(notificationId);
+  const card = document.querySelector(`.notification-card[data-notification-id="${CSS.escape(notificationId)}"]`);
+  if (card) card.classList.add('is-deleting');
+
+  try {
+    const { error } = await supabaseClient
+      .from('user_notifications')
+      .delete()
+      .eq('id', notificationId)
+      .eq('user_id', user.id);
+
+    if (error) throw error;
+
+    state.notifications = state.notifications.filter((item) => item.id !== notificationId);
+    renderNotifications(state.notifications);
+    await syncUnreadNotificationsFlagForUser(user.id);
+  } catch (err) {
+    console.error('deleteNotification error:', err);
+    if (card) card.classList.remove('is-deleting', 'swipe-delete-ready');
+    await syncUnreadNotificationsFlagForUser(user.id);
+  } finally {
+    state.deletingIds.delete(notificationId);
+  }
+}
+
+function bindNotificationInteractions() {
+  const host = getNotificationListHost();
+  if (!host) return;
+
+  host.querySelectorAll('[data-delete-id]').forEach((button) => {
+    button.addEventListener('click', async (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+      await deleteNotification(button.dataset.deleteId);
+    });
+  });
+
+  host.querySelectorAll('.notification-card').forEach((card) => {
+    let startX = 0;
+    let currentX = 0;
+    let dragging = false;
+
+    const reset = () => {
+      dragging = false;
+      currentX = 0;
+      card.style.removeProperty('--swipe-x');
+      card.classList.remove('is-swiping', 'swipe-delete-ready');
+    };
+
+    const begin = (clientX) => {
+      if (!isTouchViewport()) return;
+      startX = clientX;
+      currentX = 0;
+      dragging = true;
+      card.classList.add('is-swiping');
+    };
+
+    const move = (clientX) => {
+      if (!dragging) return;
+      const delta = clientX - startX;
+      currentX = Math.min(0, delta);
+      card.style.setProperty('--swipe-x', `${Math.max(-120, currentX)}px`);
+      card.classList.toggle('swipe-delete-ready', currentX <= -72);
+    };
+
+    const end = async () => {
+      if (!dragging) return;
+      const shouldDelete = currentX <= -72;
+      const notificationId = card.dataset.notificationId;
+      reset();
+      if (shouldDelete && notificationId) await deleteNotification(notificationId);
+    };
+
+    card.addEventListener('touchstart', (event) => {
+      if (event.touches.length !== 1) return;
+      begin(event.touches[0].clientX);
+    }, { passive: true });
+
+    card.addEventListener('touchmove', (event) => {
+      if (event.touches.length !== 1) return;
+      move(event.touches[0].clientX);
+    }, { passive: true });
+
+    card.addEventListener('touchend', () => {
+      end().catch((err) => console.error(err));
+    });
+
+    card.addEventListener('touchcancel', reset);
+  });
 }
 
 async function fetchNotifications(userId) {

@@ -243,35 +243,9 @@ function handleHeaderAvatarAction(profileHref) {
 }
 
 function applyMenuState(user, profile, track) {
-  const isLoggedIn = Boolean(user);
-  const hasProfile = hasCompletedArtistProfile(profile);
-  const hasTrack = Boolean(track);
+  applyStandardMenuState(els, user, profile, track);
 
-  setHidden(els.desktopNav.loginLink, isLoggedIn);
-  setHidden(els.mobileNav.loginLink, isLoggedIn);
-  setHidden(els.desktopNav.logoutBtn, !isLoggedIn);
-
-  setHidden(els.desktopNav.profileLink, !isLoggedIn);
-  setHidden(els.mobileNav.profileLink, !isLoggedIn);
-
-  setHidden(els.desktopNav.notificationsLink, !isLoggedIn);
-  setHidden(els.mobileNav.notificationsLink, !isLoggedIn);
-
-  setHidden(els.desktopNav.trackLink, !isLoggedIn || !hasProfile);
-  setHidden(els.mobileNav.trackLink, !isLoggedIn || !hasProfile);
-
-  const profileHref = getProfileHref(profile);
-
-  els.desktopNav.profileLink.href = profileHref;
-  els.mobileNav.profileLink.href = profileHref;
-  els.header.accountProfileLink.href = profileHref;
-
-  setHidden(els.header.accountProfileLink, !isLoggedIn);
-
-  els.desktopNav.trackLink.setAttribute("data-track-mode", hasTrack ? "edit" : "submit");
-  els.mobileNav.trackLink.setAttribute("data-track-mode", hasTrack ? "edit" : "submit");
-
-  if (hasProfile && profile.user_id) {
+  if (hasCompletedArtistProfile(profile) && profile.user_id) {
     const artistUrl = `artist.html?user_id=${encodeURIComponent(profile.user_id)}`;
     els.page.backToArtistPageLink.href = artistUrl;
     setHidden(els.page.backToArtistPageLink, false);

@@ -177,6 +177,7 @@
     }
 
     try {
+      const supabaseClient = getSupabaseClient();
       const { count, error } = await supabaseClient
         .from('user_notifications')
         .select('id', { count: 'exact', head: true })
@@ -322,6 +323,12 @@
     }
 
     updateNotificationIcons(els);
+
+    if (isLoggedIn && user?.id) {
+      syncUnreadNotificationsFlagForUser(user.id).catch((err) => {
+        console.error('applyStandardMenuState unread sync error:', err);
+      });
+    }
   }
 
   function setStandardLoggedOutState(els, options = {}) {
