@@ -82,6 +82,7 @@
 
   function getProfileHref(profile) {
     if (!profile) return 'join.html';
+    if (!hasCompletedArtistProfile(profile)) return 'edit-profile.html?welcome=1';
     if (profile?.user_id) return `artist.html?user_id=${encodeURIComponent(profile.user_id)}`;
     return 'join.html';
   }

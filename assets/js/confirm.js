@@ -14,7 +14,7 @@ async function initConfirmPage() {
   const url = new URL(window.location.href);
   const tokenHash = url.searchParams.get('token_hash');
   const type = url.searchParams.get('type') || 'signup';
-  const next = url.searchParams.get('next') || 'join.html';
+  const next = url.searchParams.get('next') || 'edit-profile.html?welcome=1';
 
   if (tokenHash) {
     const { error } = await supabaseClient.auth.verifyOtp({ type, token_hash: tokenHash });

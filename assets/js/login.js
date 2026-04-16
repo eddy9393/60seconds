@@ -168,7 +168,7 @@ async function handleAuthSubmit(event) {
         email,
         password,
         options: {
-          emailRedirectTo: "https://www.60seconds.fm/confirm.html?next=join.html"
+          emailRedirectTo: "https://www.60seconds.fm/confirm.html?next=edit-profile.html%3Fwelcome%3D1"
         }
       });
 

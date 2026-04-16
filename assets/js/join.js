@@ -238,11 +238,16 @@ function renderPageState() {
 
   setLoggedInView();
 
-  if (profile) {
+  if (profile && String(profile.artist_name || "").trim()) {
     setHidden(els.loginRequiredBox, true);
     setHidden(els.profileExistsBox, false);
     setHidden(els.joinFormWrap, true);
     fillProfileForm(profile);
+    return;
+  }
+
+  if (profile && !String(profile.artist_name || "").trim()) {
+    window.location.replace("edit-profile.html?welcome=1");
     return;
   }
 
@@ -349,7 +354,7 @@ async function signupWithCredentials(emailValue, passwordValue) {
 
   setAuthMessage("", false);
 
-  const emailRedirectTo = new URL("join.html", window.location.href).href;
+  const emailRedirectTo = new URL("confirm.html?next=edit-profile.html%3Fwelcome%3D1", window.location.href).href;
 
   const { data, error } = await supabaseClient.auth.signUp({
     email: emailValue,
@@ -551,7 +556,7 @@ async function handleCreateProfile() {
 
     const { data: alreadyExistingProfile, error: alreadyExistingProfileError } = await supabaseClient
       .from("profiles")
-      .select("user_id")
+      .select("user_id, artist_name")
       .eq("user_id", userId)
       .maybeSingle();
 
@@ -560,7 +565,7 @@ async function handleCreateProfile() {
       return;
     }
 
-    if (alreadyExistingProfile) {
+    if (alreadyExistingProfile && String(alreadyExistingProfile.artist_name || '').trim()) {
       setStatus("You already have an artist profile.", false);
       await refreshPageState();
       return;
