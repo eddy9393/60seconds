@@ -887,3 +887,121 @@ a {
     }
   }
 }
+
+
+.notifications-list {
+  display: grid;
+  gap: 18px;
+  margin-bottom: 22px;
+}
+
+.notification-card {
+  display: grid;
+  grid-template-columns: 56px minmax(0, 1fr);
+  gap: 16px;
+  text-align: left;
+  padding: 22px 22px;
+  border-radius: 24px;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.015)),
+    linear-gradient(180deg, rgba(24,24,24,0.88) 0%, rgba(17,17,17,0.94) 100%);
+  border: 1px solid rgba(212,175,55,0.15);
+  box-shadow:
+    0 20px 60px rgba(0,0,0,0.24),
+    0 0 35px rgba(212,175,55,0.06),
+    inset 0 1px 0 rgba(255,255,255,0.04);
+}
+
+.notification-card.unread {
+  border-color: rgba(244,215,122,0.42);
+  box-shadow:
+    0 20px 60px rgba(0,0,0,0.28),
+    0 0 35px rgba(212,175,55,0.12),
+    inset 0 1px 0 rgba(255,255,255,0.05);
+}
+
+.notification-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26px;
+  background: rgba(244,215,122,0.08);
+  border: 1px solid rgba(244,215,122,0.15);
+}
+
+.notification-content {
+  min-width: 0;
+}
+
+.notification-topline {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 8px;
+}
+
+.notification-title {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 20px;
+  line-height: 1.2;
+  margin: 0;
+}
+
+.notification-time {
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.4;
+  white-space: nowrap;
+}
+
+.notification-body {
+  margin: 0;
+  color: rgba(245,245,245,0.92);
+  line-height: 1.7;
+}
+
+.notification-reward {
+  display: inline-flex;
+  margin-top: 14px;
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: rgba(212,175,55,0.12);
+  border: 1px solid rgba(212,175,55,0.24);
+  color: #f7e6ac;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+@media (max-width: 760px) {
+  .notification-card {
+    grid-template-columns: 46px minmax(0, 1fr);
+    gap: 12px;
+    padding: 18px 16px;
+    border-radius: 20px;
+  }
+
+  .notification-icon {
+    width: 46px;
+    height: 46px;
+    border-radius: 14px;
+    font-size: 22px;
+  }
+
+  .notification-topline {
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .notification-title {
+    font-size: 18px;
+  }
+
+  .notification-time {
+    white-space: normal;
+  }
+}
