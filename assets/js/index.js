@@ -258,14 +258,16 @@ async function loadNewsFeed() {
         .limit(24),
       supabaseClient
         .from("public_artist_profiles")
-        .select("artist_name, user_id, photo_url, hit_daily_support_goal, hit_daily_support_goal_date, daily_seconds_earned, daily_seconds_earned_date")
-        .or(`and(hit_daily_support_goal.eq.true,hit_daily_support_goal_date.eq.${todayKey}),and(daily_seconds_earned.gte.${DAILY_SECONDS_LIMIT},daily_seconds_earned_date.eq.${todayKey})`)
-        .limit(24),
+        .select("artist_name, user_id, photo_url, daily_seconds_earned, daily_seconds_earned_date")
+        .eq("daily_seconds_earned_date", todayKey)
+        .gte("daily_seconds_earned", DAILY_SECONDS_LIMIT)
+        .order("daily_seconds_earned", { ascending: false })
+        .limit(48),
       supabaseClient
         .from("public_artist_profiles")
         .select("user_id, artist_name, photo_url")
         .not("artist_name", "is", null)
-        .limit(200)
+        .limit(400)
     ]);
 
     const items = [];
@@ -310,14 +312,17 @@ async function loadNewsFeed() {
     (supportersRes.data || []).forEach((profile) => {
       const userId = String(profile?.user_id || "").trim();
       const linkedProfile = profileByUserId.get(userId);
-      const name = String(linkedProfile?.artist_name || profile?.artist_name || "").trim();
-      if (!userId || !linkedProfile || !name) return;
+      const name = String(profile?.artist_name || linkedProfile?.artist_name || "").trim();
+      const profileDate = String(profile?.daily_seconds_earned_date || "").trim();
+      const dailySeconds = Number(profile?.daily_seconds_earned || 0);
+      if (!userId || !name) return;
+      if (profileDate !== todayKey || dailySeconds < DAILY_SECONDS_LIMIT) return;
       items.push({
         type: "support_today",
         name,
         user_id: userId,
-        photo_url: linkedProfile.photo_url || profile.photo_url || "",
-        sortTime: nowMs - 1000
+        photo_url: profile.photo_url || linkedProfile?.photo_url || "",
+        sortTime: nowMs - 500
       });
     });
 
