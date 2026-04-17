@@ -532,6 +532,8 @@
     state.els.title = wrap.querySelector('#miniRadioTitle');
     state.els.likeBtn = wrap.querySelector('#miniRadioLike');
     state.els.pauseBtn = wrap.querySelector('#miniRadioPause');
+    state.els.volumeWrap = wrap.querySelector('.mini-radio-volume-wrap');
+    state.els.volumeIcon = wrap.querySelector('.mini-radio-volume-icon');
     state.els.volume = wrap.querySelector('#miniRadioVolume');
     state.els.time = wrap.querySelector('#miniRadioTime');
     applyBodySpacing();

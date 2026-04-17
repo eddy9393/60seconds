@@ -754,13 +754,13 @@ function resetArtistPageShell() {
 async function recordProfileVisitIfNeeded(userId) {
   if (!userId || !state.currentUserId || state.currentUserId === userId) return;
 
-  const { error } = await supabaseClient.rpc("increment_profile_daily_visits", {
+  const { error } = await supabaseClient.rpc("record_profile_daily_visit", {
     p_profile_user_id: userId,
-    p_amount: 1
+    p_viewer_user_id: state.currentUserId
   });
 
   if (error) {
-    console.error("increment_profile_daily_visits error:", error);
+    console.error("record_profile_daily_visit error:", error);
   }
 }
 

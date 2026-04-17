@@ -371,17 +371,16 @@ async function loadTrendData(userId, track) {
   state.firstAvailableByMetric.likes = firstLikeDate;
 
   let totalLikes = Array.from(finalLikeMap.values()).reduce((sum, value) => sum + Number(value || 0), 0);
-  if (trackId) {
-    const { data: artistLikeRows, error: artistLikesError } = await supabaseClient
-      .from("track_likes")
-      .select("id, track_id, artist_user_id")
-      .eq("artist_user_id", userId);
 
-    if (artistLikesError) {
-      console.error("statistics total likes artist query error:", artistLikesError);
-    } else if (Array.isArray(artistLikeRows)) {
-      totalLikes = artistLikeRows.filter((row) => !trackId || String(row?.track_id || "") === String(trackId)).length;
-    }
+  const { count: artistLikeCount, error: artistLikesCountError } = await supabaseClient
+    .from("track_likes")
+    .select("id", { count: "exact", head: true })
+    .eq("artist_user_id", userId);
+
+  if (artistLikesCountError) {
+    console.error("statistics total likes artist count error:", artistLikesCountError);
+  } else if (Number.isFinite(Number(artistLikeCount))) {
+    totalLikes = Number(artistLikeCount) || 0;
   }
 
   if (!totalLikes && likeRows.length) {
