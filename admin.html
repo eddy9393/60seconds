@@ -3,76 +3,532 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>60 Seconds FM — Admin</title>
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Manrope:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="assets/css/admin.css" />
+  <title>60 Seconds Admin</title>
+  <style>
+    :root {
+      --bg: #0a0a0a;
+      --panel: rgba(255,255,255,0.04);
+      --line: rgba(255,255,255,0.1);
+      --text: #ffffff;
+      --muted: rgba(255,255,255,0.68);
+      --gold: #d4af37;
+      --gold-soft: rgba(212,175,55,0.14);
+      --danger: #ff8f8f;
+      --success: #9dde9d;
+    }
+
+    * { box-sizing: border-box; }
+    html, body { min-height: 100%; }
+    body {
+      margin: 0;
+      color: var(--text);
+      font-family: Arial, sans-serif;
+      background:
+        radial-gradient(circle at top, rgba(212,175,55,0.08), transparent 26%),
+        linear-gradient(180deg, #090909 0%, #0b0b0b 100%);
+      padding: 22px 16px 72px;
+    }
+
+    a { color: inherit; }
+    .shell { max-width: 1060px; margin: 0 auto; }
+
+    .hero {
+      text-align: center;
+      padding: 8px 0 18px;
+      border-bottom: 1px solid var(--line);
+      margin-bottom: 24px;
+    }
+    .hero-logo {
+      width: 120px;
+      max-width: 42vw;
+      display: block;
+      margin: 0 auto 14px;
+    }
+    .hero-title {
+      margin: 0;
+      font-size: clamp(28px, 4vw, 42px);
+      letter-spacing: 0.03em;
+      color: var(--gold);
+    }
+    .hero-subtitle {
+      margin: 10px auto 0;
+      max-width: 720px;
+      color: var(--muted);
+      line-height: 1.6;
+      font-size: 15px;
+    }
+
+    .nav-row {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin: 18px 0 0;
+    }
+    .nav-link {
+      text-decoration: none;
+      color: var(--gold);
+      border: 1px solid rgba(212,175,55,0.35);
+      border-radius: 999px;
+      padding: 10px 16px;
+      background: rgba(255,255,255,0.02);
+    }
+
+    .locked, .loading {
+      max-width: 760px;
+      margin: 48px auto 0;
+      text-align: center;
+      padding: 28px 22px;
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      background: rgba(255,255,255,0.03);
+    }
+    .locked h2, .loading h2 { margin-top: 0; color: var(--gold); }
+
+    .hidden { display: none !important; }
+
+    .section {
+      padding: 18px 0 8px;
+      border-bottom: 1px solid var(--line);
+    }
+    .section:first-of-type { padding-top: 0; }
+    .section-title {
+      margin: 0 0 6px;
+      font-size: 24px;
+      color: var(--gold);
+    }
+    .section-kicker {
+      margin: 0 0 18px;
+      color: var(--muted);
+      line-height: 1.6;
+      font-size: 14px;
+    }
+
+    #status, #debug {
+      margin: 0 0 10px;
+      color: var(--muted);
+      min-height: 20px;
+    }
+    #debug { font-size: 13px; }
+
+    .metric-list, .insight-list {
+      display: grid;
+      gap: 0;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+    .metric-row, .insight-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 16px;
+      padding: 16px 0;
+      border-top: 1px solid var(--line);
+    }
+    .metric-row:first-child, .insight-row:first-child { border-top: 1px solid var(--line); }
+    .metric-label {
+      font-size: 15px;
+      color: rgba(255,255,255,0.9);
+      letter-spacing: 0.01em;
+    }
+    .metric-help {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+      margin-top: 5px;
+      line-height: 1.45;
+    }
+    .metric-value {
+      font-size: clamp(20px, 3vw, 30px);
+      font-weight: 700;
+      color: var(--gold);
+      text-align: right;
+      white-space: nowrap;
+    }
+
+    .track-item {
+      padding: 18px 0;
+      border-top: 1px solid var(--line);
+    }
+    .track-item:first-child { border-top: 1px solid var(--line); }
+    .track-head {
+      display: flex;
+      gap: 12px;
+      justify-content: space-between;
+      align-items: flex-start;
+      flex-wrap: wrap;
+      margin-bottom: 8px;
+    }
+    .track-title {
+      margin: 0;
+      color: var(--gold);
+      font-size: 22px;
+      line-height: 1.2;
+    }
+    .track-meta, .track-id {
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.55;
+      margin: 4px 0 0;
+      word-break: break-word;
+    }
+    .track-status {
+      color: var(--success);
+      font-size: 12px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(157,222,157,0.25);
+      background: rgba(157,222,157,0.08);
+    }
+    audio {
+      width: 100%;
+      margin: 12px 0 14px;
+    }
+    .approve-btn {
+      border: none;
+      cursor: pointer;
+      border-radius: 999px;
+      padding: 12px 18px;
+      font-weight: 700;
+      color: #17120a;
+      background: linear-gradient(180deg, #fff5c9 0%, #f4d77a 20%, #d4af37 52%, #b98816 75%, #7c5a11 100%);
+      box-shadow: inset 0 2px 0 rgba(255,255,255,0.35), inset 0 -2px 4px rgba(90,50,0,0.22), 0 10px 20px rgba(0,0,0,0.22);
+    }
+    .approve-btn:disabled { opacity: 0.7; cursor: default; }
+
+    .empty {
+      color: var(--muted);
+      padding: 10px 0 4px;
+    }
+
+    @media (max-width: 720px) {
+      body { padding: 18px 14px 70px; }
+      .metric-row, .insight-row { grid-template-columns: 1fr; gap: 6px; }
+      .metric-value { text-align: left; }
+      .track-title { font-size: 20px; }
+      .hero-logo { width: 104px; }
+    }
+  </style>
 </head>
 <body>
-  <div class="admin-page-shell">
-    <header class="admin-header">
-      <div class="admin-header-inner">
-        <a href="index.html" class="admin-logo-link" aria-label="60 Seconds FM home">
-          <img src="logo.png" alt="60 Seconds FM" class="admin-logo" />
-        </a>
-        <div class="admin-header-copy">
-          <span class="admin-eyebrow">Admin dashboard</span>
-          <h1>Site control room</h1>
-          <p>Approve tunes first, then keep an eye on the platform pulse.</p>
-        </div>
-        <div class="admin-header-actions">
-          <a href="index.html" class="admin-chip-link">Homepage</a>
-          <a href="join.html" class="admin-chip-link">Join page</a>
-        </div>
+  <div class="shell">
+    <header class="hero">
+      <img class="hero-logo" src="logo.png" alt="60 Seconds logo" />
+      <h1 class="hero-title">Admin</h1>
+      <p class="hero-subtitle">Approve tunes fast, keep an eye on site traffic, and track the signals that actually help you run 60 Seconds better.</p>
+      <div class="nav-row">
+        <a class="nav-link" href="index.html">Homepage</a>
+        <a class="nav-link" href="join.html">Join page</a>
       </div>
     </header>
 
-    <main class="admin-main">
-      <section id="loadingBox" class="admin-panel admin-loading-panel">
-        <div class="loading-text">Checking admin access...</div>
+    <div id="lockedBox" class="locked hidden">
+      <h2>Access denied</h2>
+      <p>You do not have permission to view this admin page.</p>
+      <p>Please log in with the admin account.</p>
+    </div>
+
+    <div id="loadingBox" class="loading">
+      <h2>Loading admin</h2>
+      <p id="loadingText">Checking admin access...</p>
+    </div>
+
+    <main id="adminApp" class="hidden">
+      <section class="section">
+        <h2 class="section-title">Approve pending tunes</h2>
+        <p class="section-kicker">This stays at the top so you can review new submissions before anything else.</p>
+        <div id="status"></div>
+        <div id="debug"></div>
+        <div id="trackList"></div>
       </section>
 
-      <section id="lockedBox" class="admin-panel admin-locked-panel hidden">
-        <div class="admin-panel-head compact">
-          <span class="panel-kicker">Access</span>
-          <h2>Access denied</h2>
-        </div>
-        <p>You do not have permission to view this admin page.</p>
-        <p>Please log in with the admin account.</p>
+      <section class="section">
+        <h2 class="section-title">Traffic & platform overview</h2>
+        <p class="section-kicker">Clean readout of useful admin numbers. No card wall, just the signals that help you understand growth and behavior.</p>
+        <ul id="metricList" class="metric-list"></ul>
       </section>
 
-      <div id="adminApp" class="hidden">
-        <section class="admin-panel admin-priority-panel">
-          <div class="admin-panel-head">
-            <div>
-              <span class="panel-kicker">Priority queue</span>
-              <h2>Approve pending tunes</h2>
-              <p class="panel-copy">This queue always stays at the top so you can clear submissions fast.</p>
-            </div>
-            <div class="admin-inline-status-wrap">
-              <div id="status" class="admin-inline-status">Loading pending tracks...</div>
-              <div id="debug" class="admin-inline-debug"></div>
-            </div>
-          </div>
-          <div id="trackList" class="admin-track-list"></div>
-        </section>
-
-        <section class="admin-panel admin-metrics-panel">
-          <div class="admin-panel-head">
-            <div>
-              <span class="panel-kicker">Platform pulse</span>
-              <h2>Admin metrics</h2>
-              <p class="panel-copy">Useful live signals from the current site data.</p>
-            </div>
-          </div>
-          <div id="metricsGrid" class="admin-metrics-grid"></div>
-        </section>
-      </div>
+      <section class="section">
+        <h2 class="section-title">Useful traffic signals to add next</h2>
+        <p class="section-kicker">These are not shown as live metrics yet, but they would be high-value next additions if you want deeper traffic insight.</p>
+        <ul class="insight-list">
+          <li class="insight-row"><span class="metric-label">Signup conversion<span class="metric-help">How many visitors become users.</span></span><span class="metric-value">→</span></li>
+          <li class="insight-row"><span class="metric-label">Profile completion rate<span class="metric-help">How many signups finish their artist profile.</span></span><span class="metric-value">→</span></li>
+          <li class="insight-row"><span class="metric-label">Tune submission conversion<span class="metric-help">How many completed artists actually submit a tune.</span></span><span class="metric-value">→</span></li>
+          <li class="insight-row"><span class="metric-label">Top entry pages<span class="metric-help">Shows which pages pull people into the site first.</span></span><span class="metric-value">→</span></li>
+          <li class="insight-row"><span class="metric-label">Interaction depth<span class="metric-help">Who only visits versus who clicks, likes, and explores profiles.</span></span><span class="metric-value">→</span></li>
+        </ul>
+      </section>
     </main>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="assets/js/config.js"></script>
   <script src="assets/js/app.js"></script>
-  <script src="assets/js/admin.js"></script>
+  <script>
+    const ADMIN_EMAIL = 'kroonstadt.earvin@gmail.com';
+    const supabaseClient = window.SSFMApp.getSupabaseClient();
+
+    const loadingBoxEl = document.getElementById('loadingBox');
+    const loadingTextEl = document.getElementById('loadingText');
+    const lockedBoxEl = document.getElementById('lockedBox');
+    const adminAppEl = document.getElementById('adminApp');
+    const statusEl = document.getElementById('status');
+    const debugEl = document.getElementById('debug');
+    const trackListEl = document.getElementById('trackList');
+    const metricListEl = document.getElementById('metricList');
+
+    let currentUser = null;
+    let hasInitialized = false;
+    let isApproving = false;
+
+    function escapeHtml(value) {
+      return window.SSFMApp.escapeHtml(value);
+    }
+
+    function setStatus(message, isError = false) {
+      statusEl.textContent = message || '';
+      statusEl.style.color = isError ? 'var(--danger)' : 'var(--muted)';
+    }
+
+    function setDebug(message) {
+      debugEl.textContent = message || '';
+    }
+
+    function showLoading(message) {
+      loadingTextEl.textContent = message || 'Loading...';
+      loadingBoxEl.classList.remove('hidden');
+      lockedBoxEl.classList.add('hidden');
+      adminAppEl.classList.add('hidden');
+    }
+
+    function showLocked() {
+      loadingBoxEl.classList.add('hidden');
+      lockedBoxEl.classList.remove('hidden');
+      adminAppEl.classList.add('hidden');
+    }
+
+    function showAdmin() {
+      loadingBoxEl.classList.add('hidden');
+      lockedBoxEl.classList.add('hidden');
+      adminAppEl.classList.remove('hidden');
+    }
+
+    function isAdminUser(user) {
+      return Boolean(user && user.email && user.email.toLowerCase() === ADMIN_EMAIL.toLowerCase());
+    }
+
+    async function getSessionUser() {
+      const { data, error } = await supabaseClient.auth.getSession();
+      if (error) {
+        setDebug('getSession error: ' + error.message);
+        return null;
+      }
+      return data?.session?.user || null;
+    }
+
+    async function validateUser() {
+      const { data, error } = await supabaseClient.auth.getUser();
+      if (error) {
+        setDebug('getUser error: ' + error.message);
+        return null;
+      }
+      return data?.user || null;
+    }
+
+    async function checkAdminAccess() {
+      let user = await getSessionUser();
+      if (!user) user = await validateUser();
+      currentUser = user;
+
+      if (!user || !isAdminUser(user)) {
+        showLocked();
+        return false;
+      }
+
+      showAdmin();
+      return true;
+    }
+
+    function renderPendingTracks(tracks) {
+      trackListEl.innerHTML = '';
+
+      if (!tracks.length) {
+        trackListEl.innerHTML = '<div class="empty">No pending tracks right now.</div>';
+        setStatus('No pending tunes waiting for approval.');
+        return;
+      }
+
+      setStatus(`${tracks.length} pending tune(s) waiting for approval.`);
+
+      tracks.forEach((track) => {
+        const createdAt = track.created_at ? new Date(track.created_at).toLocaleString() : 'Unknown';
+        const article = document.createElement('article');
+        article.className = 'track-item';
+        article.innerHTML = `
+          <div class="track-head">
+            <div>
+              <h3 class="track-title">${escapeHtml(track.title || 'Untitled')}</h3>
+              <p class="track-meta">Artist: ${escapeHtml(track.artist || 'Unknown')}</p>
+              <p class="track-id">ID: ${escapeHtml(track.id)} · Submitted: ${escapeHtml(createdAt)}</p>
+            </div>
+            <div class="track-status">pending</div>
+          </div>
+          <audio controls preload="none" src="${escapeHtml(track.file_url || '')}"></audio>
+          <button class="approve-btn" data-action="approve" data-id="${escapeHtml(track.id)}">Approve tune</button>
+        `;
+        trackListEl.appendChild(article);
+      });
+
+      document.querySelectorAll('[data-action="approve"]').forEach((button) => {
+        button.addEventListener('click', async () => {
+          if (isApproving) return;
+          await approveTrack(button.getAttribute('data-id'), button);
+        });
+      });
+    }
+
+    async function loadPendingTracks() {
+      const { data, error } = await supabaseClient
+        .from('tracks')
+        .select('id, title, artist, file_url, created_at, status')
+        .eq('status', 'pending')
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        setStatus('Could not load pending tracks: ' + error.message, true);
+        return;
+      }
+
+      renderPendingTracks(data || []);
+    }
+
+    async function approveTrack(trackId, buttonEl) {
+      if (!trackId) return;
+      isApproving = true;
+      const originalLabel = buttonEl.textContent;
+      buttonEl.disabled = true;
+      buttonEl.textContent = 'Approving...';
+
+      const { error } = await supabaseClient
+        .from('tracks')
+        .update({ status: 'approved' })
+        .eq('id', trackId);
+
+      if (error) {
+        setStatus('Approve failed: ' + error.message, true);
+        buttonEl.disabled = false;
+        buttonEl.textContent = originalLabel;
+        isApproving = false;
+        return;
+      }
+
+      setStatus('Tune approved.');
+      await Promise.all([loadPendingTracks(), loadMetrics()]);
+      isApproving = false;
+    }
+
+    function renderMetrics(snapshot) {
+      const rows = [
+        {
+          label: 'Unique visitors today',
+          help: 'Distinct visitor keys seen across the website today.',
+          value: snapshot.unique_visitors_today ?? 0
+        },
+        {
+          label: 'Unique visitors (7 days)',
+          help: 'Distinct visitors seen in the last 7 days.',
+          value: snapshot.unique_visitors_7d ?? 0
+        },
+        {
+          label: 'Unique visitors (30 days)',
+          help: 'Distinct visitors seen in the last 30 days.',
+          value: snapshot.unique_visitors_30d ?? 0
+        },
+        {
+          label: 'Returning visitors (30 days)',
+          help: 'Visitors who came back more than once in the last 30 days.',
+          value: snapshot.returning_visitors_30d ?? 0
+        },
+        {
+          label: 'Profiles on the platform',
+          help: 'Total profile rows in the system.',
+          value: snapshot.signups_total ?? 0
+        },
+        {
+          label: 'Live artist profiles',
+          help: 'Profiles with a real artist name filled in.',
+          value: snapshot.active_artist_profiles ?? 0
+        },
+        {
+          label: 'Pending tracks',
+          help: 'Tunes currently waiting for admin approval.',
+          value: snapshot.pending_tracks ?? 0
+        },
+        {
+          label: 'Approved tracks',
+          help: 'Tunes already approved and live.',
+          value: snapshot.approved_tracks ?? 0
+        },
+        {
+          label: 'Total platform likes',
+          help: 'All likes recorded across the platform.',
+          value: snapshot.total_platform_likes ?? 0
+        },
+        {
+          label: 'Top page today',
+          help: 'Most visited page today with total views in brackets.',
+          value: `${snapshot.top_page_today || '—'} (${snapshot.top_page_today_views || 0})`
+        }
+      ];
+
+      metricListEl.innerHTML = rows.map((row) => `
+        <li class="metric-row">
+          <span class="metric-label">${escapeHtml(row.label)}<span class="metric-help">${escapeHtml(row.help)}</span></span>
+          <span class="metric-value">${escapeHtml(row.value)}</span>
+        </li>
+      `).join('');
+    }
+
+    async function loadMetrics() {
+      const { data, error } = await supabaseClient.rpc('admin_traffic_snapshot');
+      if (error) {
+        metricListEl.innerHTML = '<li class="metric-row"><span class="metric-label">Traffic metrics unavailable<span class="metric-help">Run the matching Supabase migration first, then refresh this page.</span></span><span class="metric-value">—</span></li>';
+        setDebug('Metrics error: ' + error.message);
+        return;
+      }
+
+      const snapshot = Array.isArray(data) ? (data[0] || {}) : (data || {});
+      renderMetrics(snapshot);
+    }
+
+    async function init() {
+      showLoading('Checking admin access...');
+      const hasAccess = await checkAdminAccess();
+      if (!hasAccess) {
+        hasInitialized = true;
+        return;
+      }
+      await Promise.all([loadPendingTracks(), loadMetrics()]);
+      hasInitialized = true;
+    }
+
+    supabaseClient.auth.onAuthStateChange(async (_event, session) => {
+      currentUser = session?.user || null;
+      if (!hasInitialized) return;
+      if (!currentUser || !isAdminUser(currentUser)) {
+        showLocked();
+        return;
+      }
+      showAdmin();
+      await Promise.all([loadPendingTracks(), loadMetrics()]);
+    });
+
+    init();
+  </script>
+  <script src="assets/js/radio-mini-player.js"></script>
 </body>
 </html>
