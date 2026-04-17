@@ -538,7 +538,101 @@
   }
 
 
+  const SITE_VISITOR_KEY = 'ssfm_site_visitor_key_v1';
+  const SITE_SESSION_KEY = 'ssfm_site_session_key_v1';
+  const SITE_VISIT_TRACK_PREFIX = 'ssfm_site_visit_seen_v1:';
+
+  function generateStableKey(prefix = '') {
+    try {
+      if (window.crypto && typeof window.crypto.randomUUID === 'function') {
+        return `${prefix}${window.crypto.randomUUID()}`;
+      }
+    } catch {}
+    return `${prefix}${Date.now()}_${Math.random().toString(36).slice(2, 10)}`;
+  }
+
+  function getPersistentVisitorKey() {
+    try {
+      let key = localStorage.getItem(SITE_VISITOR_KEY);
+      if (!key) {
+        key = generateStableKey('visitor_');
+        localStorage.setItem(SITE_VISITOR_KEY, key);
+      }
+      return key;
+    } catch {
+      return generateStableKey('visitor_');
+    }
+  }
+
+  function getSessionVisitKey() {
+    try {
+      let key = sessionStorage.getItem(SITE_SESSION_KEY);
+      if (!key) {
+        key = generateStableKey('session_');
+        sessionStorage.setItem(SITE_SESSION_KEY, key);
+      }
+      return key;
+    } catch {
+      return generateStableKey('session_');
+    }
+  }
+
+  function getPageVisitGuardKey(pathname) {
+    return `${SITE_VISIT_TRACK_PREFIX}${pathname || '/'}`;
+  }
+
+  async function trackSiteVisit() {
+    const pathname = window.location?.pathname || '/';
+    const normalizedPath = pathname.replace(/^\/+/, '') || 'index.html';
+    const skipPages = new Set(['admin.html']);
+    if (skipPages.has(normalizedPath)) return;
+
+    const guardKey = getPageVisitGuardKey(pathname);
+    try {
+      if (sessionStorage.getItem(guardKey) === '1') return;
+    } catch {}
+
+    const supabaseClient = getSupabaseClient();
+    let userId = null;
+    try {
+      const { data } = await supabaseClient.auth.getSession();
+      userId = data?.session?.user?.id || null;
+    } catch {}
+
+    const { error } = await supabaseClient
+      .from('site_visit_events')
+      .insert({
+        visitor_key: getPersistentVisitorKey(),
+        session_key: getSessionVisitKey(),
+        path: pathname || '/',
+        referrer: document.referrer || null,
+        user_id: userId
+      });
+
+    if (!error) {
+      try {
+        sessionStorage.setItem(guardKey, '1');
+      } catch {}
+      return;
+    }
+
+    const message = String(error.message || '').toLowerCase();
+    const code = String(error.code || '').toLowerCase();
+    const harmlessCodes = new Set(['42p01', '42501']);
+    const harmless = (
+      harmlessCodes.has(code) ||
+      message.includes('site_visit_events') ||
+      message.includes('permission denied') ||
+      message.includes('violates row-level security')
+    );
+
+    if (!harmless) {
+      console.warn('trackSiteVisit failed:', error);
+    }
+  }
+
   ensureMiniPlayerScript();
+  trackSiteVisit().catch((error) => console.warn('trackSiteVisit unexpected error:', error));
 
   window.SSFMApp = Object.assign(window.SSFMApp || {}, {
     config,
