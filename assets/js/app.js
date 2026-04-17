@@ -384,6 +384,135 @@
     return data || null;
   }
 
+
+  async function getArtistDisplayNameByUserId(userId, fallbackValue = 'Someone') {
+    if (!userId) return fallbackValue;
+    try {
+      const profile = await fetchProfileByUserId(userId, 'artist_name');
+      const artistName = String(profile?.artist_name || '').trim();
+      if (artistName) return artistName;
+    } catch (err) {
+      console.warn('getArtistDisplayNameByUserId profile lookup failed:', err);
+    }
+
+    try {
+      const currentUser = await getCurrentUserSafe();
+      if (currentUser?.id && String(currentUser.id) === String(userId)) {
+        const email = String(currentUser.email || '').trim();
+        if (email) return email.split('@')[0] || fallbackValue;
+      }
+    } catch (err) {
+      console.warn('getArtistDisplayNameByUserId auth lookup failed:', err);
+    }
+
+    return fallbackValue;
+  }
+
+  async function fetchLikedTrackIdsForUser(userId) {
+    if (!userId) return [];
+    const supabaseClient = getSupabaseClient();
+    const { data, error } = await supabaseClient
+      .from('track_likes')
+      .select('track_id')
+      .eq('liker_user_id', userId);
+
+    if (error) throw error;
+    return Array.isArray(data) ? data.map((row) => String(row.track_id)).filter(Boolean) : [];
+  }
+
+  async function syncLikedTrackIdsForUser(userId, storageKey = (config.radioLikeKey || 'ssfm_radio_likes_v2')) {
+    if (!userId) {
+      try { localStorage.removeItem(storageKey); } catch {}
+      return [];
+    }
+
+    const likedIds = await fetchLikedTrackIdsForUser(userId);
+    try {
+      localStorage.setItem(storageKey, JSON.stringify(likedIds));
+    } catch (err) {
+      console.warn('syncLikedTrackIdsForUser localStorage sync failed:', err);
+    }
+    return likedIds;
+  }
+
+  async function toggleTrackLikeInSupabase({ trackId, artistUserId, likerUserId, likerDisplayName } = {}) {
+    const safeTrackId = String(trackId || '').trim();
+    const safeArtistUserId = String(artistUserId || '').trim();
+    const safeLikerUserId = String(likerUserId || '').trim();
+
+    if (!safeTrackId || !safeLikerUserId) {
+      return { liked: false, changed: false, error: new Error('Missing track or user for like toggle.') };
+    }
+
+    if (safeArtistUserId && safeArtistUserId === safeLikerUserId) {
+      return { liked: false, changed: false, ownTrack: true, error: new Error('You cannot like your own tune.') };
+    }
+
+    const supabaseClient = getSupabaseClient();
+    const existingResponse = await supabaseClient
+      .from('track_likes')
+      .select('id')
+      .eq('track_id', safeTrackId)
+      .eq('liker_user_id', safeLikerUserId)
+      .maybeSingle();
+
+    if (existingResponse.error && existingResponse.error.code !== 'PGRST116') {
+      return { liked: false, changed: false, error: existingResponse.error };
+    }
+
+    const existingLikeId = existingResponse.data?.id || null;
+
+    if (existingLikeId) {
+      const deleteResponse = await supabaseClient
+        .from('track_likes')
+        .delete()
+        .eq('id', existingLikeId);
+
+      if (deleteResponse.error) {
+        return { liked: true, changed: false, error: deleteResponse.error };
+      }
+
+      return { liked: false, changed: true, likeId: null, error: null };
+    }
+
+    const insertResponse = await supabaseClient
+      .from('track_likes')
+      .insert({
+        track_id: safeTrackId,
+        liker_user_id: safeLikerUserId,
+        artist_user_id: safeArtistUserId || null
+      })
+      .select('id')
+      .single();
+
+    if (insertResponse.error) {
+      return { liked: false, changed: false, error: insertResponse.error };
+    }
+
+    const insertedLikeId = insertResponse.data?.id || null;
+
+    if (insertedLikeId && safeArtistUserId && safeArtistUserId !== safeLikerUserId) {
+      try {
+        const senderName = String(likerDisplayName || '').trim() || await getArtistDisplayNameByUserId(safeLikerUserId, 'Someone');
+        const body = `${senderName} heeft jouw tune geliked`;
+        await supabaseClient.rpc('create_user_notification', {
+          p_user_id: safeArtistUserId,
+          p_type: 'tune_liked',
+          p_title: 'New like',
+          p_body: body,
+          p_reward_seconds: 0,
+          p_related_track_id: safeTrackId,
+          p_related_user_id: safeLikerUserId,
+          p_event_key: `track_like:${insertedLikeId}`
+        });
+      } catch (notificationErr) {
+        console.error('toggleTrackLikeInSupabase notification error:', notificationErr);
+      }
+    }
+
+    return { liked: true, changed: true, likeId: insertedLikeId, error: null };
+  }
+
   function bindStandardHeaderEvents(els, options = {}) {
     const closeAll = () => closeStandardHeaderPanels(els, options.closeExtraPanels);
     if (els?.header?.showLoginBtn && typeof options.onLoginClick === 'function') {
@@ -457,6 +586,10 @@
     setStandardLoggedInState,
     fetchProfileByUserId,
     fetchTrackByUserId,
+    getArtistDisplayNameByUserId,
+    fetchLikedTrackIdsForUser,
+    syncLikedTrackIdsForUser,
+    toggleTrackLikeInSupabase,
     bindStandardHeaderEvents,
     hasCompletedArtistProfile,
     hasUnreadNotifications,

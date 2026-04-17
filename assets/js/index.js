@@ -1,4 +1,4 @@
-const { getSupabaseClient, getFlagEmoji: sharedGetFlagEmoji, getFlagMarkup: sharedGetFlagMarkup, getProfileHref: sharedGetProfileHref, closeStandardHeaderPanels, setStandardHeaderAvatar, handleStandardHeaderAvatarAction, applyStandardMenuState, setStandardLoggedOutState, setStandardLoggedInState, bindStandardHeaderEvents, getCurrentUserSafe } = window.SSFMApp;
+const { getSupabaseClient, getFlagEmoji: sharedGetFlagEmoji, getFlagMarkup: sharedGetFlagMarkup, getProfileHref: sharedGetProfileHref, closeStandardHeaderPanels, setStandardHeaderAvatar, handleStandardHeaderAvatarAction, applyStandardMenuState, setStandardLoggedOutState, setStandardLoggedInState, bindStandardHeaderEvents, getCurrentUserSafe, syncLikedTrackIdsForUser, toggleTrackLikeInSupabase } = window.SSFMApp;
 const supabaseClient = getSupabaseClient();
 
 const DAILY_SECONDS_LIMIT = 10;
@@ -773,6 +773,7 @@ function setLoggedOutView() {
   state.currentProfileData = null;
   state.currentTrackData = null;
   state.currentUser = null;
+  writeLikedTrackIds([]);
   state.currentCoins = 0;
   state.dailySecondsEarned = 0;
   state.dailySecondsEarnedDate = null;
@@ -932,11 +933,13 @@ async function refreshAuthUI() {
 
     const [profile, tune] = await Promise.all([
       loadMyProfile(user.id),
-      loadMyTune(user.id)
+      loadMyTune(user.id),
+      syncLikedTrackIdsForUser(user.id, RADIO_LIKE_KEY)
     ]);
 
     applyMenuState(user, profile, tune);
     updateInteractiveControls();
+    resetLike();
     await loadNewsFeed();
     updateJoinButtonHref();
     return user;
@@ -1404,24 +1407,36 @@ async function handleSkip() {
   nextTrack(0, true, state.desiredPlayback);
 }
 
-function handleLike() {
+async function handleLike() {
   if (!state.currentUser || isCurrentTrackOwn()) return;
 
+  const track = state.tracks[state.current] || null;
   const likeKey = getCurrentTrackLikeKey();
-  if (!likeKey) return;
+  if (!track || !likeKey) return;
 
-  const likedIds = new Set(readLikedTrackIds());
+  if (els.likeBtn) els.likeBtn.disabled = true;
 
-  state.liked = !likedIds.has(String(likeKey));
+  try {
+    const result = await toggleTrackLikeInSupabase({
+      trackId: likeKey,
+      artistUserId: track.user_id,
+      likerUserId: state.currentUser.id,
+      likerDisplayName: state.currentProfileData?.artist_name || state.currentUser.email || 'Someone'
+    });
 
-  if (state.liked) {
-    likedIds.add(String(likeKey));
-  } else {
-    likedIds.delete(String(likeKey));
+    if (result?.error) throw result.error;
+
+    const likedIds = new Set(readLikedTrackIds());
+    if (result?.liked) likedIds.add(String(likeKey));
+    else likedIds.delete(String(likeKey));
+    writeLikedTrackIds([...likedIds]);
+    state.liked = Boolean(result?.liked);
+    resetLike();
+  } catch (err) {
+    console.error('handleLike error:', err);
+  } finally {
+    if (els.likeBtn) els.likeBtn.disabled = !state.currentUser || isCurrentTrackOwn();
   }
-
-  writeLikedTrackIds([...likedIds]);
-  resetLike();
 }
 
 function handlePauseToggle() {

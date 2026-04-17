@@ -40,17 +40,6 @@ const els = {
   }
 };
 
-function readLikedTrackIds() {
-  try {
-    const raw = localStorage.getItem(LIKE_KEY);
-    if (!raw) return [];
-    const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) ? parsed.map(String) : [];
-  } catch {
-    return [];
-  }
-}
-
 function getProfileHref(profile) {
   return sharedGetProfileHref(profile);
 }
@@ -112,8 +101,15 @@ async function loadPage() {
   applyStandardMenuState(els, user, profile, track);
   setStandardHeaderAvatar(els, profile?.photo_url, profile?.artist_name || user.email || "A");
 
-  const likedIds = readLikedTrackIds();
-  if (!likedIds.length) {
+  const { data: likeRows, error: likeRowsError } = await supabaseClient
+    .from("track_likes")
+    .select("track_id, created_at")
+    .eq("liker_user_id", user.id)
+    .order("created_at", { ascending: false });
+
+  const likedIds = Array.isArray(likeRows) ? likeRows.map((row) => String(row.track_id)).filter(Boolean) : [];
+
+  if (likeRowsError || !likedIds.length) {
     setHidden(els.page.loginRequired, true);
     setHidden(els.page.emptyState, false);
     setHidden(els.page.listWrap, true);

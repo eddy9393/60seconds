@@ -1,4 +1,4 @@
-const { getSupabaseClient, getFlagEmoji: sharedGetFlagEmoji, getProfileHref: sharedGetProfileHref, bindRuntimeCurrencySync, applyRuntimeCurrencySnapshotToElement, closeStandardHeaderPanels, setStandardHeaderAvatar, handleStandardHeaderAvatarAction, applyStandardMenuState, setStandardLoggedOutState, setStandardLoggedInState, bindStandardHeaderEvents, getCurrentUserSafe } = window.SSFMApp;
+const { getSupabaseClient, getFlagEmoji: sharedGetFlagEmoji, getProfileHref: sharedGetProfileHref, bindRuntimeCurrencySync, applyRuntimeCurrencySnapshotToElement, closeStandardHeaderPanels, setStandardHeaderAvatar, handleStandardHeaderAvatarAction, applyStandardMenuState, setStandardLoggedOutState, setStandardLoggedInState, bindStandardHeaderEvents, getCurrentUserSafe, syncLikedTrackIdsForUser, toggleTrackLikeInSupabase } = window.SSFMApp;
 const supabaseClient = getSupabaseClient();
 const SHARED_LIKES_KEY = "ssfm_radio_likes_v2";
 const SHARED_VOLUME_KEY = "ssfm_radio_volume_v2";
@@ -203,7 +203,7 @@ async function loadCurrentUserState() {
     .limit(1)
     .maybeSingle();
 
-  const [{ data: profileData }, { data: trackData }] = await Promise.all([profilePromise, trackPromise]);
+  const [{ data: profileData }, { data: trackData }] = await Promise.all([profilePromise, trackPromise, syncLikedTrackIdsForUser(user.id, SHARED_LIKES_KEY)]);
 
   state.currentProfileData = profileData || null;
   state.currentTrackData = trackData || null;
@@ -621,23 +621,40 @@ function buildTrackCard(track) {
   }
 
   if (likeBtn) {
-    likeBtn.addEventListener("click", () => {
+    likeBtn.addEventListener("click", async () => {
       if (!state.currentUserId || isOwnTrack(track)) return;
 
-      const likedIdsNow = new Set(readSharedLikedTrackIds());
-      const key = String(track.id);
+      likeBtn.disabled = true;
 
-      if (likedIdsNow.has(key)) {
-        likedIdsNow.delete(key);
-        likeBtn.classList.remove("is-liked");
-        likeBtn.innerHTML = `<span class="tune-action-icon">♥</span><span>Like</span>`;
-      } else {
-        likedIdsNow.add(key);
-        likeBtn.classList.add("is-liked");
-        likeBtn.innerHTML = `<span class="tune-action-icon">♥</span><span>Liked</span>`;
+      try {
+        const result = await toggleTrackLikeInSupabase({
+          trackId: track.id,
+          artistUserId: track.user_id,
+          likerUserId: state.currentUserId,
+          likerDisplayName: state.currentProfileData?.artist_name || state.currentArtistData?.artist_name || 'Someone'
+        });
+
+        if (result?.error) throw result.error;
+
+        const likedIdsNow = new Set(readSharedLikedTrackIds());
+        const key = String(track.id);
+
+        if (result?.liked) {
+          likedIdsNow.add(key);
+          likeBtn.classList.add("is-liked");
+          likeBtn.innerHTML = `<span class="tune-action-icon">♥</span><span>Liked</span>`;
+        } else {
+          likedIdsNow.delete(key);
+          likeBtn.classList.remove("is-liked");
+          likeBtn.innerHTML = `<span class="tune-action-icon">♥</span><span>Like</span>`;
+        }
+
+        writeSharedLikedTrackIds([...likedIdsNow]);
+      } catch (err) {
+        console.error('artist like toggle error:', err);
+      } finally {
+        likeBtn.disabled = !state.currentUserId || isOwnTrack(track);
       }
-
-      writeSharedLikedTrackIds([...likedIdsNow]);
     });
   }
 

@@ -6,7 +6,7 @@
   if (!window.supabase) return;
 
 
-  const { getSupabaseClient, setCurrencyText } = window.SSFMApp || {};
+  const { getSupabaseClient, setCurrencyText, syncLikedTrackIdsForUser, toggleTrackLikeInSupabase } = window.SSFMApp || {};
   const supabaseClient = typeof getSupabaseClient === 'function'
     ? getSupabaseClient()
     : window.supabase.createClient(
@@ -102,6 +102,9 @@
     try {
       const { data } = await supabaseClient.auth.getSession();
       state.currentUserId = data?.session?.user?.id || null;
+      if (typeof syncLikedTrackIdsForUser === 'function') {
+        await syncLikedTrackIdsForUser(state.currentUserId, LIKE_KEY);
+      }
     } catch {
       state.currentUserId = null;
     }
@@ -540,16 +543,35 @@
     applyStoredCurrencySnapshot();
     setVolumeOpen(false);
     updateLikeLabel();
-    state.els.likeBtn.addEventListener('click', () => {
+    state.els.likeBtn.addEventListener('click', async () => {
       if (!state.currentUserId || isOwnCurrentTrack()) return;
       const key = currentTrackLikeKey();
       if (!key) return;
-      const likedIds = new Set(readLikedTrackIds());
-      if (likedIds.has(String(key))) likedIds.delete(String(key)); else likedIds.add(String(key));
-      writeLikedTrackIds([...likedIds]);
-      updateLikeLabel();
-      state.els.likeBtn.classList.add('like-feedback');
-      setTimeout(() => { state.els.likeBtn && state.els.likeBtn.classList.remove('like-feedback'); }, 220);
+
+      state.els.likeBtn.disabled = true;
+      try {
+        const result = typeof toggleTrackLikeInSupabase === 'function'
+          ? await toggleTrackLikeInSupabase({
+              trackId: key,
+              artistUserId: state.currentTrack?.user_id,
+              likerUserId: state.currentUserId,
+              likerDisplayName: null
+            })
+          : { liked: false, error: new Error('Like helper unavailable.') };
+
+        if (result?.error) throw result.error;
+
+        const likedIds = new Set(readLikedTrackIds());
+        if (result?.liked) likedIds.add(String(key)); else likedIds.delete(String(key));
+        writeLikedTrackIds([...likedIds]);
+        updateLikeLabel();
+        state.els.likeBtn.classList.add('like-feedback');
+        setTimeout(() => { state.els.likeBtn && state.els.likeBtn.classList.remove('like-feedback'); }, 220);
+      } catch (err) {
+        console.error('mini player like toggle error:', err);
+      } finally {
+        state.els.likeBtn.disabled = !state.currentUserId || isOwnCurrentTrack();
+      }
     });
     state.els.pauseBtn.addEventListener('click', async () => {
       if (!state.audio) return;
