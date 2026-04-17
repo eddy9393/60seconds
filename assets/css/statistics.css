@@ -281,3 +281,47 @@ body {
     align-items: stretch;
   }
 }
+
+
+.stats-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.stats-label-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+}
+
+.stats-label-coin {
+  width: 18px;
+  height: 18px;
+  object-fit: contain;
+  filter: sepia(1) saturate(4.8) hue-rotate(350deg) brightness(1.02) contrast(1.08);
+}
+
+@media (max-width: 900px) {
+  .stats-row {
+    grid-template-columns: 1fr;
+    gap: 8px;
+    text-align: center;
+    justify-items: center;
+  }
+
+  .stats-label,
+  .stats-value {
+    justify-content: center;
+    text-align: center;
+    width: 100%;
+  }
+
+  .stats-hero-copy,
+  .stats-hero-name,
+  .stats-hero-meta {
+    text-align: center;
+    justify-content: center;
+  }
+}
