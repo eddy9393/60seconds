@@ -271,6 +271,7 @@ body {
 
   .stats-value {
     font-size: 22px;
+    text-align: center;
   }
 
   .stats-chart-select {
@@ -293,13 +294,21 @@ body {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 20px;
+  width: 1.45em;
+  min-width: 1.45em;
+  font-size: 1.45em;
+  line-height: 1;
 }
 
 .stats-label-coin {
-  width: 20px;
-  height: 20px;
+  width: 1.8em;
+  height: 1.8em;
   object-fit: contain;
+  flex: 0 0 auto;
+}
+
+.stats-label-coin--gold {
+  filter: sepia(1) saturate(4.2) hue-rotate(2deg) brightness(1.08);
 }
 
 @media (max-width: 900px) {
