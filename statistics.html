@@ -16,27 +16,22 @@
           <span class="desktop-nav-icon" aria-hidden="true"><span class="nav-icon-mask" style="--icon-url: url('/icons/radio.png');"></span></span>
           <span class="desktop-nav-label">Radio</span>
         </a>
-
         <a id="desktopProfileLink" class="desktop-nav-link hidden" href="join.html" aria-label="Profile">
           <span class="desktop-nav-icon" aria-hidden="true"><span class="nav-icon-mask" style="--icon-url: url('/icons/profile.png');"></span></span>
           <span class="desktop-nav-label">Profile</span>
         </a>
-
         <a id="desktopNotificationsLink" class="desktop-nav-link hidden" href="notifications.html" aria-label="Notifications">
           <span class="desktop-nav-icon" aria-hidden="true"><span class="nav-icon-mask" style="--icon-url: url('/icons/nonotifications.png');"></span></span>
           <span class="desktop-nav-label">Notifications</span>
         </a>
-
         <a id="desktopLikedLink" class="desktop-nav-link hidden" href="liked.html" aria-label="Liked">
           <span class="desktop-nav-icon" aria-hidden="true"><span class="nav-icon-mask" style="--icon-url: url('/icons/like.png');"></span></span>
           <span class="desktop-nav-label">Liked</span>
         </a>
-
         <a id="desktopStatsLink" class="desktop-nav-link hidden active" href="statistics.html" aria-label="Statistics">
           <span class="desktop-nav-icon" aria-hidden="true"><span class="nav-icon-mask" style="--icon-url: url('/icons/stats.png');"></span></span>
           <span class="desktop-nav-label">Statistics</span>
         </a>
-
         <a id="desktopTrackLink" class="desktop-nav-link hidden" href="submit-track.html" aria-label="Tune">
           <span class="desktop-nav-icon" aria-hidden="true"><span class="nav-icon-mask" style="--icon-url: url('/icons/track.png');"></span></span>
           <span class="desktop-nav-label">Tune</span>
@@ -63,27 +58,22 @@
         <span class="mobile-nav-icon" aria-hidden="true"><span class="nav-icon-mask" style="--icon-url: url('/icons/radio.png');"></span></span>
         <span class="mobile-nav-label">Radio</span>
       </a>
-
       <a id="mobileProfileLink" class="mobile-nav-link hidden" href="join.html" aria-label="Profile">
         <span class="mobile-nav-icon" aria-hidden="true"><span class="nav-icon-mask" style="--icon-url: url('/icons/profile.png');"></span></span>
         <span class="mobile-nav-label">Profile</span>
       </a>
-
       <a id="mobileNotificationsLink" class="mobile-nav-link hidden" href="notifications.html" aria-label="Notifications">
         <span class="mobile-nav-icon" aria-hidden="true"><span class="nav-icon-mask" style="--icon-url: url('/icons/nonotifications.png');"></span></span>
         <span class="mobile-nav-label">Notifications</span>
       </a>
-
       <a id="mobileLikedLink" class="mobile-nav-link hidden" href="liked.html" aria-label="Liked">
         <span class="mobile-nav-icon" aria-hidden="true"><span class="nav-icon-mask" style="--icon-url: url('/icons/like.png');"></span></span>
         <span class="mobile-nav-label">Liked</span>
       </a>
-
       <a id="mobileTrackLink" class="mobile-nav-link hidden" href="submit-track.html" aria-label="Tune">
         <span class="mobile-nav-icon" aria-hidden="true"><span class="nav-icon-mask" style="--icon-url: url('/icons/track.png');"></span></span>
         <span class="mobile-nav-label">Tune</span>
       </a>
-
       <a id="mobileLoginLink" class="mobile-nav-link" href="login.html" aria-label="Login">
         <span class="mobile-nav-icon" aria-hidden="true"><span class="nav-icon-mask" style="--icon-url: url('/icons/login.png');"></span></span>
         <span class="mobile-nav-label">Login</span>
@@ -132,111 +122,63 @@
       <div id="statsProfileRequired" class="empty-card hidden">
         <div class="empty-icon">✦</div>
         <div class="empty-title">Create your artist profile first</div>
-        <div class="empty-text">You’ll unlock your artist page, tune submission, and a dedicated statistics view.</div>
+        <div class="empty-text">You’ll unlock your artist page, tune submission, and your premium statistics overview.</div>
         <a href="edit-profile.html" class="gold-btn">Create artist profile</a>
       </div>
 
-      <section id="statsWrap" class="stats-dashboard hidden">
-        <section class="stats-hero-flow">
-          <div class="section-kicker">Artist Statistics</div>
-          <h1 class="page-title">Your momentum at a glance</h1>
-          <p class="page-subtitle">A cleaner overview of how your profile and tune are performing inside 60 Seconds FM.</p>
-
-          <div class="artist-identity-strip">
-            <div class="artist-identity-avatar-wrap">
-              <img id="statArtistPhoto" class="artist-identity-avatar hidden" src="" alt="Artist avatar" />
-              <div id="statArtistPhotoFallback" class="artist-identity-avatar-fallback">A</div>
-            </div>
-            <div class="artist-identity-copy">
-              <div id="statArtistName" class="artist-name-xl">—</div>
-              <div class="artist-meta-line">
-                <span id="statRoles">Artist</span>
-                <span class="meta-dot">•</span>
-                <span id="statLocation">No location yet</span>
-              </div>
+      <section id="statsWrap" class="stats-layout hidden">
+        <header class="stats-hero">
+          <div class="stats-hero-avatar-wrap">
+            <img id="statArtistPhoto" class="stats-hero-avatar hidden" src="" alt="Artist avatar" />
+            <div id="statArtistPhotoFallback" class="stats-hero-avatar-fallback">A</div>
+          </div>
+          <div class="stats-hero-copy">
+            <div id="statArtistName" class="stats-hero-name">—</div>
+            <div class="stats-hero-meta">
+              <span id="statRoles">Artist</span>
+              <span class="meta-dot">•</span>
+              <span id="statLocation">No location yet</span>
             </div>
           </div>
+        </header>
+
+        <section class="stats-details" aria-label="Artist statistics">
+          <div class="stats-row"><span class="stats-label">🎵 Current tune</span><span id="statCurrentTune" class="stats-value">No tune submitted yet</span></div>
+          <div class="stats-row"><span class="stats-label">📻 Total radio streams</span><span id="statTotalPlays" class="stats-value">0</span></div>
+          <div class="stats-row"><span class="stats-label">⏱ Estimated plays / day</span><span id="statEstimatedPlays" class="stats-value">0</span></div>
+          <div class="stats-row"><span class="stats-label">❤️ Total likes</span><span id="statTotalLikes" class="stats-value">0</span></div>
+          <div class="stats-row"><span class="stats-label">👀 Profile visits</span><span id="statProfileVisits" class="stats-value">0</span></div>
+          <div class="stats-row"><span class="stats-label">🪙 Seconds balance</span><span id="statCoins" class="stats-value">0</span></div>
+          <div class="stats-row"><span class="stats-label">⚡ Earned today</span><span id="statDailySeconds" class="stats-value">0</span></div>
+          <div class="stats-row"><span class="stats-label">🌍 City</span><span id="statCity" class="stats-value">—</span></div>
+          <div class="stats-row"><span class="stats-label">🏳️ Country</span><span id="statCountry" class="stats-value">—</span></div>
+          <div class="stats-row"><span class="stats-label">🎛 Roles</span><span id="statRolesDetail" class="stats-value">Artist</span></div>
+          <div class="stats-row"><span class="stats-label">🔗 Social</span><span class="stats-value"><a id="statSocialLink" class="stats-link hidden" href="#" target="_blank" rel="noreferrer">Open</a><span id="statSocialMissing">—</span></span></div>
+          <div class="stats-row stats-row-bio"><span class="stats-label">📝 Bio</span><span id="statBio" class="stats-value stats-bio">No artist bio added yet.</span></div>
         </section>
 
-        <section class="stats-metric-ribbon" aria-label="Statistics overview">
-          <div class="hero-metric">
-            <span class="hero-metric-label">Seconds balance</span>
-            <strong id="statCoins" class="hero-metric-value">0</strong>
+        <section class="stats-chart-area" aria-label="Analytics over time">
+          <div class="stats-chart-topline">
+            <div>
+              <div class="stats-chart-kicker">Trend over time</div>
+              <h2 class="stats-chart-title">Performance since your tune went live</h2>
+            </div>
+            <label class="stats-chart-select-wrap" for="statsMetricSelect">
+              <span class="sr-only">Choose analytics metric</span>
+              <select id="statsMetricSelect" class="stats-chart-select">
+                <option value="streams">Streams on the radio</option>
+                <option value="visits">Clicks on profile visits</option>
+                <option value="likes">Likes</option>
+              </select>
+            </label>
           </div>
-          <div class="hero-metric">
-            <span class="hero-metric-label">Earned today</span>
-            <strong id="statDailySeconds" class="hero-metric-value">0</strong>
+          <p id="statsTrendNote" class="stats-chart-note">Tracking starts once analytics is enabled for a metric.</p>
+          <div class="stats-chart-canvas-wrap">
+            <canvas id="statsTrendCanvas" width="1120" height="420" aria-label="Statistics trend chart"></canvas>
           </div>
-          <div class="hero-metric">
-            <span class="hero-metric-label">Submitted tunes</span>
-            <strong id="statTuneCount" class="hero-metric-value">0</strong>
-          </div>
-          <div class="hero-metric">
-            <span class="hero-metric-label">Total plays</span>
-            <strong id="statTotalPlays" class="hero-metric-value">0</strong>
-          </div>
+          <div id="statsTrendEmpty" class="stats-chart-empty hidden">No trend data available yet for this metric.</div>
         </section>
-
-        <section class="stats-flow-layout">
-          <article class="stats-flow-block">
-            <div class="story-eyebrow">Performance</div>
-            <h2 class="story-title">Tune reach</h2>
-            <p class="flow-intro">Keep an eye on how often your tune can rotate and how your submissions are moving through the station.</p>
-
-            <div class="flow-highlight-row">
-              <div>
-                <div class="story-feature-label">Estimated plays / day</div>
-                <div id="statEstimatedPlays" class="story-feature-value">0</div>
-              </div>
-              <p class="story-feature-note">Estimated from the amount of approved tunes currently rotating on the station.</p>
-            </div>
-
-            <div class="stats-line-list">
-              <div class="stats-line-item">
-                <span class="inline-metric-label">Approved tunes</span>
-                <strong id="statApprovedTuneCount">0</strong>
-              </div>
-              <div class="stats-line-item">
-                <span class="inline-metric-label">Pending tunes</span>
-                <strong id="statPendingTuneCount">0</strong>
-              </div>
-            </div>
-
-            <div id="statTrackSummary" class="story-summary">No tune submitted yet.</div>
-          </article>
-
-          <article class="stats-flow-block stats-flow-block--profile">
-            <div class="story-eyebrow">Profile context</div>
-            <h2 class="story-title">How your artist page feels</h2>
-            <p class="flow-intro">This is the information visitors will connect to when they land on your artist identity inside 60 Seconds FM.</p>
-
-            <div class="stats-detail-grid">
-              <div class="profile-detail-row">
-                <span class="profile-detail-label">City</span>
-                <span id="statCity" class="profile-detail-value">—</span>
-              </div>
-              <div class="profile-detail-row">
-                <span class="profile-detail-label">Country</span>
-                <span id="statCountry" class="profile-detail-value">—</span>
-              </div>
-              <div class="profile-detail-row">
-                <span class="profile-detail-label">Roles</span>
-                <span id="statRolesDetail" class="profile-detail-value">—</span>
-              </div>
-              <div class="profile-detail-row">
-                <span class="profile-detail-label">Social link</span>
-                <a id="statSocialLink" class="profile-detail-link hidden" href="#" target="_blank" rel="noreferrer">Open profile link</a>
-                <span id="statSocialMissing" class="profile-detail-value">No social link yet</span>
-              </div>
-            </div>
-
-            <div class="profile-bio-wrap">
-              <div class="story-feature-label">Bio</div>
-              <div id="statBio" class="profile-bio">No artist bio added yet.</div>
-            </div>
-          </article>
-        </section>
-      </section></section>
+      </section>
     </main>
   </div>
 
@@ -244,6 +186,5 @@
   <script src="assets/js/config.js"></script>
   <script src="assets/js/app.js"></script>
   <script src="assets/js/statistics.js"></script>
-  <script src="assets/js/radio-mini-player.js"></script>
 </body>
 </html>
