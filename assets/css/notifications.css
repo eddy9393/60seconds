@@ -1167,3 +1167,53 @@ a {
     white-space: normal;
   }
 }
+
+
+.notification-avatar-link {
+  width: 54px;
+  height: 54px;
+  border-radius: 16px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  text-decoration: none;
+  border: 1px solid rgba(255,255,255,0.12);
+  background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.05), 0 10px 24px rgba(0,0,0,0.18);
+  flex: 0 0 54px;
+}
+
+.notification-avatar,
+.notification-avatar-fallback {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.notification-avatar-fallback {
+  background: linear-gradient(180deg, rgba(212,175,55,0.28), rgba(212,175,55,0.12));
+  color: #f9e7a3;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.notification-user-link,
+.notification-track-name {
+  color: #f4d77a;
+  font-weight: 700;
+}
+
+.notification-user-link {
+  text-decoration: none;
+  border-bottom: 1px solid rgba(244,215,122,0.4);
+}
+
+.notification-user-link:hover {
+  color: #fff0b8;
+  border-bottom-color: rgba(255,240,184,0.7);
+}
