@@ -322,7 +322,20 @@ async function loadTrendData(userId, track) {
   const trackCreatedDate = normalizeUtcDateInput(track?.created_at) || getTodayUtcDate();
   const today = getTodayUtcDate();
 
-  const [trackDailyResult, profileDailyResult, likesResult] = await Promise.all([
+  const { data: artistTracks, error: artistTracksError } = await supabaseClient
+    .from("tracks")
+    .select("id")
+    .eq("user_id", userId);
+
+  if (artistTracksError) {
+    console.error("statistics artist tracks error:", artistTracksError);
+  }
+
+  const artistTrackIds = Array.isArray(artistTracks)
+    ? artistTracks.map((row) => row?.id).filter(Boolean)
+    : [];
+
+  const [trackDailyResult, profileDailyResult, likesResult, totalLikesCountResult] = await Promise.all([
     trackId
       ? supabaseClient
           .from("track_daily_stats")
@@ -341,12 +354,19 @@ async function loadTrendData(userId, track) {
           .select("created_at")
           .eq("track_id", trackId)
           .order("created_at", { ascending: true })
-      : Promise.resolve({ data: [], error: null })
+      : Promise.resolve({ data: [], error: null }),
+    artistTrackIds.length
+      ? supabaseClient
+          .from("track_likes")
+          .select("id", { count: "exact", head: true })
+          .in("track_id", artistTrackIds)
+      : Promise.resolve({ count: 0, error: null })
   ]);
 
   if (trackDailyResult?.error) console.error("statistics track_daily_stats error:", trackDailyResult.error);
   if (profileDailyResult?.error) console.error("statistics profile_daily_stats error:", profileDailyResult.error);
   if (likesResult?.error) console.error("statistics track_likes error:", likesResult.error);
+  if (totalLikesCountResult?.error) console.error("statistics total likes count error:", totalLikesCountResult.error);
 
   const trackDailyRows = Array.isArray(trackDailyResult?.data) ? trackDailyResult.data : [];
   const profileDailyRows = Array.isArray(profileDailyResult?.data) ? profileDailyResult.data : [];
@@ -372,15 +392,8 @@ async function loadTrendData(userId, track) {
 
   let totalLikes = Array.from(finalLikeMap.values()).reduce((sum, value) => sum + Number(value || 0), 0);
 
-  const { count: artistLikeCount, error: artistLikesCountError } = await supabaseClient
-    .from("track_likes")
-    .select("id", { count: "exact", head: true })
-    .eq("artist_user_id", userId);
-
-  if (artistLikesCountError) {
-    console.error("statistics total likes artist count error:", artistLikesCountError);
-  } else if (Number.isFinite(Number(artistLikeCount))) {
-    totalLikes = Number(artistLikeCount) || 0;
+  if (Number.isFinite(Number(totalLikesCountResult?.count))) {
+    totalLikes = Number(totalLikesCountResult.count) || 0;
   }
 
   if (!totalLikes && likeRows.length) {
