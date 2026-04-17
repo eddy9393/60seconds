@@ -56,13 +56,7 @@ const els = {
     totalLikes: document.getElementById("statTotalLikes"),
     profileVisits: document.getElementById("statProfileVisits"),
     coins: document.getElementById("statCoins"),
-    dailySeconds: document.getElementById("statDailySeconds"),
-    city: document.getElementById("statCity"),
-    country: document.getElementById("statCountry"),
-    rolesDetail: document.getElementById("statRolesDetail"),
-    socialLink: document.getElementById("statSocialLink"),
-    socialMissing: document.getElementById("statSocialMissing"),
-    bio: document.getElementById("statBio"),
+    totalEarned: document.getElementById("statTotalEarned"),
     metricSelect: document.getElementById("statsMetricSelect"),
     trendNote: document.getElementById("statsTrendNote"),
     trendCanvas: document.getElementById("statsTrendCanvas"),
@@ -98,6 +92,21 @@ function setText(element, value) {
 
 function formatNumber(value) {
   return Number(value || 0).toLocaleString();
+}
+
+async function fetchTotalEarnedSeconds(userId) {
+  if (!userId) return 0;
+  const { data, error } = await supabaseClient
+    .from("user_notifications")
+    .select("reward_seconds")
+    .eq("user_id", userId);
+
+  if (error) {
+    console.error("statistics total earned error:", error);
+    return 0;
+  }
+
+  return (Array.isArray(data) ? data : []).reduce((sum, row) => sum + (Number(row?.reward_seconds) || 0), 0);
 }
 
 function getDisplayRoles(profile) {
@@ -397,7 +406,7 @@ async function loadPage() {
     return;
   }
 
-  const profile = await fetchProfileByUserId(user.id, "artist_name, photo_url, user_id, coins, daily_seconds_earned, city, nationality, bio, social_link, music_role, music_roles");
+  const profile = await fetchProfileByUserId(user.id, "artist_name, photo_url, user_id, coins, city, nationality, music_role, music_roles");
   const { data: track } = await supabaseClient
     .from("tracks")
     .select("id, user_id, title, status, created_at, play_count")
@@ -419,9 +428,10 @@ async function loadPage() {
     return;
   }
 
-  const [{ count: ownApprovedCount }, { count: stationApprovedCount }] = await Promise.all([
+  const [{ count: ownApprovedCount }, { count: stationApprovedCount }, totalEarnedSeconds] = await Promise.all([
     supabaseClient.from("tracks").select("*", { count: "exact", head: true }).eq("user_id", user.id).eq("status", "approved"),
-    supabaseClient.from("tracks").select("*", { count: "exact", head: true }).eq("status", "approved")
+    supabaseClient.from("tracks").select("*", { count: "exact", head: true }).eq("status", "approved"),
+    fetchTotalEarnedSeconds(user.id)
   ]);
 
   const estimatedPlays = ownApprovedCount && stationApprovedCount
@@ -432,25 +442,11 @@ async function loadPage() {
   setText(els.page.artistName, profile?.artist_name || "—");
   setText(els.page.location, getDisplayLocation(profile));
   setText(els.page.roles, getDisplayRoles(profile));
-  setText(els.page.currentTune, track?.title ? `${track.title} (${String(track.status || "pending").toLowerCase()})` : "No tune submitted yet");
+  setText(els.page.currentTune, track?.title ? track.title : "No tune submitted yet");
   setText(els.page.totalPlays, formatNumber(track?.play_count || 0));
   setText(els.page.estimatedPlays, formatNumber(estimatedPlays));
   setText(els.page.coins, formatNumber(profile?.coins || 0));
-  setText(els.page.dailySeconds, formatNumber(profile?.daily_seconds_earned || 0));
-  setText(els.page.city, String(profile?.city || "—").trim() || "—");
-  setText(els.page.country, String(profile?.nationality || "—").trim() || "—");
-  setText(els.page.rolesDetail, getDisplayRoles(profile));
-  setText(els.page.bio, String(profile?.bio || "No artist bio added yet.").trim() || "No artist bio added yet.");
-
-  if (profile?.social_link) {
-    els.page.socialLink.href = profile.social_link;
-    setHidden(els.page.socialLink, false);
-    setHidden(els.page.socialMissing, true);
-  } else {
-    els.page.socialLink.removeAttribute("href");
-    setHidden(els.page.socialLink, true);
-    setHidden(els.page.socialMissing, false);
-  }
+  setText(els.page.totalEarned, formatNumber(totalEarnedSeconds));
 
   await loadTrendData(user.id, track);
   renderTrendChart();
