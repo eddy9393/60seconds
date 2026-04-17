@@ -12,9 +12,10 @@
 <body>
   <div class="shell">
     <header class="hero">
+      <div class="hero-kicker">60 Seconds control room</div>
       <img class="hero-logo" src="logo.png" alt="60 Seconds logo" />
       <h1 class="hero-title">Admin</h1>
-      <p class="hero-subtitle">Approve tunes fast, keep an eye on site traffic, and track the signals that actually help you run 60 Seconds better.</p>
+      <p class="hero-subtitle">Approve new tunes first, then keep an eye on the signals that show how the platform is actually moving.</p>
       <div class="nav-row">
         <a class="nav-link" href="index.html">Homepage</a>
         <a class="nav-link" href="join.html">Join page</a>
@@ -33,23 +34,38 @@
     </div>
 
     <main id="adminApp" class="hidden">
-      <section class="section">
-        <h2 class="section-title">Approve pending tunes</h2>
-        <p class="section-kicker">This stays at the top so you can review new submissions before anything else.</p>
+      <section class="section section-priority">
+        <div class="section-heading">
+          <div>
+            <div class="section-overline">Priority queue</div>
+            <h2 class="section-title">Approve pending tunes</h2>
+          </div>
+          <p class="section-kicker">This always stays first, so new submissions never get buried under admin stats.</p>
+        </div>
         <div id="status"></div>
         <div id="debug"></div>
         <div id="trackList"></div>
       </section>
 
-      <section class="section">
-        <h2 class="section-title">Traffic & platform overview</h2>
-        <p class="section-kicker">Clean readout of useful admin numbers. No card wall, just the signals that help you understand growth and behavior.</p>
+      <section class="section section-metrics">
+        <div class="section-heading">
+          <div>
+            <div class="section-overline">Platform readout</div>
+            <h2 class="section-title">Traffic & platform overview</h2>
+          </div>
+          <p class="section-kicker">A quieter layout that feels closer to the public site: less dashboard clutter, more hierarchy, and only the metrics that actually help.</p>
+        </div>
         <ul id="metricList" class="metric-list"></ul>
       </section>
 
-      <section class="section">
-        <h2 class="section-title">Useful traffic signals to add next</h2>
-        <p class="section-kicker">These are not shown as live metrics yet, but they would be high-value next additions if you want deeper traffic insight.</p>
+      <section class="section section-insights">
+        <div class="section-heading">
+          <div>
+            <div class="section-overline">Next level insight</div>
+            <h2 class="section-title">Useful traffic signals to add next</h2>
+          </div>
+          <p class="section-kicker">Not live yet, but these would be the highest-value additions if you want a deeper picture of traffic quality and conversion.</p>
+        </div>
         <ul class="insight-list">
           <li class="insight-row"><span class="metric-label">Signup conversion<span class="metric-help">How many visitors become users.</span></span><span class="metric-value">→</span></li>
           <li class="insight-row"><span class="metric-label">Profile completion rate<span class="metric-help">How many signups finish their artist profile.</span></span><span class="metric-value">→</span></li>
@@ -246,85 +262,74 @@
         },
         {
           label: 'Returning visitors (30 days)',
-          help: 'Visitors who came back more than once in the last 30 days.',
+          help: 'Visitors who showed up on more than one day in the last 30 days.',
           value: snapshot.returning_visitors_30d ?? 0
         },
         {
           label: 'Profiles on the platform',
-          help: 'Total profile rows in the system.',
-          value: snapshot.signups_total ?? 0
+          help: 'All profile rows currently present in the platform.',
+          value: snapshot.total_profiles ?? 0
         },
         {
           label: 'Live artist profiles',
-          help: 'Profiles with a real artist name filled in.',
-          value: snapshot.active_artist_profiles ?? 0
+          help: 'Profiles with an artist name that can appear publicly.',
+          value: snapshot.live_artist_profiles ?? 0
         },
         {
           label: 'Pending tracks',
-          help: 'Tunes currently waiting for admin approval.',
+          help: 'Tunes currently waiting for approval.',
           value: snapshot.pending_tracks ?? 0
         },
         {
           label: 'Approved tracks',
-          help: 'Tunes already approved and live.',
+          help: 'Tunes already approved and available to listeners.',
           value: snapshot.approved_tracks ?? 0
         },
         {
           label: 'Total platform likes',
-          help: 'All likes recorded across the platform.',
+          help: 'All likes stored in track_likes across the platform.',
           value: snapshot.total_platform_likes ?? 0
         },
         {
           label: 'Top page today',
-          help: 'Most visited page today with total views in brackets.',
-          value: `${snapshot.top_page_today || '—'} (${snapshot.top_page_today_views || 0})`
+          help: 'Most visited path across today’s tracked sessions.',
+          value: snapshot.top_page_today || '—'
         }
       ];
 
       metricListEl.innerHTML = rows.map((row) => `
         <li class="metric-row">
           <span class="metric-label">${escapeHtml(row.label)}<span class="metric-help">${escapeHtml(row.help)}</span></span>
-          <span class="metric-value">${escapeHtml(row.value)}</span>
+          <span class="metric-value">${escapeHtml(String(row.value))}</span>
         </li>
       `).join('');
     }
 
     async function loadMetrics() {
-      const { data, error } = await supabaseClient.rpc('admin_traffic_snapshot');
+      const { data, error } = await supabaseClient.rpc('get_admin_traffic_snapshot');
       if (error) {
-        metricListEl.innerHTML = '<li class="metric-row"><span class="metric-label">Traffic metrics unavailable<span class="metric-help">Run the matching Supabase migration first, then refresh this page.</span></span><span class="metric-value">—</span></li>';
-        setDebug('Metrics error: ' + error.message);
+        setDebug('metrics error: ' + error.message);
+        metricListEl.innerHTML = '<li class="empty">Could not load admin metrics right now.</li>';
         return;
       }
 
-      const snapshot = Array.isArray(data) ? (data[0] || {}) : (data || {});
-      renderMetrics(snapshot);
+      renderMetrics(Array.isArray(data) ? (data[0] || {}) : (data || {}));
     }
 
-    async function init() {
+    async function boot() {
       showLoading('Checking admin access...');
-      const hasAccess = await checkAdminAccess();
-      if (!hasAccess) {
-        hasInitialized = true;
-        return;
-      }
-      await Promise.all([loadPendingTracks(), loadMetrics()]);
-      hasInitialized = true;
-    }
-
-    supabaseClient.auth.onAuthStateChange(async (_event, session) => {
-      currentUser = session?.user || null;
-      if (!hasInitialized) return;
-      if (!currentUser || !isAdminUser(currentUser)) {
-        showLocked();
-        return;
-      }
+      const ok = await checkAdminAccess();
+      if (!ok) return;
+      showLoading('Loading admin data...');
       showAdmin();
       await Promise.all([loadPendingTracks(), loadMetrics()]);
-    });
+    }
 
-    init();
+    document.addEventListener('DOMContentLoaded', async () => {
+      if (hasInitialized) return;
+      hasInitialized = true;
+      await boot();
+    });
   </script>
-  <script src="assets/js/radio-mini-player.js"></script>
 </body>
 </html>
