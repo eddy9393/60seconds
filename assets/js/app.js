@@ -490,26 +490,6 @@
     }
 
     const insertedLikeId = insertResponse.data?.id || null;
-
-    if (insertedLikeId && safeArtistUserId && safeArtistUserId !== safeLikerUserId) {
-      try {
-        const senderName = String(likerDisplayName || '').trim() || await getArtistDisplayNameByUserId(safeLikerUserId, 'Someone');
-        const body = `${senderName} heeft jouw tune geliked`;
-        await supabaseClient.rpc('create_user_notification', {
-          p_user_id: safeArtistUserId,
-          p_type: 'tune_liked',
-          p_title: 'New like',
-          p_body: body,
-          p_reward_seconds: 0,
-          p_related_track_id: safeTrackId,
-          p_related_user_id: safeLikerUserId,
-          p_event_key: `track_like:${insertedLikeId}`
-        });
-      } catch (notificationErr) {
-        console.error('toggleTrackLikeInSupabase notification error:', notificationErr);
-      }
-    }
-
     return { liked: true, changed: true, likeId: insertedLikeId, error: null };
   }
 

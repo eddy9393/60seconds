@@ -45,7 +45,10 @@ const state = {
   currentProfileData: null,
   currentTrackData: null,
   notifications: [],
-  deletingIds: new Set()
+  deletingIds: new Set(),
+  profilesByUserId: new Map(),
+  tracksById: new Map(),
+  realtimeChannel: null
 };
 
 function setHidden(element, hidden) {
@@ -212,6 +215,116 @@ function getNotificationEmoji(type) {
   }
 }
 
+
+function escapeAttribute(value) {
+  return escapeHtml(value).replace(/`/g, '&#96;');
+}
+
+function getNotificationGroupIds(item) {
+  const ids = Array.isArray(item?._groupIds) ? item._groupIds.filter(Boolean) : [];
+  return ids.length ? ids : [item?.id].filter(Boolean);
+}
+
+function getNotificationDeleteValue(item) {
+  return getNotificationGroupIds(item).join(',');
+}
+
+function dedupeNotifications(items) {
+  const map = new Map();
+  (Array.isArray(items) ? items : []).forEach((item) => {
+    if (!item) return;
+    const isLike = String(item.type || '').trim() === 'tune_liked';
+    const key = isLike
+      ? `tune_liked:${String(item.related_track_id || '')}:${String(item.related_user_id || '')}`
+      : `id:${String(item.id || '')}`;
+    const existing = map.get(key);
+    if (!existing) {
+      map.set(key, { ...item, _groupIds: [item.id].filter(Boolean) });
+      return;
+    }
+
+    const existingTime = new Date(existing.created_at || 0).getTime() || 0;
+    const nextTime = new Date(item.created_at || 0).getTime() || 0;
+    const unread = existing.is_read === false || item.is_read === false;
+    const mergedIds = [...new Set([...(existing._groupIds || []), item.id].filter(Boolean))];
+    const preferred = nextTime >= existingTime ? { ...existing, ...item } : { ...item, ...existing };
+    map.set(key, { ...preferred, is_read: !unread ? true : false, _groupIds: mergedIds });
+  });
+  return Array.from(map.values()).sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0));
+}
+
+async function enrichNotifications(items) {
+  const notifications = Array.isArray(items) ? items : [];
+  const userIds = [...new Set(notifications.map((item) => String(item.related_user_id || '').trim()).filter(Boolean))];
+  const trackIds = [...new Set(notifications.map((item) => String(item.related_track_id || '').trim()).filter(Boolean))];
+
+  const missingUserIds = userIds.filter((id) => !state.profilesByUserId.has(id));
+  const missingTrackIds = trackIds.filter((id) => !state.tracksById.has(id));
+
+  if (missingUserIds.length) {
+    const { data, error } = await supabaseClient
+      .from('profiles')
+      .select('user_id, artist_name, photo_url')
+      .in('user_id', missingUserIds);
+    if (!error && Array.isArray(data)) {
+      data.forEach((row) => state.profilesByUserId.set(String(row.user_id), row));
+    }
+  }
+
+  if (missingTrackIds.length) {
+    const { data, error } = await supabaseClient
+      .from('tracks')
+      .select('id, title')
+      .in('id', missingTrackIds);
+    if (!error && Array.isArray(data)) {
+      data.forEach((row) => state.tracksById.set(String(row.id), row));
+    }
+  }
+
+  return notifications.map((item) => {
+    const relatedUserId = String(item.related_user_id || '').trim();
+    const relatedTrackId = String(item.related_track_id || '').trim();
+    return {
+      ...item,
+      relatedProfile: relatedUserId ? state.profilesByUserId.get(relatedUserId) || null : null,
+      relatedTrack: relatedTrackId ? state.tracksById.get(relatedTrackId) || null : null
+    };
+  });
+}
+
+function getNotificationAvatarMarkup(item) {
+  if (String(item?.type || '').trim() !== 'tune_liked') {
+    return `<div class="notification-icon" aria-hidden="true">${getNotificationEmoji(item?.type)}</div>`;
+  }
+
+  const profile = item?.relatedProfile || null;
+  const profileName = String(profile?.artist_name || item?.related_user_id || 'A').trim() || 'A';
+  const initial = escapeHtml(profileName.charAt(0).toUpperCase());
+  const profileHref = profile?.user_id ? `artist.html?user_id=${encodeURIComponent(profile.user_id)}` : '#';
+
+  if (profile?.photo_url) {
+    return `<a class="notification-avatar-link" href="${escapeAttribute(profileHref)}" aria-label="Open artist profile of ${escapeAttribute(profileName)}"><img class="notification-avatar" src="${escapeAttribute(profile.photo_url)}" alt="${escapeAttribute(profileName)}" /></a>`;
+  }
+
+  return `<a class="notification-avatar-link" href="${escapeAttribute(profileHref)}" aria-label="Open artist profile of ${escapeAttribute(profileName)}"><span class="notification-avatar-fallback">${initial}</span></a>`;
+}
+
+function getNotificationTitle(item) {
+  if (String(item?.type || '').trim() === 'tune_liked') return 'Your Tune got a new like';
+  return String(item?.title || 'Notification');
+}
+
+function getNotificationBodyMarkup(item) {
+  if (String(item?.type || '').trim() === 'tune_liked') {
+    const trackTitle = String(item?.relatedTrack?.title || 'Your tune').trim() || 'Your tune';
+    const profile = item?.relatedProfile || null;
+    const displayName = String(profile?.artist_name || item?.related_user_id || 'Someone').trim() || 'Someone';
+    const profileHref = profile?.user_id ? `artist.html?user_id=${encodeURIComponent(profile.user_id)}` : '#';
+    return `<span class="notification-track-name">${escapeHtml(trackTitle)}</span> just got some love from <a class="notification-user-link" href="${escapeAttribute(profileHref)}">${escapeHtml(displayName)}</a>`;
+  }
+  return escapeHtml(item?.body || '');
+}
+
 function renderNotifications(items) {
   const host = getNotificationListHost();
   if (!host) return;
@@ -235,15 +348,15 @@ function renderNotifications(items) {
 
     return `
       <article class="notification-card${item.is_read ? '' : ' unread'}" data-notification-id="${escapeHtml(item.id || '')}">
-        <button class="notification-delete-btn" type="button" aria-label="Delete notification" data-delete-id="${escapeHtml(item.id || '')}">×</button>
+        <button class="notification-delete-btn" type="button" aria-label="Delete notification" data-delete-id="${escapeAttribute(getNotificationDeleteValue(item))}">×</button>
         <div class="notification-swipe-hint" aria-hidden="true">Delete</div>
-        <div class="notification-icon" aria-hidden="true">${getNotificationEmoji(item.type)}</div>
+        ${getNotificationAvatarMarkup(item)}
         <div class="notification-content">
           <div class="notification-topline">
-            <h2 class="notification-title">${escapeHtml(item.title || 'Notification')}</h2>
+            <h2 class="notification-title">${escapeHtml(getNotificationTitle(item))}</h2>
             <time class="notification-time" datetime="${escapeHtml(item.created_at || '')}">${escapeHtml(formatNotificationDate(item.created_at))}</time>
           </div>
-          <p class="notification-body">${escapeHtml(item.body || '')}</p>
+          <p class="notification-body">${getNotificationBodyMarkup(item)}</p>
           ${rewardMarkup}
         </div>
       </article>
@@ -259,15 +372,18 @@ function isTouchViewport() {
 }
 
 async function deleteNotification(notificationId) {
-  if (!notificationId || state.deletingIds.has(notificationId)) return;
+  const notificationIds = String(notificationId || '').split(',').map((value) => value.trim()).filter(Boolean);
+  const deleteKey = notificationIds.join(',');
+  if (!notificationIds.length || state.deletingIds.has(deleteKey)) return;
   const user = await getCurrentUserSafe();
   if (!user) {
     window.location.href = 'login.html';
     return;
   }
 
-  state.deletingIds.add(notificationId);
-  const card = document.querySelector(`.notification-card[data-notification-id="${CSS.escape(notificationId)}"]`);
+  state.deletingIds.add(deleteKey);
+  const primaryId = notificationIds[0];
+  const card = document.querySelector(`.notification-card[data-notification-id="${CSS.escape(primaryId)}"]`);
   if (card) card.classList.add('is-deleting');
 
   try {
@@ -279,7 +395,7 @@ async function deleteNotification(notificationId) {
 
     if (error) throw error;
 
-    state.notifications = state.notifications.filter((item) => item.id !== notificationId);
+    state.notifications = state.notifications.filter((item) => !getNotificationGroupIds(item).some((id) => notificationIds.includes(id)));
     renderNotifications(state.notifications);
     await syncUnreadNotificationsFlagForUser(user.id);
   } catch (err) {
@@ -287,7 +403,7 @@ async function deleteNotification(notificationId) {
     if (card) card.classList.remove('is-deleting', 'swipe-delete-ready');
     await syncUnreadNotificationsFlagForUser(user.id);
   } finally {
-    state.deletingIds.delete(notificationId);
+    state.deletingIds.delete(deleteKey);
   }
 }
 
@@ -366,14 +482,18 @@ async function fetchNotifications(userId) {
     .limit(100);
 
   if (error) throw error;
-  state.notifications = Array.isArray(data) ? data : [];
+  const deduped = dedupeNotifications(Array.isArray(data) ? data : []);
+  state.notifications = await enrichNotifications(deduped);
   return state.notifications;
 }
 
 async function acknowledgeNotifications(notifications, userId) {
   if (!userId) return false;
   const unreadIds = Array.isArray(notifications)
-    ? notifications.filter((item) => item && item.is_read === false).map((item) => item.id).filter(Boolean)
+    ? notifications
+        .filter((item) => item && item.is_read === false)
+        .flatMap((item) => getNotificationGroupIds(item))
+        .filter(Boolean)
     : [];
 
   try {
@@ -386,7 +506,7 @@ async function acknowledgeNotifications(notifications, userId) {
 
       if (error) throw error;
 
-      state.notifications = state.notifications.map((item) => unreadIds.includes(item.id) ? { ...item, is_read: true } : item);
+      state.notifications = state.notifications.map((item) => getNotificationGroupIds(item).some((id) => unreadIds.includes(id)) ? { ...item, is_read: true } : item);
       renderNotifications(state.notifications);
     }
 
@@ -396,6 +516,49 @@ async function acknowledgeNotifications(notifications, userId) {
     console.error('acknowledgeNotifications error:', err);
     await syncUnreadNotificationsFlagForUser(userId);
     return false;
+  }
+}
+
+
+async function refreshNotificationsView(userId, { acknowledge = false } = {}) {
+  const notifications = await fetchNotifications(userId);
+  renderNotifications(notifications);
+  if (acknowledge) {
+    const acked = await acknowledgeNotifications(notifications, userId);
+    if (!acked) await syncUnreadNotificationsFlagForUser(userId);
+  } else {
+    await syncUnreadNotificationsFlagForUser(userId);
+  }
+}
+
+function startNotificationsRealtime(userId) {
+  if (!userId || !supabaseClient) return;
+  if (state.realtimeChannel) {
+    supabaseClient.removeChannel(state.realtimeChannel);
+    state.realtimeChannel = null;
+  }
+
+  state.realtimeChannel = supabaseClient
+    .channel(`notifications-page:${userId}`)
+    .on('postgres_changes', {
+      event: '*',
+      schema: 'public',
+      table: 'user_notifications',
+      filter: `user_id=eq.${userId}`
+    }, async () => {
+      try {
+        await refreshNotificationsView(userId, { acknowledge: false });
+      } catch (err) {
+        console.error('notifications realtime refresh error:', err);
+      }
+    })
+    .subscribe();
+}
+
+function stopNotificationsRealtime() {
+  if (state.realtimeChannel && supabaseClient) {
+    supabaseClient.removeChannel(state.realtimeChannel);
+    state.realtimeChannel = null;
   }
 }
 
@@ -458,3 +621,5 @@ initPage().catch((err) => {
   if (els.page.emptyTitle) els.page.emptyTitle.textContent = 'Could not load notifications';
   if (els.page.emptyText) els.page.emptyText.textContent = 'Please refresh the page and try again.';
 });
+
+window.addEventListener('beforeunload', stopNotificationsRealtime);
