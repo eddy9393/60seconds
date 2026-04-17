@@ -1,4 +1,6 @@
 (function () {
+  if (window.__SSFM_MINI_PLAYER_BOOTED) return;
+  window.__SSFM_MINI_PLAYER_BOOTED = true;
   const pageName = (window.location.pathname.split('/').pop() || 'index.html').toLowerCase();
   if (pageName === 'index.html' || pageName === '') return;
   if (!window.supabase) return;

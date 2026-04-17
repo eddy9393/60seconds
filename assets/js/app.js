@@ -259,6 +259,21 @@
     return window.matchMedia('(max-width: 768px)').matches;
   }
 
+  function ensureMiniPlayerScript() {
+    const pageName = (window.location.pathname.split('/').pop() || 'index.html').toLowerCase();
+    if (pageName === 'index.html' || pageName === '') return;
+    if (window.__SSFM_MINI_PLAYER_BOOTED) return;
+    const existing = Array.from(document.scripts || []).find((script) => {
+      const src = String(script.getAttribute('src') || '');
+      return src.endsWith('assets/js/radio-mini-player.js') || src.endsWith('/assets/js/radio-mini-player.js');
+    });
+    if (existing) return;
+    const script = document.createElement('script');
+    script.src = 'assets/js/radio-mini-player.js';
+    script.defer = true;
+    document.body.appendChild(script);
+  }
+
   function handleStandardHeaderAvatarAction(els, profileHref, options = {}) {
     const menuEl = els?.header?.accountMenu;
     if (isMobileHeaderMenuMode() && menuEl) {
@@ -413,6 +428,8 @@
     });
   }
 
+
+  ensureMiniPlayerScript();
 
   window.SSFMApp = Object.assign(window.SSFMApp || {}, {
     config,
