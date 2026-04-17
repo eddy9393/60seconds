@@ -94,19 +94,13 @@ function formatNumber(value) {
   return Number(value || 0).toLocaleString();
 }
 
-async function fetchTotalEarnedSeconds(userId) {
+async function fetchTotalEarnedSeconds(userId, profileCoins = 0) {
   if (!userId) return 0;
-  const { data, error } = await supabaseClient
-    .from("user_notifications")
-    .select("reward_seconds")
-    .eq("user_id", userId);
 
-  if (error) {
-    console.error("statistics total earned error:", error);
-    return 0;
-  }
-
-  return (Array.isArray(data) ? data : []).reduce((sum, row) => sum + (Number(row?.reward_seconds) || 0), 0);
+  // In the current schema there is no full all-time earnings ledger beyond the
+  // live coin balance. Notification rewards only cover part of the earning flow,
+  // so the reliable all-time value is the current coin total.
+  return Math.max(0, Number(profileCoins) || 0);
 }
 
 function getDisplayRoles(profile) {
@@ -380,7 +374,19 @@ async function loadTrendData(userId, track) {
   state.firstAvailableByMetric.visits = firstVisitDate;
   state.firstAvailableByMetric.likes = firstLikeDate;
 
-  const totalLikes = likeRows.length || Array.from(finalLikeMap.values()).reduce((sum, value) => sum + Number(value || 0), 0);
+  let totalLikes = likeRows.length || Array.from(finalLikeMap.values()).reduce((sum, value) => sum + Number(value || 0), 0);
+  if (trackId) {
+    const { count, error: countError } = await supabaseClient
+      .from("track_likes")
+      .select("id", { count: "exact", head: true })
+      .eq("track_id", trackId);
+    if (!countError && Number.isFinite(Number(count))) {
+      totalLikes = Number(count || 0);
+    } else if (countError) {
+      console.error("statistics total likes count error:", countError);
+    }
+  }
+
   const totalVisits = Array.from(visitMap.values()).reduce((sum, value) => sum + Number(value || 0), 0);
 
   setText(els.page.totalLikes, formatNumber(totalLikes));
@@ -431,7 +437,7 @@ async function loadPage() {
   const [{ count: ownApprovedCount }, { count: stationApprovedCount }, totalEarnedSeconds] = await Promise.all([
     supabaseClient.from("tracks").select("*", { count: "exact", head: true }).eq("user_id", user.id).eq("status", "approved"),
     supabaseClient.from("tracks").select("*", { count: "exact", head: true }).eq("status", "approved"),
-    fetchTotalEarnedSeconds(user.id)
+    fetchTotalEarnedSeconds(user.id, profile?.coins || 0)
   ]);
 
   const estimatedPlays = ownApprovedCount && stationApprovedCount

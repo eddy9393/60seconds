@@ -213,13 +213,9 @@
     state.unexpectedPauseTimer = null;
   }
 
-  function scheduleUnexpectedResume(delay = 180) {
-    clearUnexpectedPauseTimer();
-    if (!state.audio || !state.desiredPlayback || !state.audio.src) return;
-    state.unexpectedPauseTimer = setTimeout(() => {
-      if (!state.audio || !state.desiredPlayback || !state.audio.src || !state.audio.paused) return;
-      state.audio.play().then(() => persistProgress(true)).catch(() => {});
-    }, delay);
+  function scheduleUnexpectedResume() {
+    // Deliberately disabled on secondary pages to avoid aggressive auto-resume
+    // loops that can jump across tracks. Playback stays user-controlled here.
   }
 
   function setVolumeOpen(open) {
@@ -572,9 +568,7 @@
   window.__ssfmPauseMiniRadio = pauseMiniRadio;
 
   function scheduleResumeBurst() {
-    [0, 180, 600, 1400].forEach((delay) => {
-      setTimeout(() => { attemptResumeFromSession(false).catch(() => {}); }, delay);
-    });
+    // Single-page mini player stays stable without repeated resume bursts.
   }
 
   async function boot() {
@@ -610,14 +604,8 @@
     updatePlayPauseLabel();
     updateLikeLabel();
 
-    window.addEventListener('focus', () => { scheduleResumeBurst(); });
-    window.addEventListener('pageshow', () => { scheduleResumeBurst(); });
     document.addEventListener('visibilitychange', () => {
-      if (document.hidden) {
-        persistProgress(true);
-        return;
-      }
-      scheduleResumeBurst();
+      if (document.hidden) persistProgress(true);
     });
 
     if (!state.unlockEventsBound) {
@@ -636,7 +624,6 @@
     window.addEventListener('pagehide', () => { clearUnexpectedPauseTimer(); persistProgress(true); });
     window.addEventListener('storage', (event) => {
       if (event.key !== SESSION_KEY && event.key !== VOLUME_KEY) return;
-      scheduleResumeBurst();
     });
   }
 
