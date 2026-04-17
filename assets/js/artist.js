@@ -751,6 +751,19 @@ function resetArtistPageShell() {
   setText(els.page.submissionTitle, "Tune");
 }
 
+async function recordProfileVisitIfNeeded(userId) {
+  if (!userId || !state.currentUserId || state.currentUserId === userId) return;
+
+  const { error } = await supabaseClient.rpc("increment_profile_daily_visits", {
+    p_profile_user_id: userId,
+    p_amount: 1
+  });
+
+  if (error) {
+    console.error("increment_profile_daily_visits error:", error);
+  }
+}
+
 async function loadViewedArtistPage(userId) {
   state.viewedArtistUserId = userId;
 
@@ -783,6 +796,7 @@ async function loadViewedArtistPage(userId) {
   const hasOwnTrack = Boolean(state.currentTrackData);
 
   renderArtistProfile(profile, isOwnPage, hasOwnTrack);
+  await recordProfileVisitIfNeeded(userId);
 
   let approvedTracks;
   try {

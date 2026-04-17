@@ -1114,8 +1114,15 @@ function incrementPlayCount(track) {
     .from("tracks")
     .update({ play_count: (track.play_count || 0) + 1 })
     .eq("id", track.id)
-    .then(() => {
+    .then(async () => {
       track.play_count = (track.play_count || 0) + 1;
+      const { error: analyticsError } = await supabaseClient.rpc("increment_track_daily_streams", {
+        p_track_id: track.id,
+        p_amount: 1
+      });
+      if (analyticsError) {
+        console.error("increment_track_daily_streams error:", analyticsError);
+      }
     })
     .catch(err => console.error("incrementPlayCount error:", err));
 }
