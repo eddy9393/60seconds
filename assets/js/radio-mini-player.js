@@ -48,7 +48,8 @@
     trackAdvanceLock: false,
     rewardedTrackId: null,
     isAdvancingTrack: false,
-    currentUserId: null
+    currentUserId: null,
+    volumeCollapseTimer: null
   };
 
   function todayKey() {
@@ -218,10 +219,25 @@
     // loops that can jump across tracks. Playback stays user-controlled here.
   }
 
+  function clearVolumeCollapseTimer() {
+    if (!state.volumeCollapseTimer) return;
+    clearTimeout(state.volumeCollapseTimer);
+    state.volumeCollapseTimer = null;
+  }
+
+  function scheduleVolumeCollapse(delay = 3000) {
+    clearVolumeCollapseTimer();
+    state.volumeCollapseTimer = setTimeout(() => {
+      setVolumeOpen(false);
+    }, delay);
+  }
+
   function setVolumeOpen(open) {
     state.volumeOpen = Boolean(open);
     if (!state.els.wrap) return;
     state.els.wrap.classList.toggle('volume-open', state.volumeOpen);
+    if (state.volumeOpen) scheduleVolumeCollapse(3000);
+    else clearVolumeCollapseTimer();
   }
 
   function applyBodySpacing() {
@@ -494,12 +510,14 @@
 .mini-radio-btn.is-liked .mini-player-icon{color:#141414!important}
 .mini-radio-btn.like-feedback{transform:scale(1.08)}
 .mini-radio-btn.is-disabled{opacity:.45;filter:grayscale(.35);cursor:not-allowed}
-.mini-radio-volume-wrap{display:inline-flex;align-items:center;gap:7px;min-width:78px;flex:0 0 92px;padding:0 8px;height:32px;border-radius:999px;border:1px solid rgba(255,255,255,0.14);background:linear-gradient(180deg, rgba(255,255,255,0.12), rgba(255,255,255,0.04)), linear-gradient(180deg, rgba(10,10,10,0.86), rgba(10,10,10,0.92));box-shadow:inset 0 1px 0 rgba(255,255,255,0.08),0 10px 22px rgba(0,0,0,0.18);margin-left:auto}
-.mini-radio-volume-icon{width:14px;height:14px;display:inline-flex;align-items:center;justify-content:center;line-height:1;color:#d4af37;flex:0 0 auto}.mini-radio-volume-icon .mini-svg-icon{width:14px;height:14px}
-.mini-radio-volume-wrap input[type=range]{width:100%;min-width:0;margin:0;accent-color:#d4af37;background:transparent}
+.mini-radio-volume-wrap{display:inline-flex;align-items:center;gap:7px;min-width:34px;flex:0 0 34px;padding:0 8px;height:32px;border-radius:999px;border:1px solid rgba(255,255,255,0.14);background:linear-gradient(180deg, rgba(255,255,255,0.12), rgba(255,255,255,0.04)), linear-gradient(180deg, rgba(10,10,10,0.86), rgba(10,10,10,0.92));box-shadow:inset 0 1px 0 rgba(255,255,255,0.08),0 10px 22px rgba(0,0,0,0.18);margin-left:auto;overflow:hidden;transition:flex-basis .22s ease,min-width .22s ease,padding .22s ease}
+.mini-radio-player.volume-open .mini-radio-volume-wrap{min-width:78px;flex:0 0 92px;padding-right:8px}
+.mini-radio-volume-icon{width:14px;height:14px;display:inline-flex;align-items:center;justify-content:center;line-height:1;color:#d4af37;flex:0 0 auto;cursor:pointer}.mini-radio-volume-icon .mini-svg-icon{width:14px;height:14px}
+.mini-radio-volume-wrap input[type=range]{width:100%;min-width:0;margin:0;accent-color:#d4af37;background:transparent;opacity:0;pointer-events:none;transition:opacity .18s ease}
+.mini-radio-player.volume-open .mini-radio-volume-wrap input[type=range]{opacity:1;pointer-events:auto}
 .mini-radio-time{font-size:10px;color:#bfbfbf;white-space:nowrap;min-width:60px;text-align:right;flex:0 0 auto}
-@media (max-width:420px){.mini-radio-btn{padding:0 8px;font-size:11px}.mini-radio-btn span:last-child{display:none}.mini-radio-btn#miniRadioLike span:last-child{display:inline}.mini-radio-volume-wrap{min-width:72px;flex-basis:84px;padding:0 7px}.mini-radio-time{min-width:48px;font-size:9px}}
-@media (min-width:901px){.has-mini-radio-player{padding-bottom:0 !important}.mini-radio-player{left:auto;right:24px;bottom:24px;width:min(430px,calc(100vw - 120px));border-radius:22px;border-bottom:1px solid rgba(255,255,255,0.08);padding:14px 16px}.mini-radio-top{gap:4px;margin-bottom:10px}.mini-radio-title{font-size:15px}.mini-radio-artist{font-size:13px}.mini-radio-btn{min-height:40px;padding:0 14px;font-size:14px}.mini-radio-volume-wrap{height:40px;min-width:124px;flex-basis:140px}.mini-radio-time{font-size:12px;min-width:72px}}`;
+@media (max-width:420px){.mini-radio-btn{padding:0 8px;font-size:11px}.mini-radio-btn span:last-child{display:none}.mini-radio-btn#miniRadioLike span:last-child{display:inline}.mini-radio-player.volume-open .mini-radio-volume-wrap{min-width:72px;flex-basis:84px;padding:0 7px}.mini-radio-time{min-width:48px;font-size:9px}}
+@media (min-width:901px){.has-mini-radio-player{padding-bottom:0 !important}.mini-radio-player{left:auto;right:24px;bottom:24px;width:min(430px,calc(100vw - 120px));border-radius:22px;border-bottom:1px solid rgba(255,255,255,0.08);padding:14px 16px}.mini-radio-top{gap:4px;margin-bottom:10px}.mini-radio-title{font-size:15px}.mini-radio-artist{font-size:13px}.mini-radio-btn{min-height:40px;padding:0 14px;font-size:14px}.mini-radio-volume-wrap{height:40px}.mini-radio-player.volume-open .mini-radio-volume-wrap{min-width:124px;flex-basis:140px}.mini-radio-time{font-size:12px;min-width:72px}}`;
     document.head.appendChild(style);
   }
 
@@ -518,6 +536,7 @@
     state.els.time = wrap.querySelector('#miniRadioTime');
     applyBodySpacing();
     applyStoredCurrencySnapshot();
+    setVolumeOpen(false);
     updateLikeLabel();
     state.els.likeBtn.addEventListener('click', () => {
       if (!state.currentUserId || isOwnCurrentTrack()) return;
@@ -545,12 +564,34 @@
       }
       persistProgress(true);
     });
+    state.els.volumeWrap.addEventListener('mouseenter', () => {
+      setVolumeOpen(true);
+    });
+    state.els.volumeWrap.addEventListener('mouseleave', () => {
+      scheduleVolumeCollapse(3000);
+    });
+    state.els.volumeIcon.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      if (!state.volumeOpen) {
+        setVolumeOpen(true);
+        return;
+      }
+      scheduleVolumeCollapse(3000);
+    });
+    state.els.volume.addEventListener('focus', () => {
+      setVolumeOpen(true);
+    });
+    state.els.volume.addEventListener('pointerdown', () => {
+      setVolumeOpen(true);
+    });
     state.els.volume.addEventListener('input', (e) => {
       const value = getSafeVolume(e.target.value);
       if (!state.audio) return;
       state.audio.volume = value;
       state.audio.muted = value === 0;
       persistProgress(true);
+      scheduleVolumeCollapse(3000);
     });
   }
 
@@ -586,6 +627,7 @@
     state.audio.volume = initialVolume;
     state.audio.muted = initialVolume === 0;
     state.els.volume.value = String(initialVolume);
+    setVolumeOpen(false);
     state.desiredPlayback = getDesiredPlayback(session);
     state.shouldPlay = state.desiredPlayback;
 

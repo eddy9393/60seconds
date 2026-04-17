@@ -94,13 +94,9 @@ function formatNumber(value) {
   return Number(value || 0).toLocaleString();
 }
 
-async function fetchTotalEarnedSeconds(userId, profileCoins = 0) {
+async function fetchTotalEarnedSeconds(userId, profile) {
   if (!userId) return 0;
-
-  // In the current schema there is no full all-time earnings ledger beyond the
-  // live coin balance. Notification rewards only cover part of the earning flow,
-  // so the reliable all-time value is the current coin total.
-  return Math.max(0, Number(profileCoins) || 0);
+  return Math.max(0, Number(profile?.lifetime_seconds_earned) || 0);
 }
 
 function getDisplayRoles(profile) {
@@ -374,17 +370,22 @@ async function loadTrendData(userId, track) {
   state.firstAvailableByMetric.visits = firstVisitDate;
   state.firstAvailableByMetric.likes = firstLikeDate;
 
-  let totalLikes = likeRows.length || Array.from(finalLikeMap.values()).reduce((sum, value) => sum + Number(value || 0), 0);
+  let totalLikes = Array.from(finalLikeMap.values()).reduce((sum, value) => sum + Number(value || 0), 0);
   if (trackId) {
-    const { count, error: countError } = await supabaseClient
+    const { data: artistLikeRows, error: artistLikesError } = await supabaseClient
       .from("track_likes")
-      .select("id", { count: "exact", head: true })
-      .eq("track_id", trackId);
-    if (!countError && Number.isFinite(Number(count))) {
-      totalLikes = Number(count || 0);
-    } else if (countError) {
-      console.error("statistics total likes count error:", countError);
+      .select("id, track_id, artist_user_id")
+      .eq("artist_user_id", userId);
+
+    if (artistLikesError) {
+      console.error("statistics total likes artist query error:", artistLikesError);
+    } else if (Array.isArray(artistLikeRows)) {
+      totalLikes = artistLikeRows.filter((row) => !trackId || String(row?.track_id || "") === String(trackId)).length;
     }
+  }
+
+  if (!totalLikes && likeRows.length) {
+    totalLikes = likeRows.length;
   }
 
   const totalVisits = Array.from(visitMap.values()).reduce((sum, value) => sum + Number(value || 0), 0);
@@ -412,7 +413,7 @@ async function loadPage() {
     return;
   }
 
-  const profile = await fetchProfileByUserId(user.id, "artist_name, photo_url, user_id, coins, city, nationality, music_role, music_roles");
+  const profile = await fetchProfileByUserId(user.id, "artist_name, photo_url, user_id, coins, lifetime_seconds_earned, city, nationality, music_role, music_roles");
   const { data: track } = await supabaseClient
     .from("tracks")
     .select("id, user_id, title, status, created_at, play_count")
@@ -437,7 +438,7 @@ async function loadPage() {
   const [{ count: ownApprovedCount }, { count: stationApprovedCount }, totalEarnedSeconds] = await Promise.all([
     supabaseClient.from("tracks").select("*", { count: "exact", head: true }).eq("user_id", user.id).eq("status", "approved"),
     supabaseClient.from("tracks").select("*", { count: "exact", head: true }).eq("status", "approved"),
-    fetchTotalEarnedSeconds(user.id, profile?.coins || 0)
+    fetchTotalEarnedSeconds(user.id, profile)
   ]);
 
   const estimatedPlays = ownApprovedCount && stationApprovedCount
