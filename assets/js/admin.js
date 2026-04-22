@@ -5,19 +5,33 @@
   const statusEl = document.getElementById("status");
   const debugEl = document.getElementById("debug");
   const trackListEl = document.getElementById("trackList");
-  const metricsGridEl = document.getElementById("metricsGrid");
+  const metricListEl = document.getElementById("metricList");
   const lockedBoxEl = document.getElementById("lockedBox");
   const adminAppEl = document.getElementById("adminApp");
   const loadingBoxEl = document.getElementById("loadingBox");
+  const loadingTextEl = document.getElementById("loadingText");
 
   let currentUser = null;
   let isApproving = false;
   let hasInitialized = false;
 
+  function escapeHtml(str) {
+    return String(str ?? "")
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;")
+      .replaceAll("'", "&#039;");
+  }
+
+  function formatNumber(value) {
+    return new Intl.NumberFormat("en-US").format(Number(value || 0));
+  }
+
   function setStatus(msg, isError = false) {
     if (!statusEl) return;
-    statusEl.textContent = msg;
-    statusEl.style.color = isError ? "#ff8a8a" : "#f3f3f3";
+    statusEl.textContent = msg || "";
+    statusEl.style.color = isError ? "var(--danger)" : "var(--muted)";
   }
 
   function setDebug(msg) {
@@ -26,8 +40,8 @@
   }
 
   function showLoading(message = "Loading...") {
+    if (loadingTextEl) loadingTextEl.textContent = message;
     loadingBoxEl.classList.remove("hidden");
-    loadingBoxEl.innerHTML = `<div class="loading-text">${escapeHtml(message)}</div>`;
     lockedBoxEl.classList.add("hidden");
     adminAppEl.classList.add("hidden");
   }
@@ -86,6 +100,100 @@
     return true;
   }
 
+  function normalizeSnapshot(raw) {
+    const snapshot = Array.isArray(raw) ? (raw[0] || {}) : (raw || {});
+    return {
+      uniqueVisitorsToday: snapshot.uniqueVisitorsToday ?? snapshot.unique_visitors_today ?? 0,
+      uniqueVisitors7d: snapshot.uniqueVisitors7d ?? snapshot.unique_visitors_7d ?? 0,
+      uniqueVisitors30d: snapshot.uniqueVisitors30d ?? snapshot.unique_visitors_30d ?? 0,
+      returningVisitors30d: snapshot.returningVisitors30d ?? snapshot.returning_visitors_30d ?? 0,
+      profilesTotal: snapshot.profilesTotal ?? snapshot.total_profiles ?? 0,
+      liveProfiles: snapshot.liveProfiles ?? snapshot.live_artist_profiles ?? 0,
+      pendingTracks: snapshot.pendingTracks ?? snapshot.pending_tracks ?? 0,
+      approvedTracks: snapshot.approvedTracks ?? snapshot.approved_tracks ?? 0,
+      totalPlatformLikes: snapshot.totalPlatformLikes ?? snapshot.total_platform_likes ?? 0,
+      topPageToday: snapshot.topPageToday ?? snapshot.top_page_today ?? "/"
+    };
+  }
+
+  function renderMetrics(rawSnapshot) {
+    if (!metricListEl) return;
+
+    const snapshot = normalizeSnapshot(rawSnapshot);
+    const rows = [
+      ["Unique visitors today", snapshot.uniqueVisitorsToday],
+      ["Unique visitors (7 days)", snapshot.uniqueVisitors7d],
+      ["Unique visitors (30 days)", snapshot.uniqueVisitors30d],
+      ["Returning visitors (30 days)", snapshot.returningVisitors30d],
+      ["Profiles on the platform", snapshot.profilesTotal],
+      ["Live artist profiles", snapshot.liveProfiles],
+      ["Pending tracks", snapshot.pendingTracks],
+      ["Approved tracks", snapshot.approvedTracks],
+      ["Total platform likes", snapshot.totalPlatformLikes],
+      ["Top page today", snapshot.topPageToday || "/"]
+    ];
+
+    metricListEl.innerHTML = rows.map(([label, value]) => `
+      <li class="metric-row">
+        <span class="metric-label">${escapeHtml(label)}</span>
+        <span class="metric-value">${typeof value === "number" ? formatNumber(value) : escapeHtml(String(value))}</span>
+      </li>
+    `).join("");
+  }
+
+  async function loadMetrics() {
+    if (!metricListEl) return;
+    metricListEl.innerHTML = '<li class="empty">Loading admin metrics...</li>';
+
+    const { data, error } = await supabaseClient.rpc("get_admin_traffic_snapshot");
+
+    if (error) {
+      setDebug("metrics error: " + error.message);
+      metricListEl.innerHTML = '<li class="empty">Could not load admin metrics right now.</li>';
+      return;
+    }
+
+    renderMetrics(data);
+  }
+
+  function renderTracks(tracks) {
+    trackListEl.innerHTML = "";
+
+    if (!tracks.length) {
+      trackListEl.innerHTML = '<div class="empty">No pending tracks right now.</div>';
+      setStatus("No pending tunes waiting for approval.");
+      return;
+    }
+
+    setStatus(`${tracks.length} pending tune(s) waiting for approval.`);
+
+    tracks.forEach((track) => {
+      const createdAt = track.created_at ? new Date(track.created_at).toLocaleString() : "Unknown";
+      const article = document.createElement("article");
+      article.className = "track-item";
+      article.innerHTML = `
+        <div class="track-head">
+          <div>
+            <h3 class="track-title">${escapeHtml(track.title || "Untitled")}</h3>
+            <p class="track-meta">Artist: ${escapeHtml(track.artist || "Unknown")}</p>
+            <p class="track-id">ID: ${escapeHtml(track.id || "")} · Submitted: ${escapeHtml(createdAt)}</p>
+          </div>
+          <div class="track-status">pending</div>
+        </div>
+        <audio controls preload="none" src="${escapeHtml(track.file_url || "")}"></audio>
+        <button class="approve-btn" type="button" data-action="approve" data-id="${escapeHtml(track.id || "")}">Approve tune</button>
+      `;
+      trackListEl.appendChild(article);
+    });
+
+    document.querySelectorAll("[data-action='approve']").forEach((button) => {
+      button.addEventListener("click", async () => {
+        if (isApproving) return;
+        await approveTrack(button.getAttribute("data-id"), button);
+      });
+    });
+  }
+
   async function loadPendingTracks() {
     if (!currentUser || !isAdminUser(currentUser)) {
       showLocked();
@@ -93,152 +201,19 @@
     }
 
     setStatus("Loading pending tracks...");
-    setDebug("Fetching pending tunes...");
 
     const { data, error } = await supabaseClient
       .from("tracks")
-      .select("id, title, artist, file_url, status, created_at, user_id")
+      .select("id, title, artist, file_url, status, created_at")
       .eq("status", "pending")
       .order("created_at", { ascending: false });
 
     if (error) {
-      setStatus("Error loading tracks: " + error.message, true);
+      setStatus("Could not load pending tracks: " + error.message, true);
       return;
     }
 
     renderTracks(data || []);
-  }
-
-  async function loadMetrics() {
-    if (!metricsGridEl) return;
-
-    metricsGridEl.innerHTML = `<div class="admin-empty">Loading metrics...</div>`;
-
-    const [
-      pendingRes,
-      approvedRes,
-      artistsRes,
-      likesRes,
-      playsRes,
-      coinsRes
-    ] = await Promise.all([
-      supabaseClient.from("tracks").select("id", { count: "exact", head: true }).eq("status", "pending"),
-      supabaseClient.from("tracks").select("id", { count: "exact", head: true }).eq("status", "approved"),
-      supabaseClient.from("profiles").select("id", { count: "exact", head: true }).not("artist_name", "is", null).neq("artist_name", ""),
-      supabaseClient.from("track_likes").select("id", { count: "exact", head: true }),
-      supabaseClient.from("tracks").select("play_count").eq("status", "approved"),
-      supabaseClient.from("profiles").select("coins")
-    ]);
-
-    const loadErrors = [pendingRes, approvedRes, artistsRes, likesRes, playsRes, coinsRes]
-      .map((r) => r.error)
-      .filter(Boolean);
-
-    if (loadErrors.length) {
-      metricsGridEl.innerHTML = `<div class="admin-empty">Could not load all metrics right now.</div>`;
-      setDebug(loadErrors[0].message || "Metric load failed");
-      return;
-    }
-
-    const totalPlays = (playsRes.data || []).reduce((sum, row) => sum + Number(row.play_count || 0), 0);
-    const secondsInCirculation = (coinsRes.data || []).reduce((sum, row) => sum + Number(row.coins || 0), 0);
-
-    const metrics = [
-      {
-        label: "Pending approvals",
-        value: pendingRes.count || 0,
-        footnote: "Tunes waiting for your decision right now."
-      },
-      {
-        label: "Approved tunes",
-        value: approvedRes.count || 0,
-        footnote: "Tracks currently approved for the station."
-      },
-      {
-        label: "Live artist profiles",
-        value: artistsRes.count || 0,
-        footnote: "Profiles with an active artist name on the platform."
-      },
-      {
-        label: "Total platform likes",
-        value: likesRes.count || 0,
-        footnote: "All likes recorded across every tune."
-      },
-      {
-        label: "Total radio plays",
-        value: totalPlays,
-        footnote: "Combined approved tune play count."
-      },
-      {
-        label: "Seconds in circulation",
-        value: secondsInCirculation,
-        footnote: "Current balance summed across all artist profiles."
-      }
-    ];
-
-    metricsGridEl.innerHTML = metrics.map((metric) => `
-      <article class="admin-metric-card">
-        <div class="admin-metric-label">${escapeHtml(metric.label)}</div>
-        <div class="admin-metric-value">${formatNumber(metric.value)}</div>
-        <div class="admin-metric-footnote">${escapeHtml(metric.footnote)}</div>
-      </article>
-    `).join("");
-  }
-
-  function renderTracks(tracks) {
-    trackListEl.innerHTML = "";
-
-    if (!tracks.length) {
-      trackListEl.innerHTML = `<div class="admin-empty">No pending tracks right now.</div>`;
-      setStatus("No pending tracks found.");
-      return;
-    }
-
-    setStatus(`${tracks.length} pending tune(s) found.`);
-
-    tracks.forEach((tune) => {
-      const createdAt = tune.created_at ? new Date(`1970-01-01T${String(tune.created_at).replace(' ', '')}`).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : "Unknown";
-      const safeTitle = escapeHtml(tune.title || "Untitled");
-      const safeArtist = escapeHtml(tune.artist || "Unknown");
-      const safeTrackId = escapeHtml(tune.id || "");
-      const safeUserId = escapeHtml(tune.user_id || "");
-      const safeAudioUrl = escapeHtml(tune.file_url || "");
-
-      const div = document.createElement("article");
-      div.className = "admin-track-card";
-      div.innerHTML = `
-        <div>
-          <h3 class="admin-track-title">${safeTitle}</h3>
-          <p><strong>Artist:</strong> ${safeArtist}</p>
-          <div class="admin-track-meta">
-            <span class="admin-pill">Pending</span>
-            <span class="admin-pill">Submitted ${escapeHtml(createdAt)}</span>
-          </div>
-          <div class="admin-track-aux">
-            <span class="admin-pill">Track ID ${safeTrackId}</span>
-            <span class="admin-pill">User ${safeUserId}</span>
-          </div>
-        </div>
-        <div class="admin-track-actions">
-          <audio controls preload="none" src="${safeAudioUrl}"></audio>
-          <button class="admin-approve-btn" type="button" data-id="${safeTrackId}" data-action="approve">Approve tune</button>
-        </div>
-      `;
-      trackListEl.appendChild(div);
-    });
-
-    wireButtons();
-  }
-
-  function wireButtons() {
-    const buttons = document.querySelectorAll("button[data-action='approve']");
-    buttons.forEach((button) => {
-      button.addEventListener("click", async () => {
-        if (isApproving) return;
-        const id = button.getAttribute("data-id");
-        await approveTrack(id, button);
-      });
-    });
   }
 
   async function approveTrack(trackId, buttonEl) {
@@ -253,7 +228,6 @@
     }
 
     setStatus("Approving tune...");
-    setDebug("Updating tune status to approved for " + trackId);
 
     const { error } = await supabaseClient
       .from("tracks")
@@ -270,22 +244,9 @@
       return;
     }
 
-    setStatus("Tune approved ✅");
+    setStatus("Tune approved.");
     await Promise.all([loadPendingTracks(), loadMetrics()]);
     isApproving = false;
-  }
-
-  function formatNumber(value) {
-    return new Intl.NumberFormat("en-US").format(Number(value || 0));
-  }
-
-  function escapeHtml(str) {
-    return String(str ?? "")
-      .replaceAll("&", "&amp;")
-      .replaceAll("<", "&lt;")
-      .replaceAll(">", "&gt;")
-      .replaceAll('"', "&quot;")
-      .replaceAll("'", "&#039;");
   }
 
   async function init() {
@@ -295,6 +256,8 @@
       hasInitialized = true;
       return;
     }
+    showLoading("Loading admin data...");
+    showAdmin();
     await Promise.all([loadPendingTracks(), loadMetrics()]);
     hasInitialized = true;
   }
@@ -310,5 +273,5 @@
     await Promise.all([loadPendingTracks(), loadMetrics()]);
   });
 
-  init();
+  document.addEventListener("DOMContentLoaded", init);
 })();
