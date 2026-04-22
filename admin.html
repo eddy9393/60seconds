@@ -15,33 +15,39 @@
       <div class="hero-kicker">60 Seconds admin</div>
       <img class="hero-logo" src="logo.png" alt="60 Seconds logo" />
       <h1 class="hero-title">Admin</h1>
+      
+      
     </header>
-
-    <div id="loadingBox" class="loading">
-      <h2>Loading</h2>
-      <p id="loadingText">Checking admin access...</p>
-    </div>
 
     <div id="lockedBox" class="locked hidden">
       <h2>Access denied</h2>
       <p>Please log in with the admin account.</p>
     </div>
 
+    <div id="loadingBox" class="loading">
+      <h2>Loading</h2>
+      <p id="loadingText">Checking admin access...</p>
+    </div>
+
     <main id="adminApp" class="hidden">
       <section class="section section-priority">
         <div class="section-heading">
-          <div class="section-overline">Priority</div>
-          <h2 class="section-title">Approve pending tunes</h2>
+          <div>
+            <div class="section-overline">Priority</div>
+            <h2 class="section-title">Approve pending tunes</h2>
+          </div>
         </div>
-        <p id="status" class="status-line"></p>
-        <p id="debug" class="debug-line"></p>
+        <div id="status"></div>
+        <div id="debug"></div>
         <div id="trackList"></div>
       </section>
 
       <section class="section section-metrics">
         <div class="section-heading">
-          <div class="section-overline">Overview</div>
-          <h2 class="section-title">Traffic & platform overview</h2>
+          <div>
+            <div class="section-overline">Overview</div>
+            <h2 class="section-title">Traffic & platform overview</h2>
+          </div>
         </div>
         <ul id="metricList" class="metric-list"></ul>
       </section>
@@ -51,6 +57,6 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="assets/js/config.js"></script>
   <script src="assets/js/app.js"></script>
-  <script src="assets/js/admin.js"></script>
+    <script src="assets/js/admin.js"></script>
 </body>
 </html>
