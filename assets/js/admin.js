@@ -1,94 +1,87 @@
 (function () {
-  const ADMIN_EMAIL = "kroonstadt.earvin@gmail.com";
+  const ADMIN_EMAIL = 'kroonstadt.earvin@gmail.com';
   const supabaseClient = window.SSFMApp.getSupabaseClient();
 
-  const statusEl = document.getElementById("status");
-  const debugEl = document.getElementById("debug");
-  const trackListEl = document.getElementById("trackList");
-  const metricListEl = document.getElementById("metricList");
-  const lockedBoxEl = document.getElementById("lockedBox");
-  const adminAppEl = document.getElementById("adminApp");
-  const loadingBoxEl = document.getElementById("loadingBox");
-  const loadingTextEl = document.getElementById("loadingText");
+  const loadingBoxEl = document.getElementById('loadingBox');
+  const loadingTextEl = document.getElementById('loadingText');
+  const lockedBoxEl = document.getElementById('lockedBox');
+  const adminAppEl = document.getElementById('adminApp');
+  const statusEl = document.getElementById('status');
+  const debugEl = document.getElementById('debug');
+  const trackListEl = document.getElementById('trackList');
+  const metricListEl = document.getElementById('metricList');
 
   let currentUser = null;
-  let isApproving = false;
   let hasInitialized = false;
+  let isApproving = false;
 
-  function escapeHtml(str) {
-    return String(str ?? "")
-      .replaceAll("&", "&amp;")
-      .replaceAll("<", "&lt;")
-      .replaceAll(">", "&gt;")
-      .replaceAll('"', "&quot;")
-      .replaceAll("'", "&#039;");
+  function escapeHtml(value) {
+    if (window.SSFMApp && typeof window.SSFMApp.escapeHtml === 'function') {
+      return window.SSFMApp.escapeHtml(value);
+    }
+    return String(value ?? '')
+      .replaceAll('&', '&amp;')
+      .replaceAll('<', '&lt;')
+      .replaceAll('>', '&gt;')
+      .replaceAll('"', '&quot;')
+      .replaceAll("'", '&#039;');
   }
 
-  function formatNumber(value) {
-    return new Intl.NumberFormat("en-US").format(Number(value || 0));
-  }
-
-  function setStatus(msg, isError = false) {
+  function setStatus(message, isError = false) {
     if (!statusEl) return;
-    statusEl.textContent = msg || "";
-    statusEl.style.color = isError ? "var(--danger)" : "var(--muted)";
+    statusEl.textContent = message || '';
+    statusEl.style.color = isError ? 'var(--danger)' : 'var(--muted)';
   }
 
-  function setDebug(msg) {
+  function setDebug(message) {
     if (!debugEl) return;
-    debugEl.textContent = msg || "";
+    debugEl.textContent = message || '';
   }
 
-  function showLoading(message = "Loading...") {
-    if (loadingTextEl) loadingTextEl.textContent = message;
-    loadingBoxEl.classList.remove("hidden");
-    lockedBoxEl.classList.add("hidden");
-    adminAppEl.classList.add("hidden");
+  function showLoading(message) {
+    if (loadingTextEl) loadingTextEl.textContent = message || 'Loading...';
+    if (loadingBoxEl) loadingBoxEl.classList.remove('hidden');
+    if (lockedBoxEl) lockedBoxEl.classList.add('hidden');
+    if (adminAppEl) adminAppEl.classList.add('hidden');
   }
 
   function showLocked() {
-    loadingBoxEl.classList.add("hidden");
-    lockedBoxEl.classList.remove("hidden");
-    adminAppEl.classList.add("hidden");
+    if (loadingBoxEl) loadingBoxEl.classList.add('hidden');
+    if (lockedBoxEl) lockedBoxEl.classList.remove('hidden');
+    if (adminAppEl) adminAppEl.classList.add('hidden');
   }
 
   function showAdmin() {
-    loadingBoxEl.classList.add("hidden");
-    lockedBoxEl.classList.add("hidden");
-    adminAppEl.classList.remove("hidden");
+    if (loadingBoxEl) loadingBoxEl.classList.add('hidden');
+    if (lockedBoxEl) lockedBoxEl.classList.add('hidden');
+    if (adminAppEl) adminAppEl.classList.remove('hidden');
   }
 
   function isAdminUser(user) {
     return Boolean(user && user.email && user.email.toLowerCase() === ADMIN_EMAIL.toLowerCase());
   }
 
-  async function getFastSessionUser() {
+  async function getSessionUser() {
     const { data, error } = await supabaseClient.auth.getSession();
     if (error) {
-      setDebug("getSession error: " + error.message);
+      setDebug('getSession error: ' + error.message);
       return null;
     }
     return data?.session?.user || null;
   }
 
-  async function validateUserFallback() {
+  async function validateUser() {
     const { data, error } = await supabaseClient.auth.getUser();
     if (error) {
-      setDebug("getUser error: " + error.message);
+      setDebug('getUser error: ' + error.message);
       return null;
     }
     return data?.user || null;
   }
 
   async function checkAdminAccess() {
-    setDebug("Checking logged-in admin...");
-    let user = await getFastSessionUser();
-
-    if (!user) {
-      setDebug("No fast session found, checking with getUser...");
-      user = await validateUserFallback();
-    }
-
+    let user = await getSessionUser();
+    if (!user) user = await validateUser();
     currentUser = user;
 
     if (!user || !isAdminUser(user)) {
@@ -100,178 +93,139 @@
     return true;
   }
 
-  function normalizeSnapshot(raw) {
-    const snapshot = Array.isArray(raw) ? (raw[0] || {}) : (raw || {});
-    return {
-      uniqueVisitorsToday: snapshot.uniqueVisitorsToday ?? snapshot.unique_visitors_today ?? 0,
-      uniqueVisitors7d: snapshot.uniqueVisitors7d ?? snapshot.unique_visitors_7d ?? 0,
-      uniqueVisitors30d: snapshot.uniqueVisitors30d ?? snapshot.unique_visitors_30d ?? 0,
-      returningVisitors30d: snapshot.returningVisitors30d ?? snapshot.returning_visitors_30d ?? 0,
-      profilesTotal: snapshot.profilesTotal ?? snapshot.total_profiles ?? 0,
-      liveProfiles: snapshot.liveProfiles ?? snapshot.live_artist_profiles ?? 0,
-      pendingTracks: snapshot.pendingTracks ?? snapshot.pending_tracks ?? 0,
-      approvedTracks: snapshot.approvedTracks ?? snapshot.approved_tracks ?? 0,
-      totalPlatformLikes: snapshot.totalPlatformLikes ?? snapshot.total_platform_likes ?? 0,
-      topPageToday: snapshot.topPageToday ?? snapshot.top_page_today ?? "/"
-    };
-  }
-
-  function renderMetrics(rawSnapshot) {
-    if (!metricListEl) return;
-
-    const snapshot = normalizeSnapshot(rawSnapshot);
-    const rows = [
-      ["Unique visitors today", snapshot.uniqueVisitorsToday],
-      ["Unique visitors (7 days)", snapshot.uniqueVisitors7d],
-      ["Unique visitors (30 days)", snapshot.uniqueVisitors30d],
-      ["Returning visitors (30 days)", snapshot.returningVisitors30d],
-      ["Profiles on the platform", snapshot.profilesTotal],
-      ["Live artist profiles", snapshot.liveProfiles],
-      ["Pending tracks", snapshot.pendingTracks],
-      ["Approved tracks", snapshot.approvedTracks],
-      ["Total platform likes", snapshot.totalPlatformLikes],
-      ["Top page today", snapshot.topPageToday || "/"]
-    ];
-
-    metricListEl.innerHTML = rows.map(([label, value]) => `
-      <li class="metric-row">
-        <span class="metric-label">${escapeHtml(label)}</span>
-        <span class="metric-value">${typeof value === "number" ? formatNumber(value) : escapeHtml(String(value))}</span>
-      </li>
-    `).join("");
-  }
-
-  async function loadMetrics() {
-    if (!metricListEl) return;
-    metricListEl.innerHTML = '<li class="empty">Loading admin metrics...</li>';
-
-    const { data, error } = await supabaseClient.rpc("get_admin_traffic_snapshot");
-
-    if (error) {
-      setDebug("metrics error: " + error.message);
-      metricListEl.innerHTML = '<li class="empty">Could not load admin metrics right now.</li>';
-      return;
-    }
-
-    renderMetrics(data);
-  }
-
-  function renderTracks(tracks) {
-    trackListEl.innerHTML = "";
+  function renderPendingTracks(tracks) {
+    if (!trackListEl) return;
+    trackListEl.innerHTML = '';
 
     if (!tracks.length) {
       trackListEl.innerHTML = '<div class="empty">No pending tracks right now.</div>';
-      setStatus("No pending tunes waiting for approval.");
+      setStatus('No pending tunes waiting for approval.');
+      setDebug('');
       return;
     }
 
     setStatus(`${tracks.length} pending tune(s) waiting for approval.`);
+    setDebug('');
 
     tracks.forEach((track) => {
-      const createdAt = track.created_at ? new Date(track.created_at).toLocaleString() : "Unknown";
-      const article = document.createElement("article");
-      article.className = "track-item";
+      const createdAt = track.created_at ? new Date(track.created_at).toLocaleString() : 'Unknown';
+      const article = document.createElement('article');
+      article.className = 'track-item';
       article.innerHTML = `
         <div class="track-head">
           <div>
-            <h3 class="track-title">${escapeHtml(track.title || "Untitled")}</h3>
-            <p class="track-meta">Artist: ${escapeHtml(track.artist || "Unknown")}</p>
-            <p class="track-id">ID: ${escapeHtml(track.id || "")} · Submitted: ${escapeHtml(createdAt)}</p>
+            <h3 class="track-title">${escapeHtml(track.title || 'Untitled')}</h3>
+            <p class="track-meta">Artist: ${escapeHtml(track.artist || 'Unknown')}</p>
+            <p class="track-id">ID: ${escapeHtml(track.id)} · Submitted: ${escapeHtml(createdAt)}</p>
           </div>
           <div class="track-status">pending</div>
         </div>
-        <audio controls preload="none" src="${escapeHtml(track.file_url || "")}"></audio>
-        <button class="approve-btn" type="button" data-action="approve" data-id="${escapeHtml(track.id || "")}">Approve tune</button>
+        <audio controls preload="none" src="${escapeHtml(track.file_url || '')}"></audio>
+        <button class="approve-btn" data-action="approve" data-id="${escapeHtml(track.id)}">Approve tune</button>
       `;
       trackListEl.appendChild(article);
     });
 
-    document.querySelectorAll("[data-action='approve']").forEach((button) => {
-      button.addEventListener("click", async () => {
+    document.querySelectorAll('[data-action="approve"]').forEach((button) => {
+      button.addEventListener('click', async () => {
         if (isApproving) return;
-        await approveTrack(button.getAttribute("data-id"), button);
+        await approveTrack(button.getAttribute('data-id'), button);
       });
     });
   }
 
   async function loadPendingTracks() {
-    if (!currentUser || !isAdminUser(currentUser)) {
-      showLocked();
-      return;
-    }
-
-    setStatus("Loading pending tracks...");
-
+    setDebug('Fetching pending tunes...');
     const { data, error } = await supabaseClient
-      .from("tracks")
-      .select("id, title, artist, file_url, status, created_at")
-      .eq("status", "pending")
-      .order("created_at", { ascending: false });
+      .from('tracks')
+      .select('id, title, artist, file_url, created_at, status')
+      .eq('status', 'pending')
+      .order('created_at', { ascending: false });
 
     if (error) {
-      setStatus("Could not load pending tracks: " + error.message, true);
+      setStatus('Could not load pending tracks: ' + error.message, true);
       return;
     }
 
-    renderTracks(data || []);
+    renderPendingTracks(data || []);
+  }
+
+  function renderMetrics(snapshot) {
+    if (!metricListEl) return;
+
+    const rows = [
+      { label: 'Unique visitors today', value: snapshot.uniqueVisitorsToday ?? 0 },
+      { label: 'Unique visitors (7 days)', value: snapshot.uniqueVisitors7d ?? 0 },
+      { label: 'Unique visitors (30 days)', value: snapshot.uniqueVisitors30d ?? 0 },
+      { label: 'Returning visitors (30 days)', value: snapshot.returningVisitors30d ?? 0 },
+      { label: 'Profiles on the platform', value: snapshot.profilesTotal ?? 0 },
+      { label: 'Live artist profiles', value: snapshot.liveProfiles ?? 0 },
+      { label: 'Pending tracks', value: snapshot.pendingTracks ?? 0 },
+      { label: 'Approved tracks', value: snapshot.approvedTracks ?? 0 },
+      { label: 'Total platform likes', value: snapshot.totalPlatformLikes ?? 0 },
+      { label: 'Top page today', value: snapshot.topPageToday || '—' }
+    ];
+
+    metricListEl.innerHTML = rows.map((row) => `
+      <li class="metric-row">
+        <span class="metric-label">${escapeHtml(row.label)}</span>
+        <span class="metric-value">${escapeHtml(String(row.value))}</span>
+      </li>
+    `).join('');
+  }
+
+  async function loadMetrics() {
+    if (!metricListEl) return;
+    metricListEl.innerHTML = '<li class="empty">Loading metrics...</li>';
+
+    const { data, error } = await supabaseClient.rpc('get_admin_traffic_snapshot');
+    if (error) {
+      setDebug('metrics error: ' + error.message);
+      metricListEl.innerHTML = '<li class="empty">Could not load admin metrics right now.</li>';
+      return;
+    }
+
+    const snapshot = Array.isArray(data) ? (data[0] || {}) : (data || {});
+    renderMetrics(snapshot);
   }
 
   async function approveTrack(trackId, buttonEl) {
     if (!trackId) return;
-
     isApproving = true;
-    const originalText = buttonEl ? buttonEl.textContent : "Approve tune";
-
-    if (buttonEl) {
-      buttonEl.disabled = true;
-      buttonEl.textContent = "Approving...";
-    }
-
-    setStatus("Approving tune...");
+    const originalLabel = buttonEl.textContent;
+    buttonEl.disabled = true;
+    buttonEl.textContent = 'Approving...';
 
     const { error } = await supabaseClient
-      .from("tracks")
-      .update({ status: "approved" })
-      .eq("id", trackId);
+      .from('tracks')
+      .update({ status: 'approved' })
+      .eq('id', trackId);
 
     if (error) {
-      setStatus("Approve failed: " + error.message, true);
-      if (buttonEl) {
-        buttonEl.disabled = false;
-        buttonEl.textContent = originalText;
-      }
+      setStatus('Approve failed: ' + error.message, true);
+      buttonEl.disabled = false;
+      buttonEl.textContent = originalLabel;
       isApproving = false;
       return;
     }
 
-    setStatus("Tune approved.");
+    setStatus('Tune approved.');
     await Promise.all([loadPendingTracks(), loadMetrics()]);
     isApproving = false;
   }
 
-  async function init() {
-    showLoading("Checking admin access...");
-    const hasAccess = await checkAdminAccess();
-    if (!hasAccess) {
-      hasInitialized = true;
-      return;
-    }
-    showLoading("Loading admin data...");
+  async function boot() {
+    showLoading('Checking admin access...');
+    const ok = await checkAdminAccess();
+    if (!ok) return;
+    showLoading('Loading admin data...');
     showAdmin();
     await Promise.all([loadPendingTracks(), loadMetrics()]);
-    hasInitialized = true;
   }
 
-  supabaseClient.auth.onAuthStateChange(async (_event, session) => {
-    currentUser = session?.user || null;
-    if (!hasInitialized) return;
-    if (!currentUser || !isAdminUser(currentUser)) {
-      showLocked();
-      return;
-    }
-    showAdmin();
-    await Promise.all([loadPendingTracks(), loadMetrics()]);
+  document.addEventListener('DOMContentLoaded', async () => {
+    if (hasInitialized) return;
+    hasInitialized = true;
+    await boot();
   });
-
-  document.addEventListener("DOMContentLoaded", init);
 })();
