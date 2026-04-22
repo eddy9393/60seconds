@@ -17,38 +17,7 @@ body {
   gap: 28px;
 }
 
-.store-hero {
-  display: grid;
-  grid-template-columns: minmax(0, 1.45fr) minmax(280px, 360px);
-  gap: 24px;
-  align-items: stretch;
-}
-
-.store-kicker,
-.store-section-kicker {
-  color: rgba(247, 230, 172, 0.82);
-  text-transform: uppercase;
-  letter-spacing: 0.22em;
-  font-size: 12px;
-  font-weight: 700;
-}
-
-.store-title {
-  margin: 10px 0 12px;
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: clamp(34px, 4.1vw, 58px);
-  line-height: 0.98;
-  letter-spacing: -0.04em;
-}
-
-.store-subtitle,
-.store-section-copy {
-  margin: 0;
-  color: rgba(244, 241, 232, 0.72);
-  font-size: 16px;
-  line-height: 1.7;
-}
-
+.store-hero-card,
 .store-balance-card,
 .store-card,
 .empty-card {
@@ -63,12 +32,55 @@ body {
   backdrop-filter: blur(10px);
 }
 
+.store-hero-card {
+  padding: 30px;
+  display: grid;
+  gap: 14px;
+}
+
+.store-kicker,
+.store-section-kicker {
+  color: rgba(247, 230, 172, 0.82);
+  text-transform: uppercase;
+  letter-spacing: 0.22em;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.store-title {
+  margin: 2px 0 2px;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: clamp(34px, 4.1vw, 58px);
+  line-height: 0.98;
+  letter-spacing: -0.04em;
+}
+
+.store-subtitle,
+.store-section-copy {
+  margin: 0;
+  color: rgba(244, 241, 232, 0.72);
+  font-size: 16px;
+  line-height: 1.7;
+}
+
+.store-subtitle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
 .store-balance-card {
   padding: 26px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   gap: 14px;
+}
+
+.store-balance-card--inline {
+  margin-top: 8px;
+  max-width: 360px;
 }
 
 .store-balance-label {
@@ -91,6 +103,12 @@ body {
   width: 30px;
   height: 30px;
   object-fit: contain;
+}
+
+.store-inline-coin--copy {
+  width: 18px;
+  height: 18px;
+  transform: translateY(-1px);
 }
 
 .store-inline-coin--large {
@@ -260,7 +278,6 @@ body {
     width: min(100%, calc(100vw - 40px));
   }
 
-  .store-hero,
   .store-grid {
     grid-template-columns: 1fr;
   }
@@ -277,6 +294,7 @@ body {
     padding: 108px 0 104px;
   }
 
+  .store-hero-card,
   .store-balance-card,
   .store-card,
   .empty-card {
@@ -286,6 +304,10 @@ body {
 
   .store-title {
     font-size: 38px;
+  }
+
+  .store-subtitle {
+    gap: 6px;
   }
 
   .store-section-title,
