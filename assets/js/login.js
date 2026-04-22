@@ -7,6 +7,7 @@ const els = {
     emailInput: document.getElementById("email"),
     passwordInput: document.getElementById("password"),
     loginButton: document.getElementById("loginButton"),
+    googleAuthButton: document.getElementById("googleAuthButton"),
     feedback: document.getElementById("feedback"),
     authModeToggle: document.getElementById("authModeToggle"),
     authSecondaryText: document.getElementById("authSecondaryText"),
@@ -54,6 +55,9 @@ function setFeedback(message = "", type = "") {
 
 function setLoadingState(isLoading) {
   els.form.loginButton.disabled = isLoading;
+  if (els.form.googleAuthButton) {
+    els.form.googleAuthButton.disabled = isLoading;
+  }
 
   if (state.authMode === "signup") {
     els.form.loginButton.textContent = isLoading ? "Creating account..." : "Sign Up";
@@ -92,6 +96,62 @@ function renderAuthMode() {
   setText(els.form.authModeToggle, "Sign up");
 }
 
+
+function getOAuthRedirectUrl() {
+  const url = new URL(window.location.href);
+  url.pathname = url.pathname.endsWith('/login.html') ? url.pathname : `${url.pathname.replace(/\/$/, '')}/login.html`;
+  url.search = '?oauth=google';
+  url.hash = '';
+  return url.toString();
+}
+
+async function handleGoogleAuth() {
+  setFeedback('');
+  setLoadingState(true);
+
+  try {
+    const { error } = await supabaseClient.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: getOAuthRedirectUrl(),
+        queryParams: {
+          access_type: 'offline',
+          prompt: 'select_account'
+        }
+      }
+    });
+
+    if (error) {
+      setFeedback(error.message || 'Google login could not be started. Please try again.', 'error');
+      setLoadingState(false);
+    }
+  } catch (err) {
+    console.error('google auth error:', err);
+    setFeedback('Google login could not be started. Please try again.', 'error');
+    setLoadingState(false);
+  }
+}
+
+function applyOAuthFeedbackFromUrl() {
+  const url = new URL(window.location.href);
+  const searchError = url.searchParams.get('error_description') || url.searchParams.get('error');
+  const hash = window.location.hash.startsWith('#') ? window.location.hash.slice(1) : '';
+  const hashParams = new URLSearchParams(hash);
+  const hashError = hashParams.get('error_description') || hashParams.get('error');
+  const errorMessage = searchError || hashError;
+
+  if (!errorMessage) return;
+
+  setFeedback(decodeURIComponent(errorMessage).replace(/\+/g, ' '), 'error');
+
+  url.searchParams.delete('error');
+  url.searchParams.delete('error_description');
+  if (url.searchParams.get('oauth') === 'google') {
+    url.searchParams.delete('oauth');
+  }
+  url.hash = '';
+  window.history.replaceState({}, document.title, `${url.pathname}${url.search}`);
+}
 
 async function getPostLoginDestination(userId) {
   if (!userId) return "index.html";
@@ -219,6 +279,9 @@ async function handleAuthSubmit(event) {
 function bindEvents() {
   els.form.authModeToggle.addEventListener("click", handleAuthModeToggle);
   els.form.loginForm.addEventListener("submit", handleAuthSubmit);
+  if (els.form.googleAuthButton) {
+    els.form.googleAuthButton.addEventListener('click', handleGoogleAuth);
+  }
 
   supabaseClient.auth.onAuthStateChange(() => {
     syncMenuVisibility().catch((err) => console.error(err));
@@ -228,6 +291,7 @@ function bindEvents() {
 async function initPage() {
   scrubSensitiveUrlParams();
   renderAuthMode();
+  applyOAuthFeedbackFromUrl();
   applyStandardMenuState(els.shell, null, null, null);
   bindEvents();
   await redirectIfAlreadyLoggedIn();
