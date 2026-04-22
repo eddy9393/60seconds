@@ -54,8 +54,122 @@
     return String(Math.max(0, Math.floor(Number(value) || 0)));
   }
 
+
+  function ensureCurrencyStoreButton(badgeEl) {
+    if (!badgeEl) return null;
+
+    let buttonEl = badgeEl.querySelector('.currency-badge-add-btn');
+    if (buttonEl) return buttonEl;
+
+    buttonEl = document.createElement('a');
+    buttonEl.className = 'currency-badge-add-btn';
+    buttonEl.href = 'store.html';
+    buttonEl.setAttribute('aria-label', 'Open Seconds store');
+    buttonEl.textContent = '+';
+    badgeEl.appendChild(buttonEl);
+
+    ensureGlobalHeaderEnhancementsStyles();
+    return buttonEl;
+  }
+
+  function ensureHeaderSlogan() {
+    const logoLink = document.querySelector('.header-center .header-logo-link');
+    if (!logoLink) return null;
+
+    let sloganEl = logoLink.querySelector('.site-slogan');
+    if (sloganEl) return sloganEl;
+
+    sloganEl = document.createElement('span');
+    sloganEl.className = 'site-slogan';
+    sloganEl.textContent = 'Let musicians be musicians';
+    logoLink.appendChild(sloganEl);
+
+    ensureGlobalHeaderEnhancementsStyles();
+    return sloganEl;
+  }
+
+  function ensureGlobalHeaderEnhancementsStyles() {
+    if (document.getElementById('ssfm-header-enhancements-styles')) return;
+
+    const style = document.createElement('style');
+    style.id = 'ssfm-header-enhancements-styles';
+    style.textContent = `
+      .header-center .header-logo-link {
+        display: inline-flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+      }
+
+      .header-center .site-slogan {
+        display: block;
+        margin-top: 8px;
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: 11px;
+        line-height: 1.2;
+        letter-spacing: 0.24em;
+        text-transform: uppercase;
+        white-space: nowrap;
+        color: rgba(255, 255, 255, 0.68);
+        pointer-events: none;
+      }
+
+      .currency-badge-add-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 26px;
+        height: 26px;
+        margin-left: 6px;
+        border-radius: 999px;
+        border: 1px solid rgba(247, 230, 172, 0.26);
+        background: rgba(255, 255, 255, 0.06);
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.08), 0 6px 16px rgba(0,0,0,0.18);
+        color: #f7e6ac;
+        text-decoration: none;
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: 18px;
+        font-weight: 700;
+        line-height: 1;
+        flex: 0 0 auto;
+        transition: transform 160ms ease, border-color 160ms ease, background 160ms ease, box-shadow 160ms ease;
+      }
+
+      .currency-badge-add-btn:hover {
+        transform: translateY(-1px);
+        border-color: rgba(247, 230, 172, 0.4);
+        background: rgba(255, 255, 255, 0.1);
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.08), 0 10px 18px rgba(0,0,0,0.22);
+      }
+
+      .currency-badge-add-btn:focus-visible {
+        outline: 2px solid rgba(247, 230, 172, 0.62);
+        outline-offset: 2px;
+      }
+
+      @media (max-width: 768px) {
+        .header-center .site-slogan {
+          display: none !important;
+        }
+
+        .currency-badge-add-btn {
+          width: 22px;
+          height: 22px;
+          margin-left: 4px;
+          font-size: 15px;
+        }
+      }
+    `;
+
+    document.head.appendChild(style);
+  }
+
   function setCurrencyText(valueEl, value, badgeEl) {
-    if (badgeEl) badgeEl.classList.remove('hidden');
+    if (badgeEl) {
+      badgeEl.classList.remove('hidden');
+      ensureCurrencyStoreButton(badgeEl);
+    }
     if (valueEl) valueEl.textContent = normalizeCoins(value);
   }
 
@@ -199,30 +313,6 @@
     const iconPath = hasUnreadNotifications() ? '/icons/notifications.png' : '/icons/nonotifications.png';
     setNavIcon(els?.desktopNav?.notificationsLink, iconPath);
     setNavIcon(els?.mobileNav?.notificationsLink, iconPath);
-  }
-
-
-
-  function ensureHeaderSlogan(doc = document) {
-    const logoLink = doc.querySelector('.header-logo-link');
-    if (!logoLink) return;
-    if (logoLink.parentElement && logoLink.parentElement.querySelector('.header-slogan')) return;
-
-    const slogan = doc.createElement('div');
-    slogan.className = 'header-slogan';
-    slogan.textContent = 'Let musicians be musicians';
-    slogan.style.marginTop = '10px';
-    slogan.style.fontSize = '11px';
-    slogan.style.fontWeight = '500';
-    slogan.style.letterSpacing = '0.22em';
-    slogan.style.textTransform = 'uppercase';
-    slogan.style.opacity = '0.68';
-    slogan.style.textAlign = 'center';
-    slogan.style.whiteSpace = 'nowrap';
-
-    if (logoLink.parentElement) {
-      logoLink.parentElement.appendChild(slogan);
-    }
   }
 
   function buildStandardShellEls(doc = document) {
