@@ -12,24 +12,20 @@
 <body>
   <div class="shell">
     <header class="hero">
-      <div class="hero-kicker">60 Seconds control room</div>
+      <div class="hero-kicker">60 Seconds admin</div>
       <img class="hero-logo" src="logo.png" alt="60 Seconds logo" />
       <h1 class="hero-title">Admin</h1>
-      <p class="hero-subtitle">Approve new tunes first, then keep an eye on the signals that show how the platform is actually moving.</p>
-      <div class="nav-row">
-        <a class="nav-link" href="index.html">Homepage</a>
-        <a class="nav-link" href="join.html">Join page</a>
-      </div>
+      
+      
     </header>
 
     <div id="lockedBox" class="locked hidden">
       <h2>Access denied</h2>
-      <p>You do not have permission to view this admin page.</p>
       <p>Please log in with the admin account.</p>
     </div>
 
     <div id="loadingBox" class="loading">
-      <h2>Loading admin</h2>
+      <h2>Loading</h2>
       <p id="loadingText">Checking admin access...</p>
     </div>
 
@@ -37,10 +33,9 @@
       <section class="section section-priority">
         <div class="section-heading">
           <div>
-            <div class="section-overline">Priority queue</div>
+            <div class="section-overline">Priority</div>
             <h2 class="section-title">Approve pending tunes</h2>
           </div>
-          <p class="section-kicker">This always stays first, so new submissions never get buried under admin stats.</p>
         </div>
         <div id="status"></div>
         <div id="debug"></div>
@@ -50,29 +45,11 @@
       <section class="section section-metrics">
         <div class="section-heading">
           <div>
-            <div class="section-overline">Platform readout</div>
+            <div class="section-overline">Overview</div>
             <h2 class="section-title">Traffic & platform overview</h2>
           </div>
-          <p class="section-kicker">A quieter layout that feels closer to the public site: less dashboard clutter, more hierarchy, and only the metrics that actually help.</p>
         </div>
         <ul id="metricList" class="metric-list"></ul>
-      </section>
-
-      <section class="section section-insights">
-        <div class="section-heading">
-          <div>
-            <div class="section-overline">Next level insight</div>
-            <h2 class="section-title">Useful traffic signals to add next</h2>
-          </div>
-          <p class="section-kicker">Not live yet, but these would be the highest-value additions if you want a deeper picture of traffic quality and conversion.</p>
-        </div>
-        <ul class="insight-list">
-          <li class="insight-row"><span class="metric-label">Signup conversion<span class="metric-help">How many visitors become users.</span></span><span class="metric-value">→</span></li>
-          <li class="insight-row"><span class="metric-label">Profile completion rate<span class="metric-help">How many signups finish their artist profile.</span></span><span class="metric-value">→</span></li>
-          <li class="insight-row"><span class="metric-label">Tune submission conversion<span class="metric-help">How many completed artists actually submit a tune.</span></span><span class="metric-value">→</span></li>
-          <li class="insight-row"><span class="metric-label">Top entry pages<span class="metric-help">Shows which pages pull people into the site first.</span></span><span class="metric-value">→</span></li>
-          <li class="insight-row"><span class="metric-label">Interaction depth<span class="metric-help">Who only visits versus who clicks, likes, and explores profiles.</span></span><span class="metric-value">→</span></li>
-        </ul>
       </section>
     </main>
   </div>
