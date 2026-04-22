@@ -201,74 +201,6 @@
     setNavIcon(els?.mobileNav?.notificationsLink, iconPath);
   }
 
-
-
-  function ensureHeaderSlogan(doc = document) {
-    const logoLink = doc.querySelector('.header-logo-link');
-    const headerCenter = doc.querySelector('.header-center');
-    if (!logoLink || !headerCenter) return;
-
-    headerCenter.style.flexDirection = 'column';
-    headerCenter.style.justifyContent = 'center';
-    headerCenter.style.alignItems = 'center';
-    headerCenter.style.gap = '8px';
-
-    let slogan = headerCenter.querySelector('.header-slogan');
-    if (!slogan) {
-      slogan = doc.createElement('div');
-      slogan.className = 'header-slogan';
-      slogan.textContent = 'Let musicians be musicians';
-      slogan.style.fontSize = '11px';
-      slogan.style.fontWeight = '500';
-      slogan.style.letterSpacing = '0.24em';
-      slogan.style.textTransform = 'uppercase';
-      slogan.style.opacity = '0.68';
-      slogan.style.textAlign = 'center';
-      slogan.style.whiteSpace = 'nowrap';
-      headerCenter.appendChild(slogan);
-    }
-
-    const syncHeaderSloganVisibility = () => {
-      const isMobile = window.matchMedia('(max-width: 768px)').matches;
-      slogan.style.display = isMobile ? 'none' : 'block';
-      headerCenter.style.gap = isMobile ? '0' : '8px';
-    };
-
-    syncHeaderSloganVisibility();
-    window.addEventListener('resize', syncHeaderSloganVisibility, { passive: true });
-  }
-
-  function ensureCurrencyStoreButton(doc = document) {
-    const badge = doc.getElementById('currencyBadge');
-    if (!badge || badge.querySelector('.currency-store-btn')) return;
-
-    const button = doc.createElement('a');
-    button.className = 'currency-store-btn';
-    button.href = 'store.html';
-    button.setAttribute('aria-label', 'Open store');
-    button.textContent = '+';
-
-    button.style.display = 'inline-flex';
-    button.style.alignItems = 'center';
-    button.style.justifyContent = 'center';
-    button.style.width = '24px';
-    button.style.height = '24px';
-    button.style.borderRadius = '999px';
-    button.style.marginLeft = '2px';
-    button.style.flex = '0 0 auto';
-    button.style.border = '1px solid rgba(247,230,172,0.14)';
-    button.style.background = 'rgba(247,230,172,0.08)';
-    button.style.color = '#f7e6ac';
-    button.style.fontFamily = "'Space Grotesk', sans-serif";
-    button.style.fontWeight = '700';
-    button.style.fontSize = '15px';
-    button.style.lineHeight = '1';
-    button.style.textDecoration = 'none';
-    button.style.boxShadow = 'inset 0 1px 0 rgba(255,255,255,0.06)';
-
-    badge.appendChild(button);
-  }
-
   function buildStandardShellEls(doc = document) {
     return {
       header: {
@@ -699,8 +631,117 @@
     }
   }
 
-  ensureHeaderSlogan();
-  ensureCurrencyStoreButton();
+
+
+  function removeMobileSloganArtifacts(doc = document) {
+    if (!window.matchMedia('(max-width: 768px)').matches) return;
+    const selectors = [
+      '.header-slogan',
+      '.site-slogan',
+      '.logo-slogan',
+      '.bottom-slogan',
+      '.mobile-slogan',
+      '.footer-slogan'
+    ];
+    selectors.forEach((selector) => {
+      doc.querySelectorAll(selector).forEach((node) => node.remove());
+    });
+  }
+
+  function ensureHeaderSlogan(doc = document) {
+    const logoLink = doc.querySelector('.header-logo-link');
+    if (!logoLink) return;
+
+    const isMobile = window.matchMedia('(max-width: 768px)').matches;
+    const existing = logoLink.querySelector('.header-slogan');
+
+    if (isMobile) {
+      if (existing) existing.remove();
+      logoLink.style.display = 'inline-flex';
+      logoLink.style.flexDirection = 'row';
+      logoLink.style.alignItems = 'center';
+      logoLink.style.justifyContent = 'center';
+      logoLink.style.gap = '0';
+      removeMobileSloganArtifacts(doc);
+      return;
+    }
+
+    logoLink.style.display = 'inline-flex';
+    logoLink.style.flexDirection = 'column';
+    logoLink.style.alignItems = 'center';
+    logoLink.style.justifyContent = 'center';
+    logoLink.style.gap = '8px';
+    logoLink.style.textDecoration = 'none';
+
+    let slogan = existing;
+    if (!slogan) {
+      slogan = doc.createElement('div');
+      slogan.className = 'header-slogan';
+      slogan.textContent = 'Let musicians be musicians';
+      logoLink.appendChild(slogan);
+    }
+
+    Object.assign(slogan.style, {
+      fontSize: '11px',
+      fontWeight: '500',
+      letterSpacing: '0.24em',
+      textTransform: 'uppercase',
+      opacity: '0.68',
+      textAlign: 'center',
+      whiteSpace: 'nowrap',
+      lineHeight: '1',
+      marginTop: '2px'
+    });
+  }
+
+  function ensureStoreShortcut(doc = document) {
+    const badge = doc.getElementById('currencyBadge');
+    if (!badge) return;
+    if (doc.getElementById('currencyStoreShortcut')) return;
+
+    badge.style.display = 'inline-flex';
+    badge.style.alignItems = 'center';
+    badge.style.gap = '10px';
+
+    const shortcut = doc.createElement('a');
+    shortcut.id = 'currencyStoreShortcut';
+    shortcut.href = 'store.html';
+    shortcut.setAttribute('aria-label', 'Open Seconds store');
+    shortcut.textContent = '+';
+
+    Object.assign(shortcut.style, {
+      display: 'inline-flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      width: '24px',
+      height: '24px',
+      borderRadius: '999px',
+      textDecoration: 'none',
+      fontSize: '15px',
+      fontWeight: '700',
+      lineHeight: '1',
+      color: 'rgba(241, 225, 170, 0.96)',
+      border: '1px solid rgba(241, 225, 170, 0.22)',
+      background: 'rgba(255, 255, 255, 0.04)',
+      flex: '0 0 auto'
+    });
+
+    badge.appendChild(shortcut);
+  }
+
+  function initializeHeaderEnhancements(doc = document) {
+    ensureHeaderSlogan(doc);
+    ensureStoreShortcut(doc);
+    removeMobileSloganArtifacts(doc);
+  }
+
+  initializeHeaderEnhancements(document);
+
+  if (!window.__ssfmHeaderEnhancementsResizeBound) {
+    window.addEventListener('resize', () => initializeHeaderEnhancements(document), { passive: true });
+    window.__ssfmHeaderEnhancementsResizeBound = true;
+  }
+
   ensureMiniPlayerScript();
   trackSiteVisit().catch((error) => console.warn('trackSiteVisit unexpected error:', error));
 
@@ -739,6 +780,9 @@
     hasUnreadNotifications,
     setUnreadNotificationsFlag,
     syncUnreadNotificationsFlagForUser,
-    updateNotificationIcons
+    updateNotificationIcons,
+    ensureHeaderSlogan,
+    ensureStoreShortcut,
+    initializeHeaderEnhancements
   });
 })();
