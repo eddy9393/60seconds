@@ -54,8 +54,79 @@
     return String(Math.max(0, Math.floor(Number(value) || 0)));
   }
 
+  function ensureCurrencyStoreButton(badgeEl) {
+    if (!badgeEl) return null;
+
+    let buttonEl = badgeEl.querySelector('.currency-badge-add-btn');
+    if (buttonEl) return buttonEl;
+
+    buttonEl = document.createElement('a');
+    buttonEl.className = 'currency-badge-add-btn';
+    buttonEl.href = 'store.html';
+    buttonEl.setAttribute('aria-label', 'Open Seconds store');
+    buttonEl.textContent = '+';
+    badgeEl.appendChild(buttonEl);
+
+    ensureCurrencyStoreButtonStyles();
+    return buttonEl;
+  }
+
+  function ensureCurrencyStoreButtonStyles() {
+    if (document.getElementById('ssfm-currency-store-button-styles')) return;
+
+    const style = document.createElement('style');
+    style.id = 'ssfm-currency-store-button-styles';
+    style.textContent = `
+      .currency-badge-add-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 28px;
+        height: 28px;
+        margin-left: 2px;
+        border-radius: 999px;
+        border: 1px solid rgba(247, 230, 172, 0.22);
+        background: linear-gradient(180deg, rgba(255,255,255,0.12), rgba(255,255,255,0.04));
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.08), 0 6px 16px rgba(0,0,0,0.18);
+        color: #f7e6ac;
+        text-decoration: none;
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: 18px;
+        font-weight: 700;
+        line-height: 1;
+        flex: 0 0 auto;
+        transition: transform 160ms ease, border-color 160ms ease, background 160ms ease, box-shadow 160ms ease;
+      }
+
+      .currency-badge-add-btn:hover {
+        transform: translateY(-1px);
+        border-color: rgba(247, 230, 172, 0.38);
+        background: linear-gradient(180deg, rgba(255,255,255,0.18), rgba(255,255,255,0.06));
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.1), 0 10px 18px rgba(0,0,0,0.22);
+      }
+
+      .currency-badge-add-btn:focus-visible {
+        outline: 2px solid rgba(247, 230, 172, 0.62);
+        outline-offset: 2px;
+      }
+
+      @media (max-width: 768px) {
+        .currency-badge-add-btn {
+          width: 24px;
+          height: 24px;
+          font-size: 16px;
+        }
+      }
+    `;
+
+    document.head.appendChild(style);
+  }
+
   function setCurrencyText(valueEl, value, badgeEl) {
-    if (badgeEl) badgeEl.classList.remove('hidden');
+    if (badgeEl) {
+      badgeEl.classList.remove('hidden');
+      ensureCurrencyStoreButton(badgeEl);
+    }
     if (valueEl) valueEl.textContent = normalizeCoins(value);
   }
 
