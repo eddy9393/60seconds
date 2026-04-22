@@ -392,3 +392,27 @@ audio::-webkit-media-controls-panel {
     justify-self: start;
   }
 }
+
+
+.hero { padding: 20px 8px 24px; margin-bottom: 26px; }
+.hero-kicker { margin-bottom: 8px; }
+.hero-logo { width: 124px; margin-bottom: 10px; }
+.hero-subtitle, .nav-row, .section-kicker, .metric-help { display: none !important; }
+.locked, .loading { border-radius: 22px; }
+#adminApp { gap: 28px; }
+.section { padding-bottom: 0; }
+.section::after { margin-top: 22px; }
+.section-heading { margin-bottom: 8px; }
+.section-title { font-size: clamp(24px, 3.4vw, 38px); }
+.metric-row { padding: 14px 0; grid-template-columns: 1fr; gap: 6px; align-items: start; }
+.metric-value { text-align: left; font-size: clamp(28px, 4vw, 40px); color: var(--gold); }
+.track-item { padding: 16px 0 20px; }
+.track-head { gap: 10px; }
+.track-title { font-size: 24px; }
+.track-meta, .track-id { color: var(--muted); }
+.track-status { justify-self: start; margin-top: 6px; }
+@media (min-width: 900px) {
+  .shell { width: min(100%, 980px); }
+  .metric-row { grid-template-columns: minmax(0,1fr) auto; gap: 18px; align-items: end; }
+  .metric-value { text-align: right; }
+}
