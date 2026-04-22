@@ -54,79 +54,8 @@
     return String(Math.max(0, Math.floor(Number(value) || 0)));
   }
 
-  function ensureCurrencyStoreButton(badgeEl) {
-    if (!badgeEl) return null;
-
-    let buttonEl = badgeEl.querySelector('.currency-badge-add-btn');
-    if (buttonEl) return buttonEl;
-
-    buttonEl = document.createElement('a');
-    buttonEl.className = 'currency-badge-add-btn';
-    buttonEl.href = 'store.html';
-    buttonEl.setAttribute('aria-label', 'Open Seconds store');
-    buttonEl.textContent = '+';
-    badgeEl.appendChild(buttonEl);
-
-    ensureCurrencyStoreButtonStyles();
-    return buttonEl;
-  }
-
-  function ensureCurrencyStoreButtonStyles() {
-    if (document.getElementById('ssfm-currency-store-button-styles')) return;
-
-    const style = document.createElement('style');
-    style.id = 'ssfm-currency-store-button-styles';
-    style.textContent = `
-      .currency-badge-add-btn {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        width: 28px;
-        height: 28px;
-        margin-left: 2px;
-        border-radius: 999px;
-        border: 1px solid rgba(247, 230, 172, 0.22);
-        background: linear-gradient(180deg, rgba(255,255,255,0.12), rgba(255,255,255,0.04));
-        box-shadow: inset 0 1px 0 rgba(255,255,255,0.08), 0 6px 16px rgba(0,0,0,0.18);
-        color: #f7e6ac;
-        text-decoration: none;
-        font-family: 'Space Grotesk', sans-serif;
-        font-size: 18px;
-        font-weight: 700;
-        line-height: 1;
-        flex: 0 0 auto;
-        transition: transform 160ms ease, border-color 160ms ease, background 160ms ease, box-shadow 160ms ease;
-      }
-
-      .currency-badge-add-btn:hover {
-        transform: translateY(-1px);
-        border-color: rgba(247, 230, 172, 0.38);
-        background: linear-gradient(180deg, rgba(255,255,255,0.18), rgba(255,255,255,0.06));
-        box-shadow: inset 0 1px 0 rgba(255,255,255,0.1), 0 10px 18px rgba(0,0,0,0.22);
-      }
-
-      .currency-badge-add-btn:focus-visible {
-        outline: 2px solid rgba(247, 230, 172, 0.62);
-        outline-offset: 2px;
-      }
-
-      @media (max-width: 768px) {
-        .currency-badge-add-btn {
-          width: 24px;
-          height: 24px;
-          font-size: 16px;
-        }
-      }
-    `;
-
-    document.head.appendChild(style);
-  }
-
   function setCurrencyText(valueEl, value, badgeEl) {
-    if (badgeEl) {
-      badgeEl.classList.remove('hidden');
-      ensureCurrencyStoreButton(badgeEl);
-    }
+    if (badgeEl) badgeEl.classList.remove('hidden');
     if (valueEl) valueEl.textContent = normalizeCoins(value);
   }
 
@@ -306,6 +235,133 @@
     };
   }
 
+
+  function injectGlobalBrandEnhancements(doc = document) {
+    if (!doc || doc.getElementById('ssfm-global-brand-enhancements')) return;
+
+    const style = doc.createElement('style');
+    style.id = 'ssfm-global-brand-enhancements';
+    style.textContent = `
+      .header-center {
+        flex-direction: column;
+        justify-content: center;
+        gap: 2px;
+      }
+
+      .header-logo-link {
+        line-height: 0;
+      }
+
+      .ssfm-brand-slogan {
+        margin: 0;
+        color: rgba(244, 231, 184, 0.68);
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: 10px;
+        font-weight: 500;
+        letter-spacing: 0.18em;
+        line-height: 1.1;
+        text-transform: uppercase;
+        white-space: nowrap;
+        text-align: center;
+        text-shadow: 0 2px 10px rgba(0, 0, 0, 0.28);
+      }
+
+      .metal-btn,
+      .gold-btn,
+      .ghost-btn,
+      .submit-link,
+      .start-btn,
+      .auth-button,
+      .desktop-nav-button,
+      .header-icon-btn,
+      .player-btn,
+      .volume-button,
+      .notification-delete-btn,
+      .approve-btn,
+      .add-role-btn,
+      .role-remove-btn,
+      .clip-play-btn,
+      .tune-action-btn,
+      .back-link {
+        background: rgba(18, 18, 18, 0.92) !important;
+        background-image: none !important;
+        border-color: rgba(212, 175, 55, 0.22) !important;
+        color: #f7f1dc !important;
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.04), 0 10px 24px rgba(0,0,0,0.22) !important;
+      }
+
+      .metal-btn:hover,
+      .gold-btn:hover,
+      .ghost-btn:hover,
+      .submit-link:hover,
+      .start-btn:hover,
+      .auth-button:hover,
+      .desktop-nav-button:hover,
+      .header-icon-btn:hover,
+      .player-btn:hover,
+      .volume-button:hover,
+      .notification-delete-btn:hover,
+      .approve-btn:hover,
+      .add-role-btn:hover,
+      .role-remove-btn:hover,
+      .clip-play-btn:hover,
+      .tune-action-btn:hover,
+      .back-link:hover {
+        background: rgba(24, 24, 24, 0.96) !important;
+        background-image: none !important;
+        border-color: rgba(212, 175, 55, 0.4) !important;
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.06), 0 16px 30px rgba(0,0,0,0.26) !important;
+      }
+
+      .gold-btn,
+      .approve-btn,
+      .start-btn,
+      .desktop-nav-button.active,
+      .liked,
+      .tune-like-btn.is-liked {
+        background: rgba(212, 175, 55, 0.18) !important;
+        background-image: none !important;
+        border-color: rgba(212, 175, 55, 0.42) !important;
+        color: #fff4cc !important;
+      }
+
+      .gold-btn:hover,
+      .approve-btn:hover,
+      .start-btn:hover,
+      .desktop-nav-button.active:hover,
+      .liked:hover,
+      .tune-like-btn.is-liked:hover {
+        background: rgba(212, 175, 55, 0.24) !important;
+      }
+
+      .start-btn-wrap::before,
+      .add-role-btn::before,
+      .desktop-nav-button.active::after {
+        display: none !important;
+      }
+
+      @media (max-width: 768px) {
+        .ssfm-brand-slogan {
+          font-size: 9px;
+          letter-spacing: 0.14em;
+        }
+      }
+    `;
+    doc.head.appendChild(style);
+  }
+
+  function ensureHeaderSlogan(doc = document) {
+    if (!doc) return;
+    doc.querySelectorAll('.header-center').forEach((headerCenter) => {
+      if (!headerCenter.querySelector('.header-logo-link')) return;
+      if (headerCenter.querySelector('.ssfm-brand-slogan')) return;
+
+      const slogan = doc.createElement('p');
+      slogan.className = 'ssfm-brand-slogan';
+      slogan.textContent = 'Let musicians be musicians';
+      headerCenter.appendChild(slogan);
+    });
+  }
   function closeStandardHeaderPanels(els, extraCloser) {
     setHidden(els?.header?.accountMenu, true);
     if (typeof extraCloser === 'function') extraCloser();
@@ -702,6 +758,8 @@
     }
   }
 
+  injectGlobalBrandEnhancements();
+  ensureHeaderSlogan();
   ensureMiniPlayerScript();
   trackSiteVisit().catch((error) => console.warn('trackSiteVisit unexpected error:', error));
 
