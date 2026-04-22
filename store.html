@@ -1,80 +1,138 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Store — 60 Seconds FM</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Manrope:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/notifications.css">
   <link rel="stylesheet" href="assets/css/store.css">
 </head>
 <body>
-  <div class="app-shell">
-    <header class="site-header">
-      <div class="header-row">
-        <div class="header-left"></div>
+  <aside class="desktop-side-nav" aria-label="Desktop navigation">
+    <div class="desktop-side-nav-panel">
+      <nav class="desktop-side-links">
+        <a class="desktop-nav-link" href="index.html" aria-label="Radio">
+          <span class="desktop-nav-icon" aria-hidden="true"><span class="nav-icon-mask" style="--icon-url: url('/icons/radio.png');"></span></span>
+          <span class="desktop-nav-label">Radio</span>
+        </a>
+        <a id="desktopProfileLink" class="desktop-nav-link hidden" href="join.html" aria-label="Profile">
+          <span class="desktop-nav-icon" aria-hidden="true"><span class="nav-icon-mask" style="--icon-url: url('/icons/profile.png');"></span></span>
+          <span class="desktop-nav-label">Profile</span>
+        </a>
+        <a id="desktopNotificationsLink" class="desktop-nav-link hidden" href="notifications.html" aria-label="Notifications">
+          <span class="desktop-nav-icon" aria-hidden="true"><span class="nav-icon-mask" style="--icon-url: url('/icons/nonotifications.png');"></span></span>
+          <span class="desktop-nav-label">Notifications</span>
+        </a>
+        <a id="desktopLikedLink" class="desktop-nav-link hidden" href="liked.html" aria-label="Liked">
+          <span class="desktop-nav-icon" aria-hidden="true"><span class="nav-icon-mask" style="--icon-url: url('/icons/like.png');"></span></span>
+          <span class="desktop-nav-label">Liked</span>
+        </a>
+        <a id="desktopStatsLink" class="desktop-nav-link hidden" href="statistics.html" aria-label="Statistics">
+          <span class="desktop-nav-icon" aria-hidden="true"><span class="nav-icon-mask" style="--icon-url: url('/icons/stats.png');"></span></span>
+          <span class="desktop-nav-label">Statistics</span>
+        </a>
+        <a id="desktopTrackLink" class="desktop-nav-link hidden" href="submit-track.html" aria-label="Tune">
+          <span class="desktop-nav-icon" aria-hidden="true"><span class="nav-icon-mask" style="--icon-url: url('/icons/track.png');"></span></span>
+          <span class="desktop-nav-label">Tune</span>
+        </a>
+      </nav>
 
-        <div class="header-center">
-          <a href="index.html" class="header-logo-link" aria-label="60 Seconds FM home">
-            <img src="logo.png" alt="60 Seconds FM" class="header-logo" />
-          </a>
+      <div class="desktop-side-bottom">
+        <a id="desktopLoginLink" class="desktop-nav-link" href="login.html" aria-label="Login">
+          <span class="desktop-nav-icon" aria-hidden="true"><span class="nav-icon-mask" style="--icon-url: url('/icons/login.png');"></span></span>
+          <span class="desktop-nav-label">Login</span>
+        </a>
+
+        <button id="desktopLogoutBtn" class="desktop-nav-button hidden" type="button" aria-label="Logout">
+          <span class="desktop-nav-icon" aria-hidden="true"><span class="nav-icon-mask" style="--icon-url: url('/icons/logout.png');"></span></span>
+          <span class="desktop-nav-label">Logout</span>
+        </button>
+      </div>
+    </div>
+  </aside>
+
+  <div class="mobile-bottom-nav-wrap">
+    <nav class="mobile-bottom-nav" aria-label="Mobile navigation">
+      <a class="mobile-nav-link" href="index.html" aria-label="Radio">
+        <span class="mobile-nav-icon" aria-hidden="true"><span class="nav-icon-mask" style="--icon-url: url('/icons/radio.png');"></span></span>
+        <span class="mobile-nav-label">Radio</span>
+      </a>
+      <a id="mobileProfileLink" class="mobile-nav-link hidden" href="join.html" aria-label="Profile">
+        <span class="mobile-nav-icon" aria-hidden="true"><span class="nav-icon-mask" style="--icon-url: url('/icons/profile.png');"></span></span>
+        <span class="mobile-nav-label">Profile</span>
+      </a>
+      <a id="mobileNotificationsLink" class="mobile-nav-link hidden" href="notifications.html" aria-label="Notifications">
+        <span class="mobile-nav-icon" aria-hidden="true"><span class="nav-icon-mask" style="--icon-url: url('/icons/nonotifications.png');"></span></span>
+        <span class="mobile-nav-label">Notifications</span>
+      </a>
+      <a id="mobileLikedLink" class="mobile-nav-link hidden" href="liked.html" aria-label="Liked">
+        <span class="mobile-nav-icon" aria-hidden="true"><span class="nav-icon-mask" style="--icon-url: url('/icons/like.png');"></span></span>
+        <span class="mobile-nav-label">Liked</span>
+      </a>
+      <a id="mobileTrackLink" class="mobile-nav-link hidden" href="submit-track.html" aria-label="Tune">
+        <span class="mobile-nav-icon" aria-hidden="true"><span class="nav-icon-mask" style="--icon-url: url('/icons/track.png');"></span></span>
+        <span class="mobile-nav-label">Tune</span>
+      </a>
+      <a id="mobileLoginLink" class="mobile-nav-link" href="login.html" aria-label="Login">
+        <span class="mobile-nav-icon" aria-hidden="true"><span class="nav-icon-mask" style="--icon-url: url('/icons/login.png');"></span></span>
+        <span class="mobile-nav-label">Login</span>
+      </a>
+    </nav>
+  </div>
+
+  <div class="header-wrap">
+    <header class="header-bar">
+      <div class="header-left">
+        <div id="currencyBadge" class="currency-badge hidden" aria-label="Seconds balance">
+          <img src="coin.png" alt="" class="currency-badge-icon" />
+          <span id="currencyValue" class="currency-badge-value">0</span>
         </div>
-
-        <div class="header-right">
-          <div id="currencyBadge" class="currency-badge hidden" aria-label="Seconds balance">
-            <img src="coin.png" alt="Seconds" class="currency-badge-icon" />
-            <span id="currencyValue" class="currency-badge-value">0</span>
-          </div>
-
-          <button id="showLoginBtn" class="gold-btn header-login-btn" type="button">Log in</button>
-
-          <div class="header-avatar-wrap hidden" id="headerAvatarWrap">
-            <button id="headerAvatarBtn" class="header-avatar-btn" type="button" aria-haspopup="true" aria-expanded="false" aria-label="Open account menu">
-              <img id="headerAvatarImage" class="header-avatar-image hidden" alt="Your profile" />
-              <span id="headerAvatarFallback" class="header-avatar-fallback">A</span>
-            </button>
-
-            <div id="accountMenu" class="account-menu hidden" role="menu" aria-label="Account menu">
-              <a id="accountProfileLink" href="join.html" role="menuitem">Profile</a>
-              <a id="accountNotificationsLink" href="notifications.html" role="menuitem">Notifications</a>
-              <button id="logout" type="button" role="menuitem">Log out</button>
-            </div>
+      </div>
+      <div class="header-center">
+        <a href="index.html" class="header-logo-link" aria-label="60 Seconds FM home">
+          <img src="logo.png" alt="60 Seconds FM" class="header-logo" />
+        </a>
+      </div>
+      <div class="header-right">
+        <a id="showLoginBtn" class="header-icon-btn" href="login.html" aria-label="Login"><span class="person-icon" aria-hidden="true"></span></a>
+        <button id="headerAvatarBtn" class="header-avatar-btn hidden" type="button" aria-label="Open account menu">
+          <img id="headerAvatarImage" class="hidden" src="" alt="Profile photo" />
+          <div id="headerAvatarFallback" class="header-avatar-fallback hidden">A</div>
+        </button>
+        <div id="accountMenu" class="account-menu hidden">
+          <div class="account-menu-actions">
+            <a id="accountProfileLink" class="metal-btn account-menu-link hidden" href="javascript:void(0)">Profile</a>
+            <button id="logout" class="metal-btn" type="button"><span class="icon">⎋</span>Logout</button>
           </div>
         </div>
       </div>
     </header>
+  </div>
 
-    <nav class="mobile-nav" aria-label="Primary">
-      <a href="index.html" aria-label="Radio" class="nav-link nav-link--radio" id="mobileRadioLink"><span class="nav-icon-mask" aria-hidden="true"></span></a>
-      <a href="liked.html" aria-label="Liked" class="nav-link nav-link--liked hidden" id="mobileLikedLink"><span class="nav-icon-mask" aria-hidden="true"></span></a>
-      <a href="statistics.html" aria-label="Statistics" class="nav-link nav-link--stats hidden" id="mobileStatsLink"><span class="nav-icon-mask" aria-hidden="true"></span></a>
-      <a href="submit-track.html" aria-label="Track" class="nav-link nav-link--track hidden" id="mobileTrackLink"><span class="nav-icon-mask" aria-hidden="true"></span></a>
-      <a href="notifications.html" aria-label="Notifications" class="nav-link nav-link--notifications hidden" id="mobileNotificationsLink"><span class="nav-icon-mask" aria-hidden="true"></span></a>
-      <a href="join.html" aria-label="Profile" class="nav-link nav-link--profile hidden" id="mobileProfileLink"><span class="nav-icon-mask" aria-hidden="true"></span></a>
-      <a href="login.html" aria-label="Login" class="nav-link nav-link--login" id="mobileLoginLink"><span class="nav-icon-mask" aria-hidden="true"></span></a>
-    </nav>
-
+  <div class="site-shell">
     <main class="page-wrap store-page">
       <div id="storeLoginRequired" class="empty-card hidden">
-        <div class="empty-icon">✦</div>
+        <div class="empty-icon">◎</div>
         <div class="empty-title">Log in to access the store</div>
-        <p class="empty-text">Your balance and promotion options are available once you are signed in.</p>
-        <a class="gold-btn" href="login.html">Go to login</a>
+        <div class="empty-text">Your balance, boosts, and future top-up options are tied to your signed-in account.</div>
+        <a href="login.html" class="gold-btn">Login</a>
       </div>
 
       <section id="storeWrap" class="store-layout hidden">
-        <header class="store-hero-card">
-          <div class="store-kicker">Seconds Store</div>
-          <h1 class="store-title">Customize your promotion plan</h1>
-          <p class="store-subtitle">On this page you can decide how you want to spend your well deserved Seconds <img src="coin.png" alt="Seconds" class="store-inline-coin store-inline-coin--copy" />.</p>
-          <div class="store-balance-card store-balance-card--inline">
-            <div class="store-balance-label">Current balance</div>
-            <div class="store-balance-value-wrap">
-              <img src="coin.png" alt="" class="store-balance-coin" />
-              <span id="storeBalanceValue" class="store-balance-value">0</span>
+        <header class="store-hero">
+          <div class="store-hero-card">
+            <div class="store-kicker">Seconds Store</div>
+            <h1 class="store-title">Customize your promotion plan</h1>
+            <p class="store-subtitle">On this page you can decide how you want to spend your well deserved Seconds <img src="coin.png" alt="Seconds" class="store-inline-coin store-inline-coin--text" /></p>
+            <div class="store-balance-card store-balance-card--inline">
+              <div class="store-balance-label">Current balance</div>
+              <div class="store-balance-value-wrap">
+                <img src="coin.png" alt="" class="store-balance-coin" />
+                <span id="storeBalanceValue" class="store-balance-value">0</span>
+              </div>
+              <div class="store-balance-note">Live from your current Seconds balance.</div>
             </div>
-            <div class="store-balance-note">Live from your current Seconds balance.</div>
           </div>
         </header>
 
