@@ -10,16 +10,12 @@
   const debugEl = document.getElementById('debug');
   const trackListEl = document.getElementById('trackList');
   const metricListEl = document.getElementById('metricList');
-  const metricSummaryEl = document.getElementById('metricSummary');
-  const metricChartEl = document.getElementById('metricChart');
-  const queueBadgeEl = document.getElementById('queueBadge');
-  const metricTabs = Array.from(document.querySelectorAll('[data-metric-filter]'));
 
   let currentUser = null;
   let hasInitialized = false;
   let isApproving = false;
-  let currentMetricFilter = 'traffic';
-  let currentMetricSnapshot = null;
+  let activeMetricFilter = 'traffic';
+  let latestMetricsSnapshot = null;
 
   function escapeHtml(value) {
     if (window.SSFMApp && typeof window.SSFMApp.escapeHtml === 'function') {
@@ -106,13 +102,11 @@
     if (!tracks.length) {
       trackListEl.innerHTML = '<div class="empty">No pending tracks right now.</div>';
       setStatus('No pending tunes waiting for approval.');
-      if (queueBadgeEl) queueBadgeEl.textContent = 'Queue clear';
       setDebug('');
       return;
     }
 
     setStatus(`${tracks.length} pending tune(s) waiting for approval.`);
-    if (queueBadgeEl) queueBadgeEl.textContent = `${tracks.length} pending`;
     setDebug('');
 
     tracks.forEach((track) => {
@@ -152,107 +146,66 @@
 
     if (error) {
       setStatus('Could not load pending tracks: ' + error.message, true);
-      if (queueBadgeEl) queueBadgeEl.textContent = 'Queue unavailable';
       return;
     }
 
     renderPendingTracks(data || []);
   }
 
-  function buildMetricGroups(snapshot) {
+  function getMetricRows(snapshot) {
     return {
       traffic: [
-        { label: 'Unique visitors today', value: snapshot.uniqueVisitorsToday ?? 0, note: 'Today' },
-        { label: 'Unique visitors (7 days)', value: snapshot.uniqueVisitors7d ?? 0, note: 'Last 7 days' },
-        { label: 'Unique visitors (30 days)', value: snapshot.uniqueVisitors30d ?? 0, note: 'Last 30 days' },
-        { label: 'Returning visitors (30 days)', value: snapshot.returningVisitors30d ?? 0, note: 'Returning users' },
-        { label: 'Top page today', value: snapshot.topPageToday || '—', note: 'Most visited page' }
+        { label: 'Unique visitors today', value: snapshot.uniqueVisitorsToday ?? 0, featured: true },
+        { label: 'Unique visitors · 7 days', value: snapshot.uniqueVisitors7d ?? 0 },
+        { label: 'Unique visitors · 30 days', value: snapshot.uniqueVisitors30d ?? 0 },
+        { label: 'Returning visitors · 30 days', value: snapshot.returningVisitors30d ?? 0 },
+        { label: 'Top page today', value: snapshot.topPageToday || '—' }
       ],
       content: [
-        { label: 'Pending tracks', value: snapshot.pendingTracks ?? 0, note: 'Needs review' },
-        { label: 'Approved tracks', value: snapshot.approvedTracks ?? 0, note: 'Live tunes' },
-        { label: 'Live artist profiles', value: snapshot.liveProfiles ?? 0, note: 'Public profiles' },
-        { label: 'Profiles on the platform', value: snapshot.profilesTotal ?? 0, note: 'Total profiles' }
+        { label: 'Pending tracks', value: snapshot.pendingTracks ?? 0, featured: true },
+        { label: 'Approved tracks', value: snapshot.approvedTracks ?? 0 },
+        { label: 'Live artist profiles', value: snapshot.liveProfiles ?? 0 },
+        { label: 'Profiles on the platform', value: snapshot.profilesTotal ?? 0 }
       ],
       platform: [
-        { label: 'Total platform likes', value: snapshot.totalPlatformLikes ?? 0, note: 'All-time likes' },
-        { label: 'Profiles on the platform', value: snapshot.profilesTotal ?? 0, note: 'Community size' },
-        { label: 'Approved tracks', value: snapshot.approvedTracks ?? 0, note: 'Available catalogue' },
-        { label: 'Pending tracks', value: snapshot.pendingTracks ?? 0, note: 'Moderation queue' }
+        { label: 'Total platform likes', value: snapshot.totalPlatformLikes ?? 0, featured: true },
+        { label: 'Profiles on the platform', value: snapshot.profilesTotal ?? 0 },
+        { label: 'Live artist profiles', value: snapshot.liveProfiles ?? 0 },
+        { label: 'Approved tracks', value: snapshot.approvedTracks ?? 0 }
       ]
     };
   }
 
-  function isNumericMetric(value) {
-    return typeof value === 'number' && Number.isFinite(value);
-  }
-
-  function renderMetricSummary(rows) {
-    if (!metricSummaryEl) return;
-    metricSummaryEl.innerHTML = rows.slice(0, 3).map((row) => `
-      <article class="summary-card">
-        <div class="summary-card__label">${escapeHtml(row.label)}</div>
-        <div class="summary-card__value">${escapeHtml(String(row.value))}</div>
-        <div class="summary-card__note">${escapeHtml(row.note || '')}</div>
-      </article>
-    `).join('');
-  }
-
-  function renderMetricChart(rows) {
-    if (!metricChartEl) return;
-    const numericRows = rows.filter((row) => isNumericMetric(row.value));
-
-    if (!numericRows.length) {
-      metricChartEl.innerHTML = '<div class="empty">No graphable values in this category yet.</div>';
-      return;
-    }
-
-    const maxValue = Math.max(...numericRows.map((row) => row.value), 1);
-    metricChartEl.innerHTML = numericRows.map((row) => {
-      const width = Math.max(4, Math.round((row.value / maxValue) * 100));
-      return `
-        <div class="chart-row">
-          <div class="chart-label">${escapeHtml(row.label)}</div>
-          <div class="chart-track" aria-hidden="true"><span class="chart-fill" style="--bar-width: ${width}%"></span></div>
-          <div class="chart-value">${escapeHtml(String(row.value))}</div>
-        </div>
-      `;
-    }).join('');
-  }
-
-  function renderMetricList(rows) {
+  function renderMetrics(snapshot) {
     if (!metricListEl) return;
+
+    latestMetricsSnapshot = snapshot || {};
+    const groupedRows = getMetricRows(latestMetricsSnapshot);
+    const rows = groupedRows[activeMetricFilter] || groupedRows.traffic;
+
     metricListEl.innerHTML = rows.map((row) => `
-      <li class="metric-row">
+      <li class="metric-row${row.featured ? ' featured' : ''}">
         <span class="metric-label">${escapeHtml(row.label)}</span>
         <span class="metric-value">${escapeHtml(String(row.value))}</span>
       </li>
     `).join('');
   }
 
-  function renderMetrics(snapshot) {
-    currentMetricSnapshot = snapshot || {};
-    const groups = buildMetricGroups(currentMetricSnapshot);
-    const rows = groups[currentMetricFilter] || groups.traffic;
-
-    renderMetricSummary(rows);
-    renderMetricChart(rows);
-    renderMetricList(rows);
-  }
-
-  function setMetricFilter(filter) {
-    currentMetricFilter = filter || 'traffic';
-    metricTabs.forEach((tab) => {
-      tab.classList.toggle('active', tab.getAttribute('data-metric-filter') === currentMetricFilter);
+  function setupMetricTabs() {
+    document.querySelectorAll('[data-metric-filter]').forEach((button) => {
+      button.addEventListener('click', () => {
+        activeMetricFilter = button.getAttribute('data-metric-filter') || 'traffic';
+        document.querySelectorAll('[data-metric-filter]').forEach((tab) => {
+          tab.classList.toggle('active', tab === button);
+        });
+        if (latestMetricsSnapshot) renderMetrics(latestMetricsSnapshot);
+      });
     });
-    if (currentMetricSnapshot) renderMetrics(currentMetricSnapshot);
   }
 
   async function loadMetrics() {
     if (!metricListEl) return;
     metricListEl.innerHTML = '<li class="empty">Loading metrics...</li>';
-    if (metricSummaryEl) metricSummaryEl.innerHTML = '';
-    if (metricChartEl) metricChartEl.innerHTML = '';
 
     const { data, error } = await supabaseClient.rpc('get_admin_traffic_snapshot');
     if (error) {
@@ -299,13 +252,10 @@
     await Promise.all([loadPendingTracks(), loadMetrics()]);
   }
 
-  metricTabs.forEach((tab) => {
-    tab.addEventListener('click', () => setMetricFilter(tab.getAttribute('data-metric-filter')));
-  });
-
   document.addEventListener('DOMContentLoaded', async () => {
     if (hasInitialized) return;
     hasInitialized = true;
+    setupMetricTabs();
     await boot();
   });
 })();
