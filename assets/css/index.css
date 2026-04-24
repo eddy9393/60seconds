@@ -2198,14 +2198,14 @@ img {
   color: rgba(255,255,255,0.72);
 }
 /* ============================================================
-   featured-artists.css
-   Voeg toe aan index.css, of link apart in index.html
+   featured-artists.css — v2
+   Passend bij de 60 Seconds FM stijl
    ============================================================ */
 
-/* ── Sectie wrapper ─────────────────────────────────────────── */
+/* ── Sectie ─────────────────────────────────────────────────── */
 .fa-section {
   max-width: 780px;
-  margin: 28px auto 0;
+  margin: 32px auto 0;
   padding: 0 12px;
 }
 
@@ -2213,81 +2213,89 @@ img {
   margin-bottom: 12px;
   font-family: 'Space Grotesk', sans-serif;
   font-size: 12px;
-  letter-spacing: 2px;
+  letter-spacing: 2.5px;
   text-transform: uppercase;
   color: var(--muted);
+  text-align: center;
 }
 
-/* ── Card — lichter dan de rest van de pagina ───────────────── */
+/* ── Card ───────────────────────────────────────────────────── */
 .fa-card {
   position: relative;
-  border-radius: 24px;
-  border: 1px solid rgba(255, 255, 255, 0.13);
+  border-radius: 28px;
+  border: 1px solid rgba(212,175,55,0.22);
   background:
-    linear-gradient(160deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.04) 100%),
-    linear-gradient(180deg, rgba(38,34,28,0.82) 0%, rgba(28,24,18,0.88) 100%);
+    linear-gradient(160deg, rgba(255,248,220,0.07) 0%, rgba(255,255,255,0.02) 60%),
+    radial-gradient(ellipse at top, rgba(212,175,55,0.12) 0%, transparent 65%),
+    linear-gradient(180deg, rgba(28,22,10,0.90) 0%, rgba(16,13,6,0.95) 100%);
   box-shadow:
-    0 2px 0 rgba(255,255,255,0.06) inset,
-    0 20px 56px rgba(0,0,0,0.22),
-    0 0 32px rgba(212,175,55,0.06);
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
+    inset 0 1px 0 rgba(255,232,140,0.14),
+    inset 0 -1px 0 rgba(0,0,0,0.4),
+    0 24px 64px rgba(0,0,0,0.38),
+    0 0 0 0.5px rgba(212,175,55,0.10),
+    0 0 48px rgba(212,175,55,0.06);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
   overflow: hidden;
-  transition: transform 0.38s cubic-bezier(0.22,1,0.36,1), opacity 0.38s ease;
+  will-change: transform, opacity;
 }
 
-/* ── Progress bar bovenaan ──────────────────────────────────── */
+/* ── Progress bar ───────────────────────────────────────────── */
 .fa-progress-bar {
   position: absolute;
   top: 0; left: 0; right: 0;
   height: 2px;
-  background: rgba(255,255,255,0.08);
-  border-radius: 2px 2px 0 0;
+  background: rgba(255,255,255,0.05);
   overflow: hidden;
+  border-radius: 2px 2px 0 0;
 }
 
 .fa-progress-fill {
   height: 100%;
   width: 0%;
-  background: linear-gradient(90deg, var(--gold-dark), var(--gold), var(--gold-2));
-  border-radius: 2px;
+  background: linear-gradient(90deg,
+    var(--gold-dark) 0%,
+    var(--gold) 50%,
+    var(--gold-2) 100%);
+  box-shadow: 0 0 8px rgba(212,175,55,0.5);
 }
 
-/* ── Body layout ────────────────────────────────────────────── */
+/* ── Body ───────────────────────────────────────────────────── */
 .fa-body {
-  display: flex;
+  display: grid;
+  grid-template-columns: 96px 1fr;
   gap: 20px;
-  padding: 24px 22px 16px;
+  padding: 28px 24px 20px;
   align-items: flex-start;
 }
 
 /* ── Foto ───────────────────────────────────────────────────── */
 .fa-photo-wrap {
-  flex: 0 0 88px;
-  width: 88px;
-  height: 88px;
+  width: 96px;
+  height: 96px;
   border-radius: 50%;
   overflow: hidden;
-  background: rgba(255,255,255,0.07);
-  border: 2px solid rgba(212,175,55,0.25);
-  box-shadow: 0 4px 16px rgba(0,0,0,0.28);
-  position: relative;
+  flex-shrink: 0;
+  border: 1.5px solid rgba(212,175,55,0.35);
+  box-shadow:
+    0 0 0 3px rgba(212,175,55,0.08),
+    0 8px 24px rgba(0,0,0,0.40);
+  background: rgba(255,255,255,0.05);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 32px;
-  font-family: 'Space Grotesk', sans-serif;
-  font-weight: 600;
-  color: var(--gold);
+  position: relative;
 }
 
 .fa-photo-wrap.fa-no-photo::after {
   content: attr(data-initials);
-  position: absolute;
-  font-size: 32px;
+  font-size: 36px;
   font-family: 'Space Grotesk', sans-serif;
-  font-weight: 600;
-  color: var(--gold);
+  font-weight: 700;
+  background: linear-gradient(180deg, var(--gold-2), var(--gold-dark));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .fa-photo {
@@ -2297,37 +2305,39 @@ img {
   display: block;
 }
 
-.fa-photo.hidden { display: none; }
-
-/* ── Info rechts van de foto ────────────────────────────────── */
+/* ── Info ───────────────────────────────────────────────────── */
 .fa-info {
-  flex: 1;
-  min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 8px;
+  min-width: 0;
 }
 
 .fa-name {
   font-family: 'Space Grotesk', sans-serif;
-  font-size: 18px;
-  font-weight: 600;
-  color: rgba(255,255,255,0.95);
+  font-size: 22px;
+  font-weight: 700;
+  color: rgba(255,255,255,0.97);
+  letter-spacing: -0.01em;
+  line-height: 1.2;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
 .fa-role {
-  font-size: 12px;
   font-family: 'Space Grotesk', sans-serif;
-  color: var(--gold);
-  letter-spacing: 0.5px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 1.8px;
   text-transform: uppercase;
+  background: linear-gradient(90deg, var(--gold), var(--gold-2));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
-.fa-role.hidden { display: none; }
-
+/* ── Meta pills ─────────────────────────────────────────────── */
 .fa-meta {
   display: flex;
   flex-wrap: wrap;
@@ -2335,129 +2345,175 @@ img {
 }
 
 .fa-pill {
-  font-size: 11px;
   font-family: 'Space Grotesk', sans-serif;
-  padding: 3px 9px;
-  border-radius: 99px;
-  background: rgba(255,255,255,0.07);
+  font-size: 11px;
+  font-weight: 500;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.06);
   border: 1px solid rgba(255,255,255,0.10);
-  color: rgba(255,255,255,0.70);
+  color: rgba(255,255,255,0.65);
   letter-spacing: 0.3px;
 }
 
+/* ── Tune titel ─────────────────────────────────────────────── */
 .fa-tune {
+  font-family: 'Manrope', sans-serif;
   font-size: 13px;
-  color: rgba(255,255,255,0.60);
+  font-weight: 500;
+  color: rgba(255,232,140,0.75);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  border-left: 2px solid rgba(212,175,55,0.4);
+  padding-left: 10px;
 }
 
-.fa-tune.hidden { display: none; }
-
+/* ── Bio ────────────────────────────────────────────────────── */
 .fa-bio {
+  font-family: 'Manrope', sans-serif;
   font-size: 13px;
-  color: rgba(255,255,255,0.55);
-  line-height: 1.55;
+  font-weight: 400;
+  line-height: 1.65;
+  color: rgba(255,255,255,0.50);
   display: -webkit-box;
-  -webkit-line-clamp: 2;
+  -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
+  margin-top: 2px;
 }
 
-.fa-bio.hidden { display: none; }
-
+/* ── View profile link ──────────────────────────────────────── */
 .fa-link {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
   margin-top: 4px;
-  font-size: 12px;
+  padding: 7px 16px;
+  border-radius: 999px;
+  border: 1px solid rgba(212,175,55,0.28);
+  background: rgba(212,175,55,0.07);
   font-family: 'Space Grotesk', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.4px;
   color: var(--gold);
   text-decoration: none;
-  letter-spacing: 0.3px;
-  opacity: 0.85;
-  transition: opacity 0.18s ease;
+  width: fit-content;
+  transition: background 0.18s ease, border-color 0.18s ease, transform 0.18s ease;
 }
 
-.fa-link:hover { opacity: 1; }
+.fa-link:hover {
+  background: rgba(212,175,55,0.14);
+  border-color: rgba(212,175,55,0.45);
+  transform: translateY(-1px);
+}
+
+/* ── Scheidingslijn ─────────────────────────────────────────── */
+.fa-divider {
+  height: 1px;
+  background: linear-gradient(90deg,
+    transparent,
+    rgba(212,175,55,0.15) 20%,
+    rgba(212,175,55,0.15) 80%,
+    transparent);
+  margin: 0 24px;
+}
 
 /* ── Footer: pijlen + dots ──────────────────────────────────── */
 .fa-footer {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 12px;
-  padding: 10px 22px 18px;
+  gap: 14px;
+  padding: 14px 24px 20px;
 }
 
 .fa-nav-btn {
-  background: rgba(255,255,255,0.07);
-  border: 1px solid rgba(255,255,255,0.10);
+  width: 34px;
+  height: 34px;
   border-radius: 50%;
-  width: 32px;
-  height: 32px;
-  color: rgba(255,255,255,0.70);
-  font-size: 18px;
+  border: 1px solid rgba(255,255,255,0.12);
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.03));
+  color: rgba(255,255,255,0.60);
+  font-size: 20px;
   line-height: 1;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: background 0.18s ease, color 0.18s ease;
   padding: 0;
+  transition: background 0.18s ease, color 0.18s ease, border-color 0.18s ease, transform 0.18s ease;
 }
 
 .fa-nav-btn:hover {
-  background: rgba(212,175,55,0.15);
+  background: rgba(212,175,55,0.12);
+  border-color: rgba(212,175,55,0.35);
   color: var(--gold);
+  transform: scale(1.08);
 }
 
 .fa-dots {
   display: flex;
-  gap: 6px;
+  gap: 7px;
   align-items: center;
 }
 
 .fa-dot {
-  width: 6px;
-  height: 6px;
+  width: 5px;
+  height: 5px;
   border-radius: 50%;
-  background: rgba(255,255,255,0.20);
+  background: rgba(255,255,255,0.18);
   border: none;
   padding: 0;
   cursor: pointer;
-  transition: background 0.22s ease, transform 0.22s ease;
+  transition: background 0.22s ease, transform 0.22s ease, width 0.22s ease;
 }
 
 .fa-dot.active {
-  background: var(--gold);
-  transform: scale(1.35);
+  background: linear-gradient(90deg, var(--gold-dark), var(--gold));
+  width: 18px;
+  border-radius: 999px;
+  transform: none;
 }
 
 /* ── Responsive ─────────────────────────────────────────────── */
-@media (max-width: 480px) {
+@media (max-width: 520px) {
   .fa-body {
-    flex-direction: column;
-    align-items: center;
+    grid-template-columns: 1fr;
+    justify-items: center;
     text-align: center;
-    padding: 20px 18px 12px;
+    padding: 22px 18px 16px;
+    gap: 14px;
+  }
+
+  .fa-photo-wrap {
+    width: 82px;
+    height: 82px;
+  }
+
+  .fa-name {
+    font-size: 19px;
   }
 
   .fa-meta {
     justify-content: center;
   }
 
-  .fa-name {
-    font-size: 16px;
+  .fa-tune {
+    border-left: none;
+    padding-left: 0;
+    text-align: center;
   }
 
-  .fa-photo-wrap {
-    flex: 0 0 76px;
-    width: 76px;
-    height: 76px;
+  .fa-link {
+    align-self: center;
+    margin: 0 auto;
   }
 
   .fa-bio {
-    -webkit-line-clamp: 3;
+    -webkit-line-clamp: 4;
+    text-align: left;
   }
 }
