@@ -9,171 +9,76 @@
   <link rel="stylesheet" href="assets/css/statistics.css">
 </head>
 <body>
-  <script>
-/**
- * nav-component.js
- * Injecteert de desktop- en mobiele navigatie in elke pagina.
- * Staat als eerste <script> in <body>, vóór app.js.
- *
- * Wil je een item toevoegen/verwijderen/hernoemen?
- * Pas alleen NAV_ITEMS hieronder aan — verder niets.
- */
-
-(function () {
-
-  // ─── Navigatie-items ────────────────────────────────────────────────────────
-  const NAV_ITEMS = [
-    {
-      id:    'Radio',
-      href:  'index.html',
-      label: 'Radio',
-      icon:  'radio.png',
-    },
-    {
-      id:     'Profile',
-      href:   'join.html',
-      label:  'Profile',
-      icon:   'profile.png',
-      hidden: true,
-    },
-    {
-      id:     'Notifications',
-      href:   'notifications.html',
-      label:  'Notifications',
-      icon:   'nonotifications.png',
-      hidden: true,
-    },
-    {
-      id:     'Liked',
-      href:   'liked.html',
-      label:  'Liked',
-      icon:   'like.png',
-      hidden: true,
-    },
-    {
-      id:          'Stats',
-      href:        'statistics.html',
-      label:       'Statistics',
-      icon:        'stats.png',
-      hidden:      true,
-      desktopOnly: true,
-    },
-    {
-      id:          'Track',
-      href:        'submit-track.html',
-      label:       'Tune',
-      icon:        'track.png',
-      hidden:      true,
-      desktopOnly: true,
-    },
-    // ── Onderin de desktop-zijbalk ───────────────────────────────────────────
-    {
-      id:       'Login',
-      href:     'login.html',
-      label:    'Login',
-      icon:     'login.png',
-      position: 'bottom',
-    },
-    {
-      id:       'Logout',
-      label:    'Logout',
-      icon:     'logout.png',
-      hidden:   true,
-      type:     'button',
-      position: 'bottom',
-    },
-  ];
-
-  // ─── Helpers ────────────────────────────────────────────────────────────────
-
-  const currentPage = (window.location.pathname.split('/').pop() || 'index.html').toLowerCase();
-
-  function isActive(href) {
-    return href && href.toLowerCase() === currentPage;
-  }
-
-  function iconMask(iconFile) {
-    return `<span class="nav-icon-mask" style="--icon-url: url('/icons/${iconFile}');"></span>`;
-  }
-
-  // ─── Desktop item ───────────────────────────────────────────────────────────
-
-  function desktopItem(item) {
-    const active = isActive(item.href) ? ' active' : '';
-    const hidden = item.hidden ? ' hidden' : '';
-    const id     = item.id ? ` id="desktop${item.id}${item.type === 'button' ? 'Btn' : 'Link'}"` : '';
-    const inner  = `
-          <span class="desktop-nav-icon" aria-hidden="true">${iconMask(item.icon)}</span>
-          <span class="desktop-nav-label">${item.label}</span>`;
-
-    if (item.type === 'button') {
-      return `<button${id} class="desktop-nav-button${hidden}" type="button" aria-label="${item.label}">${inner}
-        </button>`;
-    }
-    return `<a${id} class="desktop-nav-link${active}${hidden}" href="${item.href}" aria-label="${item.label}">${inner}
-        </a>`;
-  }
-
-  // ─── Mobiel item ────────────────────────────────────────────────────────────
-
-  function mobileItem(item) {
-    const active = isActive(item.href) ? ' active' : '';
-    const hidden = item.hidden ? ' hidden' : '';
-    const id     = item.id ? ` id="mobile${item.id}Link"` : '';
-
-    return `<a${id} class="mobile-nav-link${active}${hidden}" href="${item.href}" aria-label="${item.label}">
-        <span class="mobile-nav-icon" aria-hidden="true">${iconMask(item.icon)}</span>
-        <span class="mobile-nav-label">${item.label}</span>
-      </a>`;
-  }
-
-  // ─── HTML opbouwen ──────────────────────────────────────────────────────────
-
-  const mainItems   = NAV_ITEMS.filter(i => i.position !== 'bottom');
-  const bottomItems = NAV_ITEMS.filter(i => i.position === 'bottom');
-
-  // Mobiel: geen desktopOnly items, geen buttons — login wel meenemen
-  const mobileItems = [
-    ...NAV_ITEMS.filter(i => i.position !== 'bottom' && !i.desktopOnly && i.type !== 'button'),
-    ...NAV_ITEMS.filter(i => i.id === 'Login'),
-  ];
-
-  const desktopHTML = `<aside class="desktop-side-nav" aria-label="Desktop navigation">
+  <aside class="desktop-side-nav" aria-label="Desktop navigation">
     <div class="desktop-side-nav-panel">
       <nav class="desktop-side-links">
-        ${mainItems.map(desktopItem).join('
-        ')}
+        <a class="desktop-nav-link" href="index.html" aria-label="Radio">
+          <span class="desktop-nav-icon" aria-hidden="true"><span class="nav-icon-mask" style="--icon-url: url('/icons/radio.png');"></span></span>
+          <span class="desktop-nav-label">Radio</span>
+        </a>
+        <a id="desktopProfileLink" class="desktop-nav-link hidden" href="join.html" aria-label="Profile">
+          <span class="desktop-nav-icon" aria-hidden="true"><span class="nav-icon-mask" style="--icon-url: url('/icons/profile.png');"></span></span>
+          <span class="desktop-nav-label">Profile</span>
+        </a>
+        <a id="desktopNotificationsLink" class="desktop-nav-link hidden" href="notifications.html" aria-label="Notifications">
+          <span class="desktop-nav-icon" aria-hidden="true"><span class="nav-icon-mask" style="--icon-url: url('/icons/nonotifications.png');"></span></span>
+          <span class="desktop-nav-label">Notifications</span>
+        </a>
+        <a id="desktopLikedLink" class="desktop-nav-link hidden" href="liked.html" aria-label="Liked">
+          <span class="desktop-nav-icon" aria-hidden="true"><span class="nav-icon-mask" style="--icon-url: url('/icons/like.png');"></span></span>
+          <span class="desktop-nav-label">Liked</span>
+        </a>
+        <a id="desktopStatsLink" class="desktop-nav-link active hidden" href="statistics.html" aria-label="Statistics">
+          <span class="desktop-nav-icon" aria-hidden="true"><span class="nav-icon-mask" style="--icon-url: url('/icons/stats.png');"></span></span>
+          <span class="desktop-nav-label">Statistics</span>
+        </a>
+        <a id="desktopTrackLink" class="desktop-nav-link hidden" href="submit-track.html" aria-label="Tune">
+          <span class="desktop-nav-icon" aria-hidden="true"><span class="nav-icon-mask" style="--icon-url: url('/icons/track.png');"></span></span>
+          <span class="desktop-nav-label">Tune</span>
+        </a>
       </nav>
       <div class="desktop-side-bottom">
-        ${bottomItems.map(desktopItem).join('
-        ')}
+        <a id="desktopLoginLink" class="desktop-nav-link" href="login.html" aria-label="Login">
+          <span class="desktop-nav-icon" aria-hidden="true"><span class="nav-icon-mask" style="--icon-url: url('/icons/login.png');"></span></span>
+          <span class="desktop-nav-label">Login</span>
+        </a>
+        <button id="desktopLogoutBtn" class="desktop-nav-button hidden" type="button" aria-label="Logout">
+          <span class="desktop-nav-icon" aria-hidden="true"><span class="nav-icon-mask" style="--icon-url: url('/icons/logout.png');"></span></span>
+          <span class="desktop-nav-label">Logout</span>
+        </button>
       </div>
     </div>
-  </aside>`;
+  </aside>
 
-  const mobileHTML = `<div class="mobile-bottom-nav-wrap">
+  <div class="mobile-bottom-nav-wrap">
     <nav class="mobile-bottom-nav" aria-label="Mobile navigation">
-      ${mobileItems.map(mobileItem).join('
-      ')}
+      <a class="mobile-nav-link" href="index.html" aria-label="Radio">
+        <span class="mobile-nav-icon" aria-hidden="true"><span class="nav-icon-mask" style="--icon-url: url('/icons/radio.png');"></span></span>
+        <span class="mobile-nav-label">Radio</span>
+      </a>
+      <a id="mobileProfileLink" class="mobile-nav-link hidden" href="join.html" aria-label="Profile">
+        <span class="mobile-nav-icon" aria-hidden="true"><span class="nav-icon-mask" style="--icon-url: url('/icons/profile.png');"></span></span>
+        <span class="mobile-nav-label">Profile</span>
+      </a>
+      <a id="mobileNotificationsLink" class="mobile-nav-link hidden" href="notifications.html" aria-label="Notifications">
+        <span class="mobile-nav-icon" aria-hidden="true"><span class="nav-icon-mask" style="--icon-url: url('/icons/nonotifications.png');"></span></span>
+        <span class="mobile-nav-label">Notifications</span>
+      </a>
+      <a id="mobileLikedLink" class="mobile-nav-link hidden" href="liked.html" aria-label="Liked">
+        <span class="mobile-nav-icon" aria-hidden="true"><span class="nav-icon-mask" style="--icon-url: url('/icons/like.png');"></span></span>
+        <span class="mobile-nav-label">Liked</span>
+      </a>
+      <a id="mobileTrackLink" class="mobile-nav-link hidden" href="submit-track.html" aria-label="Tune">
+        <span class="mobile-nav-icon" aria-hidden="true"><span class="nav-icon-mask" style="--icon-url: url('/icons/track.png');"></span></span>
+        <span class="mobile-nav-label">Tune</span>
+      </a>
+      <a id="mobileLoginLink" class="mobile-nav-link" href="login.html" aria-label="Login">
+        <span class="mobile-nav-icon" aria-hidden="true"><span class="nav-icon-mask" style="--icon-url: url('/icons/login.png');"></span></span>
+        <span class="mobile-nav-label">Login</span>
+      </a>
     </nav>
-  </div>`;
+  </div>
 
-  // ─── Injecteren via currentScript (werkt synchroon, geen document.write) ───
-  // currentScript verwijst naar dit <script> element terwijl het wordt geparsed.
-  // insertAdjacentHTML('beforebegin') plaatst de nav-HTML vlak vóór het script-element,
-  // zodat de DOM-elementen bestaan voordat app.js ze opzoekt via getElementById.
-
-  var self = document.currentScript;
-  if (self) {
-    self.insertAdjacentHTML('beforebegin', desktopHTML + mobileHTML);
-  } else {
-    // Fallback voor oude browsers: toevoegen aan het begin van <body>
-    document.body.insertAdjacentHTML('afterbegin', desktopHTML + mobileHTML);
-  }
-
-})();
-
-  </script>
 
   <div class="header-wrap">
     <header class="header-bar">
