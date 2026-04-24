@@ -267,36 +267,19 @@
 
     
     <section id="featuredArtistSection" class="fa-section hidden">
-      <div class="fa-kicker">Featured Artists</div>
-      <div class="fa-card" id="featuredArtistCard">
-
-        <div class="fa-progress-bar">
-          <div class="fa-progress-fill" id="featuredArtistProgress"></div>
+      <div class="fa-header">
+        <div class="fa-kicker">Featured Artists</div>
+        <div class="fa-nav">
+          <button class="fa-nav-btn" id="featuredArtistPrev" aria-label="Previous">&#8249;</button>
+          <button class="fa-nav-btn" id="featuredArtistNext" aria-label="Next">&#8250;</button>
         </div>
-
-        <div class="fa-body">
-          <div class="fa-photo-wrap" id="featuredArtistPhotoWrap">
-            <img id="featuredArtistPhoto" class="fa-photo" src="" alt="" />
-          </div>
-
-          <div class="fa-info">
-            <div class="fa-name" id="featuredArtistName"></div>
-            <div class="fa-role" id="featuredArtistRole" style="display:none"></div>
-            <div class="fa-meta" id="featuredArtistMeta"></div>
-            <div class="fa-tune" id="featuredArtistTuneTitle" style="display:none"></div>
-            <div class="fa-bio" id="featuredArtistBio" style="display:none"></div>
-            <a id="featuredArtistLink" class="fa-link" href="#">View profile →</a>
-          </div>
-        </div>
-
-        <div class="fa-divider"></div>
-
-        <div class="fa-footer">
-          <button class="fa-nav-btn" id="featuredArtistPrev" aria-label="Previous artist">&#8249;</button>
-          <div class="fa-dots" id="featuredArtistDots"></div>
-          <button class="fa-nav-btn" id="featuredArtistNext" aria-label="Next artist">&#8250;</button>
-        </div>
-
+      </div>
+      <div class="fa-progress-bar">
+        <div class="fa-progress-fill" id="featuredArtistProgress"></div>
+      </div>
+      <div class="fa-grid">
+        <div class="fa-main-card" id="faMainCard"></div>
+        <div class="fa-side-cards" id="faSideCards"></div>
       </div>
     </section>
 
