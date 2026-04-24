@@ -2,35 +2,32 @@
 // Haalt goedgekeurde artiesten op en toont ze als carrousel (elke 10 seconden)
 
 (function () {
-  const INTERVAL_MS = 10000;
-  const TRANSITION_MS = 600;
+  const INTERVAL_MS  = 10000;
+  const TRANSITION_MS = 500;
 
-  let artists = [];
+  let artists      = [];
   let currentIndex = 0;
-  let timer = null;
-  let isPaused = false;
+  let timer        = null;
+  let isPaused     = false;
 
-  const sectionEl   = document.getElementById('featuredArtistSection');
-  const cardEl      = document.getElementById('featuredArtistCard');
-  const photoEl     = document.getElementById('featuredArtistPhoto');
-  const photoWrapEl = document.getElementById('featuredArtistPhotoWrap');
-  const nameEl      = document.getElementById('featuredArtistName');
-  const roleEl      = document.getElementById('featuredArtistRole');
-  const bioEl       = document.getElementById('featuredArtistBio');
-  const metaEl      = document.getElementById('featuredArtistMeta');
-  const tuneTitleEl = document.getElementById('featuredArtistTuneTitle');
-  const linkEl      = document.getElementById('featuredArtistLink');
-  const dotsEl      = document.getElementById('featuredArtistDots');
-  const prevBtn     = document.getElementById('featuredArtistPrev');
-  const nextBtn     = document.getElementById('featuredArtistNext');
-  const progressEl  = document.getElementById('featuredArtistProgress');
+  const sectionEl    = document.getElementById('featuredArtistSection');
+  const cardEl       = document.getElementById('featuredArtistCard');
+  const photoEl      = document.getElementById('featuredArtistPhoto');
+  const photoWrapEl  = document.getElementById('featuredArtistPhotoWrap');
+  const nameEl       = document.getElementById('featuredArtistName');
+  const roleEl       = document.getElementById('featuredArtistRole');
+  const bioEl        = document.getElementById('featuredArtistBio');
+  const metaEl       = document.getElementById('featuredArtistMeta');
+  const tuneTitleEl  = document.getElementById('featuredArtistTuneTitle');
+  const linkEl       = document.getElementById('featuredArtistLink');
+  const dotsEl       = document.getElementById('featuredArtistDots');
+  const prevBtn      = document.getElementById('featuredArtistPrev');
+  const nextBtn      = document.getElementById('featuredArtistNext');
+  const progressEl   = document.getElementById('featuredArtistProgress');
 
   if (!sectionEl) return;
 
-  function escapeHtml(str) {
-    if (window.SSFMApp && typeof window.SSFMApp.escapeHtml === 'function') {
-      return window.SSFMApp.escapeHtml(str);
-    }
+  function esc(str) {
     return String(str ?? '')
       .replace(/&/g, '&amp;').replace(/</g, '&lt;')
       .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
@@ -45,8 +42,7 @@
 
   function formatRoles(roles) {
     if (!Array.isArray(roles) || !roles.length) return '';
-    return roles
-      .filter(r => r && r !== 'none')
+    return roles.filter(r => r && r !== 'none')
       .map(r => r.charAt(0).toUpperCase() + r.slice(1))
       .join(' · ');
   }
@@ -54,10 +50,11 @@
   function buildDots(count, active) {
     if (!dotsEl) return;
     dotsEl.innerHTML = '';
-    for (let i = 0; i < count; i++) {
+    const max = Math.min(count, 10);
+    for (let i = 0; i < max; i++) {
       const dot = document.createElement('button');
       dot.className = 'fa-dot' + (i === active ? ' active' : '');
-      dot.setAttribute('aria-label', `Artist ${i + 1}`);
+      dot.setAttribute('aria-label', 'Artist ' + (i + 1));
       dot.addEventListener('click', () => goTo(i));
       dotsEl.appendChild(dot);
     }
@@ -67,198 +64,189 @@
     if (!progressEl) return;
     progressEl.style.transition = 'none';
     progressEl.style.width = '0%';
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        progressEl.style.transition = `width ${INTERVAL_MS}ms linear`;
-        progressEl.style.width = '100%';
-      });
-    });
-  }
-
-  function showArtist(artist, direction = 'next') {
-    if (!cardEl) return;
-
-    cardEl.classList.add('fa-exiting');
-    cardEl.style.transform = direction === 'next' ? 'translateX(-32px)' : 'translateX(32px)';
-    cardEl.style.opacity = '0';
-
-    setTimeout(() => {
-      renderArtist(artist);
-      cardEl.style.transform = direction === 'next' ? 'translateX(32px)' : 'translateX(-32px)';
-
-      requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-          cardEl.style.transition = `transform ${TRANSITION_MS}ms cubic-bezier(0.22,1,0.36,1), opacity ${TRANSITION_MS}ms ease`;
-          cardEl.style.transform = 'translateX(0)';
-          cardEl.style.opacity = '1';
-          cardEl.classList.remove('fa-exiting');
-        });
-      });
-    }, TRANSITION_MS / 2);
+    requestAnimationFrame(function() { requestAnimationFrame(function() {
+      progressEl.style.transition = 'width ' + INTERVAL_MS + 'ms linear';
+      progressEl.style.width = '100%';
+    }); });
   }
 
   function renderArtist(artist) {
-    // Foto
     if (artist.photo_url) {
-      photoEl.src = escapeHtml(artist.photo_url);
-      photoEl.alt = escapeHtml(artist.artist_name || 'Artist');
-      photoEl.classList.remove('hidden');
+      photoEl.src = esc(artist.photo_url);
+      photoEl.alt = esc(artist.artist_name || 'Artist');
+      photoEl.style.display = 'block';
       photoWrapEl.classList.remove('fa-no-photo');
+      photoWrapEl.removeAttribute('data-initials');
     } else {
-      photoEl.classList.add('hidden');
+      photoEl.style.display = 'none';
       photoWrapEl.classList.add('fa-no-photo');
       photoWrapEl.setAttribute('data-initials',
         (artist.artist_name || 'A').charAt(0).toUpperCase()
       );
     }
 
-    // Naam
     nameEl.textContent = artist.artist_name || 'Unknown Artist';
 
-    // Rollen
-    const roles = formatRoles(artist.music_roles);
-    if (roles) {
-      roleEl.textContent = roles;
-      roleEl.classList.remove('hidden');
-    } else {
-      roleEl.classList.add('hidden');
-    }
+    var roles = formatRoles(artist.music_roles);
+    roleEl.textContent = roles;
+    roleEl.style.display = roles ? '' : 'none';
 
-    // Bio
-    if (artist.bio) {
-      bioEl.textContent = artist.bio;
-      bioEl.classList.remove('hidden');
-    } else {
-      bioEl.classList.add('hidden');
-    }
+    bioEl.textContent = artist.bio || '';
+    bioEl.style.display = artist.bio ? '' : 'none';
 
-    // Meta pills: nationaliteit + stad
     metaEl.innerHTML = '';
     if (artist.nationality) {
-      const pill = document.createElement('span');
+      var pill = document.createElement('span');
       pill.className = 'fa-pill';
-      const flag = getFlagEmoji(artist.nationality);
-      pill.textContent = flag ? flag + ' ' + artist.nationality.toUpperCase() : artist.nationality.toUpperCase();
+      var flag = getFlagEmoji(artist.nationality);
+      pill.textContent = (flag ? flag + ' ' : '') + artist.nationality.toUpperCase();
       metaEl.appendChild(pill);
     }
-    if (artist.city) {
-      const pill = document.createElement('span');
-      pill.className = 'fa-pill';
-      pill.textContent = '📍 ' + escapeHtml(artist.city);
-      metaEl.appendChild(pill);
+    if (artist.show_city_on_artist_page && artist.city) {
+      var cpill = document.createElement('span');
+      cpill.className = 'fa-pill';
+      cpill.textContent = String.fromCodePoint(0x1F4CD) + ' ' + esc(artist.city);
+      metaEl.appendChild(cpill);
     }
 
-    // Tune titel
-    if (artist.track_title) {
-      tuneTitleEl.textContent = '🎵 ' + artist.track_title;
-      tuneTitleEl.classList.remove('hidden');
-    } else {
-      tuneTitleEl.classList.add('hidden');
-    }
+    tuneTitleEl.textContent = artist.track_title ? String.fromCodePoint(0x1F3B5) + ' ' + artist.track_title : '';
+    tuneTitleEl.style.display = artist.track_title ? '' : 'none';
 
-    // Link naar artist pagina
-    if (linkEl && artist.user_id) {
-      linkEl.href = `artist.html?id=${encodeURIComponent(artist.user_id)}`;
+    if (linkEl) {
+      linkEl.href = 'artist.html?id=' + encodeURIComponent(artist.user_id);
     }
+  }
+
+  function showArtist(artist, direction) {
+    var outX = direction === 'next' ? '-28px' : '28px';
+    var inX  = direction === 'next' ?  '28px' : '-28px';
+
+    cardEl.style.transition = 'transform ' + (TRANSITION_MS/2) + 'ms ease, opacity ' + (TRANSITION_MS/2) + 'ms ease';
+    cardEl.style.transform  = 'translateX(' + outX + ')';
+    cardEl.style.opacity    = '0';
+
+    setTimeout(function() {
+      renderArtist(artist);
+      cardEl.style.transition = 'none';
+      cardEl.style.transform  = 'translateX(' + inX + ')';
+      cardEl.style.opacity    = '0';
+      requestAnimationFrame(function() { requestAnimationFrame(function() {
+        cardEl.style.transition = 'transform ' + TRANSITION_MS + 'ms cubic-bezier(0.22,1,0.36,1), opacity ' + TRANSITION_MS + 'ms ease';
+        cardEl.style.transform  = 'translateX(0)';
+        cardEl.style.opacity    = '1';
+      }); });
+    }, TRANSITION_MS / 2);
   }
 
   function goTo(index, direction) {
-    const dir = direction || (index > currentIndex ? 'next' : 'prev');
-    currentIndex = (index + artists.length) % artists.length;
+    var dir = direction || (index > currentIndex ? 'next' : 'prev');
+    currentIndex = ((index % artists.length) + artists.length) % artists.length;
     showArtist(artists[currentIndex], dir);
     buildDots(artists.length, currentIndex);
     restartProgress();
-    resetTimer();
-  }
-
-  function next() {
-    goTo(currentIndex + 1, 'next');
-  }
-
-  function prev() {
-    goTo(currentIndex - 1, 'prev');
-  }
-
-  function resetTimer() {
     clearInterval(timer);
     if (!isPaused) {
-      timer = setInterval(next, INTERVAL_MS);
+      timer = setInterval(function() { goTo(currentIndex + 1, 'next'); }, INTERVAL_MS);
     }
   }
 
   async function loadFeaturedArtists() {
-    const supabase = window.SSFMApp?.getSupabaseClient?.();
-    if (!supabase) return;
-
-    // Haal artiesten op met een goedgekeurde track én een ingevuld profiel
-    const { data, error } = await supabase
-      .from('profiles')
-      .select(`
-        user_id,
-        artist_name,
-        photo_url,
-        bio,
-        nationality,
-        city,
-        music_roles,
-        tracks!inner ( title, status )
-      `)
-      .eq('tracks.status', 'approved')
-      .not('artist_name', 'is', null)
-      .neq('artist_name', '')
-      .limit(20);
-
-    if (error || !data || data.length === 0) {
-      sectionEl.classList.add('hidden');
+    // Wacht tot SSFMApp beschikbaar is (max 2 seconden)
+    var supabase = null;
+    for (var i = 0; i < 20; i++) {
+      supabase = window.SSFMApp && typeof window.SSFMApp.getSupabaseClient === 'function'
+        ? window.SSFMApp.getSupabaseClient()
+        : null;
+      if (supabase) break;
+      await new Promise(function(r) { setTimeout(r, 100); });
+    }
+    if (!supabase) {
+      console.warn('[featured-artists] Supabase client niet gevonden');
       return;
     }
 
-    // Shuffle voor afwisseling
-    artists = data
-      .map(p => ({
-        ...p,
-        track_title: p.tracks?.[0]?.title || null,
-      }))
-      .sort(() => Math.random() - 0.5);
+    try {
+      // Stap 1: goedgekeurde tracks ophalen
+      var tracksResult = await supabase
+        .from('tracks')
+        .select('user_id, title')
+        .eq('status', 'approved');
 
-    sectionEl.classList.remove('hidden');
-    buildDots(artists.length, 0);
-    renderArtist(artists[0]);
-    restartProgress();
-    timer = setInterval(next, INTERVAL_MS);
+      if (tracksResult.error || !tracksResult.data || tracksResult.data.length === 0) {
+        sectionEl.style.display = 'none';
+        return;
+      }
+
+      // user_id → titel map
+      var trackMap = {};
+      tracksResult.data.forEach(function(t) { trackMap[t.user_id] = t.title; });
+      var approvedUserIds = Object.keys(trackMap);
+
+      // Stap 2: profielen ophalen
+      var profilesResult = await supabase
+        .from('profiles')
+        .select('user_id, artist_name, photo_url, bio, nationality, city, show_city_on_artist_page, music_roles')
+        .in('user_id', approvedUserIds)
+        .not('artist_name', 'is', null)
+        .neq('artist_name', '')
+        .limit(20);
+
+      if (profilesResult.error || !profilesResult.data || profilesResult.data.length === 0) {
+        sectionEl.style.display = 'none';
+        return;
+      }
+
+      // Combineer
+      artists = profilesResult.data
+        .map(function(p) { return Object.assign({}, p, { track_title: trackMap[p.user_id] || null }); })
+        .sort(function() { return Math.random() - 0.5; });
+
+      // Toon sectie
+      sectionEl.style.display = '';
+      sectionEl.classList.remove('hidden');
+
+      renderArtist(artists[0]);
+      buildDots(artists.length, 0);
+      restartProgress();
+      timer = setInterval(function() { goTo(currentIndex + 1, 'next'); }, INTERVAL_MS);
+
+    } catch (err) {
+      console.error('[featured-artists] Fout:', err);
+      sectionEl.style.display = 'none';
+    }
   }
 
-  // Navigatie knoppen
-  if (prevBtn) prevBtn.addEventListener('click', prev);
-  if (nextBtn) nextBtn.addEventListener('click', next);
+  if (prevBtn) prevBtn.addEventListener('click', function() { goTo(currentIndex - 1, 'prev'); });
+  if (nextBtn) nextBtn.addEventListener('click', function() { goTo(currentIndex + 1, 'next'); });
 
-  // Pauzeer bij hover
   if (cardEl) {
-    cardEl.addEventListener('mouseenter', () => {
+    cardEl.addEventListener('mouseenter', function() {
       isPaused = true;
       clearInterval(timer);
-      if (progressEl) progressEl.style.transition = 'none';
+      if (progressEl) {
+        var w = getComputedStyle(progressEl).width;
+        progressEl.style.transition = 'none';
+        progressEl.style.width = w;
+      }
     });
-    cardEl.addEventListener('mouseleave', () => {
+    cardEl.addEventListener('mouseleave', function() {
       isPaused = false;
       restartProgress();
-      timer = setInterval(next, INTERVAL_MS);
+      timer = setInterval(function() { goTo(currentIndex + 1, 'next'); }, INTERVAL_MS);
     });
   }
 
-  // Swipe support op mobiel
-  let touchStartX = 0;
+  var touchStartX = 0;
   if (cardEl) {
-    cardEl.addEventListener('touchstart', e => {
+    cardEl.addEventListener('touchstart', function(e) {
       touchStartX = e.touches[0].clientX;
     }, { passive: true });
-    cardEl.addEventListener('touchend', e => {
-      const dx = e.changedTouches[0].clientX - touchStartX;
-      if (Math.abs(dx) > 50) dx < 0 ? next() : prev();
+    cardEl.addEventListener('touchend', function(e) {
+      var dx = e.changedTouches[0].clientX - touchStartX;
+      if (Math.abs(dx) > 50) goTo(currentIndex + (dx < 0 ? 1 : -1), dx < 0 ? 'next' : 'prev');
     }, { passive: true });
   }
 
-  // Laden na DOMContentLoaded of direct als DOM al klaar is
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', loadFeaturedArtists);
   } else {
