@@ -1,5 +1,6 @@
 (function () {
-  const ADMIN_EMAIL = 'kroonstadt.earvin@gmail.com';
+  // Geen hardcoded e-mail meer — admincheck gebeurt volledig via de database
+  // De is_admin() SQL-functie controleert de is_admin kolom in profiles
   const supabaseClient = window.SSFMApp.getSupabaseClient();
 
   const loadingBoxEl = document.getElementById('loadingBox');
@@ -59,34 +60,27 @@
     if (adminAppEl) adminAppEl.classList.remove('hidden');
   }
 
-  function isAdminUser(user) {
-    return Boolean(user && user.email && user.email.toLowerCase() === ADMIN_EMAIL.toLowerCase());
-  }
-
-  async function getSessionUser() {
-    const { data, error } = await supabaseClient.auth.getSession();
-    if (error) {
-      setDebug('getSession error: ' + error.message);
-      return null;
-    }
-    return data?.session?.user || null;
-  }
-
-  async function validateUser() {
-    const { data, error } = await supabaseClient.auth.getUser();
-    if (error) {
-      setDebug('getUser error: ' + error.message);
-      return null;
-    }
-    return data?.user || null;
-  }
-
+  // Admincheck via de database — niet via e-mail in de browser
   async function checkAdminAccess() {
-    let user = await getSessionUser();
-    if (!user) user = await validateUser();
+    const { data: { user }, error: authError } = await supabaseClient.auth.getUser();
+
+    if (authError || !user) {
+      setDebug('Niet ingelogd.');
+      showLocked();
+      return false;
+    }
+
     currentUser = user;
 
-    if (!user || !isAdminUser(user)) {
+    // Vraag de database: heeft deze gebruiker is_admin = true?
+    const { data: profile, error: profileError } = await supabaseClient
+      .from('profiles')
+      .select('is_admin')
+      .eq('user_id', user.id)
+      .single();
+
+    if (profileError || !profile?.is_admin) {
+      setDebug('Geen adminrechten.');
       showLocked();
       return false;
     }
