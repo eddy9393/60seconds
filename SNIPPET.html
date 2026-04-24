@@ -1,0 +1,27 @@
+<!--
+  STAP 1: Voeg dit toe in de <head> van ELKE HTML-pagina
+  (direct na de bestaande <meta viewport> tag)
+-->
+
+  <!-- PWA -->
+  <link rel="manifest" href="/manifest.json" />
+  <meta name="theme-color" content="#000000" />
+  <meta name="mobile-web-app-capable" content="yes" />
+
+  <!-- iOS specifiek -->
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  <meta name="apple-mobile-web-app-title" content="60 Seconds" />
+  <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
+
+<!--
+  STAP 2: Voeg dit toe vlak voor </body> op ELKE pagina
+-->
+
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js');
+      });
+    }
+  </script>
