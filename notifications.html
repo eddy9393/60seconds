@@ -3,27 +3,17 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- PWA -->
+  <link rel="manifest" href="/manifest.json" />
+  <meta name="theme-color" content="#000000" />
+  <meta name="mobile-web-app-capable" content="yes" />
+
+  <!-- iOS -->
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  <meta name="apple-mobile-web-app-title" content="60 Seconds" />
+  <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
   <title>Notifications — 60 Seconds FM</title>
-  <!-- SEO -->
-  <meta name="description" content="Your notifications on 60 Seconds FM." />
-  <meta name="robots" content="noindex, nofollow" />
-  <link rel="canonical" href="https://60seconds.fm/notifications.html" />
-
-  <!-- Open Graph -->
-  <meta property="og:type" content="website" />
-  <meta property="og:site_name" content="60 Seconds FM" />
-  <meta property="og:url" content="https://60seconds.fm/notifications.html" />
-  <meta property="og:title" content="Notifications — 60 Seconds FM" />
-  <meta property="og:description" content="Your notifications on 60 Seconds FM." />
-  <meta property="og:image" content="https://60seconds.fm/og-image.jpg" />
-  <meta property="og:image:width" content="1200" />
-  <meta property="og:image:height" content="630" />
-
-  <!-- Twitter / X -->
-  <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="Notifications — 60 Seconds FM" />
-  <meta name="twitter:description" content="Your notifications on 60 Seconds FM." />
-  <meta name="twitter:image" content="https://60seconds.fm/og-image.jpg" />
 
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Manrope:wght@300;400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="assets/css/notifications.css">
@@ -197,5 +187,13 @@
   <script src="assets/js/app.js"></script>
   <script src="assets/js/notifications.js"></script>
   <script src="assets/js/radio-mini-player.js"></script>
+
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js');
+      });
+    }
+  </script>
 </body>
 </html>

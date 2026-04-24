@@ -3,27 +3,17 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Artist Profile — 60 Seconds FM</title>
-  <!-- SEO -->
-  <meta name="description" content="Listen to this artist on 60 Seconds FM. Discover new music in 60 seconds." />
-  <meta name="robots" content="index, follow" />
-  <link rel="canonical" href="https://60seconds.fm/artist.html" />
+  <!-- PWA -->
+  <link rel="manifest" href="/manifest.json" />
+  <meta name="theme-color" content="#000000" />
+  <meta name="mobile-web-app-capable" content="yes" />
 
-  <!-- Open Graph -->
-  <meta property="og:type" content="website" />
-  <meta property="og:site_name" content="60 Seconds FM" />
-  <meta property="og:url" content="https://60seconds.fm/artist.html" />
-  <meta property="og:title" content="Artist Profile — 60 Seconds FM" />
-  <meta property="og:description" content="Listen to this artist on 60 Seconds FM. Discover new music in 60 seconds." />
-  <meta property="og:image" content="https://60seconds.fm/og-image.jpg" />
-  <meta property="og:image:width" content="1200" />
-  <meta property="og:image:height" content="630" />
-
-  <!-- Twitter / X -->
-  <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="Artist Profile — 60 Seconds FM" />
-  <meta name="twitter:description" content="Listen to this artist on 60 Seconds FM. Discover new music in 60 seconds." />
-  <meta name="twitter:image" content="https://60seconds.fm/og-image.jpg" />
+  <!-- iOS -->
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  <meta name="apple-mobile-web-app-title" content="60 Seconds" />
+  <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
+  <title>Artist Page - 60 Seconds FM</title>
 
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Manrope:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="assets/css/artist.css">
@@ -226,5 +216,13 @@
   <script src="assets/js/app.js"></script>
   <script src="assets/js/artist.js"></script>
   <script src="assets/js/radio-mini-player.js"></script>
+
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js');
+      });
+    }
+  </script>
 </body>
 </html>
