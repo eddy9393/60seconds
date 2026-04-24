@@ -3,7 +3,27 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Liked — 60 Seconds FM</title>
+  <title>Liked Tracks — 60 Seconds FM</title>
+  <!-- SEO -->
+  <meta name="description" content="Your liked tracks on 60 Seconds FM." />
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="canonical" href="https://60seconds.fm/liked.html" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="60 Seconds FM" />
+  <meta property="og:url" content="https://60seconds.fm/liked.html" />
+  <meta property="og:title" content="Liked Tracks — 60 Seconds FM" />
+  <meta property="og:description" content="Your liked tracks on 60 Seconds FM." />
+  <meta property="og:image" content="https://60seconds.fm/og-image.jpg" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+
+  <!-- Twitter / X -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Liked Tracks — 60 Seconds FM" />
+  <meta name="twitter:description" content="Your liked tracks on 60 Seconds FM." />
+  <meta name="twitter:image" content="https://60seconds.fm/og-image.jpg" />
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Manrope:wght@300;400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="assets/css/notifications.css">
   <link rel="stylesheet" href="assets/css/liked.css">
@@ -95,7 +115,7 @@
     <header class="header-bar">
       <div class="header-left">
         <div id="currencyBadge" class="currency-badge hidden" aria-label="Seconds balance">
-          <picture><source srcset="coin.webp 1x, coin@2x.webp 2x" type="image/webp"><img src="coin.png" class="currency-badge-icon" alt=""></picture>
+          <img src="coin.png" alt="" class="currency-badge-icon" />
           <span id="currencyValue" class="currency-badge-value">0</span>
         </div>
       </div>
