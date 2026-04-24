@@ -612,6 +612,13 @@ function updateConceptVisibility() {
   const shouldShow = !state.currentUser && state.isLiveActivated;
   setHidden(els.conceptSectionEl, !shouldShow);
   updateJoinButtonHref();
+
+  // Featured artists: alleen zichtbaar na Start Radio + ingelogd
+  const featuredEl = document.getElementById("featuredArtistSection");
+  if (featuredEl) {
+    const showFeatured = state.isLiveActivated && Boolean(state.currentUser);
+    featuredEl.style.display = showFeatured ? "" : "none";
+  }
 }
 
 function hideUserStats() {

@@ -246,7 +246,7 @@ function ensureHeaderSlogan(doc = document) {
       slogan.style.whiteSpace = 'nowrap';
       slogan.style.lineHeight = '1';
       slogan.style.marginTop = '2px';
-      slogan.style.color = 'inherit';
+      slogan.style.color = '#ffffff';
       logoLink.appendChild(slogan);
     }
   };

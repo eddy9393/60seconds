@@ -84,7 +84,7 @@
         + '<div class="fa-name">' + esc(artist.artist_name || 'Unknown') + '</div>'
         + (roleStr ? '<div class="fa-role">' + esc(roleStr) + '</div>' : '')
         + (metaPills ? '<div class="fa-meta">' + metaPills + '</div>' : '')
-        + (artist.track_title ? '<div class="fa-tune">&#9835; ' + esc(artist.track_title) + '</div>' : '')
+        + (artist.track_title ? '<div class="fa-tune" style="padding-left:10px;border-left:2px solid rgba(212,175,55,0.35);">&#9835; ' + esc(artist.track_title) + '</div>' : '')
         + (artist.bio ? '<div class="fa-bio">' + esc(artist.bio) + '</div>' : '')
         + statsHTML
         + '<a href="artist.html?id=' + encodeURIComponent(artist.user_id) + '" class="fa-view-btn">View profile &#8250;</a>'
