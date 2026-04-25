@@ -1,40 +1,63 @@
-(function () {
-  var INTERVAL_MS = 10000;
-  var artists = [];
-  var currentIndex = 0;
-  var timer = null;
+// featured-artists.js
+// Haalt goedgekeurde artiesten op en toont ze als carrousel (elke 10 seconden)
 
-  var sectionEl  = document.getElementById('featuredArtistSection');
-  var prevBtn    = document.getElementById('featuredArtistPrev');
-  var nextBtn    = document.getElementById('featuredArtistNext');
-  var mainSlot   = document.getElementById('faMainCard');
-  var sideSlot   = document.getElementById('faSideCards');
-  var progressEl = document.getElementById('featuredArtistProgress');
+(function () {
+  const INTERVAL_MS  = 10000;
+  const TRANSITION_MS = 500;
+
+  let artists      = [];
+  let currentIndex = 0;
+  let timer        = null;
+  let isPaused     = false;
+
+  const sectionEl    = document.getElementById('featuredArtistSection');
+  const cardEl       = document.getElementById('featuredArtistCard');
+  const photoEl      = document.getElementById('featuredArtistPhoto');
+  const photoWrapEl  = document.getElementById('featuredArtistPhotoWrap');
+  const nameEl       = document.getElementById('featuredArtistName');
+  const roleEl       = document.getElementById('featuredArtistRole');
+  const bioEl        = document.getElementById('featuredArtistBio');
+  const metaEl       = document.getElementById('featuredArtistMeta');
+  const tuneTitleEl  = document.getElementById('featuredArtistTuneTitle');
+  const linkEl       = document.getElementById('featuredArtistLink');
+  const dotsEl       = document.getElementById('featuredArtistDots');
+  const prevBtn      = document.getElementById('featuredArtistPrev');
+  const nextBtn      = document.getElementById('featuredArtistNext');
+  const progressEl   = document.getElementById('featuredArtistProgress');
 
   if (!sectionEl) return;
 
-  function esc(s) {
-    return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  function esc(str) {
+    return String(str ?? '')
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
   }
 
-  function flag(code) {
+  function getFlagEmoji(code) {
     if (!code || code.length !== 2) return '';
-    return code.toUpperCase().replace(/./g, function(c) {
-      return String.fromCodePoint(c.charCodeAt(0) + 127397);
-    });
+    return code.toUpperCase().replace(/./g, c =>
+      String.fromCodePoint(c.charCodeAt(0) + 127397)
+    );
   }
 
-  function roles(arr) {
-    if (!Array.isArray(arr) || !arr.length) return '';
-    return arr.filter(function(r) { return r && r !== 'none'; })
-      .map(function(r) { return r.charAt(0).toUpperCase() + r.slice(1); })
+  function formatRoles(roles) {
+    if (!Array.isArray(roles) || !roles.length) return '';
+    return roles.filter(r => r && r !== 'none')
+      .map(r => r.charAt(0).toUpperCase() + r.slice(1))
       .join(' · ');
   }
 
-  function formatNum(n) {
-    if (!n) return '0';
-    if (n >= 1000) return (n / 1000).toFixed(1).replace('.0','') + 'K';
-    return String(n);
+  function buildDots(count, active) {
+    if (!dotsEl) return;
+    dotsEl.innerHTML = '';
+    const max = Math.min(count, 10);
+    for (let i = 0; i < max; i++) {
+      const dot = document.createElement('button');
+      dot.className = 'fa-dot' + (i === active ? ' active' : '');
+      dot.setAttribute('aria-label', 'Artist ' + (i + 1));
+      dot.addEventListener('click', () => goTo(i));
+      dotsEl.appendChild(dot);
+    }
   }
 
   function restartProgress() {
@@ -47,178 +70,187 @@
     }); });
   }
 
-  function photoHTML(artist, size) {
+  function renderArtist(artist) {
     if (artist.photo_url) {
-      return '<img src="' + esc(artist.photo_url) + '" alt="' + esc(artist.artist_name) + '" class="fa-photo" style="width:' + size + 'px;height:' + size + 'px;border-radius:50%;object-fit:cover;display:block;">';
+      photoEl.src = esc(artist.photo_url);
+      photoEl.alt = esc(artist.artist_name || 'Artist');
+      photoEl.style.display = 'block';
+      photoWrapEl.classList.remove('fa-no-photo');
+      photoWrapEl.removeAttribute('data-initials');
+    } else {
+      photoEl.style.display = 'none';
+      photoWrapEl.classList.add('fa-no-photo');
+      photoWrapEl.setAttribute('data-initials',
+        (artist.artist_name || 'A').charAt(0).toUpperCase()
+      );
     }
-    var initial = (artist.artist_name || 'A').charAt(0).toUpperCase();
-    return '<div class="fa-initials" style="width:' + size + 'px;height:' + size + 'px;">' + esc(initial) + '</div>';
-  }
 
-  function renderMain(artist) {
-    var roleStr  = roles(artist.music_roles);
-    var flagStr  = flag(artist.nationality);
-    var plays    = formatNum(artist.track_play_count);
-    var likes    = formatNum(artist.track_likes_count);
+    nameEl.textContent = artist.artist_name || 'Unknown Artist';
 
-    var metaPills = '';
+    var roles = formatRoles(artist.music_roles);
+    roleEl.textContent = roles;
+    roleEl.style.display = roles ? '' : 'none';
+
+    bioEl.textContent = artist.bio || '';
+    bioEl.style.display = artist.bio ? '' : 'none';
+
+    metaEl.innerHTML = '';
     if (artist.nationality) {
-      metaPills += '<span class="fa-pill">' + (flagStr ? flagStr + ' ' : '') + esc(artist.nationality.toUpperCase()) + '</span>';
+      var pill = document.createElement('span');
+      pill.className = 'fa-pill';
+      var flag = getFlagEmoji(artist.nationality);
+      pill.textContent = (flag ? flag + ' ' : '') + artist.nationality.toUpperCase();
+      metaEl.appendChild(pill);
     }
     if (artist.show_city_on_artist_page && artist.city) {
-      metaPills += '<span class="fa-pill">&#128205; ' + esc(artist.city) + '</span>';
+      var cpill = document.createElement('span');
+      cpill.className = 'fa-pill';
+      cpill.textContent = String.fromCodePoint(0x1F4CD) + ' ' + esc(artist.city);
+      metaEl.appendChild(cpill);
     }
 
-    var statsHTML = '';
-    if (artist.track_play_count || artist.track_likes_count) {
-      statsHTML = '<div class="fa-stats">'
-        + '<div class="fa-stat"><span class="fa-stat-val">' + plays + '</span><span class="fa-stat-label">Plays</span></div>'
-        + '<div class="fa-stat-sep"></div>'
-        + '<div class="fa-stat"><span class="fa-stat-val">' + likes + '</span><span class="fa-stat-label">Likes</span></div>'
-        + '</div>';
-    }
+    tuneTitleEl.textContent = artist.track_title ? String.fromCodePoint(0x1F3B5) + ' ' + artist.track_title : '';
+    tuneTitleEl.style.display = artist.track_title ? '' : 'none';
 
-    mainSlot.innerHTML = '<div class="fa-main-inner">'
-      + '<div class="fa-main-photo-wrap">' + photoHTML(artist, 110) + '<div class="fa-photo-ring"></div></div>'
-      + '<div class="fa-main-info">'
-        + '<div class="fa-name">' + esc(artist.artist_name || 'Unknown') + '</div>'
-        + (roleStr ? '<div class="fa-role">' + esc(roleStr) + '</div>' : '')
-        + (metaPills ? '<div class="fa-meta">' + metaPills + '</div>' : '')
-        + (artist.track_title ? '<div class="fa-tune" style="padding-left:10px;border-left:2px solid rgba(212,175,55,0.35);">&#9835; ' + esc(artist.track_title) + '</div>' : '')
-        + (artist.bio ? '<div class="fa-bio">' + esc(artist.bio) + '</div>' : '')
-        + statsHTML
-        + '<a href="artist.html?id=' + encodeURIComponent(artist.user_id) + '" class="fa-view-btn">View profile &#8250;</a>'
-      + '</div>'
-    + '</div>';
+    if (linkEl) {
+      linkEl.href = 'artist.html?id=' + encodeURIComponent(artist.user_id);
+    }
   }
 
-  function renderSide(artist, idx) {
-    var roleStr = roles(artist.music_roles);
-    var flagStr = flag(artist.nationality);
-    var metaPills = '';
-    if (artist.nationality) {
-      metaPills += '<span class="fa-pill fa-pill-sm">' + (flagStr ? flagStr + ' ' : '') + esc(artist.nationality.toUpperCase()) + '</span>';
-    }
+  function showArtist(artist, direction) {
+    var outX = direction === 'next' ? '-28px' : '28px';
+    var inX  = direction === 'next' ?  '28px' : '-28px';
 
-    return '<div class="fa-side-card" data-idx="' + idx + '">'
-      + '<div class="fa-side-photo-wrap">' + photoHTML(artist, 64) + '</div>'
-      + '<div class="fa-side-name">' + esc(artist.artist_name || 'Unknown') + '</div>'
-      + (roleStr ? '<div class="fa-side-role">' + esc(roleStr) + '</div>' : '')
-      + (metaPills ? '<div class="fa-meta" style="justify-content:center;margin:4px 0;">' + metaPills + '</div>' : '')
-      + (artist.track_title ? '<div class="fa-side-tune">&#9835; ' + esc(artist.track_title) + '</div>' : '')
-      + '<a href="artist.html?id=' + encodeURIComponent(artist.user_id) + '" class="fa-view-btn fa-view-btn-sm">View profile &#8250;</a>'
-    + '</div>';
+    cardEl.style.transition = 'transform ' + (TRANSITION_MS/2) + 'ms ease, opacity ' + (TRANSITION_MS/2) + 'ms ease';
+    cardEl.style.transform  = 'translateX(' + outX + ')';
+    cardEl.style.opacity    = '0';
+
+    setTimeout(function() {
+      renderArtist(artist);
+      cardEl.style.transition = 'none';
+      cardEl.style.transform  = 'translateX(' + inX + ')';
+      cardEl.style.opacity    = '0';
+      requestAnimationFrame(function() { requestAnimationFrame(function() {
+        cardEl.style.transition = 'transform ' + TRANSITION_MS + 'ms cubic-bezier(0.22,1,0.36,1), opacity ' + TRANSITION_MS + 'ms ease';
+        cardEl.style.transform  = 'translateX(0)';
+        cardEl.style.opacity    = '1';
+      }); });
+    }, TRANSITION_MS / 2);
   }
 
-  function render(newIndex, direction) {
-    currentIndex = ((newIndex % artists.length) + artists.length) % artists.length;
-
-    renderMain(artists[currentIndex]);
-
-    var sideHTML = '';
-    for (var i = 1; i <= 2; i++) {
-      var si = (currentIndex + i) % artists.length;
-      sideHTML += renderSide(artists[si], (currentIndex + i));
-    }
-    sideSlot.innerHTML = sideHTML;
-
-    sideSlot.querySelectorAll('.fa-side-card').forEach(function(card) {
-      card.addEventListener('click', function() {
-        var idx = parseInt(card.getAttribute('data-idx'));
-        render(idx, 'next');
-        restartProgress();
-        clearInterval(timer);
-        timer = setInterval(function() { render(currentIndex + 1, 'next'); }, INTERVAL_MS);
-      });
-    });
-
+  function goTo(index, direction) {
+    var dir = direction || (index > currentIndex ? 'next' : 'prev');
+    currentIndex = ((index % artists.length) + artists.length) % artists.length;
+    showArtist(artists[currentIndex], dir);
+    buildDots(artists.length, currentIndex);
     restartProgress();
+    clearInterval(timer);
+    if (!isPaused) {
+      timer = setInterval(function() { goTo(currentIndex + 1, 'next'); }, INTERVAL_MS);
+    }
   }
 
-  async function load() {
+  async function loadFeaturedArtists() {
+    // Wacht tot SSFMApp beschikbaar is (max 2 seconden)
     var supabase = null;
     for (var i = 0; i < 20; i++) {
       supabase = window.SSFMApp && typeof window.SSFMApp.getSupabaseClient === 'function'
-        ? window.SSFMApp.getSupabaseClient() : null;
+        ? window.SSFMApp.getSupabaseClient()
+        : null;
       if (supabase) break;
       await new Promise(function(r) { setTimeout(r, 100); });
     }
-    if (!supabase) return;
+    if (!supabase) {
+      console.warn('[featured-artists] Supabase client niet gevonden');
+      return;
+    }
 
     try {
-      var tracksRes = await supabase
+      // Stap 1: goedgekeurde tracks ophalen
+      var tracksResult = await supabase
         .from('tracks')
-        .select('user_id, title, play_count')
+        .select('user_id, title')
         .eq('status', 'approved');
 
-      if (tracksRes.error || !tracksRes.data || !tracksRes.data.length) {
-        sectionEl.style.display = 'none'; return;
+      if (tracksResult.error || !tracksResult.data || tracksResult.data.length === 0) {
+        sectionEl.style.display = 'none';
+        return;
       }
 
+      // user_id → titel map
       var trackMap = {};
-      tracksRes.data.forEach(function(t) { trackMap[t.user_id] = t; });
-      var uids = Object.keys(trackMap);
+      tracksResult.data.forEach(function(t) { trackMap[t.user_id] = t.title; });
+      var approvedUserIds = Object.keys(trackMap);
 
-      var profRes = await supabase
+      // Stap 2: profielen ophalen
+      var profilesResult = await supabase
         .from('profiles')
         .select('user_id, artist_name, photo_url, bio, nationality, city, show_city_on_artist_page, music_roles')
-        .in('user_id', uids)
+        .in('user_id', approvedUserIds)
         .not('artist_name', 'is', null)
         .neq('artist_name', '')
         .limit(20);
 
-      if (profRes.error || !profRes.data || !profRes.data.length) {
-        sectionEl.style.display = 'none'; return;
+      if (profilesResult.error || !profilesResult.data || profilesResult.data.length === 0) {
+        sectionEl.style.display = 'none';
+        return;
       }
 
-      // Haal likes op
-      var likesRes = await supabase
-        .from('track_likes')
-        .select('artist_user_id');
-
-      var likesMap = {};
-      if (!likesRes.error && likesRes.data) {
-        likesRes.data.forEach(function(l) {
-          likesMap[l.artist_user_id] = (likesMap[l.artist_user_id] || 0) + 1;
-        });
-      }
-
-      artists = profRes.data
-        .map(function(p) {
-          var t = trackMap[p.user_id] || {};
-          return Object.assign({}, p, {
-            track_title: t.title || null,
-            track_play_count: t.play_count || 0,
-            track_likes_count: likesMap[p.user_id] || 0
-          });
-        })
+      // Combineer
+      artists = profilesResult.data
+        .map(function(p) { return Object.assign({}, p, { track_title: trackMap[p.user_id] || null }); })
         .sort(function() { return Math.random() - 0.5; });
 
-      if (artists.length < 2) { sectionEl.style.display = 'none'; return; }
-
+      // Toon sectie
       sectionEl.style.display = '';
       sectionEl.classList.remove('hidden');
-      render(0);
-      timer = setInterval(function() { render(currentIndex + 1, 'next'); }, INTERVAL_MS);
 
-    } catch(e) {
-      console.error('[featured-artists]', e);
+      renderArtist(artists[0]);
+      buildDots(artists.length, 0);
+      restartProgress();
+      timer = setInterval(function() { goTo(currentIndex + 1, 'next'); }, INTERVAL_MS);
+
+    } catch (err) {
+      console.error('[featured-artists] Fout:', err);
       sectionEl.style.display = 'none';
     }
   }
 
-  if (prevBtn) prevBtn.addEventListener('click', function() {
-    render(currentIndex - 1, 'prev');
-    clearInterval(timer);
-    timer = setInterval(function() { render(currentIndex + 1, 'next'); }, INTERVAL_MS);
-  });
-  if (nextBtn) nextBtn.addEventListener('click', function() {
-    render(currentIndex + 1, 'next');
-    clearInterval(timer);
-    timer = setInterval(function() { render(currentIndex + 1, 'next'); }, INTERVAL_MS);
-  });
+  if (prevBtn) prevBtn.addEventListener('click', function() { goTo(currentIndex - 1, 'prev'); });
+  if (nextBtn) nextBtn.addEventListener('click', function() { goTo(currentIndex + 1, 'next'); });
+
+  if (cardEl) {
+    cardEl.addEventListener('mouseenter', function() {
+      isPaused = true;
+      clearInterval(timer);
+      if (progressEl) {
+        var w = getComputedStyle(progressEl).width;
+        progressEl.style.transition = 'none';
+        progressEl.style.width = w;
+      }
+    });
+    cardEl.addEventListener('mouseleave', function() {
+      isPaused = false;
+      restartProgress();
+      timer = setInterval(function() { goTo(currentIndex + 1, 'next'); }, INTERVAL_MS);
+    });
+  }
+
+  var touchStartX = 0;
+  if (cardEl) {
+    cardEl.addEventListener('touchstart', function(e) {
+      touchStartX = e.touches[0].clientX;
+    }, { passive: true });
+    cardEl.addEventListener('touchend', function(e) {
+      var dx = e.changedTouches[0].clientX - touchStartX;
+      if (Math.abs(dx) > 50) goTo(currentIndex + (dx < 0 ? 1 : -1), dx < 0 ? 'next' : 'prev');
+    }, { passive: true });
+  }
 
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', load);
-  } else { load(); }
+    document.addEventListener('DOMContentLoaded', loadFeaturedArtists);
+  } else {
+    loadFeaturedArtists();
+  }
+
 })();

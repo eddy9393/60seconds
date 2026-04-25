@@ -55,10 +55,7 @@
   }
 
   function setCurrencyText(valueEl, value, badgeEl) {
-    if (badgeEl) {
-      badgeEl.classList.remove('hidden');
-      ensureCurrencyStoreButton(badgeEl);
-    }
+    if (badgeEl) badgeEl.classList.remove('hidden');
     if (valueEl) valueEl.textContent = normalizeCoins(value);
   }
 
@@ -206,50 +203,92 @@
 
 
 
-  function ensureHeaderSlogan(doc = document) {
-    const logoLink = doc.querySelector('.header-logo-link');
-    if (!logoLink) return;
+function ensureHeaderSlogan(doc = document) {
+  const logoLink = doc.querySelector('.header-logo-link');
+  if (!logoLink) return;
 
-    const isMobile = window.matchMedia('(max-width: 760px)').matches;
+  const applyLayout = () => {
+    const isMobile = window.matchMedia('(max-width: 768px)').matches;
 
-    doc.querySelectorAll('.header-slogan, .site-slogan, .mobile-slogan').forEach((node) => {
-      if (isMobile || !logoLink.contains(node)) node.remove();
+    doc.querySelectorAll('.header-slogan').forEach((node) => {
+      if (!logoLink.contains(node)) node.remove();
     });
 
-    logoLink.style.display = 'inline-flex';
-    logoLink.style.alignItems = 'center';
-    logoLink.style.justifyContent = 'center';
-    logoLink.style.textDecoration = 'none';
+    let slogan = logoLink.querySelector('.header-slogan');
 
     if (isMobile) {
+      if (slogan) slogan.remove();
+      logoLink.style.display = 'inline-flex';
       logoLink.style.flexDirection = 'row';
+      logoLink.style.alignItems = 'center';
+      logoLink.style.justifyContent = 'center';
       logoLink.style.gap = '0';
       return;
     }
 
+    logoLink.style.display = 'inline-flex';
     logoLink.style.flexDirection = 'column';
-    logoLink.style.gap = '7px';
+    logoLink.style.alignItems = 'center';
+    logoLink.style.justifyContent = 'center';
+    logoLink.style.gap = '6px';
+    logoLink.style.textDecoration = 'none';
 
-    let slogan = logoLink.querySelector('.header-slogan');
     if (!slogan) {
       slogan = doc.createElement('div');
       slogan.className = 'header-slogan';
       slogan.textContent = 'Let musicians be musicians';
+      slogan.style.fontSize = '11px';
+      slogan.style.fontWeight = '500';
+      slogan.style.letterSpacing = '0.24em';
+      slogan.style.textTransform = 'uppercase';
+      slogan.style.opacity = '0.68';
+      slogan.style.textAlign = 'center';
+      slogan.style.whiteSpace = 'nowrap';
+      slogan.style.lineHeight = '1';
+      slogan.style.marginTop = '2px';
+      slogan.style.color = 'inherit';
       logoLink.appendChild(slogan);
     }
+  };
+
+  applyLayout();
+
+  if (!window.__ssfmHeaderSloganResizeBound) {
+    window.addEventListener('resize', () => ensureHeaderSlogan(document), { passive: true });
+    window.__ssfmHeaderSloganResizeBound = true;
+  }
+}
+
+function ensureCurrencyStoreButton(doc = document) {
+  const badge = doc.getElementById('currencyBadge');
+  if (!badge) return;
+
+  let button = badge.querySelector('.currency-store-btn');
+  if (!button) {
+    button = doc.createElement('a');
+    button.className = 'currency-store-btn';
+    button.href = 'store.html';
+    button.setAttribute('aria-label', 'Open Seconds store');
+    button.textContent = '+';
+    badge.appendChild(button);
   }
 
-  function ensureCurrencyStoreButton(badgeEl) {
-    if (!badgeEl) return;
-    if (badgeEl.querySelector('.currency-store-plus')) return;
-
-    const plus = document.createElement('a');
-    plus.className = 'currency-store-plus';
-    plus.href = 'store.html';
-    plus.setAttribute('aria-label', 'Open Seconds Store');
-    plus.textContent = '+';
-    badgeEl.appendChild(plus);
-  }
+  button.style.display = 'inline-flex';
+  button.style.alignItems = 'center';
+  button.style.justifyContent = 'center';
+  button.style.width = '22px';
+  button.style.height = '22px';
+  button.style.marginLeft = '2px';
+  button.style.borderRadius = '999px';
+  button.style.border = '1px solid rgba(255,255,255,0.12)';
+  button.style.background = 'rgba(255,255,255,0.06)';
+  button.style.color = '#f7e6ac';
+  button.style.fontSize = '15px';
+  button.style.fontWeight = '700';
+  button.style.lineHeight = '1';
+  button.style.textDecoration = 'none';
+  button.style.flex = '0 0 auto';
+}
 
   function buildStandardShellEls(doc = document) {
     return {
@@ -682,10 +721,7 @@
   }
 
   ensureHeaderSlogan();
-  if (!window.__ssfmHeaderSloganResizeBound) {
-    window.addEventListener('resize', () => ensureHeaderSlogan(document), { passive: true });
-    window.__ssfmHeaderSloganResizeBound = true;
-  }
+  ensureCurrencyStoreButton();
   ensureMiniPlayerScript();
   trackSiteVisit().catch((error) => console.warn('trackSiteVisit unexpected error:', error));
 
