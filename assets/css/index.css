@@ -3277,3 +3277,285 @@ a.button,
 button:not(.side-nav button):not(.desktop-side-nav-panel button){
   background-image:none !important;
 }
+
+/* ============================================================
+   v24 premium refinements
+   - keep radio button icons visible/white
+   - lower radio container height
+   - coins + hover glow
+   - no sidebar menu changes
+   ============================================================ */
+
+.player-actions .metal-btn,
+.volume-button,
+#pauseBtn {
+  color: #ffffff !important;
+}
+
+.player-actions .metal-btn .icon,
+.player-actions .metal-btn svg,
+.volume-button svg,
+.volume-button .icon,
+#pauseBtn .icon,
+#pauseBtn svg {
+  color: #ffffff !important;
+  fill: currentColor !important;
+  stroke: currentColor !important;
+  opacity: 1 !important;
+  filter: drop-shadow(0 0 10px rgba(255,255,255,.20)) !important;
+}
+
+.player-actions .metal-btn svg *,
+.volume-button svg *,
+#pauseBtn svg * {
+  fill: currentColor !important;
+  stroke: currentColor !important;
+}
+
+.skip-coin-icon,
+.concept-inline-coin,
+.currency-badge-icon {
+  filter: drop-shadow(0 0 8px rgba(245,200,75,.28)) !important;
+}
+
+.radio-stage {
+  margin-top: 22px !important;
+}
+
+.radio-shell:not(.pre-live) {
+  padding-top: clamp(18px, 2.8vw, 28px) !important;
+  padding-bottom: clamp(18px, 2.8vw, 28px) !important;
+  max-width: 900px !important;
+}
+
+.radio-shell-content {
+  gap: clamp(10px, 1.8vw, 18px) !important;
+}
+
+.now-playing,
+.tune-title {
+  margin-bottom: 2px !important;
+}
+
+.progress-wrap,
+.progress-row,
+.time-row {
+  margin-top: 8px !important;
+  margin-bottom: 6px !important;
+}
+
+.player-actions {
+  margin-top: 10px !important;
+  margin-bottom: 6px !important;
+}
+
+#pauseBtn {
+  width: 78px !important;
+  height: 78px !important;
+  min-width: 78px !important;
+  min-height: 78px !important;
+}
+
+#pauseBtn .icon {
+  font-size: 30px !important;
+}
+
+.currency-badge .header-icon-btn,
+.header-icon-btn[aria-label*="coin"],
+.header-icon-btn[aria-label*="Coin"],
+.header-icon-btn[aria-label*="seconds"],
+.header-icon-btn[aria-label*="Seconds"] {
+  color: #ffffff !important;
+  border-color: rgba(245,200,75,.28) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.10),
+    0 10px 24px rgba(0,0,0,.34),
+    0 0 0 rgba(245,200,75,0) !important;
+}
+
+.currency-badge .header-icon-btn:hover,
+.header-icon-btn[aria-label*="coin"]:hover,
+.header-icon-btn[aria-label*="Coin"]:hover,
+.header-icon-btn[aria-label*="seconds"]:hover,
+.header-icon-btn[aria-label*="Seconds"]:hover {
+  color: #ffffff !important;
+  border-color: rgba(245,200,75,.86) !important;
+  background: rgba(245,200,75,.12) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.16),
+    0 14px 32px rgba(0,0,0,.42),
+    0 0 22px rgba(245,200,75,.44),
+    0 0 52px rgba(245,200,75,.24) !important;
+  transform: translateY(-2px) scale(1.03) !important;
+}
+
+@media (max-width: 900px) {
+  .radio-shell:not(.pre-live) {
+    padding-top: 20px !important;
+    padding-bottom: 20px !important;
+  }
+  #pauseBtn {
+    width: 68px !important;
+    height: 68px !important;
+    min-width: 68px !important;
+    min-height: 68px !important;
+  }
+}
+
+/* ============================================================
+   v24 premium button system — matched to index page
+   Scope: page action buttons only. Sidebar/menu navigation excluded.
+   ============================================================ */
+
+:root {
+  --btn-premium-bg: rgba(255,255,255,.055);
+  --btn-premium-bg-hover: rgba(255,255,255,.078);
+  --btn-premium-border: rgba(255,255,255,.14);
+  --btn-premium-border-hover: rgba(245,200,75,.55);
+  --btn-premium-gold: #f5c84b;
+}
+
+.main-content button:not(.desktop-nav-button):not(.mobile-nav-link):not(.desktop-nav-link),
+.main-content .gold-btn,
+.main-content .ghost-btn,
+.main-content .metal-btn,
+.main-content .primary-btn,
+.main-content .secondary-btn,
+.main-content .submit-btn,
+.main-content .save-btn,
+.main-content .auth-btn,
+.main-content .action-btn,
+.main-content .clip-play-btn,
+.main-content .store-card-btn,
+.main-content .cta-empty-state a,
+.main-content .cta-empty-state button,
+.artist-main button:not(.desktop-nav-button):not(.mobile-nav-link):not(.desktop-nav-link),
+.artist-main .gold-btn,
+.artist-main .ghost-btn,
+.artist-main .metal-btn,
+.artist-main .player-btn,
+.artist-main .action-btn,
+.artist-main .primary-btn,
+.artist-main .secondary-btn,
+.liked-main button:not(.desktop-nav-button):not(.mobile-nav-link):not(.desktop-nav-link),
+.liked-main .gold-btn,
+.liked-main .ghost-btn,
+.liked-main .metal-btn,
+.liked-main .action-btn,
+.submit-main button:not(.desktop-nav-button):not(.mobile-nav-link):not(.desktop-nav-link),
+.submit-main .gold-btn,
+.submit-main .ghost-btn,
+.submit-main .metal-btn,
+.submit-main .submit-link,
+.submit-main .ghost-link,
+.submit-main .clip-play-btn,
+.header-icon-btn,
+.account-menu-link,
+.account-menu button {
+  background: var(--btn-premium-bg) !important;
+  background-image: none !important;
+  color: #ffffff !important;
+  border: 1px solid var(--btn-premium-border) !important;
+  border-radius: 999px !important;
+  text-shadow: none !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.10),
+    0 12px 30px rgba(0,0,0,.36),
+    0 0 0 rgba(245,200,75,0) !important;
+  transition:
+    transform .18s ease,
+    border-color .18s ease,
+    box-shadow .18s ease,
+    background-color .18s ease,
+    color .18s ease !important;
+}
+
+.main-content button:not(.desktop-nav-button):not(.mobile-nav-link):not(.desktop-nav-link):hover,
+.main-content .gold-btn:hover,
+.main-content .ghost-btn:hover,
+.main-content .metal-btn:hover,
+.main-content .primary-btn:hover,
+.main-content .secondary-btn:hover,
+.main-content .submit-btn:hover,
+.main-content .save-btn:hover,
+.main-content .auth-btn:hover,
+.main-content .action-btn:hover,
+.main-content .clip-play-btn:hover,
+.main-content .store-card-btn:hover,
+.main-content .cta-empty-state a:hover,
+.main-content .cta-empty-state button:hover,
+.artist-main button:not(.desktop-nav-button):not(.mobile-nav-link):not(.desktop-nav-link):hover,
+.artist-main .gold-btn:hover,
+.artist-main .ghost-btn:hover,
+.artist-main .metal-btn:hover,
+.artist-main .player-btn:hover,
+.artist-main .action-btn:hover,
+.artist-main .primary-btn:hover,
+.artist-main .secondary-btn:hover,
+.liked-main button:not(.desktop-nav-button):not(.mobile-nav-link):not(.desktop-nav-link):hover,
+.liked-main .gold-btn:hover,
+.liked-main .ghost-btn:hover,
+.liked-main .metal-btn:hover,
+.liked-main .action-btn:hover,
+.submit-main button:not(.desktop-nav-button):not(.mobile-nav-link):not(.desktop-nav-link):hover,
+.submit-main .gold-btn:hover,
+.submit-main .ghost-btn:hover,
+.submit-main .metal-btn:hover,
+.submit-main .submit-link:hover,
+.submit-main .ghost-link:hover,
+.submit-main .clip-play-btn:hover,
+.header-icon-btn:hover,
+.account-menu-link:hover,
+.account-menu button:hover {
+  transform: translateY(-2px) !important;
+  background: var(--btn-premium-bg-hover) !important;
+  background-image: none !important;
+  color: #ffffff !important;
+  border-color: var(--btn-premium-border-hover) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.12),
+    0 16px 38px rgba(0,0,0,.42),
+    0 0 26px rgba(245,200,75,.25) !important;
+}
+
+.main-content button svg,
+.main-content button svg *,
+.artist-main button svg,
+.artist-main button svg *,
+.liked-main button svg,
+.liked-main button svg *,
+.submit-main button svg,
+.submit-main button svg *,
+.header-icon-btn svg,
+.header-icon-btn svg *,
+.account-menu button svg,
+.account-menu button svg * {
+  color: #ffffff !important;
+  fill: currentColor !important;
+  stroke: currentColor !important;
+}
+
+.main-content button .icon,
+.artist-main button .icon,
+.liked-main button .icon,
+.submit-main button .icon,
+.header-icon-btn .icon {
+  color: #ffffff !important;
+  opacity: 1 !important;
+}
+
+.main-content a.gold-btn,
+.artist-main a.gold-btn,
+.liked-main a.gold-btn,
+.submit-main a.gold-btn,
+.submit-main .submit-link {
+  color: var(--btn-premium-gold) !important;
+}
+
+.main-content a.gold-btn:hover,
+.artist-main a.gold-btn:hover,
+.liked-main a.gold-btn:hover,
+.submit-main a.gold-btn:hover,
+.submit-main .submit-link:hover {
+  color: #ffffff !important;
+}
