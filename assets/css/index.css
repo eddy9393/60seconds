@@ -12,7 +12,7 @@
   --fs-artist: 18px;
   --fs-stat-label: 12px;
   --fs-stat-value: clamp(26px, 4vw, 34px);
-  --fs-tune-title: clamp(30px, 5vw, 48px);
+  --fs-tune-title: clamp(24px, 4vw, 38px);
 
   --desktop-rail-width: 86px;
   --desktop-rail-expanded: 320px;
@@ -614,7 +614,7 @@ img {
   width: 100%;
   max-width: 780px;
   margin: 0 auto;
-  padding: 0;
+  padding: 0 20px;
   background: transparent;
   border: none;
   box-shadow: none;
@@ -747,7 +747,7 @@ img {
 
 .radio-shell-content {
   display: grid;
-  gap: 18px;
+  gap: 10px;
 }
 
 .now-playing {
@@ -765,7 +765,7 @@ img {
 
 .waveform {
   width: 100%;
-  height: 44px;
+  height: 32px;
   display: flex;
   align-items: flex-end;
   justify-content: center;
@@ -863,7 +863,7 @@ img {
   font-size: var(--fs-body);
   margin: 0 auto 10px;
   width: 100%;
-  max-width: 620px;
+  max-width: 740px;
   font-family: 'Manrope', sans-serif;
   letter-spacing: 0.02em;
 }
@@ -871,7 +871,7 @@ img {
 .progress {
   position: relative;
   width: 100%;
-  max-width: 620px;
+  max-width: 740px;
   height: 14px;
   margin: 0 auto;
   background:
@@ -971,7 +971,7 @@ img {
 }
 
 .player-actions {
-  margin-top: 18px;
+  margin-top: 10px;
   display: flex;
   justify-content: center;
   gap: 12px;
@@ -1140,8 +1140,8 @@ img {
 
 .concept-section {
   max-width: 780px;
-  margin: 34px auto 0;
-  padding: 0 12px;
+  margin: 28px auto 0;
+  padding: 0 20px;
 }
 
 .concept-card {
@@ -1738,7 +1738,7 @@ img {
 .news-feed-section {
   max-width: 780px;
   margin: 18px auto 0;
-  padding: 0 12px;
+  padding: 0 20px;
 }
 
 .news-feed-card {
@@ -1851,7 +1851,7 @@ img {
 .news-feed-section {
   max-width: 780px;
   margin: 18px auto 0;
-  padding: 0 12px;
+  padding: 0 20px;
 }
 
 .news-feed-card {
@@ -2206,7 +2206,7 @@ img {
 .fa-section {
   max-width: 780px;
   margin: 32px auto 0;
-  padding: 0 12px;
+  padding: 0 20px;
 }
 
 .fa-kicker {
