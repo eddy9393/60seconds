@@ -1622,3 +1622,78 @@ img[class*="avatar"],.avatar,.profile-photo,.artist-photo{box-shadow:0 0 0 1px r
 .submit-main .submit-link:hover {
   color: #ffffff !important;
 }
+
+/* ============================================================
+   v25 artist page button normalization
+   Goal: make every artist-profile action button match the premium
+   tune/edit-track button style. Sidebar/menu navigation untouched.
+   ============================================================ */
+.page-wrap .hero-actions a,
+.page-wrap .hero-actions button,
+.page-wrap .tune-action-btn,
+.page-wrap .player-btn,
+.page-wrap .gold-btn,
+.page-wrap .metal-btn,
+.page-wrap .ghost-btn,
+.page-wrap .action-btn,
+.page-wrap .primary-btn,
+.page-wrap .secondary-btn {
+  min-height: 42px !important;
+  padding: 0 20px !important;
+  border-radius: 999px !important;
+  border: 1px solid rgba(255,255,255,.14) !important;
+  background: rgba(255,255,255,.055) !important;
+  background-image: none !important;
+  color: #ffffff !important;
+  font-family: 'Manrope', sans-serif !important;
+  font-size: 14px !important;
+  font-weight: 700 !important;
+  line-height: 1 !important;
+  text-decoration: none !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  text-shadow: none !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.10),
+    0 12px 30px rgba(0,0,0,.36),
+    0 0 0 rgba(245,200,75,0) !important;
+  transition:
+    transform .18s ease,
+    border-color .18s ease,
+    box-shadow .18s ease,
+    background-color .18s ease,
+    color .18s ease !important;
+}
+
+.page-wrap .hero-actions a:hover,
+.page-wrap .hero-actions button:hover,
+.page-wrap .tune-action-btn:hover,
+.page-wrap .player-btn:hover,
+.page-wrap .gold-btn:hover,
+.page-wrap .metal-btn:hover,
+.page-wrap .ghost-btn:hover,
+.page-wrap .action-btn:hover,
+.page-wrap .primary-btn:hover,
+.page-wrap .secondary-btn:hover {
+  transform: translateY(-2px) !important;
+  background: rgba(255,255,255,.078) !important;
+  background-image: none !important;
+  color: #ffffff !important;
+  border-color: rgba(245,200,75,.55) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.12),
+    0 16px 38px rgba(0,0,0,.42),
+    0 0 26px rgba(245,200,75,.25) !important;
+}
+
+.page-wrap .hero-actions a *,
+.page-wrap .hero-actions button *,
+.page-wrap .tune-action-btn *,
+.page-wrap .player-btn * {
+  color: currentColor !important;
+  fill: currentColor !important;
+  stroke: currentColor !important;
+  opacity: 1 !important;
+}

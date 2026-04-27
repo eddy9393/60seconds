@@ -3559,3 +3559,118 @@ button:not(.side-nav button):not(.desktop-side-nav-panel button){
 .submit-main .submit-link:hover {
   color: #ffffff !important;
 }
+
+/* ============================================================
+   v25 index compact radio + consistent content padding
+   Scope: homepage content only. Sidebar/menu navigation untouched.
+   ============================================================ */
+.radio-stage {
+  margin-top: 14px !important;
+  min-height: auto !important;
+  padding-inline: clamp(16px, 3vw, 28px) !important;
+}
+
+.radio-shell:not(.pre-live) {
+  max-width: 860px !important;
+  padding: clamp(16px, 2vw, 24px) !important;
+}
+
+.radio-shell-content {
+  gap: 8px !important;
+}
+
+.now-playing {
+  margin-bottom: 0 !important;
+}
+
+.tune-title {
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+  line-height: 1.02 !important;
+}
+
+.tune-artist,
+.tune-genre {
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+}
+
+.waveform-wrap {
+  margin-top: 0 !important;
+  margin-bottom: 4px !important;
+}
+
+.waveform {
+  height: 24px !important;
+}
+
+.progress-wrap,
+.progress-row,
+.time-row {
+  margin-top: 4px !important;
+  margin-bottom: 4px !important;
+}
+
+.player-actions {
+  margin-top: 8px !important;
+  margin-bottom: 0 !important;
+  gap: 10px !important;
+}
+
+#pauseBtn {
+  width: 66px !important;
+  height: 66px !important;
+  min-width: 66px !important;
+  min-height: 66px !important;
+}
+
+#pauseBtn .icon {
+  font-size: 26px !important;
+}
+
+.listener-pill,
+.support-line,
+.mood-chip-row {
+  margin-top: 4px !important;
+  margin-bottom: 0 !important;
+}
+
+#featuredArtistSection,
+.news-feed-section,
+.concept-section,
+.submit-under-radio {
+  width: min(100% - 32px, 860px) !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+
+.fa-card,
+.news-feed-card,
+.concept-card,
+.submit-under-radio {
+  padding: clamp(18px, 2.4vw, 24px) !important;
+}
+
+@media (max-width: 700px) {
+  .radio-stage {
+    padding-inline: 16px !important;
+  }
+
+  .radio-shell:not(.pre-live) {
+    padding: 16px !important;
+  }
+
+  #pauseBtn {
+    width: 60px !important;
+    height: 60px !important;
+    min-width: 60px !important;
+    min-height: 60px !important;
+  }
+
+  #featuredArtistSection,
+  .news-feed-section,
+  .concept-section,
+  .submit-under-radio {
+    width: calc(100% - 32px) !important;
+  }
+}
