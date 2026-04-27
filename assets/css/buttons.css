@@ -1,0 +1,126 @@
+/* =============================================================
+   buttons.css — v1
+   Eén bron van waarheid voor alle knoppen op alle pagina's.
+   Gebaseerd op de metal-btn stijl van index.css.
+   Importeer dit LAATSTE in elke pagina-CSS zodat het wint.
+   ============================================================= */
+
+/* ── Reset alle gradient-knoppen ──────────────────────────────── */
+.gold-btn,
+.ghost-btn,
+.store-card-btn,
+.start-btn,
+.submit-btn,
+.save-btn,
+.primary-btn,
+.secondary-btn,
+.auth-btn,
+.action-btn,
+.approve-btn,
+.clip-play-btn {
+  background: rgba(255,255,255,0.055) !important;
+  background-image: none !important;
+  color: #ffffff !important;
+  border: 1px solid rgba(255,255,255,0.16) !important;
+  border-radius: 999px !important;
+  min-height: 48px;
+  padding: 0 22px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-family: 'Manrope', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.10),
+    0 12px 30px rgba(0,0,0,0.36) !important;
+  transition:
+    transform 0.18s ease,
+    border-color 0.18s ease,
+    box-shadow 0.18s ease,
+    background-color 0.18s ease !important;
+  text-shadow: none !important;
+}
+
+.gold-btn:hover,
+.ghost-btn:hover,
+.store-card-btn:hover,
+.start-btn:hover,
+.submit-btn:hover,
+.save-btn:hover,
+.primary-btn:hover,
+.secondary-btn:hover,
+.auth-btn:hover,
+.action-btn:hover,
+.approve-btn:hover,
+.clip-play-btn:hover {
+  transform: translateY(-2px) !important;
+  background: rgba(255,255,255,0.075) !important;
+  background-image: none !important;
+  border-color: rgba(245,200,75,0.55) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.12),
+    0 16px 38px rgba(0,0,0,0.42),
+    0 0 26px rgba(245,200,75,0.25) !important;
+}
+
+.gold-btn:disabled,
+.ghost-btn:disabled,
+.submit-btn:disabled,
+.save-btn:disabled,
+.auth-btn:disabled,
+.action-btn:disabled,
+.approve-btn:disabled {
+  opacity: 0.42 !important;
+  cursor: not-allowed !important;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+/* ── metal-btn blijft exact zoals op index.css ──────────────── */
+.metal-btn {
+  border: 1px solid rgba(255,255,255,0.16);
+  background:
+    linear-gradient(180deg, #fbfbfb 0%, #d6d6d6 16%, #b6b6b6 35%, #8b8b8b 52%, #d2d2d2 72%, #f4f4f4 100%);
+  color: #151515;
+  padding: 13px 18px;
+  border-radius: 999px;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 14px;
+  text-shadow: 0 1px 0 rgba(255,255,255,0.45);
+  box-shadow:
+    inset 0 2px 0 rgba(255,255,255,0.72),
+    inset 0 -2px 3px rgba(0,0,0,0.18),
+    0 10px 22px rgba(0,0,0,0.25);
+  transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
+  backdrop-filter: blur(2px);
+  font-family: 'Manrope', sans-serif;
+}
+
+.metal-btn:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.02);
+}
+
+.metal-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
+  filter: grayscale(0.25);
+}
+
+/* ── Centrering ──────────────────────────────────────────────── */
+/* Knoppen in actie-rijen altijd gecentreerd */
+.btn-row,
+.action-row,
+.form-actions,
+.cta-empty-state {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}

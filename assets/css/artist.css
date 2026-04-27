@@ -519,19 +519,7 @@ img {
   filter: brightness(1.03);
 }
 
-.gold-btn {
-  color: #231700;
-  font-weight: 700;
-  font-size: 15px;
-  background:
-    linear-gradient(180deg, #fff5c9 0%, #f4d77a 20%, #d4af37 52%, #b98816 75%, #7c5a11 100%);
-  border: 1px solid rgba(255, 230, 150, 0.38);
-  box-shadow:
-    inset 0 2px 0 rgba(255,255,255,0.45),
-    inset 0 -2px 4px rgba(90,50,0,0.28),
-    0 12px 26px rgba(212,175,55,0.22),
-    0 0 0 1px rgba(212,175,55,0.08);
-}
+/* gold-btn stijl → zie buttons.css */
 
 .metal-btn {
   border: 1px solid rgba(255,255,255,0.16);
@@ -547,18 +535,7 @@ img {
     0 10px 22px rgba(0,0,0,0.25);
 }
 
-.ghost-btn {
-  border: 1px solid rgba(255,255,255,0.08);
-  background:
-    linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.015)),
-    rgba(255,255,255,0.02);
-  color: #f4f4f4;
-  font-weight: 600;
-  font-size: 14px;
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.04),
-    0 10px 24px rgba(0,0,0,0.2);
-}
+/* gold-btn stijl → zie buttons.css */
 
 .page-wrap {
   max-width: 1120px;
@@ -1441,11 +1418,7 @@ body{background:radial-gradient(circle at 50% -10%,rgba(245,200,75,.12),transpar
 .logo-slogan,.site-slogan,.slogan,[class*="slogan"]{color:#fff!important;text-shadow:0 0 18px rgba(255,255,255,.16)!important}
 .auth-card,.auth-panel-wrap,.hero-card,.panel-card,.dashboard-card,.metrics-card,.priority-card,.store-hero-card,.store-balance-card,.store-card,.empty-card,.state-card,.check-card,.playlist-card,main section:not(.desktop-side-nav-panel){background:rgba(18,18,22,.74)!important;border-color:rgba(255,255,255,.105)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 24px 70px rgba(0,0,0,.50),0 0 42px rgba(245,200,75,.08)!important;backdrop-filter:blur(20px) saturate(1.18)!important;-webkit-backdrop-filter:blur(20px) saturate(1.18)!important}
 .auth-card:hover,.hero-card:hover,.panel-card:hover,.dashboard-card:hover,.store-card:hover,.playlist-card:hover{border-color:rgba(245,200,75,.38)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.10),0 28px 78px rgba(0,0,0,.54),0 0 48px rgba(245,200,75,.15)!important}
-.gold-btn,.ghost-btn,.store-card-btn,.start-btn,.submit-btn,.save-btn,.primary-btn,.secondary-btn,.auth-btn,.action-btn,.clip-play-btn,.header-icon-btn{background:rgba(255,255,255,.055)!important;background-image:none!important;color:#fff!important;border:1px solid rgba(255,255,255,.14)!important;border-radius:999px!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.10),0 12px 30px rgba(0,0,0,.36),0 0 0 rgba(245,200,75,0)!important;transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease,background-color .18s ease!important}
-.gold-btn:hover,.ghost-btn:hover,.store-card-btn:hover,.start-btn:hover,.submit-btn:hover,.save-btn:hover,.primary-btn:hover,.secondary-btn:hover,.auth-btn:hover,.action-btn:hover,.clip-play-btn:hover,.header-icon-btn:hover{transform:translateY(-2px)!important;background:rgba(255,255,255,.075)!important;border-color:rgba(245,200,75,.50)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.12),0 16px 38px rgba(0,0,0,.42),0 0 26px rgba(245,200,75,.25)!important}
-input,select,textarea{background:rgba(255,255,255,.055)!important;border-color:rgba(255,255,255,.13)!important;color:#fff!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.06),0 0 0 rgba(245,200,75,0)!important}
-input:focus,select:focus,textarea:focus{border-color:rgba(245,200,75,.55)!important;box-shadow:0 0 0 3px rgba(245,200,75,.12),0 0 24px rgba(245,200,75,.16)!important;outline:none!important}
-img[class*="avatar"],.avatar,.profile-photo,.artist-photo{box-shadow:0 0 0 1px rgba(245,200,75,.64),0 0 28px rgba(245,200,75,.24),0 14px 34px rgba(0,0,0,.40)!important}
+
 
 /* ============================================================
    v24 premium button system — matched to index page
