@@ -460,9 +460,10 @@ function persistRadioSession() {
 function updatePauseButtonState() {
   if (!els.pauseBtn) return;
   const isPlaying = state.isLiveActivated && !els.audio.paused;
+  els.pauseBtn.setAttribute("aria-label", isPlaying ? "Pause" : "Play");
   els.pauseBtn.innerHTML = isPlaying
-    ? `<span class="icon">⏸</span>Pause`
-    : `<span class="icon">▶</span>Play`;
+    ? `<span class="icon">⏸</span>`
+    : `<span class="icon">▶</span>`;
 }
 
 function syncWaveformState() {
