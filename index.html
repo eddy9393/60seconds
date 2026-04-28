@@ -9,6 +9,11 @@
   <link rel="stylesheet" href="assets/css/index.css" />
 </head>
 <body>
+  <!-- Loading bar -->
+  <div id="pageLoader" class="page-loader">
+    <div class="page-loader-bar"></div>
+  </div>
+
   <aside class="desktop-side-nav" aria-label="Desktop navigation">
     <div class="desktop-side-nav-panel">
       <nav class="desktop-side-links">
@@ -212,15 +217,9 @@
                 <span class="skip-cost">-1</span>
               </span>
             </button>
-          </div>
 
-          <div id="featureNote" class="feature-note hidden">
-            These features are only available with an account.
-          </div>
-
-          <div class="volume-wrap">
             <div id="volumeControl" class="volume-control">
-              <button id="volumeBtn" class="volume-button" type="button" aria-label="Volume">
+              <button id="volumeBtn" class="volume-button metal-btn" type="button" aria-label="Volume">
                 <svg class="icon-on" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                   <path d="M11 5L6 9H3a1 1 0 00-1 1v4a1 1 0 001 1h3l5 4V5z" fill="currentColor"/>
                   <path d="M15.54 8.46a5 5 0 010 7.07" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
@@ -237,6 +236,12 @@
               </div>
             </div>
           </div>
+
+          <div id="featureNote" class="feature-note hidden">
+            These features are only available with an account.
+          </div>
+
+
 
           <div class="listeners-pill">
             <span class="listeners-dot"></span>
@@ -351,5 +356,21 @@
   <script src="assets/js/featured-artists.js"></script>
 
   <script src="assets/js/waveform.js"></script>
+  <script>
+    // Verberg loader zodra alle elementen geladen zijn
+    (function() {
+      var loader = document.getElementById('pageLoader');
+      function hideLoader() {
+        if (!loader) return;
+        loader.classList.add('done');
+        setTimeout(function() { loader.style.display = 'none'; }, 600);
+      }
+      if (document.readyState === 'complete') {
+        setTimeout(hideLoader, 200);
+      } else {
+        window.addEventListener('load', function() { setTimeout(hideLoader, 200); });
+      }
+    })();
+  </script>
 </body>
 </html>
