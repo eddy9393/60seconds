@@ -624,7 +624,7 @@ img {
   border-radius: 999px;
   cursor: pointer;
   font-weight: 500;
-  font-size: 13px;
+  font-size: 17px;
   text-shadow: 0 1px 0 rgba(255,255,255,0.45);
   box-shadow:
     inset 0 2px 0 rgba(255,255,255,0.72),
@@ -1109,7 +1109,7 @@ img {
 
   .player-actions .metal-btn .icon {
     margin-right: 0;
-    font-size: 13px;
+    font-size: 17px;
   }
 
   .player-actions .skip-button-content {
@@ -1945,7 +1945,7 @@ img {
 
   .news-feed-item {
     min-height: 44px;
-    font-size: 13px;
+    font-size: 17px;
     padding: 11px 12px;
   }
 }
@@ -2058,7 +2058,7 @@ img {
 
 @media (max-width: 768px) {
   .news-feed-item {
-    font-size: 13px;
+    font-size: 17px;
     gap: 9px;
   }
 
@@ -2483,7 +2483,7 @@ img {
 /* ── Tune titel ─────────────────────────────────────────────── */
 .fa-tune {
   font-family: 'Manrope', sans-serif;
-  font-size: 13px;
+  font-size: 17px;
   font-weight: 500;
   color: rgba(255,232,140,0.75);
   white-space: nowrap;
@@ -2496,7 +2496,7 @@ img {
 /* ── Bio ────────────────────────────────────────────────────── */
 .fa-bio {
   font-family: 'Manrope', sans-serif;
-  font-size: 13px;
+  font-size: 17px;
   font-weight: 400;
   line-height: 1.65;
   color: rgba(255,255,255,0.50);
@@ -5760,8 +5760,8 @@ button:not(.side-nav button):not(.desktop-side-nav-panel button){
 }
 
 .artist-player-photo {
-  width: 32px;
-  height: 32px;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
   object-fit: cover;
   border: 1.5px solid rgba(212,175,55,0.35);
@@ -5771,12 +5771,12 @@ button:not(.side-nav button):not(.desktop-side-nav-panel button){
 }
 
 .artist-player-photo--fallback {
-  width: 32px;
-  height: 32px;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
   background: linear-gradient(135deg, rgba(50,38,8,0.9), rgba(130,96,18,0.8));
   color: rgba(212,175,55,0.9);
-  font-size: 13px;
+  font-size: 17px;
   font-weight: 700;
   display: inline-flex;
   align-items: center;
