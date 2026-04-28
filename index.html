@@ -11,8 +11,73 @@
 <body>
   <!-- Loading bar -->
   <div id="pageLoader" class="page-loader">
-    <div class="page-loader-bar"></div>
+    <div class="page-loader-track">
+      <div class="page-loader-fill" id="pageLoaderFill"></div>
+    </div>
   </div>
+  <script>
+    // Inline script: start loader direct — vóór alles geladen is
+    (function() {
+      var fill = document.getElementById('pageLoaderFill');
+      var loader = document.getElementById('pageLoader');
+      if (!fill || !loader) return;
+
+      var progress = 0;
+      var targetProgress = 0;
+      var finished = false;
+
+      // Beweeg naar 85% terwijl pagina laadt
+      function tick() {
+        if (finished) return;
+        var diff = targetProgress - progress;
+        progress += diff * 0.08 + 0.3;
+        if (progress > targetProgress) progress = targetProgress;
+        fill.style.width = Math.min(progress, 100) + '%';
+        if (progress < 100) requestAnimationFrame(tick);
+      }
+
+      // Simuleer progressie richting 85%
+      var intervals = [
+        [50,  20],
+        [150, 45],
+        [300, 65],
+        [500, 80],
+        [800, 85],
+      ];
+      intervals.forEach(function(pair) {
+        setTimeout(function() {
+          if (!finished) { targetProgress = pair[1]; tick(); }
+        }, pair[0]);
+      });
+
+      // Bij window.load: sprint naar 100% en fade weg
+      function complete() {
+        if (finished) return;
+        finished = true;
+        targetProgress = 100;
+        progress = progress;
+        var sprint = setInterval(function() {
+          progress += 4;
+          fill.style.width = Math.min(progress, 100) + '%';
+          if (progress >= 100) {
+            clearInterval(sprint);
+            setTimeout(function() {
+              loader.style.opacity = '0';
+              setTimeout(function() { loader.style.display = 'none'; }, 500);
+            }, 180);
+          }
+        }, 12);
+      }
+
+      if (document.readyState === 'complete') {
+        complete();
+      } else {
+        window.addEventListener('load', complete);
+        // Fallback na 5 seconden
+        setTimeout(complete, 5000);
+      }
+    })();
+  </script>
 
   <aside class="desktop-side-nav" aria-label="Desktop navigation">
     <div class="desktop-side-nav-panel">
@@ -356,21 +421,6 @@
   <script src="assets/js/featured-artists.js"></script>
 
   <script src="assets/js/waveform.js"></script>
-  <script>
-    // Verberg loader zodra alle elementen geladen zijn
-    (function() {
-      var loader = document.getElementById('pageLoader');
-      function hideLoader() {
-        if (!loader) return;
-        loader.classList.add('done');
-        setTimeout(function() { loader.style.display = 'none'; }, 600);
-      }
-      if (document.readyState === 'complete') {
-        setTimeout(hideLoader, 200);
-      } else {
-        window.addEventListener('load', function() { setTimeout(hideLoader, 200); });
-      }
-    })();
-  </script>
+
 </body>
 </html>
