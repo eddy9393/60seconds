@@ -603,9 +603,9 @@ img {
   position: relative;
   max-width: 880px;
   margin: 32px auto 0;
-  min-height: 52vh;
+  min-height: 44vh;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
 }
 
@@ -3921,5 +3921,75 @@ button:not(.side-nav button):not(.desktop-side-nav-panel button){
   #likeBtn,
   #skip {
     padding: 0 14px !important;
+  }
+}
+
+/* ══════════════════════════════════════════════
+   Content layout: radio links, community rechts
+   ══════════════════════════════════════════════ */
+.content-layout {
+  display: grid;
+  grid-template-columns: 1fr 300px;
+  gap: 24px;
+  align-items: start;
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 0 16px;
+}
+
+.radio-col {
+  min-width: 0;
+}
+
+.community-col {
+  position: sticky;
+  top: 90px;
+  min-width: 0;
+}
+
+/* radio-stage vult de kolom */
+.radio-col .radio-stage {
+  max-width: 100%;
+  margin: 32px 0 0;
+}
+
+/* radio-shell vult de kolom */
+.radio-col .radio-shell {
+  max-width: 100%;
+  padding: 0;
+}
+
+/* featured artist vult kolom */
+.radio-col .fa-section {
+  max-width: 100%;
+  margin: 24px 0 0;
+  padding: 0;
+}
+
+/* news-feed in de aside kolom */
+.community-col .news-feed-section {
+  max-width: 100%;
+  margin: 32px 0 0;
+  padding: 0;
+}
+
+/* news-feed-card in de aside: geen max-height scroll clip */
+.community-col .news-feed-viewport {
+  max-height: none;
+}
+
+/* Smallere schermen: stack verticaal */
+@media (max-width: 860px) {
+  .content-layout {
+    grid-template-columns: 1fr;
+    padding: 0 12px;
+  }
+
+  .community-col {
+    position: static;
+  }
+
+  .community-col .news-feed-section {
+    margin: 0;
   }
 }
