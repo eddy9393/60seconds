@@ -9,72 +9,63 @@
   <link rel="stylesheet" href="assets/css/index.css" />
 </head>
 <body>
-  <!-- Loading bar -->
+  <!-- Fullscreen loader -->
   <div id="pageLoader" class="page-loader">
-    <div class="page-loader-track">
-      <div class="page-loader-fill" id="pageLoaderFill"></div>
+    <div class="page-loader-inner">
+      <img src="logo.png" alt="60 Seconds FM" class="page-loader-logo" />
+      <div class="page-loader-track">
+        <div class="page-loader-fill" id="pageLoaderFill"></div>
+      </div>
+      <div class="page-loader-label" id="pageLoaderLabel">Loading...</div>
     </div>
   </div>
   <script>
-    // Inline script: start loader direct — vóór alles geladen is
     (function() {
-      var fill = document.getElementById('pageLoaderFill');
+      var fill   = document.getElementById('pageLoaderFill');
+      var label  = document.getElementById('pageLoaderLabel');
       var loader = document.getElementById('pageLoader');
       if (!fill || !loader) return;
 
       var progress = 0;
-      var targetProgress = 0;
       var finished = false;
 
-      // Beweeg naar 85% terwijl pagina laadt
-      function tick() {
-        if (finished) return;
-        var diff = targetProgress - progress;
-        progress += diff * 0.08 + 0.3;
-        if (progress > targetProgress) progress = targetProgress;
-        fill.style.width = Math.min(progress, 100) + '%';
-        if (progress < 100) requestAnimationFrame(tick);
+      function setProgress(p) {
+        progress = Math.min(p, 100);
+        fill.style.width = progress + '%';
       }
 
-      // Simuleer progressie richting 85%
-      var intervals = [
-        [50,  20],
-        [150, 45],
-        [300, 65],
-        [500, 80],
-        [800, 85],
-      ];
-      intervals.forEach(function(pair) {
-        setTimeout(function() {
-          if (!finished) { targetProgress = pair[1]; tick(); }
-        }, pair[0]);
+      // Progressie simulatie terwijl browser laadt
+      var steps = [[60,20],[180,40],[350,58],[550,72],[800,82],[1200,88]];
+      steps.forEach(function(s) {
+        setTimeout(function() { if (!finished) setProgress(s[1]); }, s[0]);
       });
 
-      // Bij window.load: sprint naar 100% en fade weg
       function complete() {
         if (finished) return;
         finished = true;
-        targetProgress = 100;
-        progress = progress;
+        if (label) label.textContent = 'Ready';
+        // Sprint naar 100%
+        var v = progress;
         var sprint = setInterval(function() {
-          progress += 4;
-          fill.style.width = Math.min(progress, 100) + '%';
-          if (progress >= 100) {
+          v += 3;
+          setProgress(v);
+          if (v >= 100) {
             clearInterval(sprint);
             setTimeout(function() {
-              loader.style.opacity = '0';
-              setTimeout(function() { loader.style.display = 'none'; }, 500);
-            }, 180);
+              loader.classList.add('page-loader--done');
+              setTimeout(function() {
+                loader.style.display = 'none';
+              }, 600);
+            }, 220);
           }
-        }, 12);
+        }, 10);
       }
 
       if (document.readyState === 'complete') {
         complete();
       } else {
         window.addEventListener('load', complete);
-        // Fallback na 5 seconden
-        setTimeout(complete, 5000);
+        setTimeout(complete, 6000); // fallback
       }
     })();
   </script>
