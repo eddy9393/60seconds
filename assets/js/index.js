@@ -1337,12 +1337,6 @@ async function bootstrapLiveRadio() {
   updateVolumeButtonState();
   updatePauseButtonState();
 
-  // Verwijder pre-live als gebruiker ingelogd is (ook zonder sessie)
-  if (state.currentUser && els.radioShell) {
-    els.radioShell.classList.remove("pre-live");
-    setHidden(els.startOverlay, true);
-  }
-
   const session = getSavedRadioSession();
   if (session?.isStarted && session?.startedDate === getTodayDateKey()) {
     state.isLiveActivated = true;
@@ -1355,6 +1349,21 @@ async function bootstrapLiveRadio() {
     if (index < 0) index = Number.isInteger(session.currentIndex) ? session.currentIndex : chooseNextTrackIndex();
     if (index < 0) index = chooseNextTrackIndex();
     await playTrackAt(index, Number(session.previewOffset) || 0, false, state.desiredPlayback);
+  } else {
+    state.isLiveActivated = false;
+    state.desiredPlayback = false;
+    els.radioShell.classList.add("pre-live");
+    setHidden(els.startOverlay, false);
+    if (els.startOverlay) {
+      els.startOverlay.style.visibility = '';
+      els.startOverlay.style.opacity = '';
+    }
+    updateConceptVisibility();
+
+    const previewIndex = chooseNextTrackIndex();
+    if (previewIndex >= 0) {
+      await playTrackAt(previewIndex, 0, false, false);
+    }
   }
 
   state.liveBooted = true;
