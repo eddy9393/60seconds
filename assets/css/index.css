@@ -2366,11 +2366,13 @@ img {
 
 /* ── Body ───────────────────────────────────────────────────── */
 .fa-body {
-  display: grid;
-  grid-template-columns: 96px 1fr;
-  gap: 20px;
-  padding: 28px 24px 20px;
-  align-items: flex-start;
+  display: grid !important;
+  grid-template-columns: 88px 1fr !important;
+  gap: 20px !important;
+  padding: 24px 22px 18px !important;
+  align-items: flex-start !important;
+  position: relative !important;
+  z-index: 2 !important;
 }
 
 /* ── Foto ───────────────────────────────────────────────────── */
@@ -4510,11 +4512,17 @@ button:not(.side-nav button):not(.desktop-side-nav-panel button){
 
 .community-col .news-feed-avatar,
 .community-col .news-feed-avatar-fallback {
+  width: 40px !important;
+  height: 40px !important;
+  min-width: 40px !important;
   border: none !important;
   border-radius: 50% !important;
   aspect-ratio: 1 / 1 !important;
   overflow: hidden !important;
+  object-fit: cover !important;
   box-shadow: 0 4px 10px rgba(0,0,0,.28) !important;
+  display: block !important;
+  flex-shrink: 0 !important;
 }
 
 .community-col .news-feed-copy {
@@ -4615,13 +4623,15 @@ button:not(.side-nav button):not(.desktop-side-nav-panel button){
 }
 
 .fa-photo-wrap {
-  width: clamp(132px, 15.5vw, 188px) !important;
-  height: clamp(132px, 15.5vw, 188px) !important;
+  width: 88px !important;
+  height: 88px !important;
+  flex-shrink: 0 !important;
+  border-radius: 50% !important;
+  overflow: hidden !important;
+  aspect-ratio: 1 / 1 !important;
   box-shadow:
-    0 0 0 4px rgba(245,200,75,.12),
-    0 20px 46px rgba(0,0,0,.48),
-    0 0 42px rgba(245,200,75,.36),
-    0 0 92px rgba(245,200,75,.13) !important;
+    0 0 0 3px rgba(245,200,75,.12),
+    0 8px 24px rgba(0,0,0,.38) !important;
 }
 
 .fa-photo {
@@ -4630,11 +4640,35 @@ button:not(.side-nav button):not(.desktop-side-nav-panel button){
 
 @media (max-width: 520px) {
   .fa-photo-wrap {
-    width: 132px !important;
-    height: 132px !important;
+    width: 72px !important;
+    height: 72px !important;
   }
 
   .fa-name {
     font-size: 30px !important;
   }
+}
+
+/* ── Featured artist: foto links, tekst rechts — finale override ── */
+#featuredArtistCard .fa-body {
+  display: grid !important;
+  grid-template-columns: 88px 1fr !important;
+  gap: 20px !important;
+  align-items: flex-start !important;
+  text-align: left !important;
+}
+
+#featuredArtistCard .fa-photo-wrap {
+  width: 88px !important;
+  height: 88px !important;
+  grid-row: 1 !important;
+  grid-column: 1 !important;
+  flex-shrink: 0 !important;
+}
+
+#featuredArtistCard .fa-info {
+  grid-row: 1 !important;
+  grid-column: 2 !important;
+  min-width: 0 !important;
+  text-align: left !important;
 }
