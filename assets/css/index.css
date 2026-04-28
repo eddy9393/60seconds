@@ -1083,6 +1083,7 @@ img {
   justify-content: center;
   gap: 12px;
   flex-wrap: nowrap;
+  position: relative;
 }
 
 
@@ -1162,7 +1163,7 @@ img {
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 200;
+  z-index: 500;
 }
 
 .volume-control.open .volume-slider-inline {
@@ -2488,8 +2489,8 @@ img {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  border-left: 2px solid rgba(212,175,55,0.4);
-  padding-left: 10px;
+  border-left: none !important;
+  padding-left: 0 !important;
 }
 
 /* ── Bio ────────────────────────────────────────────────────── */
