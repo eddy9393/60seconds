@@ -33,11 +33,51 @@
       .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
   }
 
+  var COUNTRY_CODES = {
+    'afghanistan':'AF','albania':'AL','algeria':'DZ','andorra':'AD','angola':'AO',
+    'argentina':'AR','armenia':'AM','australia':'AU','austria':'AT','azerbaijan':'AZ',
+    'bahamas':'BS','bahrain':'BH','bangladesh':'BD','belarus':'BY','belgium':'BE',
+    'belize':'BZ','benin':'BJ','bhutan':'BT','bolivia':'BO','bosniaandherzegovina':'BA',
+    'botswana':'BW','brazil':'BR','brunei':'BN','bulgaria':'BG','burkinafaso':'BF',
+    'burundi':'BI','cambodia':'KH','cameroon':'CM','canada':'CA','capeverde':'CV',
+    'chile':'CL','china':'CN','colombia':'CO','comoros':'KM','congo':'CG',
+    'costarica':'CR','croatia':'HR','cuba':'CU','cyprus':'CY','czechrepublic':'CZ',
+    'denmark':'DK','djibouti':'DJ','dominicanrepublic':'DO','ecuador':'EC','egypt':'EG',
+    'elsalvador':'SV','eritrea':'ER','estonia':'EE','ethiopia':'ET','fiji':'FJ',
+    'finland':'FI','france':'FR','gabon':'GA','gambia':'GM','georgia':'GE',
+    'germany':'DE','ghana':'GH','greece':'GR','guatemala':'GT','guinea':'GN',
+    'guyana':'GY','haiti':'HT','honduras':'HN','hungary':'HU','iceland':'IS',
+    'india':'IN','indonesia':'ID','iran':'IR','iraq':'IQ','ireland':'IE',
+    'israel':'IL','italy':'IT','jamaica':'JM','japan':'JP','jordan':'JO',
+    'kazakhstan':'KZ','kenya':'KE','kuwait':'KW','kyrgyzstan':'KG','laos':'LA',
+    'latvia':'LV','lebanon':'LB','lesotho':'LS','liberia':'LR','libya':'LY',
+    'liechtenstein':'LI','lithuania':'LT','luxembourg':'LU','madagascar':'MG',
+    'malawi':'MW','malaysia':'MY','maldives':'MV','mali':'ML','malta':'MT',
+    'mauritania':'MR','mauritius':'MU','mexico':'MX','moldova':'MD','monaco':'MC',
+    'mongolia':'MN','montenegro':'ME','morocco':'MA','mozambique':'MZ','myanmar':'MM',
+    'namibia':'NA','nepal':'NP','netherlands':'NL','newzealand':'NZ','nicaragua':'NI',
+    'niger':'NE','nigeria':'NG','norway':'NO','oman':'OM','pakistan':'PK',
+    'panama':'PA','paraguay':'PY','peru':'PE','philippines':'PH','poland':'PL',
+    'portugal':'PT','qatar':'QA','romania':'RO','russia':'RU','rwanda':'RW',
+    'saudiarabia':'SA','senegal':'SN','serbia':'RS','sierraleone':'SL','singapore':'SG',
+    'slovakia':'SK','slovenia':'SI','somalia':'SO','southafrica':'ZA','southkorea':'KR',
+    'spain':'ES','srilanka':'LK','sudan':'SD','suriname':'SR','sweden':'SE',
+    'switzerland':'CH','syria':'SY','taiwan':'TW','tajikistan':'TJ','tanzania':'TZ',
+    'thailand':'TH','togo':'TG','trinidad':'TT','tunisia':'TN','turkey':'TR',
+    'turkmenistan':'TM','uganda':'UG','ukraine':'UA','unitedarabemirates':'AE',
+    'unitedkingdom':'GB','uk':'GB','unitedstates':'US','usa':'US','uruguay':'UY',
+    'uzbekistan':'UZ','venezuela':'VE','vietnam':'VN','yemen':'YE','zambia':'ZM',
+    'zimbabwe':'ZW'
+  };
+
   function getFlagEmoji(code) {
-    if (!code || code.length !== 2) return '';
-    return code.toUpperCase().replace(/./g, c =>
-      String.fromCodePoint(c.charCodeAt(0) + 127397)
-    );
+    if (!code) return '';
+    var lookup = code.toLowerCase().replace(/[^a-z]/g,'');
+    var iso = code.length === 2 ? code.toUpperCase() : (COUNTRY_CODES[lookup] || '');
+    if (!iso || iso.length !== 2) return '';
+    return iso.replace(/./g, function(c) {
+      return String.fromCodePoint(c.charCodeAt(0) + 127397);
+    });
   }
 
   function formatRoles(roles) {
