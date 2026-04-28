@@ -5410,9 +5410,10 @@ button:not(.side-nav button):not(.desktop-side-nav-panel button){
 }
 
 .player-actions #skip .skip-coin-icon {
-  width: 17px !important;
-  height: 17px !important;
+  width: 22px !important;
+  height: 22px !important;
   margin: 0 !important;
+  filter: brightness(1.2) drop-shadow(0 0 6px rgba(245,200,75,.5)) !important;
 }
 
 .player-actions #skip .skip-cost {
@@ -5468,31 +5469,7 @@ button:not(.side-nav button):not(.desktop-side-nav-panel button){
   z-index: 2 !important;
 }
 
-.player-actions .volume-slider-inline {
-  position: static !important;
-  inset: auto !important;
-  transform: none !important;
-  flex: 0 0 auto !important;
-  width: 0 !important;
-  max-width: 0 !important;
-  height: 100% !important;
-  opacity: 0 !important;
-  overflow: hidden !important;
-  padding: 0 !important;
-  margin: 0 !important;
-  border: 0 !important;
-  border-radius: 0 !important;
-  background: transparent !important;
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: flex-start !important;
-  transition:
-    width .32s cubic-bezier(.2,.8,.2,1),
-    max-width .32s cubic-bezier(.2,.8,.2,1),
-    opacity .18s ease .08s !important;
-}
+/* volume-slider static override verwijderd */
 
 .player-actions .volume-control.open .volume-slider-inline {
   width: 132px !important;
@@ -5561,4 +5538,12 @@ button:not(.side-nav button):not(.desktop-side-nav-panel button){
     width: 86px !important;
     min-width: 86px !important;
   }
+}
+
+/* Skip knop label */
+.skip-label {
+  font-family: 'Manrope', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: rgba(255,255,255,0.85);
 }
