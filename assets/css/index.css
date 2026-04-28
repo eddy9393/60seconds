@@ -12,7 +12,7 @@
   --fs-artist: 18px;
   --fs-stat-label: 12px;
   --fs-stat-value: clamp(26px, 4vw, 34px);
-  --fs-tune-title: clamp(30px, 5vw, 48px);
+  --fs-tune-title: clamp(24px, 4vw, 38px);
 
   --desktop-rail-width: 86px;
   --desktop-rail-expanded: 320px;
@@ -603,9 +603,9 @@ img {
   position: relative;
   max-width: 880px;
   margin: 32px auto 0;
-  min-height: 52vh;
+  min-height: 44vh;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
 }
 
@@ -614,7 +614,7 @@ img {
   width: 100%;
   max-width: 780px;
   margin: 0 auto;
-  padding: 0;
+  padding: 0 20px;
   background: transparent;
   border: none;
   box-shadow: none;
@@ -747,7 +747,7 @@ img {
 
 .radio-shell-content {
   display: grid;
-  gap: 18px;
+  gap: 10px;
 }
 
 .now-playing {
@@ -765,7 +765,7 @@ img {
 
 .waveform {
   width: 100%;
-  height: 44px;
+  height: 32px;
   display: flex;
   align-items: flex-end;
   justify-content: center;
@@ -863,7 +863,7 @@ img {
   font-size: var(--fs-body);
   margin: 0 auto 10px;
   width: 100%;
-  max-width: 620px;
+  max-width: 740px;
   font-family: 'Manrope', sans-serif;
   letter-spacing: 0.02em;
 }
@@ -871,7 +871,7 @@ img {
 .progress {
   position: relative;
   width: 100%;
-  max-width: 620px;
+  max-width: 740px;
   height: 14px;
   margin: 0 auto;
   background:
@@ -937,10 +937,23 @@ img {
 
 .earn-seconds-wrap {
   width: 100%;
-  max-width: 620px;
-  margin: -6px auto 0;
-  display: grid;
-  gap: 8px;
+  max-width: 740px;
+  margin: 4px auto 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  background: none !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}
+
+.earn-seconds-copy-inline {
+  font-size: 11px;
+  color: rgba(255,255,255,0.38);
+  text-align: center;
+  font-family: 'Manrope', sans-serif;
+  letter-spacing: 0.02em;
 }
 
 .earn-seconds-progress {
@@ -971,7 +984,7 @@ img {
 }
 
 .player-actions {
-  margin-top: 18px;
+  margin-top: 10px;
   display: flex;
   justify-content: center;
   gap: 12px;
@@ -1028,10 +1041,10 @@ img {
 }
 
 .volume-wrap {
-  margin-top: 12px;
+  margin-top: 10px;
   display: flex;
   justify-content: center;
-  min-height: 50px;
+  align-items: center;
 }
 
 .volume-control {
@@ -1061,43 +1074,34 @@ img {
 }
 
 .volume-button {
-  width: 50px;
-  height: 50px;
-  border-radius: 999px;
-  border: 1px solid rgba(255,255,255,0.16);
-  background:
-    linear-gradient(180deg, #fbfbfb 0%, #d6d6d6 16%, #b6b6b6 35%, #8b8b8b 52%, #d2d2d2 72%, #f4f4f4 100%);
-  color: #151515;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(255,255,255,0.06);
+  color: rgba(255,255,255,0.72);
   cursor: pointer;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  box-shadow:
-    inset 0 2px 0 rgba(255,255,255,0.72),
-    inset 0 -2px 3px rgba(0,0,0,0.18),
-    0 10px 22px rgba(0,0,0,0.25);
   flex: 0 0 auto;
   padding: 0;
-  transition: transform 0.14s ease, box-shadow 0.18s ease, filter 0.18s ease;
+  transition: background 0.16s ease, border-color 0.16s ease, color 0.16s ease;
 }
 
 .volume-button:hover {
-  transform: translateY(-1px);
-  filter: brightness(1.02);
-  box-shadow:
-    inset 0 2px 0 rgba(255,255,255,0.78),
-    inset 0 -2px 3px rgba(0,0,0,0.18),
-    0 12px 24px rgba(0,0,0,0.28),
-    0 0 14px rgba(212,175,55,0.16);
+  background: rgba(255,255,255,0.10);
+  border-color: rgba(212,175,55,0.35);
+  color: rgba(255,255,255,0.95);
 }
 
 .volume-button:active {
-  transform: scale(0.96);
+  transform: scale(0.94);
 }
 
 .volume-button svg {
-  width: 22px;
-  height: 22px;
+  width: 18px;
+  height: 18px;
   display: block;
 }
 
@@ -1131,17 +1135,25 @@ img {
 }
 
 .listeners-dot {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
   border-radius: 50%;
   background: var(--gold);
-  box-shadow: 0 0 8px rgba(212,175,55,0.5);
+  box-shadow: 0 0 6px rgba(212,175,55,0.5);
+  flex-shrink: 0;
+}
+
+.listeners-icon {
+  width: 18px;
+  height: 18px;
+  color: rgba(255,255,255,0.55);
+  flex-shrink: 0;
 }
 
 .concept-section {
   max-width: 780px;
-  margin: 34px auto 0;
-  padding: 0 12px;
+  margin: 28px auto 0;
+  padding: 0 20px;
 }
 
 .concept-card {
@@ -1738,7 +1750,7 @@ img {
 .news-feed-section {
   max-width: 780px;
   margin: 18px auto 0;
-  padding: 0 12px;
+  padding: 0 20px;
 }
 
 .news-feed-card {
@@ -1851,7 +1863,7 @@ img {
 .news-feed-section {
   max-width: 780px;
   margin: 18px auto 0;
-  padding: 0 12px;
+  padding: 0 20px;
 }
 
 .news-feed-card {
@@ -2206,7 +2218,7 @@ img {
 .fa-section {
   max-width: 780px;
   margin: 32px auto 0;
-  padding: 0 12px;
+  padding: 0 20px;
 }
 
 .fa-kicker {
@@ -2225,15 +2237,16 @@ img {
   border-radius: 28px;
   border: 1px solid rgba(212,175,55,0.22);
   background:
-    linear-gradient(160deg, rgba(255,248,220,0.07) 0%, rgba(255,255,255,0.02) 60%),
-    radial-gradient(ellipse at top, rgba(212,175,55,0.12) 0%, transparent 65%),
-    linear-gradient(180deg, rgba(28,22,10,0.90) 0%, rgba(16,13,6,0.95) 100%);
+    linear-gradient(160deg, rgba(255,232,140,0.22) 0%, rgba(212,175,55,0.10) 50%, rgba(255,255,255,0.03) 100%),
+    radial-gradient(ellipse at top, rgba(212,175,55,0.35) 0%, transparent 55%),
+    linear-gradient(180deg, rgba(42,34,14,0.85) 0%, rgba(22,16,5,0.92) 100%);
   box-shadow:
     inset 0 1px 0 rgba(255,232,140,0.14),
     inset 0 -1px 0 rgba(0,0,0,0.4),
     0 24px 64px rgba(0,0,0,0.38),
     0 0 0 0.5px rgba(212,175,55,0.10),
-    0 0 48px rgba(212,175,55,0.06);
+    0 0 48px rgba(212,175,55,0.18),
+    0 0 80px rgba(212,175,55,0.08);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   overflow: hidden;
@@ -2518,227 +2531,204 @@ img {
   }
 }
 
-/* ============================================================
-   v30 focused index refinement
-   - icon-only radio like button with liked feedback
-   - adaptive radio-player sizing
-   - listeners icon without yellow status dot
-   - featured/community title polish
-   - featured artist photo/background gradient upgrade
-   ============================================================ */
-
-.radio-shell:not(.pre-live) {
-  max-height: none;
-  overflow: visible;
-  visibility: visible;
+/* ── Safe patch: clean dark background + white header slogan ────────
+   Scope: visual only. No layout/display/position changes. */
+body {
+  background: #050507 !important;
+  background-image:
+    linear-gradient(180deg, #050507 0%, #08080b 52%, #030304 100%) !important;
+  background-size: auto !important;
+  background-position: center top !important;
+  background-repeat: no-repeat !important;
+  background-attachment: fixed !important;
 }
 
-.radio-shell-content {
-  box-sizing: border-box;
-  width: 100%;
-  min-height: auto;
-  height: auto;
-  overflow: visible;
-  align-content: start;
+.header-slogan {
+  color: #ffffff !important;
+  opacity: 1 !important;
+  text-shadow: none !important;
 }
 
-.waveform-wrap,
-.time-row,
-.progress,
-.earn-seconds-wrap {
-  box-sizing: border-box;
-  width: min(100%, 620px);
+@media (max-width: 768px) {
+  body {
+    background: #050507 !important;
+    background-image:
+      linear-gradient(180deg, #050507 0%, #08080b 52%, #030304 100%) !important;
+    background-size: auto !important;
+    background-position: center top !important;
+    background-repeat: no-repeat !important;
+    background-attachment: scroll !important;
+  }
 }
 
+/* ── Safe patch: radio controls + glow polish (no sidebar changes) ─────
+   Scope: homepage content only. Does not target desktop/mobile sidebar nav. */
+
+/* More premium depth on main content cards only */
+.radio-shell,
+.start-overlay,
+.fa-card,
+.concept-card,
+.news-feed-section,
+.news-feed-card,
+.news-feed-item {
+  border-color: rgba(244, 215, 122, 0.22) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.055),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.46),
+    0 22px 64px rgba(0, 0, 0, 0.40),
+    0 0 34px rgba(212, 175, 55, 0.075) !important;
+}
+
+.radio-shell:hover,
+.fa-card:hover,
+.concept-card:hover,
+.news-feed-card:hover,
+.news-feed-item:hover {
+  border-color: rgba(244, 215, 122, 0.34) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.07),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.50),
+    0 26px 74px rgba(0, 0, 0, 0.46),
+    0 0 46px rgba(212, 175, 55, 0.13) !important;
+}
+
+/* Radio buttons: match the provided reference, no gradient fills */
 .player-actions {
-  align-items: center;
+  align-items: center !important;
+  gap: 18px !important;
 }
 
-.radio-like-btn {
-  width: 52px;
-  min-width: 52px;
-  height: 52px;
+.player-actions > .metal-btn {
+  min-width: 112px !important;
+  min-height: 48px !important;
+  padding: 0 24px !important;
+  border-radius: 999px !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  background: rgba(19, 19, 21, 0.76) !important;
+  color: rgba(255, 255, 255, 0.72) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.075),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.60),
+    0 12px 26px rgba(0, 0, 0, 0.28) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  text-shadow: none !important;
+  transform: none;
+}
+
+.player-actions > .metal-btn:hover {
+  border-color: rgba(244, 215, 122, 0.34) !important;
+  background: rgba(24, 24, 26, 0.84) !important;
+  color: #ffffff !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.095),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.62),
+    0 16px 30px rgba(0, 0, 0, 0.34),
+    0 0 22px rgba(212, 175, 55, 0.12) !important;
+  transform: translateY(-1px) !important;
+}
+
+/* Center play/pause control */
+.player-actions > #pauseBtn {
+  width: 86px !important;
+  min-width: 86px !important;
+  height: 86px !important;
+  min-height: 86px !important;
   padding: 0 !important;
-  border-radius: 999px;
-  gap: 0;
-  font-size: 0;
-  color: transparent;
-  position: relative;
-  overflow: visible;
-}
-
-.radio-like-btn .like-icon {
-  width: 23px;
-  height: 23px;
-  display: block;
-  background: rgba(255,255,255,0.92);
-  -webkit-mask: url('/icons/like.png') center / contain no-repeat;
-  mask: url('/icons/like.png') center / contain no-repeat;
-  filter: drop-shadow(0 0 8px rgba(255,255,255,0.16));
-  transition: transform 0.16s ease, background 0.16s ease, filter 0.16s ease;
-}
-
-.radio-like-btn:hover .like-icon {
-  transform: scale(1.08);
-  background: #fff8d7;
-  filter: drop-shadow(0 0 12px rgba(212,175,55,0.48));
-}
-
-.radio-like-btn.liked {
-  border-color: rgba(255,226,139,0.58);
-  background: rgba(212,175,55,0.13);
+  border-radius: 50% !important;
+  border: 1.5px solid rgba(244, 215, 122, 0.82) !important;
+  background: rgba(24, 20, 10, 0.42) !important;
+  color: #ffffff !important;
   box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.14),
-    0 14px 30px rgba(0,0,0,0.34),
-    0 0 24px rgba(212,175,55,0.30),
-    0 0 52px rgba(212,175,55,0.12);
+    inset 0 1px 0 rgba(255, 245, 204, 0.22),
+    inset 0 -10px 22px rgba(0, 0, 0, 0.32),
+    0 0 0 1px rgba(212, 175, 55, 0.22),
+    0 0 30px rgba(212, 175, 55, 0.34),
+    0 0 66px rgba(212, 175, 55, 0.22) !important;
 }
 
-.radio-like-btn.liked .like-icon {
-  background: #f4d77a;
-  transform: scale(1.12);
-  filter:
-    drop-shadow(0 0 10px rgba(244,215,122,0.78))
-    drop-shadow(0 0 18px rgba(212,175,55,0.44));
-}
-
-.radio-like-btn.liked::after {
-  content: "";
-  position: absolute;
-  inset: -8px;
-  border-radius: inherit;
-  border: 1px solid rgba(244,215,122,0.24);
-  opacity: 0.85;
-  pointer-events: none;
-  animation: likeGlowPulse 1.35s ease-out infinite;
-}
-
-@keyframes likeGlowPulse {
-  0% { transform: scale(0.92); opacity: 0.66; }
-  70% { transform: scale(1.14); opacity: 0; }
-  100% { transform: scale(1.14); opacity: 0; }
-}
-
-.volume-wrap {
-  width: 100%;
-  justify-content: center;
-  margin-top: 8px;
-  min-height: 46px;
-}
-
-.volume-button {
-  width: 46px;
-  height: 46px;
-  background: rgba(255,255,255,0.08);
-  color: rgba(255,255,255,0.94);
-  border-color: rgba(244,215,122,0.28);
+.player-actions > #pauseBtn:hover {
+  border-color: rgba(255, 236, 169, 0.95) !important;
+  background: rgba(36, 30, 14, 0.54) !important;
   box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.10),
-    0 10px 24px rgba(0,0,0,0.32),
-    0 0 20px rgba(212,175,55,0.10);
+    inset 0 1px 0 rgba(255, 245, 204, 0.28),
+    inset 0 -10px 22px rgba(0, 0, 0, 0.34),
+    0 0 0 1px rgba(212, 175, 55, 0.30),
+    0 0 38px rgba(212, 175, 55, 0.44),
+    0 0 82px rgba(212, 175, 55, 0.26) !important;
+  transform: translateY(-1px) scale(1.015) !important;
 }
 
-.volume-button:hover {
-  background: rgba(212,175,55,0.13);
-  border-color: rgba(244,215,122,0.48);
+.player-actions > #pauseBtn .icon {
+  margin: 0 !important;
+  font-size: 32px !important;
+  line-height: 1 !important;
+  color: #ffffff !important;
+  filter: drop-shadow(0 0 10px rgba(255,255,255,0.18));
+}
+
+.player-actions .skip-button-content {
+  gap: 8px !important;
+}
+
+.player-actions .skip-coin-icon {
+  width: 18px !important;
+  height: 18px !important;
+  filter: drop-shadow(0 0 8px rgba(244, 215, 122, 0.22));
+}
+
+.player-actions .skip-cost {
+  color: rgba(255,255,255,0.74) !important;
+}
+
+/* Non-sidebar buttons on homepage: remove gradients, keep premium outline/glow */
+.start-btn,
+.fa-link,
+.fa-nav-btn,
+.join-cta,
+.concept-card .metal-btn,
+.news-feed-section a,
+.news-feed-section button {
+  background: rgba(18, 18, 20, 0.76) !important;
+  color: #f4d77a !important;
+  border-color: rgba(212, 175, 55, 0.46) !important;
   box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.14),
-    0 12px 28px rgba(0,0,0,0.36),
-    0 0 28px rgba(212,175,55,0.22);
+    inset 0 1px 0 rgba(255, 255, 255, 0.07),
+    0 12px 28px rgba(0, 0, 0, 0.30),
+    0 0 20px rgba(212, 175, 55, 0.10) !important;
+  text-shadow: none !important;
 }
 
-.volume-button svg path[fill],
-.volume-button svg path[stroke] {
-  fill: currentColor !important;
-  stroke: currentColor !important;
+.start-btn:hover,
+.fa-link:hover,
+.fa-nav-btn:hover,
+.join-cta:hover,
+.concept-card .metal-btn:hover,
+.news-feed-section a:hover,
+.news-feed-section button:hover {
+  background: rgba(24, 24, 26, 0.88) !important;
+  border-color: rgba(244, 215, 122, 0.70) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.09),
+    0 16px 34px rgba(0, 0, 0, 0.34),
+    0 0 28px rgba(212, 175, 55, 0.18) !important;
 }
 
-.listeners-pill {
-  gap: 9px;
-  color: rgba(255,255,255,0.78);
-}
-
-.listeners-dot {
-  display: none !important;
-}
-
-.listeners-icon {
-  position: relative;
-  width: 21px;
-  height: 16px;
-  display: inline-block;
-  flex: 0 0 auto;
-  filter: drop-shadow(0 0 8px rgba(212,175,55,0.22));
-}
-
-.listeners-icon::before,
-.listeners-icon::after {
-  content: "";
-  position: absolute;
-  border: 1.5px solid rgba(244,215,122,0.86);
-  border-radius: 999px 999px 6px 6px;
-  box-sizing: border-box;
-}
-
-.listeners-icon::before {
-  left: 2px;
-  top: 0;
-  width: 9px;
-  height: 9px;
-  border-radius: 50%;
-  box-shadow: 8px 0 0 -1.5px rgba(244,215,122,0.86);
-}
-
-.listeners-icon::after {
-  left: 0;
-  bottom: 0;
-  width: 19px;
-  height: 8px;
-  border-top-width: 1.5px;
-  background: linear-gradient(180deg, rgba(212,175,55,0.10), rgba(212,175,55,0.02));
-}
-
-.fa-kicker,
-.news-feed-kicker {
-  color: #fff !important;
-  font-size: 15px !important;
-  font-weight: 800 !important;
-  letter-spacing: 2.2px !important;
-  text-shadow:
-    0 0 16px rgba(212,175,55,0.22),
-    0 1px 10px rgba(0,0,0,0.42);
-}
-
-.fa-card.has-fa-bg::before {
+/* Featured artist card: subtle photo-like depth without changing layout.
+   A true dynamic profile-photo background needs JS/inline CSS because CSS cannot read the img src into the parent background. */
+.fa-card::before {
   content: "";
   position: absolute;
   inset: 0;
-  background-image:
-    linear-gradient(90deg,
-      rgba(0,0,0,0.96) 0%,
-      rgba(0,0,0,0.82) 34%,
-      rgba(0,0,0,0.48) 66%,
-      rgba(0,0,0,0.20) 100%),
-    var(--fa-bg-image);
-  background-size: cover;
-  background-position: center right;
-  opacity: 0.74;
-  filter: saturate(1.16) contrast(1.06);
-  z-index: 0;
   pointer-events: none;
-}
-
-.fa-card.has-fa-bg::after {
-  content: "";
-  position: absolute;
-  inset: -24px;
+  border-radius: inherit;
   background:
-    radial-gradient(circle at 82% 42%, rgba(244,215,122,0.22), transparent 34%),
-    radial-gradient(circle at 20% 10%, rgba(255,255,255,0.07), transparent 36%);
-  filter: blur(12px);
+    radial-gradient(circle at 24% 34%, rgba(244, 215, 122, 0.12), transparent 30%),
+    radial-gradient(circle at 72% 26%, rgba(255,255,255,0.055), transparent 28%),
+    linear-gradient(120deg, transparent 0%, rgba(255,255,255,0.028) 48%, transparent 78%);
   opacity: 0.72;
   z-index: 0;
-  pointer-events: none;
 }
 
 .fa-card > * {
@@ -2746,78 +2736,1600 @@ img {
   z-index: 1;
 }
 
-.fa-body {
-  grid-template-columns: 122px 1fr;
-  gap: 24px;
+.fa-photo-wrap {
+  border-color: rgba(244, 215, 122, 0.72) !important;
+  box-shadow:
+    0 0 0 3px rgba(212, 175, 55, 0.12),
+    0 12px 28px rgba(0, 0, 0, 0.42),
+    0 0 34px rgba(212, 175, 55, 0.24) !important;
+}
+
+@media (max-width: 900px) {
+  .player-actions {
+    gap: 10px !important;
+  }
+
+  .player-actions > .metal-btn {
+    min-width: 0 !important;
+    min-height: 46px !important;
+    padding: 0 12px !important;
+  }
+
+  .player-actions > #pauseBtn {
+    width: 72px !important;
+    min-width: 72px !important;
+    height: 72px !important;
+    min-height: 72px !important;
+    padding: 0 !important;
+  }
+
+  .player-actions > #pauseBtn .icon {
+    font-size: 28px !important;
+  }
+}
+
+/* ============================================================
+   v23 index premium upgrade — safe visual layer only
+   Scope: homepage content/radio/featured cards. Sidebar untouched.
+   ============================================================ */
+
+:root {
+  --premium-bg-0: #050506;
+  --premium-bg-1: #0a0a0c;
+  --premium-panel: rgba(14, 14, 16, 0.72);
+  --premium-panel-strong: rgba(18, 18, 20, 0.86);
+  --premium-border: rgba(255, 255, 255, 0.105);
+  --premium-gold-border: rgba(212, 175, 55, 0.42);
+  --premium-glow-soft: rgba(212, 175, 55, 0.14);
+  --premium-glow-strong: rgba(212, 175, 55, 0.32);
+}
+
+body {
+  background:
+    radial-gradient(circle at 50% -10%, rgba(212, 175, 55, 0.10), transparent 34%),
+    radial-gradient(circle at 82% 18%, rgba(244, 215, 122, 0.055), transparent 26%),
+    linear-gradient(180deg, var(--premium-bg-1) 0%, var(--premium-bg-0) 52%, #020203 100%) !important;
+  background-attachment: fixed !important;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: -1;
+  background:
+    linear-gradient(rgba(255,255,255,0.018) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.012) 1px, transparent 1px);
+  background-size: 72px 72px;
+  mask-image: radial-gradient(circle at 50% 20%, black 0%, transparent 74%);
+  opacity: 0.22;
+}
+
+.header-slogan {
+  color: #ffffff !important;
+  opacity: 1 !important;
+  text-shadow: 0 0 18px rgba(255,255,255,0.10), 0 0 18px rgba(212,175,55,0.14) !important;
+}
+
+.header-logo {
+  filter:
+    drop-shadow(0 10px 22px rgba(0, 0, 0, 0.55))
+    drop-shadow(0 0 18px rgba(212, 175, 55, 0.16)) !important;
+}
+
+.site-shell {
+  position: relative;
+}
+
+.radio-stage {
+  min-height: auto !important;
+  margin-top: 28px !important;
+}
+
+.radio-shell:not(.pre-live),
+.start-overlay .overlay-content {
+  border-radius: 30px !important;
+  border: 1px solid rgba(212, 175, 55, 0.28) !important;
+  background:
+    radial-gradient(circle at 50% 112%, rgba(212,175,55,0.10), transparent 45%),
+    linear-gradient(180deg, rgba(20,20,22,0.82), rgba(8,8,10,0.88)) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.08),
+    inset 0 -1px 0 rgba(0,0,0,0.65),
+    0 26px 70px rgba(0,0,0,0.44),
+    0 0 0 1px rgba(212,175,55,0.06),
+    0 0 50px rgba(212,175,55,0.11) !important;
+  backdrop-filter: blur(20px) saturate(118%) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(118%) !important;
+}
+
+.radio-shell:not(.pre-live) {
+  padding: clamp(26px, 4vw, 44px) clamp(18px, 4vw, 48px) !important;
+  max-width: 900px !important;
+  overflow: hidden;
+}
+
+.radio-shell:not(.pre-live)::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 50% 54%, rgba(212,175,55,0.10), transparent 34%),
+    radial-gradient(circle at 18% 70%, rgba(212,175,55,0.07), transparent 22%),
+    radial-gradient(circle at 84% 68%, rgba(244,215,122,0.055), transparent 24%);
+  opacity: 0.92;
+}
+
+.radio-shell-content {
+  position: relative;
+  z-index: 1;
+}
+
+.now-playing {
+  color: #f4d77a !important;
+  opacity: 0.96 !important;
+  text-shadow: 0 0 18px rgba(212,175,55,0.24);
+}
+
+.tune-title {
+  color: #ffffff !important;
+  letter-spacing: -0.025em !important;
+  text-shadow: 0 12px 34px rgba(0,0,0,0.55), 0 0 24px rgba(255,255,255,0.05) !important;
+}
+
+.artist-wrap,
+.earn-seconds-copy,
+.time-row,
+.listeners-pill {
+  color: rgba(255,255,255,0.74) !important;
+}
+
+.progress {
+  height: 10px !important;
+  background: rgba(255,255,255,0.075) !important;
+  border-color: rgba(255,255,255,0.06) !important;
+  box-shadow:
+    inset 0 1px 2px rgba(255,255,255,0.05),
+    0 0 22px rgba(212,175,55,0.12) !important;
+}
+
+.fill {
+  background: #f4c84d !important;
+  box-shadow: 0 0 18px rgba(244,200,77,0.56), 0 0 36px rgba(212,175,55,0.28) !important;
+}
+
+.fill::before { display: none !important; }
+
+.player-actions {
+  gap: clamp(12px, 2.1vw, 28px) !important;
+  align-items: center !important;
+}
+
+.player-actions > .metal-btn,
+.volume-button {
+  background: rgba(19, 19, 21, 0.82) !important;
+  color: rgba(255,255,255,0.84) !important;
+  border: 1px solid rgba(255,255,255,0.13) !important;
+  text-shadow: none !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.08),
+    inset 0 -12px 22px rgba(0,0,0,0.22),
+    0 14px 28px rgba(0,0,0,0.32),
+    0 0 18px rgba(212,175,55,0.045) !important;
+}
+
+.player-actions > .metal-btn:hover,
+.volume-button:hover {
+  border-color: rgba(244,215,122,0.45) !important;
+  background: rgba(26, 26, 28, 0.90) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.10),
+    inset 0 -12px 22px rgba(0,0,0,0.24),
+    0 18px 34px rgba(0,0,0,0.36),
+    0 0 28px rgba(212,175,55,0.14) !important;
+}
+
+.player-actions > #pauseBtn {
+  background: rgba(189, 147, 39, 0.70) !important;
+  color: #ffffff !important;
+  border-color: rgba(255, 230, 151, 0.76) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.28),
+    inset 0 -18px 28px rgba(83, 53, 0, 0.28),
+    0 16px 34px rgba(0,0,0,0.44),
+    0 0 0 1px rgba(244,215,122,0.22),
+    0 0 30px rgba(244,215,122,0.38),
+    0 0 72px rgba(212,175,55,0.26) !important;
+}
+
+.submit-link,
+.start-btn,
+.fa-link,
+.fa-nav-btn,
+.news-feed-section a,
+.news-feed-section button,
+.concept-card a,
+.concept-card button {
+  background: rgba(18, 18, 20, 0.78) !important;
+  color: #f4d77a !important;
+  border: 1px solid rgba(212,175,55,0.42) !important;
+  text-shadow: none !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.07),
+    0 12px 26px rgba(0,0,0,0.30),
+    0 0 22px rgba(212,175,55,0.10) !important;
+}
+
+.submit-link:hover,
+.start-btn:hover,
+.fa-link:hover,
+.fa-nav-btn:hover,
+.news-feed-section a:hover,
+.news-feed-section button:hover,
+.concept-card a:hover,
+.concept-card button:hover {
+  background: rgba(24, 24, 26, 0.92) !important;
+  border-color: rgba(244,215,122,0.66) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.09),
+    0 16px 34px rgba(0,0,0,0.36),
+    0 0 34px rgba(212,175,55,0.18) !important;
+}
+
+.fa-section {
+  margin-top: 34px !important;
+}
+
+.fa-kicker,
+.news-feed-kicker {
+  color: rgba(255,255,255,0.78) !important;
+  text-shadow: 0 0 18px rgba(212,175,55,0.12);
+}
+
+.fa-card {
+  isolation: isolate;
+  border-color: rgba(212,175,55,0.38) !important;
+  background:
+    radial-gradient(circle at 18% 24%, rgba(212,175,55,0.38), transparent 42%),
+    radial-gradient(ellipse at 80% 10%, rgba(255,220,100,0.18), transparent 45%),
+    linear-gradient(150deg, rgba(40,32,12,0.84), rgba(18,12,4,0.90)) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.08),
+    inset 0 -1px 0 rgba(0,0,0,0.64),
+    0 24px 68px rgba(0,0,0,0.44),
+    0 0 48px rgba(212,175,55,0.14) !important;
+}
+
+.fa-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  background-image: var(--fa-bg-image), radial-gradient(circle at 20% 24%, rgba(212,175,55,0.10), transparent 32%);
+  background-size: cover, auto;
+  background-position: center, center;
+  background-repeat: no-repeat;
+  opacity: 0;
+  filter: blur(1px) saturate(1.04);
+  transform: scale(1.04);
+  transition: opacity 0.28s ease;
+}
+
+.fa-card.has-fa-bg::before {
+  opacity: 0.32;
+}
+
+.fa-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  background:
+    linear-gradient(90deg, rgba(8,8,10,0.86) 0%, rgba(8,8,10,0.62) 46%, rgba(8,8,10,0.90) 100%),
+    radial-gradient(circle at 20% 22%, rgba(244,215,122,0.10), transparent 34%);
+}
+
+.fa-card > * {
+  position: relative;
+  z-index: 1;
 }
 
 .fa-photo-wrap {
-  width: 122px;
-  height: 122px;
-  border-color: rgba(244,215,122,0.50);
+  border-color: rgba(244,215,122,0.78) !important;
   box-shadow:
-    0 0 0 4px rgba(212,175,55,0.10),
-    0 14px 30px rgba(0,0,0,0.46),
-    0 0 34px rgba(212,175,55,0.24);
+    0 0 0 3px rgba(212,175,55,0.12),
+    0 18px 34px rgba(0,0,0,0.46),
+    0 0 36px rgba(212,175,55,0.28) !important;
+}
+
+.fa-name { color: #fff !important; }
+.fa-pill { background: rgba(255,255,255,0.065) !important; }
+
+.news-feed-section,
+.concept-card {
+  border-color: rgba(255,255,255,0.09) !important;
+  background:
+    linear-gradient(180deg, rgba(18,18,20,0.70), rgba(8,8,10,0.78)) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.06),
+    0 18px 54px rgba(0,0,0,0.34),
+    0 0 38px rgba(212,175,55,0.065) !important;
+  backdrop-filter: blur(18px) !important;
+  -webkit-backdrop-filter: blur(18px) !important;
+}
+
+@media (max-width: 900px) {
+  .radio-shell:not(.pre-live) {
+    padding: 28px 16px !important;
+    border-radius: 26px !important;
+  }
+
+  .player-actions {
+    grid-template-columns: 1fr 72px 1fr !important;
+  }
+}
+
+/* PREMIUM UI V3 - controlled visual layer, no sidebar menu changes */
+:root{
+  --premium-bg:#050507;
+  --premium-surface:rgba(18,18,22,.72);
+  --premium-surface-strong:rgba(24,24,29,.86);
+  --premium-border:rgba(255,255,255,.105);
+  --premium-gold:#f5c84b;
+  --premium-gold-soft:rgba(245,200,75,.38);
+  --premium-gold-faint:rgba(245,200,75,.13);
+  --premium-text:#fff;
+  --premium-muted:rgba(255,255,255,.68);
+}
+
+body{
+  background:
+    radial-gradient(circle at 50% -12%, rgba(245,200,75,.14), transparent 34%),
+    radial-gradient(circle at 86% 18%, rgba(146,74,255,.10), transparent 26%),
+    radial-gradient(circle at 16% 72%, rgba(245,200,75,.08), transparent 28%),
+    var(--premium-bg) !important;
+  color:var(--premium-text) !important;
+}
+body::before{
+  opacity:.08 !important;
+  filter:saturate(.85) contrast(1.08) !important;
+}
+.logo-slogan,
+.site-slogan,
+.slogan,
+[class*="slogan"]{
+  color:#fff !important;
+  text-shadow:0 0 18px rgba(255,255,255,.18),0 0 28px rgba(245,200,75,.12) !important;
+}
+
+.radio-stage,
+.radio-shell:not(.pre-live),
+.start-overlay,
+.fa-card,
+.news-feed-section,
+.concept-card,
+.playlist-card,
+.empty-card,
+.state-card,
+.dashboard-card,
+.panel-card,
+.hero-card{
+  background:var(--premium-surface) !important;
+  border:1px solid var(--premium-border) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.08),
+    0 24px 70px rgba(0,0,0,.50),
+    0 0 42px rgba(245,200,75,.08) !important;
+  backdrop-filter:blur(22px) saturate(1.22) !important;
+  -webkit-backdrop-filter:blur(22px) saturate(1.22) !important;
+}
+.radio-shell:not(.pre-live){
+  position:relative !important;
+  overflow:hidden !important;
+  border-color:rgba(245,200,75,.28) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.10),
+    inset 0 0 90px rgba(245,200,75,.055),
+    0 28px 88px rgba(0,0,0,.58),
+    0 0 56px rgba(245,200,75,.16) !important;
+}
+.radio-shell:not(.pre-live)::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  border-radius:inherit;
+  background:
+    radial-gradient(circle at 50% 56%, rgba(245,200,75,.11), transparent 20%),
+    radial-gradient(circle at 80% 22%, rgba(146,74,255,.10), transparent 25%);
+  opacity:.86;
+}
+.radio-shell-content{position:relative;z-index:1;}
+
+.progress,
+.earn-seconds-progress{
+  background:rgba(255,255,255,.10) !important;
+  box-shadow:inset 0 1px 2px rgba(0,0,0,.60) !important;
+}
+.progress .fill,
+.earn-seconds-fill{
+  background:var(--premium-gold) !important;
+  box-shadow:0 0 18px rgba(245,200,75,.58),0 0 34px rgba(245,200,75,.22) !important;
+}
+
+.player-actions{
+  gap:20px !important;
+  align-items:center !important;
+  justify-content:center !important;
+}
+.player-actions .metal-btn,
+.fa-nav-btn,
+.start-btn,
+.gold-btn,
+.ghost-btn,
+.header-icon-btn,
+.account-menu-link{
+  background:rgba(255,255,255,.055) !important;
+  background-image:none !important;
+  color:#fff !important;
+  border:1px solid rgba(255,255,255,.13) !important;
+  border-radius:999px !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.10),
+    0 12px 30px rgba(0,0,0,.36),
+    0 0 0 rgba(245,200,75,0) !important;
+  transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease,background-color .18s ease !important;
+}
+.player-actions .metal-btn:hover,
+.fa-nav-btn:hover,
+.start-btn:hover,
+.gold-btn:hover,
+.ghost-btn:hover,
+.header-icon-btn:hover,
+.account-menu-link:hover{
+  transform:translateY(-2px) !important;
+  background:rgba(255,255,255,.075) !important;
+  border-color:rgba(245,200,75,.50) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.12),
+    0 16px 38px rgba(0,0,0,.42),
+    0 0 26px rgba(245,200,75,.25) !important;
+}
+#pauseBtn{
+  width:92px !important;
+  height:92px !important;
+  min-width:92px !important;
+  padding:0 !important;
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  border-radius:50% !important;
+  background:rgba(245,200,75,.18) !important;
+  border:1px solid rgba(245,200,75,.86) !important;
+  color:#fff !important;
+  font-size:0 !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.25),
+    inset 0 -18px 34px rgba(0,0,0,.28),
+    0 18px 44px rgba(0,0,0,.50),
+    0 0 26px rgba(245,200,75,.70),
+    0 0 62px rgba(245,200,75,.30) !important;
+}
+#pauseBtn .icon{
+  font-size:34px !important;
+  line-height:1 !important;
+  margin:0 !important;
+  transform:translateX(2px);
+  text-shadow:0 0 18px rgba(255,255,255,.28) !important;
+}
+#pauseBtn:hover{
+  transform:translateY(-3px) scale(1.035) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.28),
+    0 20px 48px rgba(0,0,0,.52),
+    0 0 34px rgba(245,200,75,.82),
+    0 0 78px rgba(245,200,75,.40) !important;
+}
+#likeBtn,#skip{
+  min-height:54px !important;
+  padding:0 28px !important;
+}
+
+.fa-card{
+  position:relative !important;
+  overflow:hidden !important;
+  border-color:rgba(245,200,75,.24) !important;
+}
+.fa-card.has-fa-bg::before{
+  content:"";
+  position:absolute;
+  inset:-12px;
+  z-index:0;
+  pointer-events:none;
+  background-image:var(--fa-bg-image) !important;
+  background-size:cover !important;
+  background-position:center !important;
+  opacity:.16 !important;
+  filter:grayscale(.08) blur(1px) saturate(1.06) !important;
+  transform:scale(1.06) !important;
+}
+.fa-card::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  z-index:0;
+  pointer-events:none;
+  background:rgba(5,5,7,.74) !important;
+}
+.fa-card>*{position:relative;z-index:1;}
+.fa-card:hover,
+.news-feed-section:hover,
+.concept-card:hover{
+  border-color:rgba(245,200,75,.42) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.10),
+    0 28px 78px rgba(0,0,0,.54),
+    0 0 48px rgba(245,200,75,.16) !important;
+}
+.fa-photo-wrap,
+.artist-avatar,
+.avatar,
+.profile-photo-wrap{
+  box-shadow:0 0 0 1px rgba(245,200,75,.70),0 0 30px rgba(245,200,75,.30),0 16px 36px rgba(0,0,0,.42) !important;
+}
+.fa-link,
+.concept-cta,
+.view-profile,
+a.button,
+button:not(.side-nav button):not(.desktop-side-nav-panel button){
+  background-image:none !important;
+}
+
+/* ============================================================
+   v24 premium refinements
+   - keep radio button icons visible/white
+   - lower radio container height
+   - coins + hover glow
+   - no sidebar menu changes
+   ============================================================ */
+
+.player-actions .metal-btn,
+.volume-button,
+#pauseBtn {
+  color: #ffffff !important;
+}
+
+.player-actions .metal-btn .icon,
+.player-actions .metal-btn svg,
+.volume-button svg,
+.volume-button .icon,
+#pauseBtn .icon,
+#pauseBtn svg {
+  color: #ffffff !important;
+  fill: currentColor !important;
+  stroke: currentColor !important;
+  opacity: 1 !important;
+  filter: drop-shadow(0 0 10px rgba(255,255,255,.20)) !important;
+}
+
+.player-actions .metal-btn svg *,
+.volume-button svg *,
+#pauseBtn svg * {
+  fill: currentColor !important;
+  stroke: currentColor !important;
+}
+
+.skip-coin-icon,
+.concept-inline-coin,
+.currency-badge-icon {
+  filter: drop-shadow(0 0 8px rgba(245,200,75,.28)) !important;
+}
+
+.radio-stage {
+  margin-top: 22px !important;
+}
+
+.radio-shell:not(.pre-live) {
+  padding-top: clamp(18px, 2.8vw, 28px) !important;
+  padding-bottom: clamp(18px, 2.8vw, 28px) !important;
+  max-width: 900px !important;
+}
+
+.radio-shell-content {
+  gap: clamp(10px, 1.8vw, 18px) !important;
+}
+
+.now-playing,
+.tune-title {
+  margin-bottom: 2px !important;
+}
+
+.progress-wrap,
+.progress-row,
+.time-row {
+  margin-top: 8px !important;
+  margin-bottom: 6px !important;
+}
+
+.player-actions {
+  margin-top: 10px !important;
+  margin-bottom: 6px !important;
+}
+
+#pauseBtn {
+  width: 78px !important;
+  height: 78px !important;
+  min-width: 78px !important;
+  min-height: 78px !important;
+}
+
+#pauseBtn .icon {
+  font-size: 30px !important;
+}
+
+.currency-badge .header-icon-btn,
+.header-icon-btn[aria-label*="coin"],
+.header-icon-btn[aria-label*="Coin"],
+.header-icon-btn[aria-label*="seconds"],
+.header-icon-btn[aria-label*="Seconds"] {
+  color: #ffffff !important;
+  border-color: rgba(245,200,75,.28) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.10),
+    0 10px 24px rgba(0,0,0,.34),
+    0 0 0 rgba(245,200,75,0) !important;
+}
+
+.currency-badge .header-icon-btn:hover,
+.header-icon-btn[aria-label*="coin"]:hover,
+.header-icon-btn[aria-label*="Coin"]:hover,
+.header-icon-btn[aria-label*="seconds"]:hover,
+.header-icon-btn[aria-label*="Seconds"]:hover {
+  color: #ffffff !important;
+  border-color: rgba(245,200,75,.86) !important;
+  background: rgba(245,200,75,.12) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.16),
+    0 14px 32px rgba(0,0,0,.42),
+    0 0 22px rgba(245,200,75,.44),
+    0 0 52px rgba(245,200,75,.24) !important;
+  transform: translateY(-2px) scale(1.03) !important;
+}
+
+@media (max-width: 900px) {
+  .radio-shell:not(.pre-live) {
+    padding-top: 20px !important;
+    padding-bottom: 20px !important;
+  }
+  #pauseBtn {
+    width: 68px !important;
+    height: 68px !important;
+    min-width: 68px !important;
+    min-height: 68px !important;
+  }
+}
+
+/* ============================================================
+   v24 premium button system — matched to index page
+   Scope: page action buttons only. Sidebar/menu navigation excluded.
+   ============================================================ */
+
+:root {
+  --btn-premium-bg: rgba(255,255,255,.055);
+  --btn-premium-bg-hover: rgba(255,255,255,.078);
+  --btn-premium-border: rgba(255,255,255,.14);
+  --btn-premium-border-hover: rgba(245,200,75,.55);
+  --btn-premium-gold: #f5c84b;
+}
+
+.main-content button:not(.desktop-nav-button):not(.mobile-nav-link):not(.desktop-nav-link),
+.main-content .gold-btn,
+.main-content .ghost-btn,
+.main-content .metal-btn,
+.main-content .primary-btn,
+.main-content .secondary-btn,
+.main-content .submit-btn,
+.main-content .save-btn,
+.main-content .auth-btn,
+.main-content .action-btn,
+.main-content .clip-play-btn,
+.main-content .store-card-btn,
+.main-content .cta-empty-state a,
+.main-content .cta-empty-state button,
+.artist-main button:not(.desktop-nav-button):not(.mobile-nav-link):not(.desktop-nav-link),
+.artist-main .gold-btn,
+.artist-main .ghost-btn,
+.artist-main .metal-btn,
+.artist-main .player-btn,
+.artist-main .action-btn,
+.artist-main .primary-btn,
+.artist-main .secondary-btn,
+.liked-main button:not(.desktop-nav-button):not(.mobile-nav-link):not(.desktop-nav-link),
+.liked-main .gold-btn,
+.liked-main .ghost-btn,
+.liked-main .metal-btn,
+.liked-main .action-btn,
+.submit-main button:not(.desktop-nav-button):not(.mobile-nav-link):not(.desktop-nav-link),
+.submit-main .gold-btn,
+.submit-main .ghost-btn,
+.submit-main .metal-btn,
+.submit-main .submit-link,
+.submit-main .ghost-link,
+.submit-main .clip-play-btn,
+.header-icon-btn,
+.account-menu-link,
+.account-menu button {
+  background: var(--btn-premium-bg) !important;
+  background-image: none !important;
+  color: #ffffff !important;
+  border: 1px solid var(--btn-premium-border) !important;
+  border-radius: 999px !important;
+  text-shadow: none !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.10),
+    0 12px 30px rgba(0,0,0,.36),
+    0 0 0 rgba(245,200,75,0) !important;
+  transition:
+    transform .18s ease,
+    border-color .18s ease,
+    box-shadow .18s ease,
+    background-color .18s ease,
+    color .18s ease !important;
+}
+
+.main-content button:not(.desktop-nav-button):not(.mobile-nav-link):not(.desktop-nav-link):hover,
+.main-content .gold-btn:hover,
+.main-content .ghost-btn:hover,
+.main-content .metal-btn:hover,
+.main-content .primary-btn:hover,
+.main-content .secondary-btn:hover,
+.main-content .submit-btn:hover,
+.main-content .save-btn:hover,
+.main-content .auth-btn:hover,
+.main-content .action-btn:hover,
+.main-content .clip-play-btn:hover,
+.main-content .store-card-btn:hover,
+.main-content .cta-empty-state a:hover,
+.main-content .cta-empty-state button:hover,
+.artist-main button:not(.desktop-nav-button):not(.mobile-nav-link):not(.desktop-nav-link):hover,
+.artist-main .gold-btn:hover,
+.artist-main .ghost-btn:hover,
+.artist-main .metal-btn:hover,
+.artist-main .player-btn:hover,
+.artist-main .action-btn:hover,
+.artist-main .primary-btn:hover,
+.artist-main .secondary-btn:hover,
+.liked-main button:not(.desktop-nav-button):not(.mobile-nav-link):not(.desktop-nav-link):hover,
+.liked-main .gold-btn:hover,
+.liked-main .ghost-btn:hover,
+.liked-main .metal-btn:hover,
+.liked-main .action-btn:hover,
+.submit-main button:not(.desktop-nav-button):not(.mobile-nav-link):not(.desktop-nav-link):hover,
+.submit-main .gold-btn:hover,
+.submit-main .ghost-btn:hover,
+.submit-main .metal-btn:hover,
+.submit-main .submit-link:hover,
+.submit-main .ghost-link:hover,
+.submit-main .clip-play-btn:hover,
+.header-icon-btn:hover,
+.account-menu-link:hover,
+.account-menu button:hover {
+  transform: translateY(-2px) !important;
+  background: var(--btn-premium-bg-hover) !important;
+  background-image: none !important;
+  color: #ffffff !important;
+  border-color: var(--btn-premium-border-hover) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.12),
+    0 16px 38px rgba(0,0,0,.42),
+    0 0 26px rgba(245,200,75,.25) !important;
+}
+
+.main-content button svg,
+.main-content button svg *,
+.artist-main button svg,
+.artist-main button svg *,
+.liked-main button svg,
+.liked-main button svg *,
+.submit-main button svg,
+.submit-main button svg *,
+.header-icon-btn svg,
+.header-icon-btn svg *,
+.account-menu button svg,
+.account-menu button svg * {
+  color: #ffffff !important;
+  fill: currentColor !important;
+  stroke: currentColor !important;
+}
+
+.main-content button .icon,
+.artist-main button .icon,
+.liked-main button .icon,
+.submit-main button .icon,
+.header-icon-btn .icon {
+  color: #ffffff !important;
+  opacity: 1 !important;
+}
+
+.main-content a.gold-btn,
+.artist-main a.gold-btn,
+.liked-main a.gold-btn,
+.submit-main a.gold-btn,
+.submit-main .submit-link {
+  color: var(--btn-premium-gold) !important;
+}
+
+.main-content a.gold-btn:hover,
+.artist-main a.gold-btn:hover,
+.liked-main a.gold-btn:hover,
+.submit-main a.gold-btn:hover,
+.submit-main .submit-link:hover {
+  color: #ffffff !important;
+}
+
+/* ============================================================
+   v26 index layout + radio premium upgrade
+   Goal:
+   - all homepage content containers share one visual width
+   - radio player is more compact but more premium/glowy
+   - no sidebar/menu selectors touched
+   ============================================================ */
+
+:root {
+  --index-content-width: 900px;
+  --index-content-gutter: clamp(16px, 4vw, 24px);
+  --radio-gold: #f5c84b;
+  --radio-gold-2: #ffe69a;
+  --radio-panel: rgba(10, 10, 14, .78);
+  --radio-panel-strong: rgba(18, 18, 24, .88);
+}
+
+/* Keep every index page content block the same width. */
+.site-shell {
+  width: 100% !important;
+  max-width: none !important;
+  padding-left: var(--index-content-gutter) !important;
+  padding-right: var(--index-content-gutter) !important;
+}
+
+.radio-stage,
+.fa-section,
+.news-feed-section,
+.concept-section,
+.submit-under-radio {
+  width: min(100%, var(--index-content-width)) !important;
+  max-width: var(--index-content-width) !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+  box-sizing: border-box !important;
+}
+
+.radio-stage {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  min-height: auto !important;
+  margin-top: clamp(18px, 3vw, 30px) !important;
+}
+
+.radio-shell:not(.pre-live),
+.start-overlay .overlay-content {
+  width: 100% !important;
+  max-width: var(--index-content-width) !important;
+  box-sizing: border-box !important;
+}
+
+/* Premium radio card: more attractive, less tall. */
+.radio-shell:not(.pre-live) {
+  isolation: isolate !important;
+  position: relative !important;
+  padding: clamp(18px, 2.4vw, 26px) clamp(18px, 3.2vw, 36px) !important;
+  border-radius: 34px !important;
+  border: 1px solid rgba(255, 230, 151, .34) !important;
+  background:
+    radial-gradient(circle at 50% -18%, rgba(255,230,151,.24), transparent 34%),
+    radial-gradient(circle at 8% 18%, rgba(245,200,75,.13), transparent 26%),
+    radial-gradient(circle at 94% 74%, rgba(245,200,75,.10), transparent 30%),
+    linear-gradient(145deg, rgba(26,24,20,.88), rgba(7,7,10,.92) 48%, rgba(13,11,8,.94)) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.14),
+    inset 0 -1px 0 rgba(0,0,0,.72),
+    inset 0 0 70px rgba(245,200,75,.06),
+    0 18px 42px rgba(0,0,0,.48),
+    0 0 0 1px rgba(245,200,75,.06),
+    0 0 42px rgba(245,200,75,.20),
+    0 0 110px rgba(245,200,75,.10) !important;
+  overflow: hidden !important;
+  transform: translateZ(0) !important;
+}
+
+.radio-shell:not(.pre-live)::before {
+  content: "" !important;
+  position: absolute !important;
+  inset: 1px !important;
+  border-radius: 33px !important;
+  pointer-events: none !important;
+  z-index: 0 !important;
+  background:
+    linear-gradient(120deg, rgba(255,255,255,.13), transparent 21%, transparent 76%, rgba(255,230,151,.12)),
+    radial-gradient(ellipse at 50% 50%, rgba(245,200,75,.13), transparent 35%),
+    repeating-linear-gradient(90deg, rgba(255,255,255,.035) 0 1px, transparent 1px 92px) !important;
+  opacity: .72 !important;
+  mask-image: linear-gradient(180deg, rgba(0,0,0,.85), rgba(0,0,0,.35)) !important;
+  -webkit-mask-image: linear-gradient(180deg, rgba(0,0,0,.85), rgba(0,0,0,.35)) !important;
+}
+
+.radio-shell:not(.pre-live)::after {
+  content: "" !important;
+  position: absolute !important;
+  inset: auto 10% -54px 10% !important;
+  height: 92px !important;
+  pointer-events: none !important;
+  z-index: 0 !important;
+  border-radius: 999px !important;
+  background: radial-gradient(ellipse at center, rgba(245,200,75,.35), transparent 68%) !important;
+  filter: blur(18px) !important;
+  opacity: .82 !important;
+}
+
+.radio-shell-content {
+  position: relative !important;
+  z-index: 1 !important;
+  gap: clamp(8px, 1.2vw, 13px) !important;
+}
+
+.now-playing {
+  display: inline-flex !important;
+  align-self: center !important;
+  width: auto !important;
+  margin: 0 auto 2px !important;
+  padding: 7px 13px !important;
+  border-radius: 999px !important;
+  color: var(--radio-gold-2) !important;
+  background: rgba(245,200,75,.08) !important;
+  border: 1px solid rgba(245,200,75,.20) !important;
+  box-shadow: 0 0 22px rgba(245,200,75,.12), inset 0 1px 0 rgba(255,255,255,.08) !important;
+  opacity: 1 !important;
+}
+
+.waveform-wrap {
+  margin: 0 auto !important;
+  min-height: 42px !important;
+  padding: 6px 0 2px !important;
+  filter: drop-shadow(0 0 18px rgba(245,200,75,.16)) !important;
+}
+
+.waveform {
+  height: 38px !important;
+  gap: 5px !important;
+  align-items: center !important;
+}
+
+.waveform-bar {
+  width: 5px !important;
+  border-radius: 999px !important;
+  background: linear-gradient(180deg, rgba(255,239,180,.92), rgba(245,200,75,.34)) !important;
+  box-shadow: 0 0 14px rgba(245,200,75,.34) !important;
+}
+
+.tune-title-row {
+  margin-top: 0 !important;
+}
+
+.tune-title {
+  margin: 0 !important;
+  font-size: clamp(28px, 4.6vw, 52px) !important;
+  line-height: .98 !important;
+  letter-spacing: -.055em !important;
+  color: #fff !important;
+  text-shadow:
+    0 1px 0 rgba(255,255,255,.12),
+    0 18px 34px rgba(0,0,0,.58),
+    0 0 24px rgba(245,200,75,.10) !important;
+}
+
+.artist-wrap {
+  margin: 0 !important;
+  color: rgba(255,255,255,.72) !important;
+}
+
+.time-row {
+  width: min(100%, 720px) !important;
+  margin: 4px auto 0 !important;
+  color: rgba(255,255,255,.66) !important;
+}
+
+.progress {
+  width: min(100%, 720px) !important;
+  height: 9px !important;
+  margin: 0 auto !important;
+  border-radius: 999px !important;
+  border: 1px solid rgba(255,255,255,.08) !important;
+  background: rgba(255,255,255,.075) !important;
+  box-shadow:
+    inset 0 1px 2px rgba(0,0,0,.70),
+    0 0 26px rgba(245,200,75,.09) !important;
+}
+
+.progress .fill,
+.fill {
+  border-radius: inherit !important;
+  background: linear-gradient(90deg, #b88618, #f5c84b 42%, #ffe69a 72%, #d9a72f) !important;
+  box-shadow:
+    0 0 14px rgba(245,200,75,.72),
+    0 0 34px rgba(245,200,75,.34) !important;
+}
+
+.earn-seconds-wrap {
+  width: min(100%, 720px) !important;
+  margin: 2px auto 0 !important;
+  padding: 10px 12px !important;
+  border-radius: 18px !important;
+  background: rgba(255,255,255,.045) !important;
+  border: 1px solid rgba(255,255,255,.08) !important;
+}
+
+.player-actions {
+  margin: 8px auto 0 !important;
+  gap: clamp(12px, 2vw, 22px) !important;
+}
+
+.player-actions > .metal-btn,
+.volume-button {
+  min-height: 50px !important;
+  background: rgba(255,255,255,.055) !important;
+  background-image: none !important;
+  color: #fff !important;
+  border: 1px solid rgba(255,255,255,.15) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.12),
+    inset 0 -12px 24px rgba(0,0,0,.26),
+    0 12px 26px rgba(0,0,0,.34),
+    0 0 18px rgba(245,200,75,.08) !important;
+}
+
+.player-actions > .metal-btn:hover,
+.volume-button:hover {
+  background: rgba(245,200,75,.09) !important;
+  border-color: rgba(245,200,75,.58) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.14),
+    0 16px 34px rgba(0,0,0,.42),
+    0 0 28px rgba(245,200,75,.30),
+    0 0 70px rgba(245,200,75,.12) !important;
+}
+
+#likeBtn,
+#skip {
+  padding: 0 24px !important;
+}
+
+#pauseBtn {
+  width: 72px !important;
+  height: 72px !important;
+  min-width: 72px !important;
+  min-height: 72px !important;
+  padding: 0 !important;
+  border-radius: 50% !important;
+  color: #fff !important;
+  border-color: rgba(255,230,151,.88) !important;
+  background:
+    radial-gradient(circle at 32% 24%, rgba(255,255,255,.34), transparent 24%),
+    rgba(245,200,75,.20) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.34),
+    inset 0 -18px 28px rgba(75,48,0,.36),
+    0 14px 32px rgba(0,0,0,.44),
+    0 0 0 6px rgba(245,200,75,.045),
+    0 0 32px rgba(245,200,75,.76),
+    0 0 86px rgba(245,200,75,.30) !important;
+}
+
+#pauseBtn .icon {
+  color: #fff !important;
+  font-size: 28px !important;
+  margin: 0 !important;
+  line-height: 1 !important;
+  text-shadow: 0 0 18px rgba(255,255,255,.38) !important;
+}
+
+#pauseBtn:hover {
+  transform: translateY(-3px) scale(1.04) !important;
+  background:
+    radial-gradient(circle at 32% 24%, rgba(255,255,255,.42), transparent 25%),
+    rgba(245,200,75,.26) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.38),
+    0 18px 38px rgba(0,0,0,.48),
+    0 0 0 8px rgba(245,200,75,.06),
+    0 0 42px rgba(245,200,75,.86),
+    0 0 108px rgba(245,200,75,.38) !important;
+}
+
+.volume-wrap {
+  margin-top: 2px !important;
+}
+
+.volume-control {
+  padding: 6px 10px !important;
+  border-radius: 999px !important;
+  background: rgba(255,255,255,.045) !important;
+  border: 1px solid rgba(255,255,255,.08) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.06), 0 0 22px rgba(245,200,75,.055) !important;
+}
+
+.volume-button svg,
+.volume-button svg * {
+  color: #fff !important;
+  fill: currentColor !important;
+  stroke: currentColor !important;
+}
+
+.listeners-pill {
+  margin-top: 2px !important;
+  padding: 8px 12px !important;
+  border-radius: 999px !important;
+  background: rgba(255,255,255,.045) !important;
+  border: 1px solid rgba(255,255,255,.08) !important;
+  color: rgba(255,255,255,.74) !important;
+}
+
+.listeners-dot {
+  background: var(--radio-gold) !important;
+  box-shadow: 0 0 12px rgba(245,200,75,.72), 0 0 26px rgba(245,200,75,.32) !important;
+}
+
+/* Match lower homepage cards to the same full content width. */
+.fa-card,
+.news-feed-section,
+.concept-card {
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+@media (max-width: 700px) {
+  :root {
+    --index-content-gutter: 14px;
+  }
+
+  .radio-shell:not(.pre-live) {
+    padding: 18px 14px !important;
+    border-radius: 28px !important;
+  }
+
+  .radio-shell:not(.pre-live)::before {
+    border-radius: 27px !important;
+  }
+
+  .waveform-wrap {
+    min-height: 34px !important;
+  }
+
+  .waveform {
+    height: 32px !important;
+  }
+
+  .player-actions {
+    grid-template-columns: 1fr 66px 1fr !important;
+    gap: 10px !important;
+  }
+
+  #pauseBtn {
+    width: 66px !important;
+    height: 66px !important;
+    min-width: 66px !important;
+    min-height: 66px !important;
+  }
+
+  #likeBtn,
+  #skip {
+    padding: 0 14px !important;
+  }
+}
+
+/* ══════════════════════════════════════════════
+   Content layout: radio links, community rechts
+   ══════════════════════════════════════════════ */
+.content-layout {
+  display: grid;
+  grid-template-columns: 1fr 300px;
+  gap: 24px;
+  align-items: start;
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 0 16px;
+}
+
+.radio-col {
+  min-width: 0;
+}
+
+.community-col {
+  position: sticky;
+  top: 90px;
+  min-width: 0;
+}
+
+/* radio-stage vult de kolom */
+.radio-col .radio-stage {
+  max-width: 100%;
+  margin: 32px 0 0;
+}
+
+/* radio-shell vult de kolom */
+.radio-col .radio-shell {
+  max-width: 100%;
+  padding: 0;
+}
+
+/* featured artist vult kolom — zelfde breedte als radio */
+.radio-col .fa-section,
+.radio-col > .fa-section {
+  max-width: 100%;
+  margin: 20px 0 0;
+  padding: 0;
+}
+
+.radio-col .fa-card {
+  width: 100%;
+}
+
+/* news-feed in de aside kolom */
+.community-col .news-feed-section {
+  max-width: 100%;
+  margin: 32px 0 0;
+  padding: 0;
+}
+
+/* news-feed-card in de aside: geen max-height scroll clip */
+.community-col .news-feed-viewport {
+  max-height: none;
+}
+
+/* Smallere schermen: stack verticaal */
+@media (max-width: 860px) {
+  .content-layout {
+    grid-template-columns: 1fr;
+    padding: 0 12px;
+  }
+
+  .community-col {
+    position: static;
+  }
+
+  .community-col .news-feed-section {
+    margin: 0;
+  }
+}
+
+/* ── Waveform canvas (echte frequentie-visualisatie) ───────── */
+.waveform-canvas {
+  display: none; /* wordt zichtbaar zodra Web Audio verbonden is */
+  width: 100%;
+  height: 44px;
+  border-radius: 4px;
+}
+
+.waveform-fallback {
+  /* fallback CSS-animatie — verborgen als canvas actief is */
+}
+
+/* ── Like knop icon ─────────────────────────────────────────── */
+.btn-icon-img {
+  width: 16px;
+  height: 16px;
+  object-fit: contain;
+  display: block;
+  flex-shrink: 0;
+  filter: brightness(0) invert(1);
+  opacity: 0.75;
+  transition: opacity 0.18s ease, filter 0.18s ease, transform 0.18s ease;
+}
+
+#likeBtn.is-liked .like-icon {
+  filter: brightness(0) saturate(100%) invert(80%) sepia(60%) saturate(400%) hue-rotate(5deg) brightness(110%);
+  opacity: 1;
+  transform: scale(1.2);
+}
+
+#likeBtn.is-liked {
+  border-color: rgba(212,175,55,0.50);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.08),
+    0 0 18px rgba(212,175,55,0.22);
+}
+
+#likeBtn.is-liked .like-label {
+  color: var(--gold);
+}
+
+/* ── Waveform canvas: altijd canvas, nooit fallback ─────────── */
+.waveform-fallback {
+  display: none !important;
+}
+
+.waveform-canvas {
+  display: block !important;
+  width: 100%;
+  height: 44px;
+  border-radius: 4px;
+}
+
+.waveform-wrap {
+  width: 100%;
+  max-width: 740px;
+  margin: 0 auto 4px;
+}
+
+/* ── Featured artist: tekst links uitlijnen ─────────────────── */
+.fa-body {
+  text-align: left !important;
+}
+
+.fa-info {
+  text-align: left !important;
+}
+
+.fa-name,
+.fa-role,
+.fa-tune,
+.fa-bio,
+.fa-link {
+  text-align: left !important;
+}
+
+.fa-meta {
+  justify-content: flex-start !important;
+}
+
+/* Alleen op mobile centreren */
+@media (max-width: 520px) {
+  .fa-body {
+    text-align: center !important;
+  }
+  .fa-meta {
+    justify-content: center !important;
+  }
+  .fa-name, .fa-role, .fa-tune, .fa-bio {
+    text-align: center !important;
+  }
+}
+
+/* =========================================================
+   v29 safe refinement: flatter radio internals + premium controls
+   Scope: index page only. Keeps sidebar layout unchanged.
+   ========================================================= */
+
+/* Remove visible nested containers inside the radio card while preserving spacing. */
+.radio-shell:not(.pre-live) .now-playing,
+.radio-shell:not(.pre-live) .earn-seconds-wrap,
+.radio-shell:not(.pre-live) .volume-control,
+.radio-shell:not(.pre-live) .listeners-pill {
+  background: transparent !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+.radio-shell:not(.pre-live) .now-playing {
+  padding: 0 !important;
+  color: rgba(255, 231, 154, .92) !important;
+  text-shadow: 0 0 16px rgba(245, 200, 75, .22) !important;
+}
+
+.radio-shell:not(.pre-live) .earn-seconds-wrap {
+  padding: 4px 0 0 !important;
+}
+
+.radio-shell:not(.pre-live) .earn-seconds-progress {
+  height: 5px !important;
+  border-radius: 999px !important;
+  background: rgba(255,255,255,.08) !important;
+  overflow: hidden !important;
+  box-shadow: inset 0 1px 2px rgba(0,0,0,.55) !important;
+}
+
+.radio-shell:not(.pre-live) .earn-seconds-copy-inline,
+.radio-shell:not(.pre-live) .listeners-pill {
+  color: rgba(255,255,255,.68) !important;
+}
+
+/* Like button: use the provided liked icon, keep same premium button style. */
+#likeBtn .btn-icon-img.like-icon {
+  width: 18px !important;
+  height: 18px !important;
+  opacity: .96 !important;
+  filter:
+    brightness(0) invert(1)
+    drop-shadow(0 0 8px rgba(255,255,255,.18)) !important;
+}
+
+#likeBtn:hover .btn-icon-img.like-icon,
+#likeBtn.is-liked .btn-icon-img.like-icon {
+  opacity: 1 !important;
+  filter:
+    brightness(0) saturate(100%) invert(85%) sepia(37%) saturate(927%) hue-rotate(352deg) brightness(104%) contrast(94%)
+    drop-shadow(0 0 12px rgba(245,200,75,.55)) !important;
+}
+
+/* Cleaner volume control: circular icon, no visible outer container. */
+.volume-wrap {
+  display: flex !important;
+  justify-content: center !important;
+}
+
+.volume-control {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+  padding: 0 !important;
+}
+
+.volume-button {
+  width: 46px !important;
+  height: 46px !important;
+  min-width: 46px !important;
+  min-height: 46px !important;
+  padding: 0 !important;
+  border-radius: 50% !important;
+  color: #fff !important;
+  background: rgba(255,255,255,.055) !important;
+  border: 1px solid rgba(255,255,255,.16) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.12),
+    0 10px 22px rgba(0,0,0,.30),
+    0 0 18px rgba(245,200,75,.10) !important;
+}
+
+.volume-button:hover {
+  transform: translateY(-1px) !important;
+  border-color: rgba(245,200,75,.62) !important;
+  background: rgba(245,200,75,.10) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.16),
+    0 14px 28px rgba(0,0,0,.36),
+    0 0 26px rgba(245,200,75,.34) !important;
+}
+
+.volume-button svg {
+  width: 20px !important;
+  height: 20px !important;
+}
+
+.volume-slider-inline {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+.volume-slider-inline input[type="range"] {
+  accent-color: #f5c84b !important;
+}
+
+/* Featured Artist: more readable and premium text treatment. */
+.fa-card {
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.10),
+    0 18px 44px rgba(0,0,0,.38),
+    0 0 42px rgba(245,200,75,.13) !important;
+}
+
+.fa-card.has-fa-bg::before {
+  opacity: .40 !important;
+  filter: saturate(1.18) contrast(1.08) brightness(.88) blur(.2px) !important;
+}
+
+.fa-card::after {
+  background:
+    radial-gradient(circle at 16% 18%, rgba(245,200,75,.24), transparent 28%),
+    linear-gradient(90deg, rgba(5,5,8,.58) 0%, rgba(5,5,8,.34) 48%, rgba(5,5,8,.70) 100%) !important;
+}
+
+.fa-kicker {
+  color: rgba(255,231,154,.92) !important;
+  text-shadow: 0 0 16px rgba(245,200,75,.22) !important;
 }
 
 .fa-name {
-  font-size: 25px;
-  font-weight: 800;
-  color: #fff;
-  text-shadow: 0 0 18px rgba(212,175,55,0.14), 0 2px 12px rgba(0,0,0,0.55);
+  font-weight: 900 !important;
+  letter-spacing: -.04em !important;
+  text-shadow: 0 10px 28px rgba(0,0,0,.55), 0 0 22px rgba(245,200,75,.14) !important;
 }
 
 .fa-role,
 .fa-tune {
-  font-weight: 800;
+  font-weight: 800 !important;
+  color: rgba(255,243,205,.94) !important;
 }
 
+.fa-meta,
 .fa-bio {
-  color: rgba(255,255,255,0.70);
+  font-weight: 650 !important;
+  color: rgba(255,255,255,.78) !important;
+}
+
+.fa-pill {
+  font-weight: 800 !important;
+  color: rgba(255,239,190,.94) !important;
+  border-color: rgba(245,200,75,.24) !important;
+  background: rgba(245,200,75,.08) !important;
 }
 
 .fa-link {
-  padding: 10px 18px;
-  border-color: rgba(244,215,122,0.42);
-  background: rgba(212,175,55,0.12);
-  color: #fff7d4;
-  box-shadow: 0 0 18px rgba(212,175,55,0.10);
+  width: fit-content !important;
+  min-height: 46px !important;
+  padding: 0 20px !important;
+  border-radius: 999px !important;
+  color: #fff !important;
+  font-weight: 900 !important;
+  letter-spacing: .01em !important;
+  text-decoration: none !important;
+  background: rgba(255,255,255,.065) !important;
+  border: 1px solid rgba(245,200,75,.36) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.12),
+    0 12px 28px rgba(0,0,0,.30),
+    0 0 22px rgba(245,200,75,.14) !important;
 }
 
 .fa-link:hover {
-  background: rgba(212,175,55,0.20);
-  border-color: rgba(244,215,122,0.62);
-  box-shadow: 0 0 28px rgba(212,175,55,0.22);
+  color: #fff7d6 !important;
+  transform: translateY(-2px) !important;
+  border-color: rgba(245,200,75,.70) !important;
+  background: rgba(245,200,75,.12) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.16),
+    0 16px 34px rgba(0,0,0,.38),
+    0 0 34px rgba(245,200,75,.34) !important;
+}
+
+/* Sidebar buttons: same gold-glow color language as the main buttons, no layout changes. */
+.desktop-nav-link:hover,
+.desktop-nav-button:hover,
+.mobile-nav-link:hover {
+  color: #fff7d6 !important;
+  background: rgba(245,200,75,.085) !important;
+  box-shadow: inset 0 0 0 1px rgba(245,200,75,.18), 0 0 22px rgba(245,200,75,.13) !important;
+}
+
+.desktop-nav-link.active,
+.desktop-nav-button.active,
+.mobile-nav-link.active {
+  color: #fff4c7 !important;
+  background: rgba(245,200,75,.105) !important;
+  box-shadow: inset 0 0 0 1px rgba(245,200,75,.22), 0 0 28px rgba(245,200,75,.16) !important;
+}
+
+.desktop-nav-link:hover .nav-icon-mask,
+.desktop-nav-button:hover .nav-icon-mask,
+.mobile-nav-link:hover .nav-icon-mask,
+.desktop-nav-link.active .nav-icon-mask,
+.desktop-nav-button.active .nav-icon-mask,
+.mobile-nav-link.active .nav-icon-mask {
+  filter:
+    drop-shadow(0 0 10px rgba(245,200,75,.42))
+    drop-shadow(0 0 22px rgba(245,200,75,.20)) !important;
 }
 
 @media (max-width: 520px) {
-  .radio-like-btn {
-    width: 46px;
-    min-width: 46px;
-    height: 46px;
+  .fa-link {
+    margin-left: auto !important;
+    margin-right: auto !important;
   }
 
-  .radio-like-btn .like-icon {
-    width: 20px;
-    height: 20px;
+  .volume-control {
+    gap: 8px !important;
   }
-
-  .fa-body {
-    grid-template-columns: 1fr;
-  }
-
-  .fa-photo-wrap {
-    width: 104px;
-    height: 104px;
-  }
-}
-
-.volume-button svg path[fill] {
-  fill: currentColor !important;
-}
-
-.volume-button svg path[stroke] {
-  stroke: currentColor !important;
-  fill: none !important;
 }
