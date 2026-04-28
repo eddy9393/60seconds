@@ -460,9 +460,10 @@ function persistRadioSession() {
 function updatePauseButtonState() {
   if (!els.pauseBtn) return;
   const isPlaying = state.isLiveActivated && !els.audio.paused;
+  els.pauseBtn.setAttribute("aria-label", isPlaying ? "Pause" : "Play");
   els.pauseBtn.innerHTML = isPlaying
-    ? `<span class="icon">⏸</span>Pause`
-    : `<span class="icon">▶</span>Play`;
+    ? `<span class="icon">⏸</span>`
+    : `<span class="icon">▶</span>`;
 }
 
 function syncWaveformState() {
@@ -927,6 +928,12 @@ async function refreshAuthUI() {
       return null;
     }
 
+    // Verberg start-overlay direct als ingelogd — voorkomt flash
+    if (els.startOverlay && !state.isLiveActivated) {
+      els.startOverlay.style.visibility = 'hidden';
+      els.startOverlay.style.opacity = '0';
+    }
+
     updateCurrencyVisibility(user);
     setCurrency(state.currentCoins || 0);
     setLoggedInView();
@@ -1337,6 +1344,10 @@ async function handleStartRadio() {
 
   els.radioShell.classList.remove("pre-live");
   setHidden(els.startOverlay, true);
+  if (els.startOverlay) {
+    els.startOverlay.style.visibility = '';
+    els.startOverlay.style.opacity = '';
+  }
   updateConceptVisibility();
 
   if (!els.audio.src && state.tracks.length) {
