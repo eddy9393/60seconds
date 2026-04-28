@@ -5682,3 +5682,33 @@ button:not(.side-nav button):not(.desktop-side-nav-panel button){
   cursor: pointer !important;
   accent-color: #f5c84b !important;
 }
+
+/* Skip button: icon + -1 coin only */
+.player-actions #skip .skip-button-content {
+  grid-template-columns: auto auto auto !important;
+  gap: 6px !important;
+}
+
+.player-actions #skip .skip-icon {
+  width: 19px !important;
+  height: 19px !important;
+  display: block !important;
+  color: #fff !important;
+  flex: 0 0 auto !important;
+}
+
+.player-actions #skip .skip-cost {
+  min-width: auto !important;
+  text-align: center !important;
+}
+
+.player-actions #skip .skip-coin-icon {
+  order: initial !important;
+}
+
+@media (max-width: 900px) {
+  .player-actions #skip .skip-icon {
+    width: 17px !important;
+    height: 17px !important;
+  }
+}
