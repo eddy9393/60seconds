@@ -2225,9 +2225,9 @@ img {
   border-radius: 28px;
   border: 1px solid rgba(212,175,55,0.22);
   background:
-    linear-gradient(160deg, rgba(255,248,220,0.07) 0%, rgba(255,255,255,0.02) 60%),
-    radial-gradient(ellipse at top, rgba(212,175,55,0.12) 0%, transparent 65%),
-    linear-gradient(180deg, rgba(28,22,10,0.90) 0%, rgba(16,13,6,0.95) 100%);
+    linear-gradient(160deg, rgba(255,232,140,0.14) 0%, rgba(212,175,55,0.06) 50%, rgba(255,255,255,0.02) 100%),
+    radial-gradient(ellipse at top, rgba(212,175,55,0.22) 0%, transparent 60%),
+    linear-gradient(180deg, rgba(35,28,12,0.88) 0%, rgba(18,14,6,0.94) 100%);
   box-shadow:
     inset 0 1px 0 rgba(255,232,140,0.14),
     inset 0 -1px 0 rgba(0,0,0,0.4),
@@ -2980,8 +2980,9 @@ body::before {
   isolation: isolate;
   border-color: rgba(212,175,55,0.38) !important;
   background:
-    radial-gradient(circle at 18% 24%, rgba(212,175,55,0.13), transparent 30%),
-    linear-gradient(150deg, rgba(24,24,26,0.88), rgba(8,8,10,0.92)) !important;
+    radial-gradient(circle at 18% 24%, rgba(212,175,55,0.26), transparent 40%),
+    radial-gradient(ellipse at 80% 10%, rgba(255,220,100,0.12), transparent 45%),
+    linear-gradient(150deg, rgba(32,26,10,0.86), rgba(14,10,4,0.92)) !important;
   box-shadow:
     inset 0 1px 0 rgba(255,255,255,0.08),
     inset 0 -1px 0 rgba(0,0,0,0.64),
@@ -3007,7 +3008,7 @@ body::before {
 }
 
 .fa-card.has-fa-bg::before {
-  opacity: 0.18;
+  opacity: 0.32;
 }
 
 .fa-card::after {
@@ -3959,11 +3960,16 @@ button:not(.side-nav button):not(.desktop-side-nav-panel button){
   padding: 0;
 }
 
-/* featured artist vult kolom */
-.radio-col .fa-section {
+/* featured artist vult kolom — zelfde breedte als radio */
+.radio-col .fa-section,
+.radio-col > .fa-section {
   max-width: 100%;
-  margin: 24px 0 0;
+  margin: 20px 0 0;
   padding: 0;
+}
+
+.radio-col .fa-card {
+  width: 100%;
 }
 
 /* news-feed in de aside kolom */
@@ -3992,4 +3998,16 @@ button:not(.side-nav button):not(.desktop-side-nav-panel button){
   .community-col .news-feed-section {
     margin: 0;
   }
+}
+
+/* ── Waveform canvas (echte frequentie-visualisatie) ───────── */
+.waveform-canvas {
+  display: none; /* wordt zichtbaar zodra Web Audio verbonden is */
+  width: 100%;
+  height: 44px;
+  border-radius: 4px;
+}
+
+.waveform-fallback {
+  /* fallback CSS-animatie — verborgen als canvas actief is */
 }
