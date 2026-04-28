@@ -5749,3 +5749,39 @@ button:not(.side-nav button):not(.desktop-side-nav-panel button){
     flex-basis: 20px !important;
   }
 }
+
+/* ── Profielfoto in radio player ────────────────────────────── */
+.artist-link,
+.artist-inline {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  justify-content: center;
+}
+
+.artist-player-photo {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1.5px solid rgba(212,175,55,0.35);
+  flex-shrink: 0;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.artist-player-photo--fallback {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(50,38,8,0.9), rgba(130,96,18,0.8));
+  color: rgba(212,175,55,0.9);
+  font-size: 13px;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1.5px solid rgba(212,175,55,0.35);
+  flex-shrink: 0;
+  font-family: 'Space Grotesk', sans-serif;
+}
