@@ -3659,8 +3659,8 @@ button:not(.side-nav button):not(.desktop-side-nav-panel button){
    ============================================================ */
 
 :root {
-  --index-content-width: 900px;
-  --index-content-gutter: clamp(16px, 4vw, 24px);
+  --index-content-width: 100%;
+  --index-content-gutter: 0px;
   --radio-gold: #f5c84b;
   --radio-gold-2: #ffe69a;
   --radio-panel: rgba(10, 10, 14, .78);
@@ -3677,15 +3677,20 @@ button:not(.side-nav button):not(.desktop-side-nav-panel button){
 
 .radio-stage,
 .fa-section,
-.news-feed-section,
 .concept-section,
 .submit-under-radio {
-  width: min(100%, var(--index-content-width)) !important;
-  max-width: var(--index-content-width) !important;
-  margin-left: auto !important;
-  margin-right: auto !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
   padding-left: 0 !important;
   padding-right: 0 !important;
+  box-sizing: border-box !important;
+}
+
+.news-feed-section {
+  width: 100% !important;
+  max-width: 100% !important;
   box-sizing: border-box !important;
 }
 
@@ -3696,13 +3701,13 @@ button:not(.side-nav button):not(.desktop-side-nav-panel button){
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
   min-height: auto !important;
-  margin-top: clamp(18px, 3vw, 30px) !important;
+  margin-top: 12px !important;
 }
 
 .radio-shell:not(.pre-live),
 .start-overlay .overlay-content {
   width: 100% !important;
-  max-width: var(--index-content-width) !important;
+  max-width: 100% !important;
   box-sizing: border-box !important;
 }
 
@@ -3770,7 +3775,7 @@ button:not(.side-nav button):not(.desktop-side-nav-panel button){
   align-self: center !important;
   width: auto !important;
   margin: 0 auto 2px !important;
-  padding: 7px 13px !important;
+  padding: 4px 10px !important;
   border-radius: 999px !important;
   color: var(--radio-gold-2) !important;
   background: rgba(245,200,75,.08) !important;
@@ -3805,7 +3810,7 @@ button:not(.side-nav button):not(.desktop-side-nav-panel button){
 
 .tune-title {
   margin: 0 !important;
-  font-size: clamp(28px, 4.6vw, 52px) !important;
+  font-size: clamp(18px, 2.4vw, 26px) !important;
   line-height: .98 !important;
   letter-spacing: -.055em !important;
   color: #fff !important;
@@ -3857,13 +3862,13 @@ button:not(.side-nav button):not(.desktop-side-nav-panel button){
 }
 
 .player-actions {
-  margin: 8px auto 0 !important;
-  gap: clamp(12px, 2vw, 22px) !important;
+  margin: 6px auto 0 !important;
+  gap: 8px !important;
 }
 
 .player-actions > .metal-btn,
 .volume-button {
-  min-height: 50px !important;
+  min-height: 36px !important;
   background: rgba(255,255,255,.055) !important;
   background-image: none !important;
   color: #fff !important;
@@ -3888,14 +3893,14 @@ button:not(.side-nav button):not(.desktop-side-nav-panel button){
 
 #likeBtn,
 #skip {
-  padding: 0 24px !important;
+  padding: 0 14px !important;
 }
 
 #pauseBtn {
-  width: 72px !important;
-  height: 72px !important;
-  min-width: 72px !important;
-  min-height: 72px !important;
+  width: 48px !important;
+  height: 48px !important;
+  min-width: 48px !important;
+  min-height: 48px !important;
   padding: 0 !important;
   border-radius: 50% !important;
   color: #fff !important;
