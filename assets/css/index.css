@@ -3957,13 +3957,7 @@ button:not(.side-nav button):not(.desktop-side-nav-panel button){
   margin-top: 2px !important;
 }
 
-.volume-control {
-  padding: 6px 10px !important;
-  border-radius: 999px !important;
-  background: rgba(255,255,255,.045) !important;
-  border: 1px solid rgba(255,255,255,.08) !important;
-  box-shadow: inset 0 1px 0 rgba(255,255,255,.06), 0 0 22px rgba(245,200,75,.055) !important;
-}
+/* volume-control: geen override — stijl zit in de volume-button */
 
 .volume-button svg,
 .volume-button svg * {
@@ -4433,19 +4427,19 @@ button:not(.side-nav button):not(.desktop-side-nav-panel button){
 .community-col .news-feed-avatar-fallback {
   width: 40px !important;
   height: 40px !important;
+  aspect-ratio: 1 / 1 !important;
   border-radius: 50% !important;
   flex-shrink: 0 !important;
-  border: 1.5px solid rgba(212,175,55,0.28) !important;
-  box-shadow:
-    0 4px 12px rgba(0,0,0,0.28),
-    0 0 0 3px rgba(212,175,55,0.06) !important;
+  border: none !important;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.28) !important;
+  object-fit: cover !important;
 }
 
 .community-col .news-feed-avatar-fallback {
   font-size: 14px !important;
   font-weight: 700 !important;
-  background: linear-gradient(145deg, rgba(48,36,8,0.95), rgba(130,96,18,0.85)) !important;
-  color: rgba(255,220,100,0.9) !important;
+  background: linear-gradient(145deg, rgba(36,28,8,0.95), rgba(80,60,14,0.9)) !important;
+  color: rgba(255,220,100,0.85) !important;
 }
 
 /* Tekst */
@@ -4459,7 +4453,7 @@ button:not(.side-nav button):not(.desktop-side-nav-panel button){
 }
 
 .community-col .news-feed-name {
-  color: rgba(255,255,255,0.88) !important;
+  color: rgba(255,255,255,0.92) !important;
   font-weight: 600 !important;
 }
 
