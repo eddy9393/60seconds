@@ -1,3 +1,42 @@
+
+/* ══════════════════════════════════════════════
+   Page loader — goudkleurige progressiebalk
+   ══════════════════════════════════════════════ */
+.page-loader {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: #080808;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-start;
+  pointer-events: none;
+  transition: opacity 0.5s ease;
+}
+
+.page-loader-bar {
+  height: 3px;
+  background: linear-gradient(90deg,
+    transparent 0%,
+    rgba(212,175,55,0.4) 10%,
+    var(--gold) 50%,
+    rgba(244,215,122,0.9) 75%,
+    transparent 100%
+  );
+  background-size: 200% 100%;
+  animation: loaderSlide 1.2s ease-in-out infinite;
+  box-shadow: 0 0 12px rgba(212,175,55,0.5), 0 0 4px rgba(212,175,55,0.8);
+}
+
+@keyframes loaderSlide {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+.page-loader.done {
+  opacity: 0;
+}
 :root {
   --gold: #d4af37;
   --gold-2: #f4d77a;
@@ -12,7 +51,7 @@
   --fs-artist: 18px;
   --fs-stat-label: 12px;
   --fs-stat-value: clamp(26px, 4vw, 34px);
-  --fs-tune-title: clamp(24px, 4vw, 38px);
+  --fs-tune-title: clamp(20px, 3.2vw, 30px);
 
   --desktop-rail-width: 86px;
   --desktop-rail-expanded: 320px;
@@ -601,9 +640,10 @@ img {
 
 .radio-stage {
   position: relative;
-  max-width: 880px;
-  margin: 32px auto 0;
-  min-height: 44vh;
+  width: 100%;
+  max-width: 100%;
+  margin: 24px 0 0;
+  min-height: auto;
   display: flex;
   align-items: flex-start;
   justify-content: center;
@@ -612,9 +652,9 @@ img {
 .radio-shell {
   position: relative;
   width: 100%;
-  max-width: 780px;
-  margin: 0 auto;
-  padding: 0 20px;
+  max-width: 100%;
+  margin: 0;
+  padding: 0 16px;
   background: transparent;
   border: none;
   box-shadow: none;
@@ -747,7 +787,7 @@ img {
 
 .radio-shell-content {
   display: grid;
-  gap: 10px;
+  gap: 7px;
 }
 
 .now-playing {
@@ -757,10 +797,11 @@ img {
 
 .waveform-wrap {
   width: 100%;
-  max-width: 620px;
-  display: flex;
-  justify-content: center;
-  margin: 0 auto 8px;
+  margin: 2px auto 4px;
+  background: none !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
 }
 
 .waveform {
@@ -1041,10 +1082,7 @@ img {
 }
 
 .volume-wrap {
-  margin-top: 10px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  display: none; /* volume zit nu in player-actions */
 }
 
 .volume-control {
@@ -3944,11 +3982,10 @@ button:not(.side-nav button):not(.desktop-side-nav-panel button){
 .content-layout {
   display: grid;
   grid-template-columns: 1fr 300px;
-  gap: 24px;
+  gap: 20px;
   align-items: start;
-  max-width: 1120px;
-  margin: 0 auto;
-  padding: 0 16px;
+  width: 100%;
+  padding: 0;
 }
 
 .radio-col {
@@ -4232,4 +4269,58 @@ button:not(.side-nav button):not(.desktop-side-nav-panel button){
 
 .radio-shell:not(.pre-live) .time-row {
   margin-top: 2px !important;
+}
+
+/* ── Volume als vierde knop in player-actions ─────────────── */
+.volume-control {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  position: relative;
+}
+
+/* Slider popup boven de knop */
+.volume-control .volume-slider-inline {
+  position: absolute;
+  bottom: calc(100% + 10px);
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  opacity: 0;
+  overflow: hidden;
+  transition: width 0.22s ease, opacity 0.18s ease;
+  background: rgba(20,16,8,0.92);
+  border: 1px solid rgba(212,175,55,0.2);
+  border-radius: 12px;
+  padding: 0;
+  backdrop-filter: blur(12px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.volume-control.open .volume-slider-inline {
+  width: 130px;
+  opacity: 1;
+  padding: 10px 14px;
+}
+
+.volume-slider-inline input[type="range"] {
+  width: 100px;
+  margin: 0;
+  accent-color: var(--gold);
+  cursor: pointer;
+}
+
+/* Volume knop zelf: zelfde formaat als andere knoppen */
+.volume-button.metal-btn {
+  min-height: 44px;
+  padding: 0 14px;
+  gap: 0;
+}
+
+.volume-button svg {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
 }
