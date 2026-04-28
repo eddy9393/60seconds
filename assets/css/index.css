@@ -4182,3 +4182,54 @@ button:not(.side-nav button):not(.desktop-side-nav-panel button){
     0 0 34px rgba(245,200,75,.34),
     0 0 70px rgba(245,200,75,.12) !important;
 }
+
+/* ============================================================
+   v31 earn seconds text-only placement
+   - no earn progress bar/container
+   - copy sits above track time/progress
+   ============================================================ */
+.radio-shell:not(.pre-live) #earnSecondsWrap.earn-seconds-wrap {
+  width: min(100%, 720px) !important;
+  margin: 2px auto 4px !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  text-align: center !important;
+}
+
+.radio-shell:not(.pre-live) #earnSecondsWrap.hidden {
+  display: none !important;
+}
+
+.radio-shell:not(.pre-live) .earn-seconds-progress,
+.radio-shell:not(.pre-live) .earn-seconds-fill {
+  display: none !important;
+}
+
+.radio-shell:not(.pre-live) #earnSecondsCopy.earn-seconds-copy-inline {
+  display: inline !important;
+  width: auto !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  color: rgba(255,255,255,.68) !important;
+  font-size: clamp(14px, 1.6vw, 16px) !important;
+  font-weight: 600 !important;
+  line-height: 1.35 !important;
+  letter-spacing: -.01em !important;
+  text-shadow: 0 1px 16px rgba(0,0,0,.45) !important;
+}
+
+.radio-shell:not(.pre-live) .earn-seconds-amount {
+  color: #f5c84b !important;
+  font-weight: 800 !important;
+  text-shadow: 0 0 18px rgba(245,200,75,.34) !important;
+}
+
+.radio-shell:not(.pre-live) .time-row {
+  margin-top: 2px !important;
+}
