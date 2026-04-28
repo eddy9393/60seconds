@@ -4770,3 +4770,373 @@ button:not(.side-nav button):not(.desktop-side-nav-panel button){
   display: flex !important;
   flex-shrink: 0 !important;
 }
+
+/* ============================================================
+   v34 safe radio/community/featured refinement
+   Scope: index page only. No functional changes.
+   ============================================================ */
+
+/* Radio controls: consistent sizing and visible white icons */
+#radioShell .player-actions {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 14px !important;
+  flex-wrap: wrap !important;
+}
+
+#radioShell .player-actions > .metal-btn,
+#radioShell .volume-button {
+  width: 56px !important;
+  height: 56px !important;
+  min-width: 56px !important;
+  min-height: 56px !important;
+  max-width: 56px !important;
+  max-height: 56px !important;
+  padding: 0 !important;
+  border-radius: 999px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  color: #fff !important;
+  background: rgba(17, 17, 20, 0.78) !important;
+  background-image: none !important;
+  border: 1px solid rgba(255,255,255,0.14) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.10),
+    0 14px 30px rgba(0,0,0,0.36),
+    0 0 18px rgba(245,200,75,0.08) !important;
+}
+
+#radioShell .player-actions > .metal-btn:hover,
+#radioShell .volume-button:hover,
+#radioShell .volume-control.open .volume-button {
+  border-color: rgba(245,200,75,0.58) !important;
+  background: rgba(25, 25, 29, 0.92) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.12),
+    0 16px 34px rgba(0,0,0,0.42),
+    0 0 28px rgba(245,200,75,0.24) !important;
+}
+
+#radioShell #pauseBtn {
+  width: 72px !important;
+  height: 72px !important;
+  min-width: 72px !important;
+  min-height: 72px !important;
+  max-width: 72px !important;
+  max-height: 72px !important;
+  border-color: rgba(245,200,75,0.82) !important;
+  background: rgba(245,200,75,0.20) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.24),
+    0 18px 42px rgba(0,0,0,0.46),
+    0 0 34px rgba(245,200,75,0.48) !important;
+}
+
+#radioShell #pauseBtn .icon {
+  font-size: 30px !important;
+  line-height: 1 !important;
+  margin: 0 !important;
+  color: #fff !important;
+}
+
+#radioShell .player-actions .icon,
+#radioShell .player-actions svg,
+#radioShell .volume-button svg,
+#radioShell .btn-icon-img {
+  color: #fff !important;
+  fill: currentColor !important;
+  stroke: currentColor !important;
+  opacity: 1 !important;
+  filter: drop-shadow(0 0 10px rgba(255,255,255,0.18)) !important;
+}
+
+#radioShell .btn-icon-img.like-icon {
+  width: 22px !important;
+  height: 22px !important;
+  object-fit: contain !important;
+}
+
+#radioShell .skip-button-content {
+  gap: 4px !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+#radioShell .skip-coin-icon {
+  width: 16px !important;
+  height: 16px !important;
+}
+
+#radioShell .skip-cost {
+  font-size: 12px !important;
+  font-weight: 800 !important;
+  color: rgba(255,255,255,0.86) !important;
+}
+
+/* Volume slider: clickable again, premium styling */
+#radioShell .volume-control {
+  position: relative !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+#radioShell .volume-slider-inline {
+  position: absolute !important;
+  left: 50% !important;
+  bottom: calc(100% + 12px) !important;
+  transform: translateX(-50%) translateY(4px) !important;
+  width: 152px !important;
+  height: 44px !important;
+  padding: 0 14px !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+  overflow: visible !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border-radius: 999px !important;
+  border: 1px solid rgba(245,200,75,0.28) !important;
+  background: rgba(10,10,13,0.94) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.08),
+    0 18px 40px rgba(0,0,0,0.44),
+    0 0 26px rgba(245,200,75,0.12) !important;
+  backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
+  transition: opacity .16s ease, visibility .16s ease, transform .16s ease !important;
+  z-index: 30 !important;
+}
+
+#radioShell .volume-control.open .volume-slider-inline {
+  opacity: 1 !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
+  transform: translateX(-50%) translateY(0) !important;
+}
+
+#radioShell .volume-slider-inline input[type="range"] {
+  width: 122px !important;
+  height: 18px !important;
+  margin: 0 !important;
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  background: transparent !important;
+  cursor: pointer !important;
+  accent-color: #f5c84b !important;
+}
+
+#radioShell .volume-slider-inline input[type="range"]::-webkit-slider-runnable-track {
+  height: 5px !important;
+  border-radius: 999px !important;
+  background: linear-gradient(90deg, rgba(245,200,75,0.96), rgba(245,200,75,0.34)) !important;
+  box-shadow: 0 0 14px rgba(245,200,75,0.30) !important;
+}
+
+#radioShell .volume-slider-inline input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none !important;
+  width: 16px !important;
+  height: 16px !important;
+  margin-top: -5.5px !important;
+  border-radius: 50% !important;
+  background: #fff !important;
+  border: 2px solid #f5c84b !important;
+  box-shadow: 0 0 16px rgba(245,200,75,0.52) !important;
+}
+
+#radioShell .volume-slider-inline input[type="range"]::-moz-range-track {
+  height: 5px !important;
+  border-radius: 999px !important;
+  background: rgba(245,200,75,0.82) !important;
+  box-shadow: 0 0 14px rgba(245,200,75,0.30) !important;
+}
+
+#radioShell .volume-slider-inline input[type="range"]::-moz-range-thumb {
+  width: 14px !important;
+  height: 14px !important;
+  border-radius: 50% !important;
+  background: #fff !important;
+  border: 2px solid #f5c84b !important;
+  box-shadow: 0 0 16px rgba(245,200,75,0.52) !important;
+}
+
+/* Featured artist: stronger content design without overlap */
+#featuredArtistSection .fa-kicker,
+.community-col .news-feed-kicker {
+  color: #fff !important;
+  font-size: 15px !important;
+  font-weight: 900 !important;
+  letter-spacing: 0.18em !important;
+  text-transform: uppercase !important;
+  text-shadow: 0 0 20px rgba(245,200,75,0.18) !important;
+}
+
+#featuredArtistCard.fa-card {
+  border-color: rgba(255,255,255,0.12) !important;
+  background:
+    radial-gradient(circle at 16% 20%, rgba(245,200,75,0.12), transparent 32%),
+    linear-gradient(135deg, rgba(17,17,21,0.86), rgba(8,8,11,0.92)) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.08),
+    0 22px 64px rgba(0,0,0,0.44),
+    0 0 42px rgba(245,200,75,0.10) !important;
+}
+
+#featuredArtistCard.fa-card.has-fa-bg::before {
+  opacity: 0.24 !important;
+  filter: blur(1px) saturate(1.14) contrast(1.06) !important;
+}
+
+#featuredArtistCard.fa-card::after {
+  background:
+    linear-gradient(90deg, rgba(5,5,7,0.92) 0%, rgba(5,5,7,0.72) 42%, rgba(5,5,7,0.42) 100%),
+    radial-gradient(circle at 23% 30%, rgba(245,200,75,0.13), transparent 34%) !important;
+}
+
+#featuredArtistCard .fa-body {
+  display: grid !important;
+  grid-template-columns: minmax(132px, 168px) minmax(0, 1fr) !important;
+  gap: 28px !important;
+  align-items: center !important;
+  text-align: left !important;
+}
+
+#featuredArtistCard .fa-photo-wrap {
+  width: clamp(132px, 17vw, 168px) !important;
+  height: clamp(132px, 17vw, 168px) !important;
+  border: 1px solid rgba(245,200,75,0.74) !important;
+  box-shadow:
+    0 0 0 3px rgba(245,200,75,0.10),
+    0 20px 44px rgba(0,0,0,0.48),
+    0 0 38px rgba(245,200,75,0.30) !important;
+}
+
+#featuredArtistCard .fa-info {
+  min-width: 0 !important;
+  text-align: left !important;
+}
+
+#featuredArtistCard .fa-name {
+  color: #fff !important;
+  font-size: clamp(30px, 3.8vw, 46px) !important;
+  line-height: 1.02 !important;
+  font-weight: 950 !important;
+  letter-spacing: -0.04em !important;
+  text-shadow: 0 0 22px rgba(255,255,255,0.12) !important;
+}
+
+#featuredArtistCard .fa-role,
+#featuredArtistCard .fa-meta,
+#featuredArtistCard .fa-tune,
+#featuredArtistCard .fa-bio {
+  font-weight: 800 !important;
+}
+
+#featuredArtistCard .fa-meta {
+  justify-content: flex-start !important;
+  color: rgba(255,255,255,0.78) !important;
+}
+
+#featuredArtistCard .fa-link {
+  margin-top: 18px !important;
+  font-weight: 900 !important;
+  letter-spacing: 0.02em !important;
+  color: #fff !important;
+  border-color: rgba(245,200,75,0.50) !important;
+  background: rgba(255,255,255,0.055) !important;
+  box-shadow: 0 0 24px rgba(245,200,75,0.13), inset 0 1px 0 rgba(255,255,255,0.09) !important;
+}
+
+#featuredArtistCard .fa-link:hover {
+  border-color: rgba(245,200,75,0.78) !important;
+  box-shadow: 0 0 34px rgba(245,200,75,0.26), inset 0 1px 0 rgba(255,255,255,0.12) !important;
+}
+
+/* Community updates: premium but no layout change */
+.community-col .news-feed-section {
+  border: 1px solid rgba(255,255,255,0.10) !important;
+  background:
+    radial-gradient(circle at 18% 8%, rgba(245,200,75,0.08), transparent 34%),
+    linear-gradient(180deg, rgba(18,18,22,0.78), rgba(7,7,10,0.82)) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.07),
+    0 22px 56px rgba(0,0,0,0.40),
+    0 0 34px rgba(245,200,75,0.07) !important;
+  backdrop-filter: blur(18px) !important;
+  -webkit-backdrop-filter: blur(18px) !important;
+}
+
+.community-col .news-feed-viewport,
+.community-col .news-feed-list {
+  border: none !important;
+  box-shadow: none !important;
+  background: transparent !important;
+}
+
+.community-col .news-feed-item {
+  border: 1px solid rgba(255,255,255,0.075) !important;
+  border-bottom-color: rgba(255,255,255,0.075) !important;
+  border-radius: 18px !important;
+  background: rgba(255,255,255,0.035) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.055) !important;
+  padding: 13px 14px !important;
+}
+
+.community-col .news-feed-item::after,
+.community-col .news-feed-kicker::before {
+  display: none !important;
+}
+
+.community-col .news-feed-item-avatar,
+.community-col .news-feed-avatar,
+.community-col .news-feed-avatar-fallback {
+  width: 44px !important;
+  height: 44px !important;
+  min-width: 44px !important;
+  border-radius: 50% !important;
+}
+
+.community-col .news-feed-avatar,
+.community-col .news-feed-avatar-fallback {
+  border: 1px solid rgba(245,200,75,0.34) !important;
+  box-shadow: 0 0 18px rgba(245,200,75,0.14), 0 10px 22px rgba(0,0,0,0.26) !important;
+}
+
+.community-col .news-feed-copy,
+.community-col .news-feed-name,
+.community-col .news-feed-track {
+  font-weight: 850 !important;
+}
+
+.community-col .news-feed-copy {
+  color: rgba(255,255,255,0.82) !important;
+  line-height: 1.35 !important;
+}
+
+.community-col .news-feed-name,
+.community-col .news-feed-track {
+  color: #fff !important;
+  text-shadow: 0 0 12px rgba(255,255,255,0.10) !important;
+}
+
+@media (max-width: 760px) {
+  #featuredArtistCard .fa-body {
+    grid-template-columns: 1fr !important;
+    gap: 18px !important;
+    justify-items: center !important;
+    text-align: center !important;
+  }
+
+  #featuredArtistCard .fa-info,
+  #featuredArtistCard .fa-meta,
+  #featuredArtistCard .fa-name,
+  #featuredArtistCard .fa-role,
+  #featuredArtistCard .fa-tune,
+  #featuredArtistCard .fa-bio {
+    text-align: center !important;
+    justify-content: center !important;
+  }
+}
