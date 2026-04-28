@@ -116,7 +116,7 @@ body {
   color: var(--text);
   font-family: 'Manrope', sans-serif;
   text-align: center;
-  padding: 0 24px 44px calc(var(--desktop-rail-width) + 52px);
+  padding: 0 20px 44px calc(var(--desktop-rail-width) + 68px);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -175,16 +175,20 @@ img {
 }
 
 .currency-badge {
+  /* Fixed boven de sidebar */
+  position: fixed;
+  top: 14px;
+  left: 18px;
+  width: var(--desktop-rail-width);
+  z-index: 130;
+
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
-  min-height: 46px;
-  width: max-content;
-  min-width: 88px;
-  max-width: none;
-  padding: 0 16px 0 12px;
-  border-radius: 999px;
+  gap: 8px;
+  min-height: 40px;
+  padding: 0 10px;
+  border-radius: 12px;
   border: 1px solid rgba(255,255,255,0.10);
   background:
     linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02)),
@@ -194,8 +198,19 @@ img {
     0 10px 22px rgba(0,0,0,0.22);
   backdrop-filter: blur(6px);
   white-space: nowrap;
-  flex: 0 0 auto;
   flex-shrink: 0;
+}
+
+@media (max-width: 768px) {
+  .currency-badge {
+    position: relative;
+    top: auto;
+    left: auto;
+    width: auto;
+    border-radius: 999px;
+    min-height: 46px;
+    padding: 0 16px 0 12px;
+  }
 }
 
 .currency-badge-icon {
@@ -4028,6 +4043,7 @@ button:not(.side-nav button):not(.desktop-side-nav-panel button){
   gap: 0;
   align-items: start;
   width: 100%;
+  max-width: 1100px;
   padding: 0;
 }
 
@@ -4348,37 +4364,4 @@ button:not(.side-nav button):not(.desktop-side-nav-panel button){
   width: 18px;
   height: 18px;
   flex-shrink: 0;
-}
-
-/* ── Coins badge: vast boven de sidebar ───────────────────── */
-.currency-badge {
-  position: fixed !important;
-  top: 14px !important;
-  left: 18px !important;
-  width: calc(var(--desktop-rail-width) - 0px) !important;
-  min-width: 0 !important;
-  max-width: calc(var(--desktop-rail-width) - 0px) !important;
-  z-index: 130 !important;
-  justify-content: center !important;
-  padding: 0 10px !important;
-  min-height: 40px !important;
-  border-radius: 14px !important;
-}
-
-/* Verberg de currency badge in de header-left flow */
-.header-left .currency-badge {
-  /* De badge wordt fixed gepositioneerd, header-left mag leeg zijn */
-}
-
-/* Op mobile: terug naar normale flow */
-@media (max-width: 768px) {
-  .currency-badge {
-    position: relative !important;
-    top: auto !important;
-    left: auto !important;
-    width: auto !important;
-    max-width: none !important;
-    min-height: 46px !important;
-    border-radius: 999px !important;
-  }
 }
