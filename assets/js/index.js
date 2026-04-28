@@ -1101,16 +1101,24 @@ async function loadTrackNationalities() {
 
     const { data, error } = await supabaseClient
       .from("public_artist_profiles")
-      .select("user_id, nationality")
+      .select("user_id, nationality, photo_url")
       .in("user_id", userIds);
 
     if (error || !data) return;
 
-    const nationalityByUserId = new Map(data.map((row) => [String(row.user_id), row.nationality || null]));
-    state.tracks = state.tracks.map((track) => ({
-      ...track,
-      nationality: track.nationality || nationalityByUserId.get(String(track.user_id || "")) || null
-    }));
+    const profileByUserId = new Map(data.map((row) => [String(row.user_id), row]));
+    state.tracks = state.tracks.map((track) => {
+      const profile = profileByUserId.get(String(track.user_id || ""));
+      return {
+        ...track,
+        nationality: track.nationality || profile?.nationality || null,
+        photo_url: track.photo_url || profile?.photo_url || null,
+      };
+    });
+
+    // Herrender artiest nu nationality + photo_url beschikbaar zijn
+    const currentTrack = state.tracks[state.currentTrackIndex ?? 0];
+    if (currentTrack) renderArtist(currentTrack);
   } catch (err) {
     console.error("loadTrackNationalities error:", err);
   }
@@ -1119,17 +1127,21 @@ async function loadTrackNationalities() {
 function renderArtist(track) {
   if (!els.artistEl) return;
 
+  const photoHtml = track.photo_url
+    ? `<img class="artist-player-photo" src="${escapeHtml(track.photo_url)}" alt="" aria-hidden="true" />`
+    : `<span class="artist-player-photo artist-player-photo--fallback">${escapeHtml((track.artist || 'A').charAt(0).toUpperCase())}</span>`;
+
   if (track.user_id) {
     els.artistEl.outerHTML = `
       <a id="artist" class="artist-link" href="artist.html?user_id=${encodeURIComponent(track.user_id)}">
-        ${getFlagMarkup(track.nationality)}<span class="artist-name-text">${escapeHtml(track.artist)}</span>
+        ${photoHtml}${getFlagMarkup(track.nationality)}<span class="artist-name-text">${escapeHtml(track.artist)}</span>
       </a>
     `;
     els.artistEl = document.getElementById("artist");
     return;
   }
 
-  els.artistEl.outerHTML = `<span id="artist" class="artist-inline">${getFlagMarkup(track.nationality)}<span class="artist-name-text">${escapeHtml(track.artist)}</span></span>`;
+  els.artistEl.outerHTML = `<span id="artist" class="artist-inline">${photoHtml}${getFlagMarkup(track.nationality)}<span class="artist-name-text">${escapeHtml(track.artist)}</span></span>`;
   els.artistEl = document.getElementById("artist");
 }
 
