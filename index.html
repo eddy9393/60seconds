@@ -157,6 +157,8 @@
   </div>
 
   <div class="site-shell">
+    <div class="content-layout">
+    <div class="radio-col">
     <div class="radio-stage">
       <div id="startOverlay" class="start-overlay">
         <div class="overlay-content">
@@ -174,28 +176,12 @@
         <div id="player" class="radio-shell-content">
           <div class="now-playing">Now Playing</div>
 
-          <div class="waveform-wrap" aria-hidden="true">
-            <div class="waveform">
-              <span class="waveform-bar"></span>
-              <span class="waveform-bar"></span>
-              <span class="waveform-bar"></span>
-              <span class="waveform-bar"></span>
-              <span class="waveform-bar"></span>
-              <span class="waveform-bar"></span>
-              <span class="waveform-bar"></span>
-              <span class="waveform-bar"></span>
-              <span class="waveform-bar"></span>
-              <span class="waveform-bar"></span>
-              <span class="waveform-bar"></span>
-              <span class="waveform-bar"></span>
-              <span class="waveform-bar"></span>
-              <span class="waveform-bar"></span>
-              <span class="waveform-bar"></span>
-            </div>
-          </div>
-
           <div class="tune-title-row"><h2 id="title" class="tune-title">Loading...</h2><span id="trackGenre" class="tune-genre hidden">—</span></div>
           <p id="artistWrap" class="artist-wrap"><span id="artist">—</span></p>
+
+          <div class="waveform-wrap" aria-hidden="true">
+            <canvas id="waveformCanvas" class="waveform-canvas"></canvas>
+          </div>
 
           <div class="time-row">
             <span id="elapsedTime">0:00</span>
@@ -210,15 +196,16 @@
             <div class="earn-seconds-progress" aria-hidden="true">
               <div id="earnSecondsProgress" class="earn-seconds-fill"></div>
             </div>
-            <div class="earn-seconds-copy">
-              <span id="earnSecondsCopy">Earn Seconds by listening the entire tune · 0/10 today</span>
-            </div>
+            <span id="earnSecondsCopy" class="earn-seconds-copy-inline">Earn Seconds by listening the entire tune · 0/10 today</span>
           </div>
 
           <div class="player-actions">
-            <button id="likeBtn" class="metal-btn radio-like-btn" type="button" aria-label="Like this tune"><span class="like-icon" aria-hidden="true"></span></button>
+            <button id="likeBtn" class="metal-btn" type="button">
+              <img src="liked.png" alt="" class="btn-icon-img like-icon" aria-hidden="true" />
+              <span class="like-label">Like</span>
+            </button>
 
-            <button id="pauseBtn" class="metal-btn" type="button"><span class="icon">⏯</span>Pause</button>
+            <button id="pauseBtn" class="metal-btn radio-icon-btn" type="button" aria-label="Play or pause"><span class="icon">▶</span></button>
 
             <button id="skip" class="metal-btn" type="button">
               <span class="skip-button-content">
@@ -237,19 +224,17 @@
           <div class="volume-wrap">
             <div id="volumeControl" class="volume-control">
               <button id="volumeBtn" class="volume-button" type="button" aria-label="Volume">
-                <svg class="icon-on" viewBox="0 0 24 24" aria-hidden="true">
-                  <path fill="#1a1a1a" d="M3 10h4l5-4v12l-5-4H3z"></path>
-                  <path fill="none" stroke="#1a1a1a" stroke-width="2" stroke-linecap="round" d="M15 9c1 .7 2 1.8 2 3s-1 2.3-2 3"></path>
-                  <path fill="none" stroke="#1a1a1a" stroke-width="2" stroke-linecap="round" d="M17.5 6.5c2 1.5 3.5 3.5 3.5 5.5s-1.5 4-3.5 5.5"></path>
+                <svg class="icon-on" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <path d="M11 5L6 9H3a1 1 0 00-1 1v4a1 1 0 001 1h3l5 4V5z" fill="currentColor"/>
+                  <path d="M15.54 8.46a5 5 0 010 7.07" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                  <path d="M19.07 4.93a10 10 0 010 14.14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
                 </svg>
-
-                <svg class="icon-muted" viewBox="0 0 24 24" aria-hidden="true">
-                  <path fill="#1a1a1a" d="M3 10h4l5-4v12l-5-4H3z"></path>
-                  <path fill="none" stroke="#1a1a1a" stroke-width="2.2" stroke-linecap="round" d="M16 8l6 8"></path>
-                  <path fill="none" stroke="#1a1a1a" stroke-width="2.2" stroke-linecap="round" d="M22 8l-6 8"></path>
+                <svg class="icon-muted" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <path d="M11 5L6 9H3a1 1 0 00-1 1v4a1 1 0 001 1h3l5 4V5z" fill="currentColor"/>
+                  <line x1="23" y1="9" x2="17" y2="15" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                  <line x1="17" y1="9" x2="23" y2="15" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
                 </svg>
               </button>
-
               <div class="volume-slider-inline">
                 <input id="volume" type="range" min="0" max="1" step="0.01" value="0.3" />
               </div>
@@ -257,15 +242,19 @@
           </div>
 
           <div class="listeners-pill">
-            <span class="listeners-icon" aria-hidden="true"></span>
+            <span class="listeners-dot"></span>
+            <svg class="listeners-icon" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+              <circle cx="7.5" cy="6.5" r="2.5" fill="currentColor"/>
+              <path d="M2 16c0-3 2.5-5 5.5-5s5.5 2 5.5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+              <circle cx="14" cy="6" r="2" fill="currentColor" opacity="0.6"/>
+              <path d="M16 16c0-2.5 1.5-4 3-4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" opacity="0.6"/>
+            </svg>
             <span id="listenersCount">0 Listeners</span>
           </div>
         </div>
       </div>
     </div>
 
-
-    
     <section id="featuredArtistSection" class="fa-section hidden">
       <div class="fa-kicker">Featured Artists</div>
       <div class="fa-card" id="featuredArtistCard">
@@ -299,13 +288,17 @@
 
       </div>
     </section>
+    </div><!-- /radio-col -->
 
+    <aside class="community-col">
     <section id="newsFeedSection" class="news-feed-section hidden">
       <div class="news-feed-kicker">Community updates</div>
       <div class="news-feed-viewport">
         <div id="newsFeedList" class="news-feed-list"></div>
       </div>
     </section>
+    </aside><!-- /community-col -->
+    </div><!-- /content-layout -->
 
     <section id="conceptSection"  class="concept-section hidden">
       <div class="concept-card">
@@ -360,5 +353,6 @@
   <script src="assets/js/index.js"></script>
   <script src="assets/js/featured-artists.js"></script>
 
+  <script src="assets/js/waveform.js"></script>
 </body>
 </html>
