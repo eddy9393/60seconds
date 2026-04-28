@@ -683,16 +683,16 @@ function resetLike() {
 }
 
 function updateEarnSecondsProgress() {
-  if (!els.earnSecondsProgress) return;
-
   const safeCurrent = Math.max(0, Number(state.dailySecondsEarned) || 0);
   const safeLimit = Math.max(1, Number(DAILY_SECONDS_LIMIT) || 1);
   const percentage = Math.min((safeCurrent / safeLimit) * 100, 100);
 
-  els.earnSecondsProgress.style.width = `${percentage}%`;
+  if (els.earnSecondsProgress) {
+    els.earnSecondsProgress.style.width = `${percentage}%`;
+  }
 
   if (els.earnSecondsCopy) {
-    els.earnSecondsCopy.textContent = `Earn Seconds by listening the entire tune · ${safeCurrent}/${safeLimit} today`;
+    els.earnSecondsCopy.innerHTML = `Earn Seconds by listening the entire tune <strong class="earn-seconds-amount">${safeCurrent}/${safeLimit}</strong> today.`;
   }
 }
 
