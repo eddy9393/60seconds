@@ -1544,7 +1544,7 @@ function bindUIEvents() {
 
   document.addEventListener("click", (e) => {
     const insideHeaderRight = e.target.closest(".header-right");
-    const insideVolumeWrap = e.target.closest(".volume-wrap");
+    const insideVolumeWrap = e.target.closest(".volume-control");
     const isAvatarButton = e.target.closest("#headerAvatarBtn");
 
     if (!insideHeaderRight && !isAvatarButton) {
