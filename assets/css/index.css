@@ -2779,7 +2779,6 @@ body {
 .fa-nav-btn,
 .join-cta,
 .concept-card .metal-btn,
-.news-feed-section a,
 .news-feed-section button {
   background: rgba(18, 18, 20, 0.76) !important;
   color: #f4d77a !important;
@@ -3040,7 +3039,6 @@ body::before {
 .start-btn,
 .fa-link,
 .fa-nav-btn,
-.news-feed-section a,
 .news-feed-section button,
 .concept-card a,
 .concept-card button {
@@ -4741,4 +4739,19 @@ button:not(.side-nav button):not(.desktop-side-nav-panel button){
 
 #featuredArtistCard .fa-meta {
   justify-content: flex-start !important;
+}
+
+/* news-feed avatar link: nooit een border */
+.news-feed-item-avatar,
+.community-col .news-feed-item-avatar {
+  border: none !important;
+  background: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  border-radius: 50% !important;
+  overflow: hidden !important;
+  width: 36px !important;
+  height: 36px !important;
+  display: flex !important;
+  flex-shrink: 0 !important;
 }
