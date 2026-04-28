@@ -671,13 +671,13 @@ function resetLike() {
   state.liked = Boolean(likeKey && likedIds.includes(String(likeKey)));
 
   if (isCurrentTrackOwn()) {
-    els.likeBtn.innerHTML = `<img src="like.png" alt="" class="btn-icon-img like-icon" aria-hidden="true" />`;
+    els.likeBtn.innerHTML = `<img src="icons/like.png" alt="" class="btn-icon-img like-icon" aria-hidden="true" />`;
     els.likeBtn.classList.remove("liked");
     els.likeBtn.classList.add("like-own-disabled");
     return;
   }
 
-  els.likeBtn.innerHTML = `<img src="like.png" alt="" class="btn-icon-img like-icon" aria-hidden="true" />`;
+  els.likeBtn.innerHTML = `<img src="icons/like.png" alt="" class="btn-icon-img like-icon" aria-hidden="true" />`;
   els.likeBtn.classList.toggle("liked", state.liked);
   els.likeBtn.classList.remove("like-own-disabled");
 }
