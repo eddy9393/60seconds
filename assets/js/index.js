@@ -964,6 +964,10 @@ async function refreshAuthUI() {
     if (els.startOverlay && !state.isLiveActivated) {
       els.startOverlay.style.visibility = 'hidden';
       els.startOverlay.style.opacity = '0';
+      // Verwijder pre-live direct zodat radio zichtbaar wordt
+      if (els.radioShell) {
+        els.radioShell.classList.remove('pre-live');
+      }
     }
 
     updateCurrencyVisibility(user);
