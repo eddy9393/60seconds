@@ -420,3 +420,57 @@ img[class*="avatar"],.avatar,.profile-photo,.artist-photo{box-shadow:0 0 0 1px r
     0 16px 38px rgba(0,0,0,.42),
     0 0 26px rgba(245,200,75,.25) !important;
 }
+
+/* ============================================================
+   v27 liked page button consistency
+   Go To Artist and all content buttons match premium style.
+   Navigation/sidebar menu is excluded.
+   ============================================================ */
+.liked-page .playlist-open,
+.liked-page .tune-action-btn,
+.liked-page .back-link,
+.liked-page button:not(.desktop-nav-button):not(.mobile-nav-link):not(.desktop-nav-link) {
+  min-height: 44px !important;
+  padding: 0 20px !important;
+  border-radius: 999px !important;
+  border: 1px solid rgba(255,255,255,.15) !important;
+  background: rgba(255,255,255,.058) !important;
+  background-image: none !important;
+  color: #ffffff !important;
+  font-family: 'Manrope', sans-serif !important;
+  font-size: 14px !important;
+  font-weight: 750 !important;
+  line-height: 1 !important;
+  text-decoration: none !important;
+  text-shadow: none !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.11), 0 12px 30px rgba(0,0,0,.34), 0 0 0 rgba(245,200,75,0) !important;
+  transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease, background-color .18s ease, color .18s ease !important;
+}
+
+.liked-page .playlist-open:hover,
+.liked-page .tune-action-btn:hover,
+.liked-page .back-link:hover,
+.liked-page button:not(.desktop-nav-button):not(.mobile-nav-link):not(.desktop-nav-link):hover {
+  transform: translateY(-2px) !important;
+  background: rgba(255,255,255,.086) !important;
+  background-image: none !important;
+  color: #ffffff !important;
+  border-color: rgba(245,200,75,.56) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.14), 0 16px 38px rgba(0,0,0,.42), 0 0 30px rgba(245,200,75,.25) !important;
+}
+
+.liked-page button svg,
+.liked-page button svg *,
+.liked-page a svg,
+.liked-page a svg *,
+.liked-page button .icon,
+.liked-page a .icon {
+  color: #ffffff !important;
+  fill: currentColor !important;
+  stroke: currentColor !important;
+  opacity: 1 !important;
+}
