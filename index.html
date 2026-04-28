@@ -177,7 +177,8 @@
           <div class="now-playing">Now Playing</div>
 
           <div class="waveform-wrap" aria-hidden="true">
-            <div class="waveform">
+            <canvas id="waveformCanvas" class="waveform-canvas"></canvas>
+            <div class="waveform waveform-fallback">
               <span class="waveform-bar"></span>
               <span class="waveform-bar"></span>
               <span class="waveform-bar"></span>
@@ -265,9 +266,7 @@
         </div>
       </div>
     </div>
-    </div><!-- /radio-col -->
 
-    <aside class="community-col">
     <section id="featuredArtistSection" class="fa-section hidden">
       <div class="fa-kicker">Featured Artists</div>
       <div class="fa-card" id="featuredArtistCard">
@@ -301,7 +300,9 @@
 
       </div>
     </section>
+    </div><!-- /radio-col -->
 
+    <aside class="community-col">
     <section id="newsFeedSection" class="news-feed-section hidden">
       <div class="news-feed-kicker">Community updates</div>
       <div class="news-feed-viewport">
@@ -364,5 +365,6 @@
   <script src="assets/js/index.js"></script>
   <script src="assets/js/featured-artists.js"></script>
 
+  <script src="assets/js/waveform.js"></script>
 </body>
 </html>
