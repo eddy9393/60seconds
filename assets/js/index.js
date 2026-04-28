@@ -964,10 +964,6 @@ async function refreshAuthUI() {
     if (els.startOverlay && !state.isLiveActivated) {
       els.startOverlay.style.visibility = 'hidden';
       els.startOverlay.style.opacity = '0';
-      // Verwijder pre-live direct zodat radio zichtbaar wordt
-      if (els.radioShell) {
-        els.radioShell.classList.remove('pre-live');
-      }
     }
 
     updateCurrencyVisibility(user);
@@ -1340,6 +1336,12 @@ async function bootstrapLiveRadio() {
   els.audio.muted = safeVolume === 0;
   updateVolumeButtonState();
   updatePauseButtonState();
+
+  // Verwijder pre-live als gebruiker ingelogd is (ook zonder sessie)
+  if (state.currentUser && els.radioShell) {
+    els.radioShell.classList.remove("pre-live");
+    setHidden(els.startOverlay, true);
+  }
 
   const session = getSavedRadioSession();
   if (session?.isStarted && session?.startedDate === getTodayDateKey()) {
