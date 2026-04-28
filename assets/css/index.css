@@ -4106,79 +4106,230 @@ button:not(.side-nav button):not(.desktop-side-nav-panel button){
   }
 }
 
-/* ============================================================
-   v28 safe refinement
-   Scope: index radio waveform containment + featured artist visual lift only.
-   No HTML/JS changes.
-   ============================================================ */
+/* =========================================================
+   v29 safe refinement: flatter radio internals + premium controls
+   Scope: index page only. Keeps sidebar layout unchanged.
+   ========================================================= */
 
-/* Keep the canvas wavetable visually inside the radio player container. */
-.radio-shell:not(.pre-live) .waveform-wrap {
-  width: min(100%, 720px) !important;
-  max-width: 100% !important;
-  box-sizing: border-box !important;
+/* Remove visible nested containers inside the radio card while preserving spacing. */
+.radio-shell:not(.pre-live) .now-playing,
+.radio-shell:not(.pre-live) .earn-seconds-wrap,
+.radio-shell:not(.pre-live) .volume-control,
+.radio-shell:not(.pre-live) .listeners-pill {
+  background: transparent !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+.radio-shell:not(.pre-live) .now-playing {
+  padding: 0 !important;
+  color: rgba(255, 231, 154, .92) !important;
+  text-shadow: 0 0 16px rgba(245, 200, 75, .22) !important;
+}
+
+.radio-shell:not(.pre-live) .earn-seconds-wrap {
+  padding: 4px 0 0 !important;
+}
+
+.radio-shell:not(.pre-live) .earn-seconds-progress {
+  height: 5px !important;
+  border-radius: 999px !important;
+  background: rgba(255,255,255,.08) !important;
   overflow: hidden !important;
-  margin-left: auto !important;
-  margin-right: auto !important;
-  padding: 6px 10px 4px !important;
-  border-radius: 18px !important;
-  background: rgba(255,255,255,.035) !important;
-  border: 1px solid rgba(255,255,255,.075) !important;
+  box-shadow: inset 0 1px 2px rgba(0,0,0,.55) !important;
+}
+
+.radio-shell:not(.pre-live) .earn-seconds-copy-inline,
+.radio-shell:not(.pre-live) .listeners-pill {
+  color: rgba(255,255,255,.68) !important;
+}
+
+/* Like button: use the provided liked icon, keep same premium button style. */
+#likeBtn .btn-icon-img.like-icon {
+  width: 18px !important;
+  height: 18px !important;
+  opacity: .96 !important;
+  filter:
+    brightness(0) invert(1)
+    drop-shadow(0 0 8px rgba(255,255,255,.18)) !important;
+}
+
+#likeBtn:hover .btn-icon-img.like-icon,
+#likeBtn.is-liked .btn-icon-img.like-icon {
+  opacity: 1 !important;
+  filter:
+    brightness(0) saturate(100%) invert(85%) sepia(37%) saturate(927%) hue-rotate(352deg) brightness(104%) contrast(94%)
+    drop-shadow(0 0 12px rgba(245,200,75,.55)) !important;
+}
+
+/* Cleaner volume control: circular icon, no visible outer container. */
+.volume-wrap {
+  display: flex !important;
+  justify-content: center !important;
+}
+
+.volume-control {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+  padding: 0 !important;
+}
+
+.volume-button {
+  width: 46px !important;
+  height: 46px !important;
+  min-width: 46px !important;
+  min-height: 46px !important;
+  padding: 0 !important;
+  border-radius: 50% !important;
+  color: #fff !important;
+  background: rgba(255,255,255,.055) !important;
+  border: 1px solid rgba(255,255,255,.16) !important;
   box-shadow:
-    inset 0 1px 0 rgba(255,255,255,.06),
-    inset 0 -16px 28px rgba(0,0,0,.18),
-    0 0 26px rgba(245,200,75,.10) !important;
+    inset 0 1px 0 rgba(255,255,255,.12),
+    0 10px 22px rgba(0,0,0,.30),
+    0 0 18px rgba(245,200,75,.10) !important;
 }
 
-.radio-shell:not(.pre-live) .waveform-canvas {
-  display: block !important;
-  width: 100% !important;
-  max-width: 100% !important;
-  height: 38px !important;
-  border-radius: 14px !important;
-  box-sizing: border-box !important;
+.volume-button:hover {
+  transform: translateY(-1px) !important;
+  border-color: rgba(245,200,75,.62) !important;
+  background: rgba(245,200,75,.10) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.16),
+    0 14px 28px rgba(0,0,0,.36),
+    0 0 26px rgba(245,200,75,.34) !important;
 }
 
-@media (max-width: 560px) {
-  .radio-shell:not(.pre-live) .waveform-wrap {
-    width: 100% !important;
-    padding-left: 8px !important;
-    padding-right: 8px !important;
-  }
-
-  .radio-shell:not(.pre-live) .waveform-canvas {
-    height: 34px !important;
-  }
+.volume-button svg {
+  width: 20px !important;
+  height: 20px !important;
 }
 
-/* Make the featured artist profile image background more visible, less black, with a premium glow. */
+.volume-slider-inline {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+.volume-slider-inline input[type="range"] {
+  accent-color: #f5c84b !important;
+}
+
+/* Featured Artist: more readable and premium text treatment. */
+.fa-card {
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.10),
+    0 18px 44px rgba(0,0,0,.38),
+    0 0 42px rgba(245,200,75,.13) !important;
+}
+
 .fa-card.has-fa-bg::before {
-  opacity: .34 !important;
-  filter: blur(1px) saturate(1.22) contrast(1.06) brightness(1.08) !important;
-  transform: scale(1.07) !important;
+  opacity: .40 !important;
+  filter: saturate(1.18) contrast(1.08) brightness(.88) blur(.2px) !important;
 }
 
 .fa-card::after {
   background:
-    linear-gradient(90deg, rgba(5,5,7,.58) 0%, rgba(5,5,7,.42) 44%, rgba(5,5,7,.64) 100%),
-    radial-gradient(circle at 20% 24%, rgba(245,200,75,.18), transparent 36%),
-    radial-gradient(circle at 78% 12%, rgba(255,230,151,.12), transparent 32%) !important;
+    radial-gradient(circle at 16% 18%, rgba(245,200,75,.24), transparent 28%),
+    linear-gradient(90deg, rgba(5,5,8,.58) 0%, rgba(5,5,8,.34) 48%, rgba(5,5,8,.70) 100%) !important;
 }
 
-.fa-card {
-  border-color: rgba(245,200,75,.36) !important;
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,.10),
-    0 26px 76px rgba(0,0,0,.48),
-    0 0 44px rgba(245,200,75,.18),
-    0 0 92px rgba(245,200,75,.075) !important;
+.fa-kicker {
+  color: rgba(255,231,154,.92) !important;
+  text-shadow: 0 0 16px rgba(245,200,75,.22) !important;
 }
 
-.fa-photo-wrap {
-  border-color: rgba(255,230,151,.82) !important;
+.fa-name {
+  font-weight: 900 !important;
+  letter-spacing: -.04em !important;
+  text-shadow: 0 10px 28px rgba(0,0,0,.55), 0 0 22px rgba(245,200,75,.14) !important;
+}
+
+.fa-role,
+.fa-tune {
+  font-weight: 800 !important;
+  color: rgba(255,243,205,.94) !important;
+}
+
+.fa-meta,
+.fa-bio {
+  font-weight: 650 !important;
+  color: rgba(255,255,255,.78) !important;
+}
+
+.fa-pill {
+  font-weight: 800 !important;
+  color: rgba(255,239,190,.94) !important;
+  border-color: rgba(245,200,75,.24) !important;
+  background: rgba(245,200,75,.08) !important;
+}
+
+.fa-link {
+  width: fit-content !important;
+  min-height: 46px !important;
+  padding: 0 20px !important;
+  border-radius: 999px !important;
+  color: #fff !important;
+  font-weight: 900 !important;
+  letter-spacing: .01em !important;
+  text-decoration: none !important;
+  background: rgba(255,255,255,.065) !important;
+  border: 1px solid rgba(245,200,75,.36) !important;
   box-shadow:
-    0 0 0 3px rgba(245,200,75,.14),
-    0 18px 38px rgba(0,0,0,.44),
-    0 0 34px rgba(245,200,75,.34),
-    0 0 70px rgba(245,200,75,.12) !important;
+    inset 0 1px 0 rgba(255,255,255,.12),
+    0 12px 28px rgba(0,0,0,.30),
+    0 0 22px rgba(245,200,75,.14) !important;
+}
+
+.fa-link:hover {
+  color: #fff7d6 !important;
+  transform: translateY(-2px) !important;
+  border-color: rgba(245,200,75,.70) !important;
+  background: rgba(245,200,75,.12) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.16),
+    0 16px 34px rgba(0,0,0,.38),
+    0 0 34px rgba(245,200,75,.34) !important;
+}
+
+/* Sidebar buttons: same gold-glow color language as the main buttons, no layout changes. */
+.desktop-nav-link:hover,
+.desktop-nav-button:hover,
+.mobile-nav-link:hover {
+  color: #fff7d6 !important;
+  background: rgba(245,200,75,.085) !important;
+  box-shadow: inset 0 0 0 1px rgba(245,200,75,.18), 0 0 22px rgba(245,200,75,.13) !important;
+}
+
+.desktop-nav-link.active,
+.desktop-nav-button.active,
+.mobile-nav-link.active {
+  color: #fff4c7 !important;
+  background: rgba(245,200,75,.105) !important;
+  box-shadow: inset 0 0 0 1px rgba(245,200,75,.22), 0 0 28px rgba(245,200,75,.16) !important;
+}
+
+.desktop-nav-link:hover .nav-icon-mask,
+.desktop-nav-button:hover .nav-icon-mask,
+.mobile-nav-link:hover .nav-icon-mask,
+.desktop-nav-link.active .nav-icon-mask,
+.desktop-nav-button.active .nav-icon-mask,
+.mobile-nav-link.active .nav-icon-mask {
+  filter:
+    drop-shadow(0 0 10px rgba(245,200,75,.42))
+    drop-shadow(0 0 22px rgba(245,200,75,.20)) !important;
+}
+
+@media (max-width: 520px) {
+  .fa-link {
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
+
+  .volume-control {
+    gap: 8px !important;
+  }
 }
