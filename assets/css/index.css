@@ -88,7 +88,7 @@
   --fs-stat-value: clamp(26px, 4vw, 34px);
   --fs-tune-title: clamp(18px, 2.6vw, 26px);
 
-  --desktop-rail-width: 86px;
+  --desktop-rail-width: 120px;
   --desktop-rail-expanded: 320px;
   --mobile-bottom-nav-height: 86px;
   --mobile-nav-bg: rgba(10, 10, 10, 0.94);
