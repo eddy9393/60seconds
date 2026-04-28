@@ -1083,6 +1083,7 @@ img {
   justify-content: center;
   gap: 12px;
   flex-wrap: nowrap;
+  position: relative;
 }
 
 
@@ -2474,8 +2475,8 @@ img {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  border-left: 2px solid rgba(212,175,55,0.4);
-  padding-left: 10px;
+  border-left: none;
+  padding-left: 0;
 }
 
 /* ── Bio ────────────────────────────────────────────────────── */
