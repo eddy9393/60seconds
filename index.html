@@ -267,14 +267,11 @@
 
             <button id="pauseBtn" class="metal-btn radio-icon-btn" type="button" aria-label="Play or pause"><span class="icon">▶</span></button>
 
-            <button id="skip" class="metal-btn" type="button" aria-label="Skip tune, costs 1 Second">
-              <span class="skip-button-content" aria-hidden="true">
-                <svg class="skip-icon" viewBox="0 0 24 24" fill="none" focusable="false">
-                  <path d="M5 6.75v10.5L13.25 12 5 6.75Z" fill="currentColor"/>
-                  <path d="M13.5 6.75v10.5L21.75 12 13.5 6.75Z" fill="currentColor"/>
-                </svg>
-                <span class="skip-cost">-1</span>
+            <button id="skip" class="metal-btn" type="button">
+              <span class="skip-button-content">
+                <span class="skip-label">Skip</span>
                 <img src="coin.webp" alt="" class="skip-coin-icon" />
+                <span class="skip-cost">-1</span>
               </span>
             </button>
 
@@ -417,5 +414,7 @@
 
   <script src="assets/js/waveform.js"></script>
 
+
+<img src="icons/canvas.png" style="position:absolute; top:0; left:0; width:100%; height:auto; pointer-events:none; z-index:10;">
 </body>
 </html>
