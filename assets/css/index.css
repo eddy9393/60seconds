@@ -4640,24 +4640,38 @@ button:not(.side-nav button):not(.desktop-side-nav-panel button){
 
 
 /* ══ Community updates: geen gele borders ══════════════════ */
+
+/* Section en wrapper: geen border */
 .community-col .news-feed-section,
 .community-col .news-feed-card,
-.community-col .news-feed-item,
 .community-col .news-feed-viewport,
 .community-col .news-feed-list,
 .community-col .news-feed-kicker {
-  border-color: transparent !important;
+  border: none !important;
   box-shadow: none !important;
   outline: none !important;
 }
 
+/* Item: subtiele neutrale border, geen geel */
 .community-col .news-feed-item {
-  border: 1px solid rgba(255,255,255,0.06) !important;
-  background: rgba(255,255,255,0.03) !important;
+  border: none !important;
+  border-bottom: 1px solid rgba(255,255,255,0.06) !important;
+  background: transparent !important;
+  box-shadow: none !important;
 }
 
-.community-col .news-feed-avatar,
-.community-col .news-feed-avatar-fallback {
+/* Verwijder gele ::after lijn */
+.community-col .news-feed-item::after {
+  display: none !important;
+}
+
+/* Avatar: perfecte cirkel */
+.community-col .news-feed-item-avatar {
+  width: 40px !important;
+  flex-shrink: 0 !important;
+}
+
+.community-col .news-feed-avatar {
   width: 40px !important;
   height: 40px !important;
   min-width: 40px !important;
@@ -4667,9 +4681,21 @@ button:not(.side-nav button):not(.desktop-side-nav-panel button){
   overflow: hidden !important;
   object-fit: cover !important;
   box-shadow: none !important;
-  flex-shrink: 0 !important;
+  display: block !important;
 }
 
+.community-col .news-feed-avatar-fallback {
+  width: 40px !important;
+  height: 40px !important;
+  min-width: 40px !important;
+  border: none !important;
+  border-radius: 50% !important;
+  aspect-ratio: 1 / 1 !important;
+  overflow: hidden !important;
+  box-shadow: none !important;
+}
+
+/* Geen gele dot voor kicker */
 .community-col .news-feed-kicker::before {
   display: none !important;
 }
