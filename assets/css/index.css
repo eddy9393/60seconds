@@ -1083,7 +1083,6 @@ img {
   justify-content: center;
   gap: 12px;
   flex-wrap: nowrap;
-  position: relative;
 }
 
 
@@ -1143,13 +1142,41 @@ img {
   display: inline-flex;
   align-items: center;
   gap: 10px;
+  position: relative;
 }
 
-/* volume-slider-inline: zie popup definitie verderop */
+.volume-slider-inline {
+  position: absolute;
+  bottom: calc(100% + 10px);
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  opacity: 0;
+  overflow: hidden;
+  transition: width 0.22s ease, opacity 0.18s ease;
+  background: rgba(20,16,8,0.95);
+  border: 1px solid rgba(212,175,55,0.2);
+  border-radius: 12px;
+  padding: 0;
+  backdrop-filter: blur(12px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+}
 
-/* volume-control.open: zie popup definitie verderop */
+.volume-control.open .volume-slider-inline {
+  width: 140px;
+  opacity: 1;
+  padding: 10px 14px;
+}
 
-/* volume input: zie popup definitie verderop */
+.volume-slider-inline input[type="range"] {
+  width: 110px;
+  margin: 0;
+  accent-color: var(--gold);
+  cursor: pointer;
+}
 
 .volume-button {
   width: 40px;
@@ -2461,8 +2488,8 @@ img {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  border-left: none;
-  padding-left: 0;
+  border-left: 2px solid rgba(212,175,55,0.4);
+  padding-left: 10px;
 }
 
 /* ── Bio ────────────────────────────────────────────────────── */
