@@ -2005,13 +2005,14 @@ img {
 }
 
 .news-feed-avatar {
-  width: 28px;
-  height: 28px;
-  border-radius: 999px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  aspect-ratio: 1 / 1;
   object-fit: cover;
   display: block;
-  border: 1px solid rgba(212,175,55,0.35);
-  box-shadow: 0 6px 14px rgba(0,0,0,0.18);
+  border: none;
+  box-shadow: none;
   flex: 0 0 auto;
 }
 
@@ -2080,7 +2081,7 @@ img {
   position: relative;
   min-height: 56px;
   display: grid;
-  grid-template-columns: 32px minmax(0, 1fr);
+  grid-template-columns: 36px minmax(0, 1fr);
   align-items: center;
   column-gap: 12px;
   padding: 12px 0;
@@ -2103,10 +2104,11 @@ img {
 }
 
 .news-feed-item-avatar {
-  width: 32px;
+  width: 36px;
   display: flex;
   align-items: flex-start;
   justify-content: center;
+  flex-shrink: 0;
 }
 
 .news-feed-item-body {
@@ -2124,13 +2126,14 @@ img {
 }
 
 .news-feed-avatar {
-  width: 30px;
-  height: 30px;
-  border-radius: 999px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  aspect-ratio: 1 / 1;
   object-fit: cover;
   display: block;
-  border: 1px solid rgba(212,175,55,0.35);
-  box-shadow: 0 6px 14px rgba(0,0,0,0.18);
+  border: none;
+  box-shadow: none;
   flex: 0 0 auto;
 }
 
@@ -2183,7 +2186,7 @@ img {
 
 /* v21 radio/feed separator + title/genre alignment */
 .news-feed-section {
-  border-top: 1px solid rgba(212,175,55,0.14);
+  border-top: none;
   padding-top: 18px;
 }
 
