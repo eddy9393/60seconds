@@ -1,21 +1,46 @@
 
 /* ══════════════════════════════════════════════
-   Page loader — gouden progress balk
+   Fullscreen page loader
    ══════════════════════════════════════════════ */
 .page-loader {
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 9999;
+  inset: 0;
+  /* Dekt alles behalve de sidebar */
+  left: var(--desktop-rail-width, 86px);
+  z-index: 9000;
+  background: #080808;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.55s ease;
+  pointer-events: all;
+}
+
+.page-loader--done {
+  opacity: 0;
   pointer-events: none;
-  transition: opacity 0.5s ease;
+}
+
+.page-loader-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 28px;
+  width: 280px;
+}
+
+.page-loader-logo {
+  width: 180px;
+  height: auto;
+  opacity: 0.92;
+  filter: drop-shadow(0 0 18px rgba(212,175,55,0.25));
 }
 
 .page-loader-track {
   width: 100%;
   height: 3px;
-  background: rgba(255,255,255,0.06);
+  background: rgba(255,255,255,0.08);
+  border-radius: 999px;
   overflow: hidden;
 }
 
@@ -24,15 +49,29 @@
   width: 0%;
   background: linear-gradient(90deg,
     rgba(180,130,30,0.9) 0%,
-    var(--gold) 40%,
-    rgba(244,215,122,1) 70%,
-    rgba(255,240,160,0.9) 100%
+    var(--gold) 45%,
+    rgba(244,215,122,1) 72%,
+    rgba(255,240,160,0.85) 100%
   );
-  box-shadow:
-    0 0 10px rgba(212,175,55,0.7),
-    0 0 4px rgba(244,215,122,0.9);
-  border-radius: 0 2px 2px 0;
-  transition: width 0.1s linear;
+  border-radius: 999px;
+  box-shadow: 0 0 10px rgba(212,175,55,0.6), 0 0 3px rgba(244,215,122,0.8);
+  transition: width 0.12s linear;
+}
+
+.page-loader-label {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 12px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.28);
+  margin-top: -14px;
+}
+
+/* Op mobile: bedek volledig (geen sidebar) */
+@media (max-width: 768px) {
+  .page-loader {
+    left: 0;
+  }
 }
 :root {
   --gold: #d4af37;
