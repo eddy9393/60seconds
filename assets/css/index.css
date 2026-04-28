@@ -1848,7 +1848,7 @@ img {
   position: relative;
   border-radius: 24px;
   padding: 18px 20px;
-  border: 1px solid rgba(212,175,55,0.12);
+  border: none;
   background:
     linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.015)),
     radial-gradient(circle at top, rgba(212,175,55,0.08), transparent 55%),
@@ -1866,6 +1866,8 @@ img {
   letter-spacing: 2px;
   text-transform: uppercase;
   color: var(--muted);
+  border: none !important;
+  box-shadow: none !important;
 }
 
 .news-feed-viewport {
@@ -2008,6 +2010,8 @@ img {
   width: 28px;
   height: 28px;
   border-radius: 999px;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
   object-fit: cover;
   display: block;
   border: none;
@@ -2019,6 +2023,7 @@ img {
   width: 28px;
   height: 28px;
   border-radius: 999px;
+  aspect-ratio: 1 / 1;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -2131,6 +2136,8 @@ img {
   width: 30px;
   height: 30px;
   border-radius: 999px;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
   object-fit: cover;
   display: block;
   border: none;
@@ -2142,6 +2149,7 @@ img {
   width: 30px;
   height: 30px;
   border-radius: 999px;
+  aspect-ratio: 1 / 1;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -4414,7 +4422,7 @@ button:not(.side-nav button):not(.desktop-side-nav-panel button){
   gap: 12px !important;
   padding: 12px 14px !important;
   border-radius: 16px !important;
-  border: 1px solid rgba(255,255,255,0.07) !important;
+  border: 1px solid rgba(255,255,255,0.06) !important;
   background:
     linear-gradient(145deg, rgba(255,255,255,0.045), rgba(255,255,255,0.015)) !important;
   backdrop-filter: blur(8px) !important;
@@ -4670,4 +4678,24 @@ body.is-loading .currency-badge {
 .header-wrap,
 .currency-badge {
   transition: opacity 0.45s ease;
+}
+
+/* Verwijder alle gele borders van community updates */
+.community-col,
+.community-col .news-feed-section,
+.community-col .news-feed-kicker,
+.community-col .news-feed-viewport,
+.community-col .news-feed-list {
+  border: none !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+.community-col .news-feed-avatar,
+.community-col .news-feed-avatar-fallback {
+  border: none !important;
+  aspect-ratio: 1 / 1 !important;
+  border-radius: 50% !important;
+  overflow: hidden !important;
+  object-fit: cover !important;
 }
