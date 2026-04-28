@@ -77,20 +77,12 @@
       photoEl.style.display = 'block';
       photoWrapEl.classList.remove('fa-no-photo');
       photoWrapEl.removeAttribute('data-initials');
-      if (cardEl) {
-        cardEl.style.setProperty('--fa-bg-image', 'url("' + String(artist.photo_url).replace(/"/g, '%22') + '")');
-        cardEl.classList.add('has-fa-bg');
-      }
     } else {
       photoEl.style.display = 'none';
       photoWrapEl.classList.add('fa-no-photo');
       photoWrapEl.setAttribute('data-initials',
         (artist.artist_name || 'A').charAt(0).toUpperCase()
       );
-      if (cardEl) {
-        cardEl.style.removeProperty('--fa-bg-image');
-        cardEl.classList.remove('has-fa-bg');
-      }
     }
 
     nameEl.textContent = artist.artist_name || 'Unknown Artist';

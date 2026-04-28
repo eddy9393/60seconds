@@ -670,15 +670,13 @@ function resetLike() {
   state.liked = Boolean(likeKey && likedIds.includes(String(likeKey)));
 
   if (isCurrentTrackOwn()) {
-    els.likeBtn.innerHTML = `<span class="like-icon" aria-hidden="true"></span>`;
-    els.likeBtn.setAttribute("aria-label", "You cannot like your own tune");
+    els.likeBtn.innerHTML = `<span class="icon">♥</span>Own tune`;
     els.likeBtn.classList.remove("liked");
     els.likeBtn.classList.add("like-own-disabled");
     return;
   }
 
-  els.likeBtn.innerHTML = `<span class="like-icon" aria-hidden="true"></span>`;
-  els.likeBtn.setAttribute("aria-label", state.liked ? "Unlike this tune" : "Like this tune");
+  els.likeBtn.innerHTML = state.liked ? `<span class="icon">♥</span>Liked` : `<span class="icon">♥</span>Like`;
   els.likeBtn.classList.toggle("liked", state.liked);
   els.likeBtn.classList.remove("like-own-disabled");
 }
