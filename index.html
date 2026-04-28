@@ -9,6 +9,12 @@
   <link rel="stylesheet" href="assets/css/index.css" />
 </head>
 <body>
+  <!-- Coins badge: buiten header zodat fixed werkt -->
+  <div id="currencyBadge" class="currency-badge hidden" aria-label="Seconds balance">
+    <img src="coin.png" alt="" class="currency-badge-icon" />
+    <span id="currencyValue" class="currency-badge-value">0</span>
+  </div>
+
   <!-- Fullscreen loader -->
   <div id="pageLoader" class="page-loader">
     <div class="page-loader-inner">
@@ -185,10 +191,6 @@
   <div class="header-wrap">
     <header class="header-bar">
       <div class="header-left">
-        <div id="currencyBadge" class="currency-badge hidden" aria-label="Seconds balance">
-          <img src="coin.png" alt="" class="currency-badge-icon" />
-          <span id="currencyValue" class="currency-badge-value">0</span>
-        </div>
       </div>
 
       <div class="header-center">
