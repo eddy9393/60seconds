@@ -1145,25 +1145,11 @@ img {
   gap: 10px;
 }
 
-.volume-slider-inline {
-  width: 0;
-  opacity: 0;
-  overflow: hidden;
-  transition: width 0.22s ease, opacity 0.18s ease, margin 0.22s ease;
-  margin-left: 0;
-}
+/* volume-slider-inline: zie popup definitie verderop */
 
-.volume-control.open .volume-slider-inline {
-  width: 156px;
-  opacity: 1;
-  margin-left: 4px;
-}
+/* volume-control.open: zie popup definitie verderop */
 
-.volume-slider-inline input[type="range"] {
-  width: 156px;
-  margin: 0;
-  accent-color: var(--gold);
-}
+/* volume input: zie popup definitie verderop */
 
 .volume-button {
   width: 40px;
