@@ -6,6 +6,8 @@ const SKIP_COST = 1;
 const RADIO_SESSION_KEY = "ssfm_radio_session_v2";
 const RADIO_VOLUME_KEY = "ssfm_radio_volume_v2";
 const RADIO_LIKE_KEY = "ssfm_radio_likes_v2";
+const VOLUME_AUTO_CLOSE_MS = 3000;
+let volumeAutoCloseTimer = null;
 const DEFAULT_VOLUME = 0.3;
 const els = {
   showLoginBtn: document.getElementById("showLoginBtn"),
@@ -630,9 +632,34 @@ function updateVolumeButtonState() {
   els.volumeBtn.setAttribute("aria-label", isMuted ? "Volume muted" : "Volume");
 }
 
+function closeVolumeControl() {
+  if (volumeAutoCloseTimer) {
+    window.clearTimeout(volumeAutoCloseTimer);
+    volumeAutoCloseTimer = null;
+  }
+  els.volumeControl?.classList.remove("open");
+}
+
+function scheduleVolumeAutoClose() {
+  if (!els.volumeControl?.classList.contains("open")) return;
+  if (volumeAutoCloseTimer) window.clearTimeout(volumeAutoCloseTimer);
+  volumeAutoCloseTimer = window.setTimeout(closeVolumeControl, VOLUME_AUTO_CLOSE_MS);
+}
+
+function openVolumeControl() {
+  els.volumeControl?.classList.add("open");
+  scheduleVolumeAutoClose();
+}
+
+function toggleVolumeControl() {
+  if (!els.volumeControl) return;
+  if (els.volumeControl.classList.contains("open")) closeVolumeControl();
+  else openVolumeControl();
+}
+
 function closeHeaderPanels() {
   closeStandardHeaderPanels({ header: { accountMenu: els.accountMenu } });
-  els.volumeControl.classList.remove("open");
+  closeVolumeControl();
 }
 
 function getProfileHref(profile) {
@@ -672,13 +699,18 @@ function resetLike() {
 
   if (isCurrentTrackOwn()) {
     els.likeBtn.innerHTML = `<img src="icons/like.png" alt="" class="btn-icon-img like-icon" aria-hidden="true" />`;
-    els.likeBtn.classList.remove("liked");
+    els.likeBtn.classList.remove("liked", "is-liked", "like-feedback");
+    els.likeBtn.setAttribute("aria-pressed", "false");
+    els.likeBtn.setAttribute("aria-label", "You cannot like your own track");
     els.likeBtn.classList.add("like-own-disabled");
     return;
   }
 
   els.likeBtn.innerHTML = `<img src="icons/like.png" alt="" class="btn-icon-img like-icon" aria-hidden="true" />`;
   els.likeBtn.classList.toggle("liked", state.liked);
+  els.likeBtn.classList.toggle("is-liked", state.liked);
+  els.likeBtn.setAttribute("aria-pressed", state.liked ? "true" : "false");
+  els.likeBtn.setAttribute("aria-label", state.liked ? "Unlike track" : "Like track");
   els.likeBtn.classList.remove("like-own-disabled");
 }
 
@@ -1443,6 +1475,11 @@ async function handleLike() {
     writeLikedTrackIds([...likedIds]);
     state.liked = Boolean(result?.liked);
     resetLike();
+    if (els.likeBtn) {
+      els.likeBtn.classList.remove("like-feedback");
+      void els.likeBtn.offsetWidth;
+      els.likeBtn.classList.add("like-feedback");
+    }
   } catch (err) {
     console.error('handleLike error:', err);
   } finally {
@@ -1502,7 +1539,7 @@ function bindUIEvents() {
   };
 
   els.headerAvatarBtn.onclick = () => {
-    els.volumeControl.classList.remove("open");
+    closeVolumeControl();
     handleHeaderAvatarAction(els.accountProfileLink?.href || "artist.html");
   };
 
@@ -1523,7 +1560,7 @@ function bindUIEvents() {
 
   els.volumeBtn.onclick = () => {
     setHidden(els.accountMenu, true);
-    els.volumeControl.classList.toggle("open");
+    toggleVolumeControl();
   };
 
   els.startBtn.onclick = handleStartRadio;
@@ -1540,6 +1577,11 @@ function bindUIEvents() {
     updateVolumeButtonState();
     syncRadioVolumeStorage();
     persistRadioSession();
+    scheduleVolumeAutoClose();
+  });
+
+  ["pointermove", "pointerdown", "focusin"].forEach((eventName) => {
+    els.volumeControl?.addEventListener(eventName, scheduleVolumeAutoClose);
   });
 
   document.addEventListener("click", (e) => {
@@ -1552,14 +1594,14 @@ function bindUIEvents() {
     }
 
     if (!insideVolumeWrap) {
-      els.volumeControl.classList.remove("open");
+      closeVolumeControl();
     }
   });
 
   document.addEventListener("keydown", (e) => {
     if (e.key === "Escape") {
       setHidden(els.accountMenu, true);
-      els.volumeControl.classList.remove("open");
+      closeVolumeControl();
     }
   });
 
