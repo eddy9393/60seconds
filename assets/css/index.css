@@ -2010,8 +2010,8 @@ img {
   border-radius: 999px;
   object-fit: cover;
   display: block;
-  border: 1px solid rgba(212,175,55,0.35);
-  box-shadow: 0 6px 14px rgba(0,0,0,0.18);
+  border: none;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.22);
   flex: 0 0 auto;
 }
 
@@ -2030,10 +2030,14 @@ img {
   flex: 0 0 auto;
 }
 
-.news-feed-name,
+.news-feed-name {
+  color: rgba(255,255,255,0.92);
+  font-weight: 600;
+}
+
 .news-feed-tune {
-  color: #fff1c0;
-  font-weight: 700;
+  color: rgba(212,175,55,0.85);
+  font-weight: 600;
 }
 
 .news-feed-copy {
@@ -2129,8 +2133,8 @@ img {
   border-radius: 999px;
   object-fit: cover;
   display: block;
-  border: 1px solid rgba(212,175,55,0.35);
-  box-shadow: 0 6px 14px rgba(0,0,0,0.18);
+  border: none;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.22);
   flex: 0 0 auto;
 }
 
@@ -2367,10 +2371,12 @@ img {
 /* ── Body ───────────────────────────────────────────────────── */
 .fa-body {
   display: grid;
-  grid-template-columns: 96px 1fr;
+  grid-template-columns: 90px 1fr;
   gap: 20px;
-  padding: 28px 24px 20px;
+  padding: 24px 22px 18px;
   align-items: flex-start;
+  position: relative;
+  z-index: 2;
 }
 
 /* ── Foto ───────────────────────────────────────────────────── */
@@ -2415,6 +2421,8 @@ img {
   flex-direction: column;
   gap: 8px;
   min-width: 0;
+  position: relative;
+  z-index: 2;
 }
 
 .fa-name {
@@ -4624,13 +4632,12 @@ button:not(.side-nav button):not(.desktop-side-nav-panel button){
 }
 
 .fa-photo-wrap {
-  width: clamp(132px, 15.5vw, 188px) !important;
-  height: clamp(132px, 15.5vw, 188px) !important;
+  width: 90px !important;
+  height: 90px !important;
+  flex-shrink: 0 !important;
   box-shadow:
-    0 0 0 4px rgba(245,200,75,.12),
-    0 20px 46px rgba(0,0,0,.48),
-    0 0 42px rgba(245,200,75,.36),
-    0 0 92px rgba(245,200,75,.13) !important;
+    0 0 0 3px rgba(245,200,75,.10),
+    0 8px 24px rgba(0,0,0,.38) !important;
 }
 
 .fa-photo {
@@ -4646,4 +4653,21 @@ button:not(.side-nav button):not(.desktop-side-nav-panel button){
   .fa-name {
     font-size: 30px !important;
   }
+}
+
+/* ── Pagina verborgen tijdens laden ────────────────────────── */
+body.is-loading .site-shell,
+body.is-loading .header-wrap {
+  opacity: 0;
+  pointer-events: none;
+}
+
+body.is-loading .currency-badge {
+  opacity: 0;
+}
+
+.site-shell,
+.header-wrap,
+.currency-badge {
+  transition: opacity 0.45s ease;
 }
