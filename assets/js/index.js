@@ -460,10 +460,9 @@ function persistRadioSession() {
 function updatePauseButtonState() {
   if (!els.pauseBtn) return;
   const isPlaying = state.isLiveActivated && !els.audio.paused;
-  els.pauseBtn.setAttribute("aria-label", isPlaying ? "Pause" : "Play");
   els.pauseBtn.innerHTML = isPlaying
-    ? `<span class="icon">⏸</span>`
-    : `<span class="icon">▶</span>`;
+    ? `<span class="icon">⏸</span>Pause`
+    : `<span class="icon">▶</span>Play`;
 }
 
 function syncWaveformState() {
@@ -671,13 +670,15 @@ function resetLike() {
   state.liked = Boolean(likeKey && likedIds.includes(String(likeKey)));
 
   if (isCurrentTrackOwn()) {
-    els.likeBtn.innerHTML = `<span class="icon">♥</span>Own tune`;
+    els.likeBtn.innerHTML = `<span class="like-icon" aria-hidden="true"></span>`;
+    els.likeBtn.setAttribute("aria-label", "You cannot like your own tune");
     els.likeBtn.classList.remove("liked");
     els.likeBtn.classList.add("like-own-disabled");
     return;
   }
 
-  els.likeBtn.innerHTML = state.liked ? `<span class="icon">♥</span>Liked` : `<span class="icon">♥</span>Like`;
+  els.likeBtn.innerHTML = `<span class="like-icon" aria-hidden="true"></span>`;
+  els.likeBtn.setAttribute("aria-label", state.liked ? "Unlike this tune" : "Like this tune");
   els.likeBtn.classList.toggle("liked", state.liked);
   els.likeBtn.classList.remove("like-own-disabled");
 }
@@ -926,12 +927,6 @@ async function refreshAuthUI() {
     if (!user) {
       setLoggedOutView();
       return null;
-    }
-
-    // Verberg start-overlay direct als ingelogd — voorkomt flash
-    if (els.startOverlay && !state.isLiveActivated) {
-      els.startOverlay.style.visibility = 'hidden';
-      els.startOverlay.style.opacity = '0';
     }
 
     updateCurrencyVisibility(user);
@@ -1344,10 +1339,6 @@ async function handleStartRadio() {
 
   els.radioShell.classList.remove("pre-live");
   setHidden(els.startOverlay, true);
-  if (els.startOverlay) {
-    els.startOverlay.style.visibility = '';
-    els.startOverlay.style.opacity = '';
-  }
   updateConceptVisibility();
 
   if (!els.audio.src && state.tracks.length) {
