@@ -8,7 +8,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Manrope:wght@300;400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="assets/css/index.css" />
 </head>
-<body>
+<body class="is-loading">
   <!-- Coins badge: buiten header zodat fixed werkt -->
   <div id="currencyBadge" class="currency-badge hidden" aria-label="Seconds balance">
     <img src="coin.png" alt="" class="currency-badge-icon" />
@@ -50,7 +50,6 @@
         if (finished) return;
         finished = true;
         if (label) label.textContent = 'Ready';
-        // Sprint naar 100%
         var v = progress;
         var sprint = setInterval(function() {
           v += 3;
@@ -58,11 +57,13 @@
           if (v >= 100) {
             clearInterval(sprint);
             setTimeout(function() {
+              // Toon alle pagina-inhoud tegelijk zodra balk vol is
+              document.body.classList.remove('is-loading');
               loader.classList.add('page-loader--done');
               setTimeout(function() {
                 loader.style.display = 'none';
-              }, 600);
-            }, 220);
+              }, 500);
+            }, 120);
           }
         }, 10);
       }
