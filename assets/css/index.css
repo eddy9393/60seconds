@@ -5942,14 +5942,19 @@ button:not(.side-nav button):not(.desktop-side-nav-panel button){
 }
 
 /* ============================================================
-   What is 60 Seconds: visible before radio start and while logged out
+   What is 60 Seconds: visible only while logged out
    ============================================================ */
-body:not(.radio-started) #conceptSection,
-body:not(.is-authenticated) #conceptSection,
-#conceptSection.concept-section {
+body.is-logged-out #conceptSection {
   display: block !important;
   visibility: visible !important;
   opacity: 1 !important;
+}
+
+body.is-authenticated #conceptSection {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
 }
 
 
@@ -5957,3 +5962,19 @@ body:not(.is-authenticated) #conceptSection,
 body.is-authenticated #conceptSection {
   display: none !important;
 }
+
+
+/* FINAL conceptSection logged-out only override */
+body.is-authenticated #conceptSection {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+body.is-logged-out #conceptSection {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
