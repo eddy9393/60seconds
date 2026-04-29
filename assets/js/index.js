@@ -641,7 +641,7 @@ function broadcastCurrencyUpdate(coins, dailySecondsEarned = state.dailySecondsE
 }
 
 function updateConceptVisibility() {
-  const shouldShow = !state.currentUser && state.isLiveActivated;
+  const shouldShow = !state.currentUser;
   setHidden(els.conceptSectionEl, !shouldShow);
   updateJoinButtonHref();
 }
