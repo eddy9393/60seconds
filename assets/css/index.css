@@ -5951,3 +5951,9 @@ body:not(.is-authenticated) #conceptSection,
   visibility: visible !important;
   opacity: 1 !important;
 }
+
+
+/* Hide 'What is 60 Seconds' when logged in */
+body.is-authenticated #conceptSection {
+  display: none !important;
+}
