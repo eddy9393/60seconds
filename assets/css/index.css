@@ -5873,3 +5873,43 @@ button:not(.side-nav button):not(.desktop-side-nav-panel button){
     0 18px 46px rgba(0,0,0,0.44),
     0 0 38px rgba(212,175,55,0.18) !important;
 }
+
+
+/* ============================================================
+   Width restore: locked/blurred radio player matches Featured Artist width
+   ============================================================ */
+.radio-col,
+.radio-col .radio-stage,
+.radio-stage {
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+.radio-stage {
+  justify-content: stretch !important;
+  justify-items: stretch !important;
+}
+
+.radio-stage > .radio-shell,
+.radio-stage > .start-overlay,
+#radioShell {
+  width: 100% !important;
+  max-width: 100% !important;
+  justify-self: stretch !important;
+}
+
+.radio-shell:not(.pre-live),
+.radio-shell.pre-live {
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+.start-overlay {
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+.start-overlay .overlay-content {
+  width: 100% !important;
+  max-width: 100% !important;
+}
