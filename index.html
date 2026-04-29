@@ -7,16 +7,6 @@
 
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Manrope:wght@300;400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="assets/css/index.css" />
-
-<style>
-.premium-container{
-  background: linear-gradient(135deg, #1a1a1a, #2b2b2b);
-  border: 1px solid rgba(255,215,0,0.4);
-  box-shadow: 0 0 20px rgba(255,215,0,0.2);
-  border-radius: 16px;
-}
-</style>
-
 </head>
 <body class="is-loading">
   <!-- Coins badge: buiten header zodat fixed werkt -->
@@ -277,14 +267,11 @@
 
             <button id="pauseBtn" class="metal-btn radio-icon-btn" type="button" aria-label="Play or pause"><span class="icon">▶</span></button>
 
-            <button id="skip" class="metal-btn" type="button" aria-label="Skip tune, costs 1 Second">
-              <span class="skip-button-content" aria-hidden="true">
-                <svg class="skip-icon" viewBox="0 0 24 24" fill="none" focusable="false">
-                  <path d="M5 6.75v10.5L13.25 12 5 6.75Z" fill="currentColor"/>
-                  <path d="M13.5 6.75v10.5L21.75 12 13.5 6.75Z" fill="currentColor"/>
-                </svg>
-                <span class="skip-cost">-1</span>
+            <button id="skip" class="metal-btn" type="button">
+              <span class="skip-button-content">
+                <span class="skip-label">Skip</span>
                 <img src="coin.webp" alt="" class="skip-coin-icon" />
+                <span class="skip-cost">-1</span>
               </span>
             </button>
 
