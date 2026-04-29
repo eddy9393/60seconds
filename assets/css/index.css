@@ -715,8 +715,12 @@ img {
 }
 
 .radio-shell.pre-live {
+  opacity: 0;
+  transform: translateY(18px) scale(0.985);
   pointer-events: none;
-  /* Overlay bedekt de radio — geen extra hiding nodig */
+  visibility: hidden;
+  max-height: 0;
+  overflow: hidden;
 }
 
 .start-overlay {
@@ -3209,7 +3213,6 @@ body::before{
   text-shadow:0 0 18px rgba(255,255,255,.18),0 0 28px rgba(245,200,75,.12) !important;
 }
 
-.radio-stage,
 .radio-shell:not(.pre-live),
 .start-overlay,
 .fa-card,
@@ -3719,7 +3722,8 @@ button:not(.side-nav button):not(.desktop-side-nav-panel button){
 
 .radio-stage {
   background: transparent !important;
-  border: 0 !important;
+  border: none !important;
+  border-radius: 0 !important;
   box-shadow: none !important;
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
