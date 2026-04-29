@@ -5913,3 +5913,31 @@ button:not(.side-nav button):not(.desktop-side-nav-panel button){
   width: 100% !important;
   max-width: 100% !important;
 }
+
+
+/* ============================================================
+   What is 60 Seconds: match radio/featured column width
+   The radio player and Featured Artists live in .radio-col inside
+   .content-layout (1fr + 420px community column). This section sits
+   outside that grid, so it needs the same calculated left-column width.
+   ============================================================ */
+.site-shell > #conceptSection.concept-section {
+  width: calc(100% - 420px) !important;
+  max-width: none !important;
+  margin: 28px auto 0 0 !important;
+  padding: 0 !important;
+}
+
+.site-shell > #conceptSection.concept-section .concept-card {
+  width: 100% !important;
+  max-width: none !important;
+}
+
+@media (max-width: 860px) {
+  .site-shell > #conceptSection.concept-section {
+    width: 100% !important;
+    max-width: none !important;
+    margin: 24px 0 0 !important;
+    padding: 0 12px !important;
+  }
+}
