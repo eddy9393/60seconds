@@ -1,4 +1,4 @@
-const CACHE = '60sfm-v4';
+const CACHE = '60sfm-v5';
 
 // Bestanden die altijd offline beschikbaar zijn
 const PRECACHE = [
