@@ -960,11 +960,7 @@ async function refreshAuthUI() {
       return null;
     }
 
-    // Verberg start-overlay direct als ingelogd — voorkomt flash
-    if (els.startOverlay && !state.isLiveActivated) {
-      els.startOverlay.style.visibility = 'hidden';
-      els.startOverlay.style.opacity = '0';
-    }
+    // Overlay blijft zichtbaar totdat user Start Radio klikt
 
     updateCurrencyVisibility(user);
     setCurrency(state.currentCoins || 0);
@@ -1365,10 +1361,12 @@ async function bootstrapLiveRadio() {
     state.isLiveActivated = false;
     state.desiredPlayback = false;
     els.radioShell.classList.add("pre-live");
+    // Overlay zichtbaar maken — verwijder inline styles die het verbergen
     setHidden(els.startOverlay, false);
     if (els.startOverlay) {
       els.startOverlay.style.visibility = '';
       els.startOverlay.style.opacity = '';
+      els.startOverlay.style.display = '';
     }
     updateConceptVisibility();
 
@@ -1402,11 +1400,19 @@ async function handleStartRadio() {
   await loadMyTotalPlays();
 
   els.radioShell.classList.remove("pre-live");
-  setHidden(els.startOverlay, true);
+  // Forceer zichtbaarheid van de radio shell
+  els.radioShell.style.visibility = 'visible';
+  els.radioShell.style.opacity = '1';
+  els.radioShell.style.maxHeight = '';
+  els.radioShell.style.overflow = '';
+  // Verberg de overlay volledig
   if (els.startOverlay) {
-    els.startOverlay.style.visibility = '';
-    els.startOverlay.style.opacity = '';
+    els.startOverlay.style.display = 'none';
+    els.startOverlay.style.visibility = 'hidden';
+    els.startOverlay.style.opacity = '0';
+    els.startOverlay.style.pointerEvents = 'none';
   }
+  setHidden(els.startOverlay, true);
   updateConceptVisibility();
 
   if (!els.audio.src && state.tracks.length) {
