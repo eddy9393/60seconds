@@ -262,8 +262,8 @@ async function loadNewsFeed() {
         .from("profiles")
         .select("artist_name, user_id, photo_url, daily_seconds_earned, daily_seconds_earned_date")
         .not("artist_name", "is", null)
-        .eq("daily_seconds_earned_date", todayKey)
         .gte("daily_seconds_earned", DAILY_SECONDS_LIMIT)
+        .order("daily_seconds_earned_date", { ascending: false })
         .order("daily_seconds_earned", { ascending: false })
         .limit(48),
       supabaseClient
@@ -319,7 +319,7 @@ async function loadNewsFeed() {
       const profileDate = normalizeSupabaseDate(profile?.daily_seconds_earned_date);
       const dailySeconds = Number(profile?.daily_seconds_earned || 0);
       if (!userId || !name) return;
-      if (profileDate !== todayKey || dailySeconds < DAILY_SECONDS_LIMIT) return;
+      if (!isCurrentSupabaseDailyDate(profileDate) || dailySeconds < DAILY_SECONDS_LIMIT) return;
       items.push({
         type: "support_today",
         name,
@@ -410,6 +410,30 @@ function getTodayDateKey() {
   const month = String(now.getMonth() + 1).padStart(2, "0");
   const day = String(now.getDate()).padStart(2, "0");
   return `${year}-${month}-${day}`;
+}
+
+function getDateKeyOffset(baseDateKey, offsetDays) {
+  const [year, month, day] = String(baseDateKey || "").split("-").map(Number);
+  if (!year || !month || !day) return "";
+  const date = new Date(year, month - 1, day);
+  date.setDate(date.getDate() + offsetDays);
+  const outYear = date.getFullYear();
+  const outMonth = String(date.getMonth() + 1).padStart(2, "0");
+  const outDay = String(date.getDate()).padStart(2, "0");
+  return `${outYear}-${outMonth}-${outDay}`;
+}
+
+function isCurrentSupabaseDailyDate(profileDate) {
+  const normalizedDate = normalizeSupabaseDate(profileDate);
+  if (!normalizedDate) return false;
+
+  const localToday = getTodayDateKey();
+
+  // Supabase current_date can differ from the browser date around midnight/timezones.
+  // Accept today plus/minus one day as the current Supabase day for display/feed purposes.
+  return normalizedDate === localToday
+    || normalizedDate === getDateKeyOffset(localToday, -1)
+    || normalizedDate === getDateKeyOffset(localToday, 1);
 }
 
 function getSavedRadioSession() {
@@ -571,8 +595,8 @@ function normalizeDailySecondsState(profile) {
   const profileDate = normalizeSupabaseDate(profile?.daily_seconds_earned_date);
   const profileCount = Number(profile?.daily_seconds_earned);
 
-  if (profileDate === today) {
-    state.dailySecondsEarnedDate = today;
+  if (isCurrentSupabaseDailyDate(profileDate)) {
+    state.dailySecondsEarnedDate = profileDate || today;
     state.dailySecondsEarned = Number.isFinite(profileCount) && profileCount >= 0 ? profileCount : 0;
     return;
   }
@@ -849,7 +873,7 @@ async function loadMyProfile(userId) {
     state.currentProfileData = null;
     state.currentCoins = 0;
     state.dailySecondsEarned = 0;
-    state.dailySecondsEarnedDate = getTodayDateKey();
+    state.dailySecondsEarnedDate = state.dailySecondsEarnedDate || getTodayDateKey();
     setHeaderAvatar("", "•");
     setCurrency(0);
     updateEarnSecondsProgress();
@@ -905,7 +929,7 @@ async function refreshCoins() {
     console.error("refreshCoins error:", error);
     state.currentCoins = 0;
     state.dailySecondsEarned = 0;
-    state.dailySecondsEarnedDate = getTodayDateKey();
+    state.dailySecondsEarnedDate = state.dailySecondsEarnedDate || getTodayDateKey();
     setCurrency(0);
     updateEarnSecondsProgress();
     return 0;
@@ -934,7 +958,7 @@ async function awardListeningSecond() {
     }
     if (typeof data.daily_seconds_earned !== "undefined") {
       state.dailySecondsEarned = Number(data.daily_seconds_earned) || 0;
-      state.dailySecondsEarnedDate = getTodayDateKey();
+      state.dailySecondsEarnedDate = state.dailySecondsEarnedDate || getTodayDateKey();
       updateEarnSecondsProgress();
     }
     return false;
@@ -942,7 +966,7 @@ async function awardListeningSecond() {
 
   state.currentCoins = Number(data.coins) || 0;
   state.dailySecondsEarned = Number(data.daily_seconds_earned) || 0;
-  state.dailySecondsEarnedDate = getTodayDateKey();
+  state.dailySecondsEarnedDate = state.dailySecondsEarnedDate || getTodayDateKey();
 
   setCurrency(state.currentCoins);
   updateEarnSecondsProgress();
