@@ -189,7 +189,7 @@ function buildNewsFeedText(item) {
 function renderNewsFeedSlice() {
   if (!els.newsFeedListEl) return;
 
-  if (!state.newsFeedItems.length) {
+  if (!state.currentUser || !state.newsFeedItems.length) {
     els.newsFeedListEl.innerHTML = '<div class="news-feed-item news-feed-empty">No community updates yet.</div>';
     return;
   }
@@ -237,8 +237,7 @@ async function loadNewsFeed() {
     clearNewsFeedTimers();
     state.newsFeedItems = [];
     state.newsFeedIndex = 0;
-    renderNewsFeedSlice();
-    setHidden(els.newsFeedSectionEl, false);
+    setHidden(els.newsFeedSectionEl, true);
     return;
   }
 
@@ -356,10 +355,7 @@ async function loadNewsFeed() {
     }, 60000);
   } catch (err) {
     console.error("loadNewsFeed error:", err);
-    state.newsFeedItems = [];
-    state.newsFeedIndex = 0;
-    renderNewsFeedSlice();
-    setHidden(els.newsFeedSectionEl, false);
+    setHidden(els.newsFeedSectionEl, true);
   }
 }
 
@@ -953,8 +949,9 @@ async function awardListeningSecond() {
   broadcastCurrencyUpdate(state.currentCoins, state.dailySecondsEarned);
 
   if (state.dailySecondsEarned >= DAILY_SECONDS_LIMIT) {
-    await refreshCoins().catch((err) => console.error("refreshCoins threshold sync error:", err));
-    await loadNewsFeed().catch((err) => console.error("loadNewsFeed threshold refresh error:", err));
+    refreshCoins()
+      .then(() => loadNewsFeed())
+      .catch((err) => console.error("seconds threshold refresh error:", err));
   }
 
   return true;
@@ -979,11 +976,12 @@ async function refreshAuthUI() {
     updateCurrencyVisibility(user);
     setLoggedInView();
 
+    await refreshCoins();
+
     const [profile, tune] = await Promise.all([
       loadMyProfile(user.id),
       loadMyTune(user.id),
-      syncLikedTrackIdsForUser(user.id, RADIO_LIKE_KEY),
-      refreshCoins()
+      syncLikedTrackIdsForUser(user.id, RADIO_LIKE_KEY)
     ]);
 
     applyMenuState(user, profile, tune);
