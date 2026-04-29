@@ -488,9 +488,61 @@ function scheduleUnexpectedResume(delay = 180) {
 }
 
 function getDesiredSessionPlayback(session = getSavedRadioSession()) {
-  if (!session?.isStarted || session?.startedDate !== getTodayDateKey()) return false;
+  if (!session?.isStarted) return false;
   if (typeof session.desiredPlaying === "boolean") return session.desiredPlaying;
   return session.isPlaying !== false;
+}
+
+function hasUnlockedRadioSession(session = getSavedRadioSession()) {
+  // Once the visitor has pressed Start Radio, the radio should stay unlocked
+  // across reloads/back navigation. Do not tie visibility to today's date.
+  return Boolean(session?.isStarted);
+}
+
+function showUnlockedRadio() {
+  state.isLiveActivated = true;
+  if (els.radioShell) {
+    els.radioShell.classList.remove("pre-live");
+    els.radioShell.style.visibility = "visible";
+    els.radioShell.style.opacity = "1";
+    els.radioShell.style.maxHeight = "";
+    els.radioShell.style.overflow = "";
+    els.radioShell.style.pointerEvents = "";
+  }
+
+  if (els.startOverlay) {
+    els.startOverlay.style.display = "none";
+    els.startOverlay.style.visibility = "hidden";
+    els.startOverlay.style.opacity = "0";
+    els.startOverlay.style.pointerEvents = "none";
+    setHidden(els.startOverlay, true);
+  }
+
+  document.body.classList.add("radio-started");
+}
+
+function showLockedRadioStartState() {
+  state.isLiveActivated = false;
+  state.desiredPlayback = false;
+
+  if (els.radioShell) {
+    els.radioShell.classList.add("pre-live");
+    els.radioShell.style.visibility = "";
+    els.radioShell.style.opacity = "";
+    els.radioShell.style.maxHeight = "";
+    els.radioShell.style.overflow = "";
+    els.radioShell.style.pointerEvents = "";
+  }
+
+  if (els.startOverlay) {
+    els.startOverlay.style.display = "";
+    els.startOverlay.style.visibility = "";
+    els.startOverlay.style.opacity = "";
+    els.startOverlay.style.pointerEvents = "";
+    setHidden(els.startOverlay, false);
+  }
+
+  document.body.classList.remove("radio-started");
 }
 
 async function restoreExactPlaybackState() {
@@ -1340,28 +1392,20 @@ async function bootstrapLiveRadio() {
   updatePauseButtonState();
 
   const session = getSavedRadioSession();
-  if (session?.isStarted && session?.startedDate === getTodayDateKey()) {
-    state.isLiveActivated = true;
+  if (hasUnlockedRadioSession(session)) {
     state.desiredPlayback = getDesiredSessionPlayback(session);
-    els.radioShell.classList.remove("pre-live");
-    setHidden(els.startOverlay, true);
+    showUnlockedRadio();
     updateConceptVisibility();
 
     let index = state.tracks.findIndex(track => String(track.id) === String(session.currentTrackId || session.currentTrack?.id || ""));
     if (index < 0) index = Number.isInteger(session.currentIndex) ? session.currentIndex : chooseNextTrackIndex();
     if (index < 0) index = chooseNextTrackIndex();
+
+    // The UI stays unlocked after reload/back navigation. Playback resumes only
+    // when the browser allows it; otherwise the player remains visible with play controls.
     await playTrackAt(index, Number(session.previewOffset) || 0, false, state.desiredPlayback);
   } else {
-    state.isLiveActivated = false;
-    state.desiredPlayback = false;
-    els.radioShell.classList.add("pre-live");
-    // Overlay zichtbaar maken — verwijder inline styles die het verbergen
-    setHidden(els.startOverlay, false);
-    if (els.startOverlay) {
-      els.startOverlay.style.visibility = '';
-      els.startOverlay.style.opacity = '';
-      els.startOverlay.style.display = '';
-    }
+    showLockedRadioStartState();
     updateConceptVisibility();
 
     const previewIndex = chooseNextTrackIndex();
@@ -1393,20 +1437,7 @@ async function handleStartRadio() {
   await loadTrackStats();
   await loadMyTotalPlays();
 
-  els.radioShell.classList.remove("pre-live");
-  // Forceer zichtbaarheid van de radio shell
-  els.radioShell.style.visibility = 'visible';
-  els.radioShell.style.opacity = '1';
-  els.radioShell.style.maxHeight = '';
-  els.radioShell.style.overflow = '';
-  // Verberg de overlay volledig
-  if (els.startOverlay) {
-    els.startOverlay.style.display = 'none';
-    els.startOverlay.style.visibility = 'hidden';
-    els.startOverlay.style.opacity = '0';
-    els.startOverlay.style.pointerEvents = 'none';
-  }
-  setHidden(els.startOverlay, true);
+  showUnlockedRadio();
   updateConceptVisibility();
 
   if (!els.audio.src && state.tracks.length) {
