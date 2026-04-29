@@ -189,7 +189,7 @@ function buildNewsFeedText(item) {
 function renderNewsFeedSlice() {
   if (!els.newsFeedListEl) return;
 
-  if (!state.currentUser || !state.newsFeedItems.length) {
+  if (!state.newsFeedItems.length) {
     els.newsFeedListEl.innerHTML = '<div class="news-feed-item news-feed-empty">No community updates yet.</div>';
     return;
   }
@@ -233,15 +233,6 @@ function advanceNewsFeed() {
 }
 
 async function loadNewsFeed() {
-  if (!state.currentUser) {
-    clearNewsFeedTimers();
-    state.newsFeedItems = [];
-    state.newsFeedIndex = 0;
-    setHidden(els.newsFeedSectionEl, false);
-    renderNewsFeedSlice();
-    return;
-  }
-
   try {
     const todayKey = getTodayDateKey();
     const nowMs = Date.now();
@@ -959,6 +950,7 @@ async function refreshAuthUI() {
 
     if (!user) {
       setLoggedOutView();
+      await loadNewsFeed();
       return null;
     }
 
