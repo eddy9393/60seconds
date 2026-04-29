@@ -4,6 +4,7 @@ const supabaseClient = getSupabaseClient();
 const DAILY_SECONDS_LIMIT = 10;
 const SKIP_COST = 1;
 const RADIO_SESSION_KEY = "ssfm_radio_session_v2";
+const RADIO_SESSION_UNLOCK_KEY = "ssfm_radio_unlocked_this_session_v1";
 const RADIO_VOLUME_KEY = "ssfm_radio_volume_v2";
 const RADIO_LIKE_KEY = "ssfm_radio_likes_v2";
 const VOLUME_AUTO_CLOSE_MS = 3000;
@@ -488,15 +489,25 @@ function scheduleUnexpectedResume(delay = 180) {
 }
 
 function getDesiredSessionPlayback(session = getSavedRadioSession()) {
-  if (!session?.isStarted) return false;
+  if (!hasUnlockedRadioSession(session)) return false;
   if (typeof session.desiredPlaying === "boolean") return session.desiredPlaying;
   return session.isPlaying !== false;
 }
 
+function markRadioUnlockedForBrowserSession() {
+  try {
+    sessionStorage.setItem(RADIO_SESSION_UNLOCK_KEY, "true");
+  } catch {}
+}
+
 function hasUnlockedRadioSession(session = getSavedRadioSession()) {
-  // Once the visitor has pressed Start Radio, the radio should stay unlocked
-  // across reloads/back navigation. Do not tie visibility to today's date.
-  return Boolean(session?.isStarted);
+  // Start Radio only has to be pressed once per browser session.
+  // sessionStorage survives reloads and back navigation, but resets after the browser session ends.
+  try {
+    if (sessionStorage.getItem(RADIO_SESSION_UNLOCK_KEY) === "true") return true;
+  } catch {}
+
+  return false;
 }
 
 function showUnlockedRadio() {
@@ -1424,6 +1435,8 @@ async function handleStartRadio() {
   state.isLiveActivated = true;
   state.desiredPlayback = true;
   state.listenerIdentity = null;
+
+  markRadioUnlockedForBrowserSession();
 
   saveRadioSession({
     startedDate: getTodayDateKey(),
