@@ -4,7 +4,6 @@ const supabaseClient = getSupabaseClient();
 const DAILY_SECONDS_LIMIT = 10;
 const SKIP_COST = 1;
 const RADIO_SESSION_KEY = "ssfm_radio_session_v2";
-const RADIO_SESSION_UNLOCK_KEY = "ssfm_radio_unlocked_this_session_v1";
 const RADIO_VOLUME_KEY = "ssfm_radio_volume_v2";
 const RADIO_LIKE_KEY = "ssfm_radio_likes_v2";
 const VOLUME_AUTO_CLOSE_MS = 3000;
@@ -234,6 +233,15 @@ function advanceNewsFeed() {
 }
 
 async function loadNewsFeed() {
+  if (!state.currentUser) {
+    clearNewsFeedTimers();
+    state.newsFeedItems = [];
+    state.newsFeedIndex = 0;
+    renderNewsFeedSlice();
+    setHidden(els.newsFeedSectionEl, false);
+    return;
+  }
+
   try {
     const todayKey = getTodayDateKey();
     const nowMs = Date.now();
@@ -309,7 +317,7 @@ async function loadNewsFeed() {
       const userId = String(profile?.user_id || "").trim();
       const linkedProfile = profileByUserId.get(userId);
       const name = String(profile?.artist_name || linkedProfile?.artist_name || "").trim();
-      const profileDate = String(profile?.daily_seconds_earned_date || "").trim();
+      const profileDate = normalizeSupabaseDate(profile?.daily_seconds_earned_date);
       const dailySeconds = Number(profile?.daily_seconds_earned || 0);
       if (!userId || !name) return;
       if (profileDate !== todayKey || dailySeconds < DAILY_SECONDS_LIMIT) return;
@@ -348,7 +356,10 @@ async function loadNewsFeed() {
     }, 60000);
   } catch (err) {
     console.error("loadNewsFeed error:", err);
-    setHidden(els.newsFeedSectionEl, true);
+    state.newsFeedItems = [];
+    state.newsFeedIndex = 0;
+    renderNewsFeedSlice();
+    setHidden(els.newsFeedSectionEl, false);
   }
 }
 
@@ -489,71 +500,9 @@ function scheduleUnexpectedResume(delay = 180) {
 }
 
 function getDesiredSessionPlayback(session = getSavedRadioSession()) {
-  if (!hasUnlockedRadioSession(session)) return false;
+  if (!session?.isStarted || session?.startedDate !== getTodayDateKey()) return false;
   if (typeof session.desiredPlaying === "boolean") return session.desiredPlaying;
   return session.isPlaying !== false;
-}
-
-function markRadioUnlockedForBrowserSession() {
-  try {
-    sessionStorage.setItem(RADIO_SESSION_UNLOCK_KEY, "true");
-  } catch {}
-}
-
-function hasUnlockedRadioSession(session = getSavedRadioSession()) {
-  // Start Radio only has to be pressed once per browser session.
-  // sessionStorage survives reloads and back navigation, but resets after the browser session ends.
-  try {
-    if (sessionStorage.getItem(RADIO_SESSION_UNLOCK_KEY) === "true") return true;
-  } catch {}
-
-  return false;
-}
-
-function showUnlockedRadio() {
-  state.isLiveActivated = true;
-  if (els.radioShell) {
-    els.radioShell.classList.remove("pre-live");
-    els.radioShell.style.visibility = "visible";
-    els.radioShell.style.opacity = "1";
-    els.radioShell.style.maxHeight = "";
-    els.radioShell.style.overflow = "";
-    els.radioShell.style.pointerEvents = "";
-  }
-
-  if (els.startOverlay) {
-    els.startOverlay.style.display = "none";
-    els.startOverlay.style.visibility = "hidden";
-    els.startOverlay.style.opacity = "0";
-    els.startOverlay.style.pointerEvents = "none";
-    setHidden(els.startOverlay, true);
-  }
-
-  document.body.classList.add("radio-started");
-}
-
-function showLockedRadioStartState() {
-  state.isLiveActivated = false;
-  state.desiredPlayback = false;
-
-  if (els.radioShell) {
-    els.radioShell.classList.add("pre-live");
-    els.radioShell.style.visibility = "";
-    els.radioShell.style.opacity = "";
-    els.radioShell.style.maxHeight = "";
-    els.radioShell.style.overflow = "";
-    els.radioShell.style.pointerEvents = "";
-  }
-
-  if (els.startOverlay) {
-    els.startOverlay.style.display = "";
-    els.startOverlay.style.visibility = "";
-    els.startOverlay.style.opacity = "";
-    els.startOverlay.style.pointerEvents = "";
-    setHidden(els.startOverlay, false);
-  }
-
-  document.body.classList.remove("radio-started");
 }
 
 async function restoreExactPlaybackState() {
@@ -616,9 +565,14 @@ function bindPlaybackUnlockEvents() {
   });
 }
 
+function normalizeSupabaseDate(value) {
+  if (!value) return "";
+  return String(value).slice(0, 10);
+}
+
 function normalizeDailySecondsState(profile) {
   const today = getTodayDateKey();
-  const profileDate = profile?.daily_seconds_earned_date || null;
+  const profileDate = normalizeSupabaseDate(profile?.daily_seconds_earned_date);
   const profileCount = Number(profile?.daily_seconds_earned);
 
   if (profileDate === today) {
@@ -873,8 +827,7 @@ function setLoggedOutView() {
   updateInteractiveControls();
   updateCurrencyVisibility(null);
   setCurrency(0);
-  setHidden(els.newsFeedSectionEl, false);
-  renderNewsFeedSlice();
+  setHidden(els.newsFeedSectionEl, true);
   clearNewsFeedTimers();
   updateJoinButtonHref();
 }
@@ -948,7 +901,7 @@ async function refreshCoins() {
 
   const { data, error } = await supabaseClient
     .from("profiles")
-    .select("coins, daily_seconds_earned, daily_seconds_earned_date")
+    .select("coins, daily_seconds_earned, daily_seconds_earned_date, hit_daily_support_goal, hit_daily_support_goal_date")
     .eq("user_id", state.currentUser.id)
     .maybeSingle();
 
@@ -1000,6 +953,7 @@ async function awardListeningSecond() {
   broadcastCurrencyUpdate(state.currentCoins, state.dailySecondsEarned);
 
   if (state.dailySecondsEarned >= DAILY_SECONDS_LIMIT) {
+    await refreshCoins().catch((err) => console.error("refreshCoins threshold sync error:", err));
     await loadNewsFeed().catch((err) => console.error("loadNewsFeed threshold refresh error:", err));
   }
 
@@ -1013,20 +967,23 @@ async function refreshAuthUI() {
 
     if (!user) {
       setLoggedOutView();
-      await loadNewsFeed();
       return null;
     }
 
-    // Overlay blijft zichtbaar totdat user Start Radio klikt
+    // Verberg start-overlay direct als ingelogd — voorkomt flash
+    if (els.startOverlay && !state.isLiveActivated) {
+      els.startOverlay.style.visibility = 'hidden';
+      els.startOverlay.style.opacity = '0';
+    }
 
     updateCurrencyVisibility(user);
-    setCurrency(state.currentCoins || 0);
     setLoggedInView();
 
     const [profile, tune] = await Promise.all([
       loadMyProfile(user.id),
       loadMyTune(user.id),
-      syncLikedTrackIdsForUser(user.id, RADIO_LIKE_KEY)
+      syncLikedTrackIdsForUser(user.id, RADIO_LIKE_KEY),
+      refreshCoins()
     ]);
 
     applyMenuState(user, profile, tune);
@@ -1154,24 +1111,16 @@ async function loadTrackNationalities() {
 
     const { data, error } = await supabaseClient
       .from("public_artist_profiles")
-      .select("user_id, nationality, photo_url")
+      .select("user_id, nationality")
       .in("user_id", userIds);
 
     if (error || !data) return;
 
-    const profileByUserId = new Map(data.map((row) => [String(row.user_id), row]));
-    state.tracks = state.tracks.map((track) => {
-      const profile = profileByUserId.get(String(track.user_id || ""));
-      return {
-        ...track,
-        nationality: track.nationality || profile?.nationality || null,
-        photo_url: track.photo_url || profile?.photo_url || null,
-      };
-    });
-
-    // Herrender artiest nu nationality + photo_url beschikbaar zijn
-    const currentTrack = state.tracks[state.currentTrackIndex ?? 0];
-    if (currentTrack) renderArtist(currentTrack);
+    const nationalityByUserId = new Map(data.map((row) => [String(row.user_id), row.nationality || null]));
+    state.tracks = state.tracks.map((track) => ({
+      ...track,
+      nationality: track.nationality || nationalityByUserId.get(String(track.user_id || "")) || null
+    }));
   } catch (err) {
     console.error("loadTrackNationalities error:", err);
   }
@@ -1180,21 +1129,17 @@ async function loadTrackNationalities() {
 function renderArtist(track) {
   if (!els.artistEl) return;
 
-  const photoHtml = track.photo_url
-    ? `<img class="artist-player-photo" src="${escapeHtml(track.photo_url)}" alt="" aria-hidden="true" />`
-    : `<span class="artist-player-photo artist-player-photo--fallback">${escapeHtml((track.artist || 'A').charAt(0).toUpperCase())}</span>`;
-
   if (track.user_id) {
     els.artistEl.outerHTML = `
       <a id="artist" class="artist-link" href="artist.html?user_id=${encodeURIComponent(track.user_id)}">
-        ${photoHtml}${getFlagMarkup(track.nationality)}<span class="artist-name-text">${escapeHtml(track.artist)}</span>
+        ${getFlagMarkup(track.nationality)}<span class="artist-name-text">${escapeHtml(track.artist)}</span>
       </a>
     `;
     els.artistEl = document.getElementById("artist");
     return;
   }
 
-  els.artistEl.outerHTML = `<span id="artist" class="artist-inline">${photoHtml}${getFlagMarkup(track.nationality)}<span class="artist-name-text">${escapeHtml(track.artist)}</span></span>`;
+  els.artistEl.outerHTML = `<span id="artist" class="artist-inline">${getFlagMarkup(track.nationality)}<span class="artist-name-text">${escapeHtml(track.artist)}</span></span>`;
   els.artistEl = document.getElementById("artist");
 }
 
@@ -1403,20 +1348,26 @@ async function bootstrapLiveRadio() {
   updatePauseButtonState();
 
   const session = getSavedRadioSession();
-  if (hasUnlockedRadioSession(session)) {
+  if (session?.isStarted && session?.startedDate === getTodayDateKey()) {
+    state.isLiveActivated = true;
     state.desiredPlayback = getDesiredSessionPlayback(session);
-    showUnlockedRadio();
+    els.radioShell.classList.remove("pre-live");
+    setHidden(els.startOverlay, true);
     updateConceptVisibility();
 
     let index = state.tracks.findIndex(track => String(track.id) === String(session.currentTrackId || session.currentTrack?.id || ""));
     if (index < 0) index = Number.isInteger(session.currentIndex) ? session.currentIndex : chooseNextTrackIndex();
     if (index < 0) index = chooseNextTrackIndex();
-
-    // The UI stays unlocked after reload/back navigation. Playback resumes only
-    // when the browser allows it; otherwise the player remains visible with play controls.
     await playTrackAt(index, Number(session.previewOffset) || 0, false, state.desiredPlayback);
   } else {
-    showLockedRadioStartState();
+    state.isLiveActivated = false;
+    state.desiredPlayback = false;
+    els.radioShell.classList.add("pre-live");
+    setHidden(els.startOverlay, false);
+    if (els.startOverlay) {
+      els.startOverlay.style.visibility = '';
+      els.startOverlay.style.opacity = '';
+    }
     updateConceptVisibility();
 
     const previewIndex = chooseNextTrackIndex();
@@ -1436,8 +1387,6 @@ async function handleStartRadio() {
   state.desiredPlayback = true;
   state.listenerIdentity = null;
 
-  markRadioUnlockedForBrowserSession();
-
   saveRadioSession({
     startedDate: getTodayDateKey(),
     isStarted: true,
@@ -1450,7 +1399,12 @@ async function handleStartRadio() {
   await loadTrackStats();
   await loadMyTotalPlays();
 
-  showUnlockedRadio();
+  els.radioShell.classList.remove("pre-live");
+  setHidden(els.startOverlay, true);
+  if (els.startOverlay) {
+    els.startOverlay.style.visibility = '';
+    els.startOverlay.style.opacity = '';
+  }
   updateConceptVisibility();
 
   if (!els.audio.src && state.tracks.length) {
