@@ -715,12 +715,8 @@ img {
 }
 
 .radio-shell.pre-live {
-  opacity: 0;
-  transform: translateY(18px) scale(0.985);
   pointer-events: none;
-  visibility: hidden;
-  max-height: 0;
-  overflow: hidden;
+  /* Overlay bedekt de radio — geen extra hiding nodig */
 }
 
 .start-overlay {
