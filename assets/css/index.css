@@ -5791,50 +5791,65 @@ button:not(.side-nav button):not(.desktop-side-nav-panel button){
   min-height: 380px;
 }
 
-/* ══════════════════════════════════════════════
-   Index start radio placement fix
-   - Start Radio stays in normal flow above Featured Artists
-   - Removes the grey outer start container
-   - Radio player remains hidden until Start Radio is pressed
-   ══════════════════════════════════════════════ */
-body:not(.is-loading) .radio-stage {
-  min-height: 0 !important;
-  margin-top: 18px !important;
-}
-
-body:not(.is-loading) #startOverlay.start-overlay {
-  position: static !important;
-  inset: auto !important;
-  width: 100% !important;
-  min-height: 0 !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  padding: 10px 0 18px !important;
-  z-index: 2 !important;
-}
-
-body:not(.is-loading) #startOverlay.hidden {
-  display: none !important;
-}
-
-body:not(.is-loading) #startOverlay .overlay-content {
-  width: auto !important;
-  max-width: none !important;
-  padding: 0 !important;
-  border: 0 !important;
-  border-radius: 0 !important;
+/* ============================================================
+   Start radio premium state + public community updates
+   ============================================================ */
+.radio-stage .start-overlay {
   background: transparent !important;
+  border: 0 !important;
   box-shadow: none !important;
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
+  min-height: 128px !important;
+  position: relative !important;
+  inset: auto !important;
+  width: 100% !important;
+  padding: 18px 0 20px !important;
 }
 
-body:not(.is-loading) #startOverlay .overlay-title,
-body:not(.is-loading) #startOverlay .overlay-subcopy {
+.radio-stage .start-overlay .overlay-content {
+  width: min(100%, 900px) !important;
+  min-height: 112px !important;
+  padding: 24px clamp(18px, 4vw, 42px) !important;
+  margin: 0 auto !important;
+  border-radius: 30px !important;
+  border: 1px solid rgba(244, 215, 122, 0.30) !important;
+  background:
+    radial-gradient(circle at 50% 50%, rgba(212,175,55,0.18), transparent 34%),
+    radial-gradient(circle at 76% 20%, rgba(255,255,255,0.08), transparent 26%),
+    linear-gradient(135deg, rgba(26,26,28,0.88), rgba(7,7,10,0.94)) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.10),
+    inset 0 -1px 0 rgba(0,0,0,0.65),
+    0 24px 70px rgba(0,0,0,0.48),
+    0 0 0 1px rgba(212,175,55,0.07),
+    0 0 56px rgba(212,175,55,0.18) !important;
+  backdrop-filter: blur(20px) saturate(120%) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(120%) !important;
+}
+
+.radio-stage .start-overlay .overlay-title,
+.radio-stage .start-overlay .overlay-subcopy {
   display: none !important;
 }
 
-body:not(.is-loading) #radioShell.radio-shell.pre-live {
-  display: none !important;
+.radio-stage .start-overlay .start-btn-wrap {
+  margin-top: 0 !important;
+}
+
+.radio-stage .start-overlay .start-btn {
+  background:
+    radial-gradient(circle at 50% 0%, rgba(255,255,255,0.18), transparent 34%),
+    linear-gradient(180deg, rgba(44,44,48,0.98), rgba(20,20,24,0.98)) !important;
+  color: #fff8dc !important;
+  border-color: rgba(255,232,166,0.34) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.12),
+    inset 0 -1px 0 rgba(0,0,0,0.70),
+    0 16px 36px rgba(0,0,0,0.44),
+    0 0 34px rgba(212,175,55,0.20) !important;
+}
+
+.community-col .news-feed-section {
+  display: block;
 }
