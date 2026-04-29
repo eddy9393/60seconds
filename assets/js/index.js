@@ -237,7 +237,8 @@ async function loadNewsFeed() {
     clearNewsFeedTimers();
     state.newsFeedItems = [];
     state.newsFeedIndex = 0;
-    setHidden(els.newsFeedSectionEl, true);
+    setHidden(els.newsFeedSectionEl, false);
+    renderNewsFeedSlice();
     return;
   }
 
@@ -818,7 +819,8 @@ function setLoggedOutView() {
   updateInteractiveControls();
   updateCurrencyVisibility(null);
   setCurrency(0);
-  setHidden(els.newsFeedSectionEl, true);
+  setHidden(els.newsFeedSectionEl, false);
+  renderNewsFeedSlice();
   clearNewsFeedTimers();
   updateJoinButtonHref();
 }
