@@ -428,7 +428,7 @@ async function loadPage() {
   const profile = await fetchProfileByUserId(user.id, "artist_name, photo_url, user_id, coins, lifetime_seconds_earned, city, nationality, music_role, music_roles");
   const { data: track } = await supabaseClient
     .from("tracks")
-    .select("id, user_id, title, status, created_at, play_count")
+    .select("id, user_id, title, status, created_at, updated_at, play_count")
     .eq("user_id", user.id)
     .maybeSingle();
 

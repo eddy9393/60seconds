@@ -231,18 +231,34 @@ async function fetchArtistProfile(userId) {
 }
 
 async function fetchApprovedTracks(userId) {
+  const baseSelect = "id, title, artist, file_url, created_at, status, user_id, preview_start_seconds, preview_duration_seconds, genre_primary, genre_secondary, feeling_tags, artist_page_full_track";
+
   const { data, error } = await supabaseClient
     .from("tracks")
-    .select("id, title, artist, file_url, created_at, status, user_id, preview_start_seconds, preview_duration_seconds, genre_primary, genre_secondary, feeling_tags, artist_page_full_track")
+    .select(`${baseSelect}, updated_at`)
     .eq("user_id", userId)
     .eq("status", "approved")
-    .order("created_at", { ascending: false });
+    .order("updated_at", { ascending: false, nullsFirst: false })
+    .order("created_at", { ascending: false })
+    .limit(1);
 
-  if (error) {
-    throw new Error("Could not load approved track: " + error.message);
+  if (!error) {
+    return data || [];
   }
 
-  return data || [];
+  const { data: fallbackData, error: fallbackError } = await supabaseClient
+    .from("tracks")
+    .select(baseSelect)
+    .eq("user_id", userId)
+    .eq("status", "approved")
+    .order("created_at", { ascending: false })
+    .limit(1);
+
+  if (fallbackError) {
+    throw new Error("Could not load approved track: " + fallbackError.message);
+  }
+
+  return fallbackData || [];
 }
 
 function formatDate(dateString) {
