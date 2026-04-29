@@ -5785,3 +5785,8 @@ button:not(.side-nav button):not(.desktop-side-nav-panel button){
   flex-shrink: 0;
   font-family: 'Space Grotesk', sans-serif;
 }
+
+/* Start overlay vult de volledige radio-stage hoogte */
+.start-overlay {
+  min-height: 380px;
+}
