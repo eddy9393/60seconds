@@ -5914,7 +5914,6 @@ button:not(.side-nav button):not(.desktop-side-nav-panel button){
   max-width: 100% !important;
 }
 
-
 /* ============================================================
    What is 60 Seconds: match radio/featured column width
    The radio player and Featured Artists live in .radio-col inside
@@ -5940,4 +5939,15 @@ button:not(.side-nav button):not(.desktop-side-nav-panel button){
     margin: 24px 0 0 !important;
     padding: 0 12px !important;
   }
+}
+
+/* ============================================================
+   What is 60 Seconds: visible before radio start and while logged out
+   ============================================================ */
+body:not(.radio-started) #conceptSection,
+body:not(.is-authenticated) #conceptSection,
+#conceptSection.concept-section {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
 }
