@@ -125,7 +125,7 @@ async function loadMyProfile(userId) {
 async function loadMyTrack(userId) {
   const { data, error } = await supabaseClient
     .from("tracks")
-    .select("id, user_id, title, status, created_at, updated_at")
+    .select("id, user_id, title, status, created_at")
     .eq("user_id", userId)
     .order("created_at", { ascending: false })
     .limit(1)

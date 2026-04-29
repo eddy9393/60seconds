@@ -120,8 +120,7 @@
       .from('tracks')
       .select('id, title, artist, file_url, user_id, preview_start_seconds, preview_duration_seconds')
       .eq('status', 'approved')
-    .order("updated_at", { ascending: false, nullsFirst: false })
-    .order("created_at", { ascending: false });
+      .order('created_at', { ascending: false });
 
     if (error) {
       console.error('mini player track load error:', error);

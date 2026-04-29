@@ -189,7 +189,7 @@ function buildNewsFeedText(item) {
 function renderNewsFeedSlice() {
   if (!els.newsFeedListEl) return;
 
-  if (!state.currentUser || !state.newsFeedItems.length) {
+  if (!state.newsFeedItems.length) {
     els.newsFeedListEl.innerHTML = '<div class="news-feed-item news-feed-empty">No community updates yet.</div>';
     return;
   }
@@ -233,14 +233,6 @@ function advanceNewsFeed() {
 }
 
 async function loadNewsFeed() {
-  if (!state.currentUser) {
-    clearNewsFeedTimers();
-    state.newsFeedItems = [];
-    state.newsFeedIndex = 0;
-    setHidden(els.newsFeedSectionEl, true);
-    return;
-  }
-
   try {
     const todayKey = getTodayDateKey();
     const nowMs = Date.now();
@@ -254,10 +246,9 @@ async function loadNewsFeed() {
         .limit(24),
       supabaseClient
         .from("tracks")
-        .select("title, artist, user_id, created_at, updated_at, status")
+        .select("title, artist, user_id, created_at, status")
         .eq("status", "approved")
-    .order("updated_at", { ascending: false, nullsFirst: false })
-    .order("created_at", { ascending: false })
+        .order("created_at", { ascending: false })
         .limit(24),
       supabaseClient
         .from("profiles")
@@ -819,7 +810,8 @@ function setLoggedOutView() {
   updateInteractiveControls();
   updateCurrencyVisibility(null);
   setCurrency(0);
-  setHidden(els.newsFeedSectionEl, true);
+  setHidden(els.newsFeedSectionEl, false);
+  renderNewsFeedSlice();
   clearNewsFeedTimers();
   updateJoinButtonHref();
 }
@@ -866,7 +858,7 @@ async function loadMyProfile(userId) {
 async function loadMyTune(userId) {
   const { data, error } = await supabaseClient
     .from("tracks")
-    .select("id, user_id, title, status, created_at, updated_at")
+    .select("id, user_id, title, status, created_at")
     .eq("user_id", userId)
     .order("created_at", { ascending: false })
     .limit(1)
@@ -958,14 +950,11 @@ async function refreshAuthUI() {
 
     if (!user) {
       setLoggedOutView();
+      await loadNewsFeed();
       return null;
     }
 
-    // Verberg start-overlay direct als ingelogd — voorkomt flash
-    if (els.startOverlay && !state.isLiveActivated) {
-      els.startOverlay.style.visibility = 'hidden';
-      els.startOverlay.style.opacity = '0';
-    }
+    // Overlay blijft zichtbaar totdat user Start Radio klikt
 
     updateCurrencyVisibility(user);
     setCurrency(state.currentCoins || 0);
@@ -1069,9 +1058,8 @@ async function refreshAuthDependentUI() {
 async function loadTracksFromSupabase() {
   const { data, error } = await supabaseClient
     .from("tracks")
-    .select("id, title, artist, file_url, user_id, play_count, status, created_at, updated_at, preview_start_seconds, preview_duration_seconds, genre_primary, genre_secondary")
+    .select("id, title, artist, file_url, user_id, play_count, status, created_at, preview_start_seconds, preview_duration_seconds, genre_primary, genre_secondary")
     .eq("status", "approved")
-    .order("updated_at", { ascending: false, nullsFirst: false })
     .order("created_at", { ascending: false });
 
   if (error) {
@@ -1103,16 +1091,24 @@ async function loadTrackNationalities() {
 
     const { data, error } = await supabaseClient
       .from("public_artist_profiles")
-      .select("user_id, nationality")
+      .select("user_id, nationality, photo_url")
       .in("user_id", userIds);
 
     if (error || !data) return;
 
-    const nationalityByUserId = new Map(data.map((row) => [String(row.user_id), row.nationality || null]));
-    state.tracks = state.tracks.map((track) => ({
-      ...track,
-      nationality: track.nationality || nationalityByUserId.get(String(track.user_id || "")) || null
-    }));
+    const profileByUserId = new Map(data.map((row) => [String(row.user_id), row]));
+    state.tracks = state.tracks.map((track) => {
+      const profile = profileByUserId.get(String(track.user_id || ""));
+      return {
+        ...track,
+        nationality: track.nationality || profile?.nationality || null,
+        photo_url: track.photo_url || profile?.photo_url || null,
+      };
+    });
+
+    // Herrender artiest nu nationality + photo_url beschikbaar zijn
+    const currentTrack = state.tracks[state.currentTrackIndex ?? 0];
+    if (currentTrack) renderArtist(currentTrack);
   } catch (err) {
     console.error("loadTrackNationalities error:", err);
   }
@@ -1121,17 +1117,21 @@ async function loadTrackNationalities() {
 function renderArtist(track) {
   if (!els.artistEl) return;
 
+  const photoHtml = track.photo_url
+    ? `<img class="artist-player-photo" src="${escapeHtml(track.photo_url)}" alt="" aria-hidden="true" />`
+    : `<span class="artist-player-photo artist-player-photo--fallback">${escapeHtml((track.artist || 'A').charAt(0).toUpperCase())}</span>`;
+
   if (track.user_id) {
     els.artistEl.outerHTML = `
       <a id="artist" class="artist-link" href="artist.html?user_id=${encodeURIComponent(track.user_id)}">
-        ${getFlagMarkup(track.nationality)}<span class="artist-name-text">${escapeHtml(track.artist)}</span>
+        ${photoHtml}${getFlagMarkup(track.nationality)}<span class="artist-name-text">${escapeHtml(track.artist)}</span>
       </a>
     `;
     els.artistEl = document.getElementById("artist");
     return;
   }
 
-  els.artistEl.outerHTML = `<span id="artist" class="artist-inline">${getFlagMarkup(track.nationality)}<span class="artist-name-text">${escapeHtml(track.artist)}</span></span>`;
+  els.artistEl.outerHTML = `<span id="artist" class="artist-inline">${photoHtml}${getFlagMarkup(track.nationality)}<span class="artist-name-text">${escapeHtml(track.artist)}</span></span>`;
   els.artistEl = document.getElementById("artist");
 }
 
@@ -1355,10 +1355,12 @@ async function bootstrapLiveRadio() {
     state.isLiveActivated = false;
     state.desiredPlayback = false;
     els.radioShell.classList.add("pre-live");
+    // Overlay zichtbaar maken — verwijder inline styles die het verbergen
     setHidden(els.startOverlay, false);
     if (els.startOverlay) {
       els.startOverlay.style.visibility = '';
       els.startOverlay.style.opacity = '';
+      els.startOverlay.style.display = '';
     }
     updateConceptVisibility();
 
@@ -1392,11 +1394,19 @@ async function handleStartRadio() {
   await loadMyTotalPlays();
 
   els.radioShell.classList.remove("pre-live");
-  setHidden(els.startOverlay, true);
+  // Forceer zichtbaarheid van de radio shell
+  els.radioShell.style.visibility = 'visible';
+  els.radioShell.style.opacity = '1';
+  els.radioShell.style.maxHeight = '';
+  els.radioShell.style.overflow = '';
+  // Verberg de overlay volledig
   if (els.startOverlay) {
-    els.startOverlay.style.visibility = '';
-    els.startOverlay.style.opacity = '';
+    els.startOverlay.style.display = 'none';
+    els.startOverlay.style.visibility = 'hidden';
+    els.startOverlay.style.opacity = '0';
+    els.startOverlay.style.pointerEvents = 'none';
   }
+  setHidden(els.startOverlay, true);
   updateConceptVisibility();
 
   if (!els.audio.src && state.tracks.length) {
