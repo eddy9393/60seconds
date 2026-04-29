@@ -115,6 +115,11 @@ function setHidden(el, hidden) {
   el.classList.toggle("hidden", hidden);
 }
 
+function setAuthBodyState(isAuthenticated) {
+  document.body.classList.toggle("is-authenticated", Boolean(isAuthenticated));
+  document.body.classList.toggle("is-logged-out", !isAuthenticated);
+}
+
 function setText(el, value) {
   if (!el) return;
   el.textContent = value;
@@ -642,6 +647,7 @@ function broadcastCurrencyUpdate(coins, dailySecondsEarned = state.dailySecondsE
 
 function updateConceptVisibility() {
   const shouldShow = !state.currentUser;
+  setAuthBodyState(Boolean(state.currentUser));
   setHidden(els.conceptSectionEl, !shouldShow);
   updateJoinButtonHref();
 }
@@ -814,6 +820,7 @@ function setHeaderAvatar(photoUrl, artistName) {
 }
 
 function setLoggedOutView() {
+  setAuthBodyState(false);
   closeHeaderPanels();
   setStandardLoggedOutState({
     header: {
@@ -853,6 +860,7 @@ function setLoggedOutView() {
 }
 
 function setLoggedInView() {
+  setAuthBodyState(true);
   setHidden(els.submitTrackBtn, true);
   setStandardLoggedInState({ header: { showLoginBtn: els.showLoginBtn, headerAvatarBtn: els.headerAvatarBtn, accountMenu: els.accountMenu, currencyBadge: els.currencyBadge, currencyValue: els.currencyValue } }, { coins: state.currentCoins });
   updateCurrencyVisibility(state.currentUser || true);
