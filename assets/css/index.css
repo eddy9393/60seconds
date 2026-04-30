@@ -5979,7 +5979,7 @@ body.is-logged-out #conceptSection {
 }
 
 
-/* ── Artist player: foto + naam + meta-rij ──────────────────── */
+/* ── Artist foto in radio player ────────────────────────────── */
 .artist-link,
 .artist-inline {
   display: inline-flex;
@@ -5998,7 +5998,6 @@ body.is-logged-out #conceptSection {
   aspect-ratio: 1 / 1;
   border: 1.5px solid rgba(212,175,55,0.35);
   flex-shrink: 0;
-  display: inline-block;
 }
 
 .artist-player-photo--fallback {
@@ -6017,39 +6016,14 @@ body.is-logged-out #conceptSection {
   font-family: 'Space Grotesk', sans-serif;
 }
 
-.artist-meta-row {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  margin-top: 6px;
-  flex-wrap: wrap;
-}
-
-.artist-meta-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  padding: 3px 10px;
-  border-radius: 999px;
-  border: 1px solid rgba(255,255,255,0.12);
-  background: rgba(255,255,255,0.05);
-  font-size: 11px;
-  font-weight: 500;
-  color: rgba(255,255,255,0.65);
-  font-family: 'Manrope', sans-serif;
-}
-
-.artist-meta-genre {
-  color: rgba(212,175,55,0.9);
-  border-color: rgba(212,175,55,0.25);
-  background: rgba(212,175,55,0.07);
+/* Nationaliteitsbadge: zelfde stijl als tune-genre */
+.tune-nationality {
+  font-size: 16px;
+  line-height: 1;
 }
 
 /* Top Supporters */
-.top-supporters-section {
-  margin-top: 18px !important;
-}
+.top-supporters-section { margin-top: 18px !important; }
 
 .top-supporter-item .news-feed-item-body {
   display: flex;
