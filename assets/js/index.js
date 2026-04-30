@@ -144,10 +144,8 @@ function getTrackGenreLabel(track) {
 }
 
 function setTrackGenre(track) {
-  const label = getTrackGenreLabel(track);
-  if (!els.trackGenreEl) return;
-  setText(els.trackGenreEl, label);
-  setHidden(els.trackGenreEl, !label);
+  // Genre wordt getoond als badge in de artist meta-rij — verberg het naast de titel
+  if (els.trackGenreEl) setHidden(els.trackGenreEl, true);
 }
 
 function escapeFeedHtml(value) {
@@ -365,52 +363,6 @@ async function loadNewsFeed() {
 }
 
 
-
-async function loadTopSupporters() {
-  const listEl = document.getElementById('topSupportersList');
-  const sectionEl = document.getElementById('topSupportersSection');
-  if (!listEl || !sectionEl) return;
-
-  try {
-    const { data, error } = await supabaseClient
-      .from('profiles')
-      .select('artist_name, user_id, photo_url, coins')
-      .not('artist_name', 'is', null)
-      .gt('coins', 0)
-      .order('coins', { ascending: false })
-      .limit(10);
-
-    if (error || !data || !data.length) {
-      sectionEl.classList.add('hidden');
-      return;
-    }
-
-    const items = data.filter(p => String(p.artist_name || '').trim());
-    if (!items.length) { sectionEl.classList.add('hidden'); return; }
-
-    listEl.innerHTML = items.map((p, i) => {
-      const name = escapeHtml(String(p.artist_name || '').trim());
-      const coins = Number(p.coins || 0).toLocaleString();
-      const href = p.user_id ? `artist.html?user_id=${encodeURIComponent(p.user_id)}` : '#';
-      const avatarHtml = p.photo_url
-        ? `<img class="news-feed-avatar" src="${escapeHtml(p.photo_url)}" alt="${name}" />`
-        : `<span class="news-feed-avatar-fallback">${escapeHtml((p.artist_name || 'A').charAt(0).toUpperCase())}</span>`;
-
-      return `<div class="news-feed-item top-supporter-item">
-        <a class="news-feed-item-avatar" href="${href}">${avatarHtml}</a>
-        <div class="news-feed-item-body">
-          <span class="top-supporter-rank">${i + 1}</span>
-          <a class="news-feed-name" href="${href}">${name}</a>
-          <span class="top-supporter-coins">${coins} sec</span>
-        </div>
-      </div>`;
-    }).join('');
-
-    sectionEl.classList.remove('hidden');
-  } catch (err) {
-    console.error('loadTopSupporters error:', err);
-  }
-}
 
 function formatNumber(value) {
   return Number(value || 0).toLocaleString();
@@ -1066,7 +1018,6 @@ async function refreshAuthUI() {
     updateInteractiveControls();
     resetLike();
     await loadNewsFeed();
-    loadTopSupporters().catch(err => console.error('topSupporters error:', err));
     updateJoinButtonHref();
     return user;
   } catch (err) {
@@ -1188,16 +1139,24 @@ async function loadTrackNationalities() {
 
     const { data, error } = await supabaseClient
       .from("public_artist_profiles")
-      .select("user_id, nationality")
+      .select("user_id, nationality, photo_url")
       .in("user_id", userIds);
 
     if (error || !data) return;
 
-    const nationalityByUserId = new Map(data.map((row) => [String(row.user_id), row.nationality || null]));
-    state.tracks = state.tracks.map((track) => ({
-      ...track,
-      nationality: track.nationality || nationalityByUserId.get(String(track.user_id || "")) || null
-    }));
+    const profileByUserId = new Map(data.map((row) => [String(row.user_id), row]));
+    state.tracks = state.tracks.map((track) => {
+      const profile = profileByUserId.get(String(track.user_id || ""));
+      return {
+        ...track,
+        nationality: track.nationality || profile?.nationality || null,
+        photo_url: track.photo_url || profile?.photo_url || null,
+      };
+    });
+
+    // Herrender huidige track nu nationality + photo_url beschikbaar zijn
+    const currentTrack = state.tracks[state.current ?? 0];
+    if (currentTrack) renderArtist(currentTrack);
   } catch (err) {
     console.error("loadTrackNationalities error:", err);
   }
@@ -1206,6 +1165,7 @@ async function loadTrackNationalities() {
 function renderArtist(track) {
   if (!els.artistEl) return;
 
+  // Foto links van naam
   const photoHtml = track.photo_url
     ? `<img class="artist-player-photo" src="${escapeHtml(track.photo_url)}" alt="" aria-hidden="true" />`
     : `<span class="artist-player-photo artist-player-photo--fallback">${escapeHtml((track.artist || 'A').charAt(0).toUpperCase())}</span>`;
@@ -1213,26 +1173,20 @@ function renderArtist(track) {
   const nameHtml = `<span class="artist-name-text">${escapeHtml(track.artist)}</span>`;
 
   if (track.user_id) {
-    els.artistEl.outerHTML = `
-      <a id="artist" class="artist-link" href="artist.html?user_id=${encodeURIComponent(track.user_id)}">
-        ${photoHtml}${nameHtml}
-      </a>
-    `;
-    els.artistEl = document.getElementById("artist");
+    els.artistEl.outerHTML = `<a id="artist" class="artist-link" href="artist.html?user_id=${encodeURIComponent(track.user_id)}">${photoHtml}${nameHtml}</a>`;
   } else {
     els.artistEl.outerHTML = `<span id="artist" class="artist-inline">${photoHtml}${nameHtml}</span>`;
-    els.artistEl = document.getElementById("artist");
   }
+  els.artistEl = document.getElementById("artist");
 
-  // Vlag + genre in artistWrap als meta-rij
+  // Vlag + genre als badges onder de naam in artistWrap
   if (els.artistWrapEl) {
-    const flagHtml = getFlagMarkup(track.nationality);
+    const flagEmoji = getFlagEmoji(track.nationality);
     const genreLabel = getTrackGenreLabel(track);
     const metaItems = [];
-    if (flagHtml) metaItems.push(`<span class="artist-meta-badge">${flagHtml}</span>`);
+    if (flagEmoji) metaItems.push(`<span class="artist-meta-badge">${flagEmoji} ${escapeHtml(track.nationality || '')}</span>`);
     if (genreLabel) metaItems.push(`<span class="artist-meta-badge artist-meta-genre">${escapeHtml(genreLabel)}</span>`);
 
-    // Verwijder bestaande meta rij als die er al is
     const existingMeta = els.artistWrapEl.querySelector('.artist-meta-row');
     if (existingMeta) existingMeta.remove();
 
