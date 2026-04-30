@@ -144,8 +144,10 @@ function getTrackGenreLabel(track) {
 }
 
 function setTrackGenre(track) {
-  // Genre wordt getoond als badge in de artist meta-rij — verberg het naast de titel
-  if (els.trackGenreEl) setHidden(els.trackGenreEl, true);
+  const label = getTrackGenreLabel(track);
+  if (!els.trackGenreEl) return;
+  setText(els.trackGenreEl, label);
+  setHidden(els.trackGenreEl, !label);
 }
 
 function escapeFeedHtml(value) {
@@ -363,6 +365,48 @@ async function loadNewsFeed() {
 }
 
 
+
+async function loadTopSupporters() {
+  const listEl = document.getElementById('topSupportersList');
+  const sectionEl = document.getElementById('topSupportersSection');
+  if (!listEl || !sectionEl) return;
+
+  try {
+    const { data, error } = await supabaseClient
+      .from('profiles')
+      .select('artist_name, user_id, photo_url, coins')
+      .not('artist_name', 'is', null)
+      .gt('coins', 0)
+      .order('coins', { ascending: false })
+      .limit(10);
+
+    if (error || !data || !data.length) { sectionEl.classList.add('hidden'); return; }
+
+    const items = data.filter(p => String(p.artist_name || '').trim());
+    if (!items.length) { sectionEl.classList.add('hidden'); return; }
+
+    listEl.innerHTML = items.map((p, i) => {
+      const name = escapeHtml(String(p.artist_name || '').trim());
+      const coins = Number(p.coins || 0).toLocaleString();
+      const href = p.user_id ? `artist.html?user_id=${encodeURIComponent(p.user_id)}` : '#';
+      const avatarHtml = p.photo_url
+        ? `<img class="news-feed-avatar" src="${escapeHtml(p.photo_url)}" alt="${name}" />`
+        : `<span class="news-feed-avatar-fallback">${escapeHtml((p.artist_name || 'A').charAt(0).toUpperCase())}</span>`;
+      return `<div class="news-feed-item top-supporter-item">
+        <a class="news-feed-item-avatar" href="${href}">${avatarHtml}</a>
+        <div class="news-feed-item-body">
+          <span class="top-supporter-rank">${i + 1}</span>
+          <a class="news-feed-name" href="${href}">${name}</a>
+          <span class="top-supporter-coins">${coins} sec</span>
+        </div>
+      </div>`;
+    }).join('');
+
+    sectionEl.classList.remove('hidden');
+  } catch (err) {
+    console.error('loadTopSupporters error:', err);
+  }
+}
 
 function formatNumber(value) {
   return Number(value || 0).toLocaleString();
@@ -1018,6 +1062,7 @@ async function refreshAuthUI() {
     updateInteractiveControls();
     resetLike();
     await loadNewsFeed();
+    loadTopSupporters().catch(err => console.error('topSupporters error:', err));
     updateJoinButtonHref();
     return user;
   } catch (err) {
@@ -1139,24 +1184,16 @@ async function loadTrackNationalities() {
 
     const { data, error } = await supabaseClient
       .from("public_artist_profiles")
-      .select("user_id, nationality, photo_url")
+      .select("user_id, nationality")
       .in("user_id", userIds);
 
     if (error || !data) return;
 
-    const profileByUserId = new Map(data.map((row) => [String(row.user_id), row]));
-    state.tracks = state.tracks.map((track) => {
-      const profile = profileByUserId.get(String(track.user_id || ""));
-      return {
-        ...track,
-        nationality: track.nationality || profile?.nationality || null,
-        photo_url: track.photo_url || profile?.photo_url || null,
-      };
-    });
-
-    // Herrender huidige track nu nationality + photo_url beschikbaar zijn
-    const currentTrack = state.tracks[state.current ?? 0];
-    if (currentTrack) renderArtist(currentTrack);
+    const nationalityByUserId = new Map(data.map((row) => [String(row.user_id), row.nationality || null]));
+    state.tracks = state.tracks.map((track) => ({
+      ...track,
+      nationality: track.nationality || nationalityByUserId.get(String(track.user_id || "")) || null
+    }));
   } catch (err) {
     console.error("loadTrackNationalities error:", err);
   }
@@ -1179,22 +1216,15 @@ function renderArtist(track) {
   }
   els.artistEl = document.getElementById("artist");
 
-  // Vlag + genre als badges onder de naam in artistWrap
-  if (els.artistWrapEl) {
+  // Nationaliteitsbadge in tune-title-row (zelfde stijl als tune-genre)
+  const natBadge = document.getElementById('nationalityBadge');
+  if (natBadge) {
     const flagEmoji = getFlagEmoji(track.nationality);
-    const genreLabel = getTrackGenreLabel(track);
-    const metaItems = [];
-    if (flagEmoji) metaItems.push(`<span class="artist-meta-badge">${flagEmoji} ${escapeHtml(track.nationality || '')}</span>`);
-    if (genreLabel) metaItems.push(`<span class="artist-meta-badge artist-meta-genre">${escapeHtml(genreLabel)}</span>`);
-
-    const existingMeta = els.artistWrapEl.querySelector('.artist-meta-row');
-    if (existingMeta) existingMeta.remove();
-
-    if (metaItems.length) {
-      const metaRow = document.createElement('div');
-      metaRow.className = 'artist-meta-row';
-      metaRow.innerHTML = metaItems.join('');
-      els.artistWrapEl.appendChild(metaRow);
+    if (flagEmoji) {
+      natBadge.textContent = flagEmoji;
+      natBadge.classList.remove('hidden');
+    } else {
+      natBadge.classList.add('hidden');
     }
   }
 }
