@@ -5979,9 +5979,7 @@ body.is-logged-out #conceptSection {
 }
 
 
-/* ══════════════════════════════════════════════════
-   Artist player: foto + naam + meta-rij (vlag+genre)
-   ══════════════════════════════════════════════════ */
+/* ── Artist player: foto + naam + meta-rij ──────────────────── */
 .artist-link,
 .artist-inline {
   display: inline-flex;
@@ -5997,6 +5995,7 @@ body.is-logged-out #conceptSection {
   height: 44px;
   border-radius: 50%;
   object-fit: cover;
+  aspect-ratio: 1 / 1;
   border: 1.5px solid rgba(212,175,55,0.35);
   flex-shrink: 0;
   display: inline-block;
@@ -6018,7 +6017,6 @@ body.is-logged-out #conceptSection {
   font-family: 'Space Grotesk', sans-serif;
 }
 
-/* Meta-rij: vlag + genre badges */
 .artist-meta-row {
   display: flex;
   align-items: center;
@@ -6032,7 +6030,7 @@ body.is-logged-out #conceptSection {
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  padding: 2px 10px;
+  padding: 3px 10px;
   border-radius: 999px;
   border: 1px solid rgba(255,255,255,0.12);
   background: rgba(255,255,255,0.05);
@@ -6043,14 +6041,12 @@ body.is-logged-out #conceptSection {
 }
 
 .artist-meta-genre {
-  color: rgba(212,175,55,0.85);
-  border-color: rgba(212,175,55,0.2);
-  background: rgba(212,175,55,0.06);
+  color: rgba(212,175,55,0.9);
+  border-color: rgba(212,175,55,0.25);
+  background: rgba(212,175,55,0.07);
 }
 
-/* ══════════════════════════════════════════════════
-   Top Supporters sectie
-   ══════════════════════════════════════════════════ */
+/* Top Supporters */
 .top-supporters-section {
   margin-top: 18px !important;
 }
@@ -6092,8 +6088,4 @@ body.is-logged-out #conceptSection {
   text-overflow: ellipsis;
   flex: 1;
   min-width: 0;
-}
-
-.top-supporter-item .news-feed-name:hover {
-  color: #fff;
 }
