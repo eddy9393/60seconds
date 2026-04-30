@@ -381,7 +381,6 @@ async function loadTopSupporters() {
       .limit(10);
 
     if (error || !data || !data.length) { sectionEl.classList.add('hidden'); return; }
-
     const items = data.filter(p => String(p.artist_name || '').trim());
     if (!items.length) { sectionEl.classList.add('hidden'); return; }
 
@@ -1062,7 +1061,7 @@ async function refreshAuthUI() {
     updateInteractiveControls();
     resetLike();
     await loadNewsFeed();
-    loadTopSupporters().catch(err => console.error('topSupporters error:', err));
+    loadTopSupporters().catch(err => console.error(err));
     updateJoinButtonHref();
     return user;
   } catch (err) {
@@ -1184,16 +1183,24 @@ async function loadTrackNationalities() {
 
     const { data, error } = await supabaseClient
       .from("public_artist_profiles")
-      .select("user_id, nationality")
+      .select("user_id, nationality, photo_url")
       .in("user_id", userIds);
 
     if (error || !data) return;
 
-    const nationalityByUserId = new Map(data.map((row) => [String(row.user_id), row.nationality || null]));
-    state.tracks = state.tracks.map((track) => ({
-      ...track,
-      nationality: track.nationality || nationalityByUserId.get(String(track.user_id || "")) || null
-    }));
+    const profileByUserId = new Map(data.map((row) => [String(row.user_id), row]));
+    state.tracks = state.tracks.map((track) => {
+      const profile = profileByUserId.get(String(track.user_id || ""));
+      return {
+        ...track,
+        nationality: track.nationality || profile?.nationality || null,
+        photo_url: track.photo_url || profile?.photo_url || null,
+      };
+    });
+
+    // Herrender huidige track nu data beschikbaar is
+    const currentTrack = state.tracks[state.current ?? 0];
+    if (currentTrack) renderArtist(currentTrack);
   } catch (err) {
     console.error("loadTrackNationalities error:", err);
   }
@@ -1216,7 +1223,7 @@ function renderArtist(track) {
   }
   els.artistEl = document.getElementById("artist");
 
-  // Nationaliteitsbadge in tune-title-row (zelfde stijl als tune-genre)
+  // Vlag badge in tune-title-row NA genre (zelfde tune-genre stijl)
   const natBadge = document.getElementById('nationalityBadge');
   if (natBadge) {
     const flagEmoji = getFlagEmoji(track.nationality);
