@@ -1237,9 +1237,11 @@ function renderArtist(track) {
 }
 
 function setTrackUI(track) {
-  setText(els.titleEl, track.title || "Untitled");
-  renderArtist(track);
-  setTrackGenre(track);
+  // Gebruik de verrijkte track uit state.tracks (bevat photo_url + nationality)
+  const enrichedTrack = state.tracks.find(t => t.id === track.id) || track;
+  setText(els.titleEl, enrichedTrack.title || "Untitled");
+  renderArtist(enrichedTrack);
+  setTrackGenre(enrichedTrack);
 
   state.currentPreviewStart = getTrackPreviewStart(track);
   state.currentPreviewDuration = getTrackPreviewDuration(track);
