@@ -366,6 +366,52 @@ async function loadNewsFeed() {
 
 
 
+async function loadTopSupporters() {
+  const listEl = document.getElementById('topSupportersList');
+  const sectionEl = document.getElementById('topSupportersSection');
+  if (!listEl || !sectionEl) return;
+
+  try {
+    const { data, error } = await supabaseClient
+      .from('profiles')
+      .select('artist_name, user_id, photo_url, coins')
+      .not('artist_name', 'is', null)
+      .gt('coins', 0)
+      .order('coins', { ascending: false })
+      .limit(10);
+
+    if (error || !data || !data.length) {
+      sectionEl.classList.add('hidden');
+      return;
+    }
+
+    const items = data.filter(p => String(p.artist_name || '').trim());
+    if (!items.length) { sectionEl.classList.add('hidden'); return; }
+
+    listEl.innerHTML = items.map((p, i) => {
+      const name = escapeHtml(String(p.artist_name || '').trim());
+      const coins = Number(p.coins || 0).toLocaleString();
+      const href = p.user_id ? `artist.html?user_id=${encodeURIComponent(p.user_id)}` : '#';
+      const avatarHtml = p.photo_url
+        ? `<img class="news-feed-avatar" src="${escapeHtml(p.photo_url)}" alt="${name}" />`
+        : `<span class="news-feed-avatar-fallback">${escapeHtml((p.artist_name || 'A').charAt(0).toUpperCase())}</span>`;
+
+      return `<div class="news-feed-item top-supporter-item">
+        <a class="news-feed-item-avatar" href="${href}">${avatarHtml}</a>
+        <div class="news-feed-item-body">
+          <span class="top-supporter-rank">${i + 1}</span>
+          <a class="news-feed-name" href="${href}">${name}</a>
+          <span class="top-supporter-coins">${coins} sec</span>
+        </div>
+      </div>`;
+    }).join('');
+
+    sectionEl.classList.remove('hidden');
+  } catch (err) {
+    console.error('loadTopSupporters error:', err);
+  }
+}
+
 function formatNumber(value) {
   return Number(value || 0).toLocaleString();
 }
@@ -1020,6 +1066,7 @@ async function refreshAuthUI() {
     updateInteractiveControls();
     resetLike();
     await loadNewsFeed();
+    loadTopSupporters().catch(err => console.error('topSupporters error:', err));
     updateJoinButtonHref();
     return user;
   } catch (err) {
@@ -1159,18 +1206,43 @@ async function loadTrackNationalities() {
 function renderArtist(track) {
   if (!els.artistEl) return;
 
+  const photoHtml = track.photo_url
+    ? `<img class="artist-player-photo" src="${escapeHtml(track.photo_url)}" alt="" aria-hidden="true" />`
+    : `<span class="artist-player-photo artist-player-photo--fallback">${escapeHtml((track.artist || 'A').charAt(0).toUpperCase())}</span>`;
+
+  const nameHtml = `<span class="artist-name-text">${escapeHtml(track.artist)}</span>`;
+
   if (track.user_id) {
     els.artistEl.outerHTML = `
       <a id="artist" class="artist-link" href="artist.html?user_id=${encodeURIComponent(track.user_id)}">
-        ${getFlagMarkup(track.nationality)}<span class="artist-name-text">${escapeHtml(track.artist)}</span>
+        ${photoHtml}${nameHtml}
       </a>
     `;
     els.artistEl = document.getElementById("artist");
-    return;
+  } else {
+    els.artistEl.outerHTML = `<span id="artist" class="artist-inline">${photoHtml}${nameHtml}</span>`;
+    els.artistEl = document.getElementById("artist");
   }
 
-  els.artistEl.outerHTML = `<span id="artist" class="artist-inline">${getFlagMarkup(track.nationality)}<span class="artist-name-text">${escapeHtml(track.artist)}</span></span>`;
-  els.artistEl = document.getElementById("artist");
+  // Vlag + genre in artistWrap als meta-rij
+  if (els.artistWrapEl) {
+    const flagHtml = getFlagMarkup(track.nationality);
+    const genreLabel = getTrackGenreLabel(track);
+    const metaItems = [];
+    if (flagHtml) metaItems.push(`<span class="artist-meta-badge">${flagHtml}</span>`);
+    if (genreLabel) metaItems.push(`<span class="artist-meta-badge artist-meta-genre">${escapeHtml(genreLabel)}</span>`);
+
+    // Verwijder bestaande meta rij als die er al is
+    const existingMeta = els.artistWrapEl.querySelector('.artist-meta-row');
+    if (existingMeta) existingMeta.remove();
+
+    if (metaItems.length) {
+      const metaRow = document.createElement('div');
+      metaRow.className = 'artist-meta-row';
+      metaRow.innerHTML = metaItems.join('');
+      els.artistWrapEl.appendChild(metaRow);
+    }
+  }
 }
 
 function setTrackUI(track) {
