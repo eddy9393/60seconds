@@ -6034,3 +6034,12 @@ body.is-logged-out #conceptSection {
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
   flex: 1; min-width: 0;
 }
+
+/* ── Artiestnaam kleur = earn-seconds goud ──────── */
+.artist-name-text {
+  color: #f5c84b;
+}
+
+.artist-link:hover .artist-name-text {
+  color: #fff8dc;
+}
