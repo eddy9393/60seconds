@@ -574,6 +574,13 @@ function getDesiredSessionPlayback(session = getSavedRadioSession()) {
 async function restoreExactPlaybackState() {
   if (!state.liveBooted || !els.audio.src) return;
 
+  // Herstel de artist UI (foto + vlag kunnen weg zijn na page navigation)
+  const currentTrack = state.tracks[state.current ?? 0];
+  if (currentTrack && els.artistEl) {
+    renderArtist(currentTrack);
+    setTrackGenre(currentTrack);
+  }
+
   const session = getSavedRadioSession();
   const safeVolume = getSafeVolume(session?.volume ?? localStorage.getItem(RADIO_VOLUME_KEY) ?? DEFAULT_VOLUME);
   els.volume.value = String(safeVolume);
