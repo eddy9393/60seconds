@@ -1,4 +1,5 @@
 @import url("https://api.fontshare.com/v2/css?f[]=clash-display@400,500,600,700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap");
 @import url("buttons.css");
 
 :root {
@@ -35,7 +36,7 @@ body {
   background-repeat: no-repeat, no-repeat, no-repeat;
   background-attachment: fixed, scroll, fixed;
   color: var(--text);
-  font-family: 'Clash Display', sans-serif;
+  font-family: 'Manrope', sans-serif;
   text-align: center;
   padding: 0 18px 44px calc(var(--desktop-rail-width) + 28px);
   -webkit-font-smoothing: antialiased;
@@ -43,7 +44,7 @@ body {
 }
 
 h1, h2, h3 {
-  font-family: 'Clash Display', sans-serif;
+  font-family: 'Space Grotesk', sans-serif;
   margin: 0;
 }
 
@@ -138,7 +139,7 @@ a {
   font-size: 16px;
   font-weight: 700;
   line-height: 1;
-  font-family: 'Clash Display', sans-serif;
+  font-family: 'Space Grotesk', sans-serif;
   letter-spacing: 0.3px;
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
@@ -266,7 +267,7 @@ a {
   color: #fff;
   font-weight: 700;
   font-size: 15px;
-  font-family: 'Clash Display', sans-serif;
+  font-family: 'Space Grotesk', sans-serif;
 }
 
 .account-menu {
@@ -366,7 +367,7 @@ a {
   cursor: pointer;
   overflow: hidden;
   white-space: nowrap;
-  font-family: 'Clash Display', sans-serif;
+  font-family: 'Manrope', sans-serif;
   transition: transform 0.18s ease, opacity 0.18s ease, color 0.18s ease, background 0.18s ease;
   text-align: left;
   position: relative;
@@ -469,7 +470,7 @@ a {
   font-size: 16px;
   font-weight: 500;
   letter-spacing: 0.1px;
-  font-family: 'Clash Display', sans-serif;
+  font-family: 'Manrope', sans-serif;
   opacity: 0;
   transform: translateX(-10px);
   transition:
@@ -533,7 +534,7 @@ a {
 .empty-title {
   font-size: 22px;
   margin-bottom: 10px;
-  font-family: 'Clash Display', sans-serif;
+  font-family: 'Space Grotesk', sans-serif;
 }
 
 .empty-text {
@@ -570,7 +571,7 @@ a {
     0 10px 22px rgba(0,0,0,0.25);
   transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
   backdrop-filter: blur(2px);
-  font-family: 'Clash Display', sans-serif;
+  font-family: 'Manrope', sans-serif;
 }
 
 .metal-btn:hover {
@@ -645,7 +646,7 @@ a {
     font-size: 10px;
     font-weight: 600;
     letter-spacing: 0.2px;
-    font-family: 'Clash Display', sans-serif;
+    font-family: 'Manrope', sans-serif;
     padding: 6px 2px;
     background: transparent;
   }
@@ -948,7 +949,7 @@ a {
 }
 
 .notification-title {
-  font-family: 'Clash Display', sans-serif;
+  font-family: 'Space Grotesk', sans-serif;
   font-size: 20px;
   line-height: 1.2;
   margin: 0;
@@ -975,7 +976,7 @@ a {
   background: rgba(212,175,55,0.12);
   border: 1px solid rgba(212,175,55,0.24);
   color: #f7e6ac;
-  font-family: 'Clash Display', sans-serif;
+  font-family: 'Space Grotesk', sans-serif;
   font-size: 13px;
   font-weight: 700;
 }
@@ -1063,7 +1064,7 @@ a {
   justify-content: center;
   background: linear-gradient(180deg, rgba(140,14,14,0.96), rgba(93,6,6,0.96));
   color: #fff;
-  font-family: 'Clash Display', sans-serif;
+  font-family: 'Space Grotesk', sans-serif;
   font-weight: 700;
   letter-spacing: 0.04em;
 }
@@ -1200,7 +1201,7 @@ a {
 .notification-avatar-fallback {
   background: linear-gradient(180deg, rgba(212,175,55,0.28), rgba(212,175,55,0.12));
   color: #f9e7a3;
-  font-family: 'Clash Display', sans-serif;
+  font-family: 'Space Grotesk', sans-serif;
   font-size: 22px;
   font-weight: 700;
 }
@@ -1227,3 +1228,112 @@ body{background:radial-gradient(circle at 50% -10%,rgba(245,200,75,.12),transpar
 .logo-slogan,.site-slogan,.slogan,[class*="slogan"]{color:#fff!important;text-shadow:0 0 18px rgba(255,255,255,.16)!important}
 .auth-card,.auth-panel-wrap,.hero-card,.panel-card,.dashboard-card,.metrics-card,.priority-card,.store-hero-card,.store-balance-card,.store-card,.empty-card,.state-card,.check-card,.playlist-card,main section:not(.desktop-side-nav-panel){background:rgba(18,18,22,.74)!important;border-color:rgba(255,255,255,.105)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 24px 70px rgba(0,0,0,.50),0 0 42px rgba(245,200,75,.08)!important;backdrop-filter:blur(20px) saturate(1.18)!important;-webkit-backdrop-filter:blur(20px) saturate(1.18)!important}
 .auth-card:hover,.hero-card:hover,.panel-card:hover,.dashboard-card:hover,.store-card:hover,.playlist-card:hover{border-color:rgba(245,200,75,.38)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.10),0 28px 78px rgba(0,0,0,.54),0 0 48px rgba(245,200,75,.15)!important}
+
+/* ============================================================
+   60 Seconds Typography System
+   Clash Display = titles / branding
+   Inter = UI / body / controls
+   ============================================================ */
+:root {
+  --font-display: 'Clash Display', 'Space Grotesk', system-ui, sans-serif;
+  --font-ui: 'Inter', 'Manrope', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+html,
+body {
+  font-family: var(--font-ui) !important;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+}
+
+button,
+input,
+select,
+textarea,
+.auth-link,
+.nav-link,
+.desktop-nav-link,
+.desktop-nav-button,
+.mobile-nav-link,
+.metal-btn,
+.gold-btn {
+  font-family: var(--font-ui) !important;
+}
+
+h1,
+h2,
+h3,
+h4,
+.logo-text,
+.header-logo,
+.auth-title,
+.page-title,
+.section-title,
+.panel-title,
+.card-title,
+.artist-name,
+.artist-title,
+.profile-name,
+.track-title,
+.tune-title,
+.submission-title,
+.concept-title,
+.store-title,
+.stats-title {
+  font-family: var(--font-display) !important;
+  font-weight: 600;
+  letter-spacing: -0.035em;
+}
+
+.auth-kicker,
+.section-kicker,
+.concept-kicker,
+.now-playing,
+.overlay-label,
+.news-feed-kicker,
+.leaderboard-kicker,
+.card-kicker,
+.field-label,
+.meta-label,
+.stat-label,
+.desktop-nav-label,
+.mobile-nav-label,
+.badge,
+.pill,
+.genre-pill,
+.mini-pill {
+  font-family: var(--font-ui) !important;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+p,
+.auth-subtitle,
+.concept-copy,
+.card-copy,
+.profile-bio,
+.artist-bio,
+.track-meta,
+.tune-subtitle,
+.news-feed-item,
+.leaderboard-row,
+.empty-box,
+.status-box {
+  font-family: var(--font-ui) !important;
+  font-weight: 400;
+  line-height: 1.55;
+}
+
+.auth-button,
+.auth-social-button,
+.gold-btn,
+.metal-btn,
+.player-btn,
+.tune-action-btn,
+.skip-btn,
+#skip {
+  font-family: var(--font-ui) !important;
+  font-weight: 600;
+  letter-spacing: 0.015em;
+}

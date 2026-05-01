@@ -1,4 +1,5 @@
 @import url("https://api.fontshare.com/v2/css?f[]=clash-display@400,500,600,700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap");
 :root {
   --gold: #d4af37;
   --gold-2: #f4d77a;
@@ -56,14 +57,14 @@ body {
   background-repeat: no-repeat, no-repeat, no-repeat;
   background-attachment: fixed, scroll, fixed;
   color: var(--text);
-  font-family: 'Clash Display', sans-serif;
+  font-family: 'Manrope', sans-serif;
   padding: 0 18px 44px calc(var(--desktop-rail-width) + 28px);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 h1, h2, h3 {
-  font-family: 'Clash Display', sans-serif;
+  font-family: 'Space Grotesk', sans-serif;
   margin: 0;
 }
 
@@ -161,7 +162,7 @@ select {
   font-size: 16px;
   font-weight: 700;
   line-height: 1;
-  font-family: 'Clash Display', sans-serif;
+  font-family: 'Space Grotesk', sans-serif;
   letter-spacing: 0.3px;
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
@@ -289,7 +290,7 @@ select {
   color: #fff;
   font-weight: 700;
   font-size: 15px;
-  font-family: 'Clash Display', sans-serif;
+  font-family: 'Space Grotesk', sans-serif;
 }
 
 .account-menu {
@@ -390,7 +391,7 @@ select {
   cursor: pointer;
   overflow: hidden;
   white-space: nowrap;
-  font-family: 'Clash Display', sans-serif;
+  font-family: 'Manrope', sans-serif;
   transition: transform 0.18s ease, opacity 0.18s ease, color 0.18s ease, background 0.18s ease;
   text-align: left;
   position: relative;
@@ -493,7 +494,7 @@ select {
   font-size: 16px;
   font-weight: 500;
   letter-spacing: 0.1px;
-  font-family: 'Clash Display', sans-serif;
+  font-family: 'Manrope', sans-serif;
   opacity: 0;
   transform: translateX(-10px);
   transition:
@@ -531,7 +532,7 @@ select {
 }
 
 .section-kicker {
-  font-family: 'Clash Display', sans-serif;
+  font-family: 'Space Grotesk', sans-serif;
   text-transform: uppercase;
   letter-spacing: 2px;
   font-size: 12px;
@@ -580,7 +581,7 @@ select {
   font-size: 12px;
   text-transform: uppercase;
   letter-spacing: 2px;
-  font-family: 'Clash Display', sans-serif;
+  font-family: 'Space Grotesk', sans-serif;
   opacity: 0.82;
 }
 
@@ -659,7 +660,7 @@ select {
   box-shadow:
     inset 0 1px 0 rgba(255,255,255,0.04),
     0 6px 16px rgba(0,0,0,0.18);
-  font-family: 'Clash Display', sans-serif;
+  font-family: 'Manrope', sans-serif;
 }
 
 .field-input,
@@ -792,7 +793,7 @@ select {
   box-shadow:
     inset 0 1px 0 rgba(255,255,255,0.10),
     0 12px 30px rgba(0,0,0,0.36);
-  font-family: 'Clash Display', sans-serif;
+  font-family: 'Manrope', sans-serif;
   cursor: pointer;
   transition: transform 0.16s ease, box-shadow 0.16s ease, filter 0.16s ease;
 }
@@ -823,7 +824,7 @@ select {
     inset 0 2px 0 rgba(255,255,255,0.72),
     inset 0 -2px 3px rgba(0,0,0,0.18),
     0 10px 22px rgba(0,0,0,0.25);
-  font-family: 'Clash Display', sans-serif;
+  font-family: 'Manrope', sans-serif;
   transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
   backdrop-filter: blur(2px);
 }
@@ -1091,7 +1092,7 @@ select {
     font-size: 10px;
     font-weight: 600;
     letter-spacing: 0.2px;
-    font-family: 'Clash Display', sans-serif;
+    font-family: 'Manrope', sans-serif;
     padding: 6px 2px;
     background: transparent;
   }
@@ -1335,7 +1336,7 @@ select {
   text-align: left;
   padding: 0 16px;
   font-size: 14px;
-  font-family: 'Clash Display', sans-serif;
+  font-family: 'Manrope', sans-serif;
   box-shadow: inset 0 1px 0 rgba(255,255,255,0.04), 0 10px 24px rgba(0,0,0,0.18);
 }
 
@@ -1496,7 +1497,7 @@ select {
 }
 
 .cta-empty-state-title {
-  font-family: 'Clash Display', sans-serif;
+  font-family: 'Space Grotesk', sans-serif;
   font-size: clamp(28px, 4.2vw, 42px);
   line-height: 1.08;
   margin: 0 0 14px;
@@ -1694,4 +1695,113 @@ img[class*="avatar"],.avatar,.profile-photo,.artist-photo{box-shadow:0 0 0 1px r
 .submit-main a.gold-btn:hover,
 .submit-main .submit-link:hover {
   color: #ffffff !important;
+}
+
+/* ============================================================
+   60 Seconds Typography System
+   Clash Display = titles / branding
+   Inter = UI / body / controls
+   ============================================================ */
+:root {
+  --font-display: 'Clash Display', 'Space Grotesk', system-ui, sans-serif;
+  --font-ui: 'Inter', 'Manrope', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+html,
+body {
+  font-family: var(--font-ui) !important;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+}
+
+button,
+input,
+select,
+textarea,
+.auth-link,
+.nav-link,
+.desktop-nav-link,
+.desktop-nav-button,
+.mobile-nav-link,
+.metal-btn,
+.gold-btn {
+  font-family: var(--font-ui) !important;
+}
+
+h1,
+h2,
+h3,
+h4,
+.logo-text,
+.header-logo,
+.auth-title,
+.page-title,
+.section-title,
+.panel-title,
+.card-title,
+.artist-name,
+.artist-title,
+.profile-name,
+.track-title,
+.tune-title,
+.submission-title,
+.concept-title,
+.store-title,
+.stats-title {
+  font-family: var(--font-display) !important;
+  font-weight: 600;
+  letter-spacing: -0.035em;
+}
+
+.auth-kicker,
+.section-kicker,
+.concept-kicker,
+.now-playing,
+.overlay-label,
+.news-feed-kicker,
+.leaderboard-kicker,
+.card-kicker,
+.field-label,
+.meta-label,
+.stat-label,
+.desktop-nav-label,
+.mobile-nav-label,
+.badge,
+.pill,
+.genre-pill,
+.mini-pill {
+  font-family: var(--font-ui) !important;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+p,
+.auth-subtitle,
+.concept-copy,
+.card-copy,
+.profile-bio,
+.artist-bio,
+.track-meta,
+.tune-subtitle,
+.news-feed-item,
+.leaderboard-row,
+.empty-box,
+.status-box {
+  font-family: var(--font-ui) !important;
+  font-weight: 400;
+  line-height: 1.55;
+}
+
+.auth-button,
+.auth-social-button,
+.gold-btn,
+.metal-btn,
+.player-btn,
+.tune-action-btn,
+.skip-btn,
+#skip {
+  font-family: var(--font-ui) !important;
+  font-weight: 600;
+  letter-spacing: 0.015em;
 }

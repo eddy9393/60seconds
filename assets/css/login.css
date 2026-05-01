@@ -1,4 +1,5 @@
 @import url("https://api.fontshare.com/v2/css?f[]=clash-display@400,500,600,700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap");
 @import url("buttons.css");
 
 :root {
@@ -57,14 +58,14 @@ body {
   background-repeat: no-repeat, no-repeat, no-repeat;
   background-attachment: fixed, scroll, fixed;
   color: var(--text);
-  font-family: 'Clash Display', sans-serif;
+  font-family: 'Manrope', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   padding: 0 18px 44px calc(var(--desktop-rail-width) + 28px);
 }
 
 h1, h2, h3 {
-  font-family: 'Clash Display', sans-serif;
+  font-family: 'Space Grotesk', sans-serif;
 }
 
 a {
@@ -158,7 +159,7 @@ img {
   font-size: 16px;
   font-weight: 700;
   line-height: 1;
-  font-family: 'Clash Display', sans-serif;
+  font-family: 'Space Grotesk', sans-serif;
   letter-spacing: 0.3px;
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
@@ -257,7 +258,7 @@ img {
   cursor: pointer;
   overflow: hidden;
   white-space: nowrap;
-  font-family: 'Clash Display', sans-serif;
+  font-family: 'Manrope', sans-serif;
   transition: transform 0.18s ease, opacity 0.18s ease, color 0.18s ease, background 0.18s ease;
   text-align: left;
   position: relative;
@@ -345,7 +346,7 @@ img {
   font-size: 16px;
   font-weight: 500;
   letter-spacing: 0.1px;
-  font-family: 'Clash Display', sans-serif;
+  font-family: 'Manrope', sans-serif;
   opacity: 0;
   transform: translateX(-10px);
   transition:
@@ -394,7 +395,7 @@ img {
 
 .auth-kicker {
   text-align: center;
-  font-family: 'Clash Display', sans-serif;
+  font-family: 'Space Grotesk', sans-serif;
   text-transform: uppercase;
   letter-spacing: 2px;
   font-size: 12px;
@@ -449,7 +450,7 @@ img {
   color: var(--text);
   padding: 0 16px;
   font-size: 15px;
-  font-family: 'Clash Display', sans-serif;
+  font-family: 'Manrope', sans-serif;
   outline: none;
   transition: border-color 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
   box-shadow: inset 0 1px 0 rgba(255,255,255,0.03);
@@ -475,7 +476,7 @@ img {
   border: 1px solid rgba(255, 230, 150, 0.38);
   border-radius: 999px;
   cursor: pointer;
-  font-family: 'Clash Display', sans-serif;
+  font-family: 'Manrope', sans-serif;
   font-size: 15px;
   font-weight: 700;
   letter-spacing: 0.2px;
@@ -599,7 +600,7 @@ img {
     font-size: 10px;
     font-weight: 600;
     letter-spacing: 0.2px;
-    font-family: 'Clash Display', sans-serif;
+    font-family: 'Manrope', sans-serif;
     padding: 6px 2px;
     background: transparent;
   }
@@ -861,7 +862,7 @@ body{background:radial-gradient(circle at 50% -10%,rgba(245,200,75,.12),transpar
   -webkit-backdrop-filter: blur(12px);
   text-shadow: none !important;
   cursor: pointer;
-  font-family: 'Clash Display', sans-serif;
+  font-family: 'Space Grotesk', sans-serif;
   font-size: 15px;
   font-weight: 700;
   letter-spacing: 0.08em;
@@ -904,7 +905,7 @@ body{background:radial-gradient(circle at 50% -10%,rgba(245,200,75,.12),transpar
   font-size: 12px;
   letter-spacing: 0.16em;
   text-transform: uppercase;
-  font-family: 'Clash Display', sans-serif;
+  font-family: 'Space Grotesk', sans-serif;
 }
 
 .auth-social-divider::before,
@@ -953,50 +954,111 @@ body{background:radial-gradient(circle at 50% -10%,rgba(245,200,75,.12),transpar
   line-height: 1;
 }
 
-
 /* ============================================================
-   Login sidebar nav-icon-mask visibility fix
-   login.html uses .nav-icon-mask spans for sidebar icons.
-   This restores only those icon masks and does not touch auth buttons.
+   60 Seconds Typography System
+   Clash Display = titles / branding
+   Inter = UI / body / controls
    ============================================================ */
-.nav-icon-mask {
-  width: 100%;
-  height: 100%;
-  display: block;
-  background:
-    linear-gradient(180deg, #fff3b6 0%, #f4d77a 20%, #d4af37 52%, #b98714 76%, #7d5a10 100%);
-  -webkit-mask-image: var(--icon-url);
-  mask-image: var(--icon-url);
-  -webkit-mask-repeat: no-repeat;
-  mask-repeat: no-repeat;
-  -webkit-mask-position: center;
-  mask-position: center;
-  -webkit-mask-size: contain;
-  mask-size: contain;
-  filter: drop-shadow(0 2px 10px rgba(212,175,55,0.18));
-  opacity: 0.98;
-  transition: transform 0.18s ease, filter 0.18s ease, opacity 0.18s ease, background 0.18s ease;
-  pointer-events: none;
-  user-select: none;
+:root {
+  --font-display: 'Clash Display', 'Space Grotesk', system-ui, sans-serif;
+  --font-ui: 'Inter', 'Manrope', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
 
-.desktop-nav-link:hover .nav-icon-mask,
-.desktop-nav-button:hover .nav-icon-mask,
-.mobile-nav-link:hover .nav-icon-mask {
-  transform: scale(1.04);
-  opacity: 1;
-  background:
-    linear-gradient(180deg, #fff7cf 0%, #ffe08d 18%, #f4d77a 36%, #d4af37 58%, #b98714 80%, #7d5a10 100%);
-  filter: drop-shadow(0 2px 11px rgba(212,175,55,0.22));
+html,
+body {
+  font-family: var(--font-ui) !important;
+  font-weight: 400;
+  letter-spacing: -0.01em;
 }
 
-.desktop-nav-link.active .nav-icon-mask,
-.desktop-nav-button.active .nav-icon-mask,
-.mobile-nav-link.active .nav-icon-mask {
-  background:
-    linear-gradient(180deg, #fff8d9 0%, #ffe08d 18%, #f4d77a 36%, #d4af37 58%, #b98714 80%, #7d5a10 100%);
-  filter:
-    drop-shadow(0 2px 12px rgba(212,175,55,0.24))
-    drop-shadow(0 0 15px rgba(212,175,55,0.20));
+button,
+input,
+select,
+textarea,
+.auth-link,
+.nav-link,
+.desktop-nav-link,
+.desktop-nav-button,
+.mobile-nav-link,
+.metal-btn,
+.gold-btn {
+  font-family: var(--font-ui) !important;
 }
 
+h1,
+h2,
+h3,
+h4,
+.logo-text,
+.header-logo,
+.auth-title,
+.page-title,
+.section-title,
+.panel-title,
+.card-title,
+.artist-name,
+.artist-title,
+.profile-name,
+.track-title,
+.tune-title,
+.submission-title,
+.concept-title,
+.store-title,
+.stats-title {
+  font-family: var(--font-display) !important;
+  font-weight: 600;
+  letter-spacing: -0.035em;
+}
+
+.auth-kicker,
+.section-kicker,
+.concept-kicker,
+.now-playing,
+.overlay-label,
+.news-feed-kicker,
+.leaderboard-kicker,
+.card-kicker,
+.field-label,
+.meta-label,
+.stat-label,
+.desktop-nav-label,
+.mobile-nav-label,
+.badge,
+.pill,
+.genre-pill,
+.mini-pill {
+  font-family: var(--font-ui) !important;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+p,
+.auth-subtitle,
+.concept-copy,
+.card-copy,
+.profile-bio,
+.artist-bio,
+.track-meta,
+.tune-subtitle,
+.news-feed-item,
+.leaderboard-row,
+.empty-box,
+.status-box {
+  font-family: var(--font-ui) !important;
+  font-weight: 400;
+  line-height: 1.55;
+}
+
+.auth-button,
+.auth-social-button,
+.gold-btn,
+.metal-btn,
+.player-btn,
+.tune-action-btn,
+.skip-btn,
+#skip {
+  font-family: var(--font-ui) !important;
+  font-weight: 600;
+  letter-spacing: 0.015em;
+}

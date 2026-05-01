@@ -1,4 +1,5 @@
 @import url("https://api.fontshare.com/v2/css?f[]=clash-display@400,500,600,700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap");
 /* =============================================================
    buttons.css — v1
    Eén bron van waarheid voor alle knoppen op alle pagina's.
@@ -30,7 +31,7 @@
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  font-family: 'Clash Display', sans-serif;
+  font-family: 'Manrope', sans-serif;
   font-size: 14px;
   font-weight: 500;
   text-decoration: none;
@@ -98,7 +99,7 @@
     0 10px 22px rgba(0,0,0,0.25);
   transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
   backdrop-filter: blur(2px);
-  font-family: 'Clash Display', sans-serif;
+  font-family: 'Manrope', sans-serif;
 }
 
 .metal-btn:hover {
@@ -124,4 +125,113 @@
   align-items: center;
   gap: 10px;
   flex-wrap: wrap;
+}
+
+/* ============================================================
+   60 Seconds Typography System
+   Clash Display = titles / branding
+   Inter = UI / body / controls
+   ============================================================ */
+:root {
+  --font-display: 'Clash Display', 'Space Grotesk', system-ui, sans-serif;
+  --font-ui: 'Inter', 'Manrope', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+html,
+body {
+  font-family: var(--font-ui) !important;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+}
+
+button,
+input,
+select,
+textarea,
+.auth-link,
+.nav-link,
+.desktop-nav-link,
+.desktop-nav-button,
+.mobile-nav-link,
+.metal-btn,
+.gold-btn {
+  font-family: var(--font-ui) !important;
+}
+
+h1,
+h2,
+h3,
+h4,
+.logo-text,
+.header-logo,
+.auth-title,
+.page-title,
+.section-title,
+.panel-title,
+.card-title,
+.artist-name,
+.artist-title,
+.profile-name,
+.track-title,
+.tune-title,
+.submission-title,
+.concept-title,
+.store-title,
+.stats-title {
+  font-family: var(--font-display) !important;
+  font-weight: 600;
+  letter-spacing: -0.035em;
+}
+
+.auth-kicker,
+.section-kicker,
+.concept-kicker,
+.now-playing,
+.overlay-label,
+.news-feed-kicker,
+.leaderboard-kicker,
+.card-kicker,
+.field-label,
+.meta-label,
+.stat-label,
+.desktop-nav-label,
+.mobile-nav-label,
+.badge,
+.pill,
+.genre-pill,
+.mini-pill {
+  font-family: var(--font-ui) !important;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+p,
+.auth-subtitle,
+.concept-copy,
+.card-copy,
+.profile-bio,
+.artist-bio,
+.track-meta,
+.tune-subtitle,
+.news-feed-item,
+.leaderboard-row,
+.empty-box,
+.status-box {
+  font-family: var(--font-ui) !important;
+  font-weight: 400;
+  line-height: 1.55;
+}
+
+.auth-button,
+.auth-social-button,
+.gold-btn,
+.metal-btn,
+.player-btn,
+.tune-action-btn,
+.skip-btn,
+#skip {
+  font-family: var(--font-ui) !important;
+  font-weight: 600;
+  letter-spacing: 0.015em;
 }
