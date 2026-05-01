@@ -420,5 +420,31 @@
 
   <script src="assets/js/waveform.js"></script>
 
+  <script>
+    (function() {
+      function setRadioBgHeight() {
+        var bg = document.getElementById('radioBg');
+        if (!bg) return;
+        // Meet de top van de featured artist sectie
+        var fa = document.getElementById('featuredArtistSection');
+        if (fa) {
+          var rect = fa.getBoundingClientRect();
+          var scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+          bg.style.height = (rect.top + scrollTop) + 'px';
+        } else {
+          // Fallback: header + radio shell hoogte
+          bg.style.height = '520px';
+        }
+      }
+      // Zet hoogte na load en na resize
+      window.addEventListener('load', setRadioBgHeight);
+      window.addEventListener('resize', setRadioBgHeight);
+      // Zet ook direct op DOMContentLoaded
+      document.addEventListener('DOMContentLoaded', setRadioBgHeight);
+      // En na een korte delay voor dynamische content
+      setTimeout(setRadioBgHeight, 800);
+      setTimeout(setRadioBgHeight, 2000);
+    })();
+  </script>
 </body>
 </html>
