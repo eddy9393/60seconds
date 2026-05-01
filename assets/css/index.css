@@ -105,6 +105,7 @@ html {
 body {
   margin: 0;
   min-height: 100vh;
+  position: relative;
   background:
     linear-gradient(180deg, rgba(7, 7, 7, 0.46) 0%, rgba(7, 7, 7, 0.72) 45%, rgba(7, 7, 7, 0.84) 100%),
     radial-gradient(circle at top, rgba(212, 175, 55, 0.14), transparent 30%),
@@ -6052,15 +6053,7 @@ body.is-logged-out #conceptSection {
   width: 100vw;
   /* hoogte wordt via JS gezet */
   min-height: 400px;
-  background-image:
-    linear-gradient(
-      180deg,
-      rgba(8,8,8,0.18) 0%,
-      rgba(8,8,8,0.32) 55%,
-      rgba(8,8,8,0.82) 85%,
-      rgba(8,8,8,1.00) 100%
-    ),
-    url('icons/background-radio.jpg');
+  /* background-image wordt via inline style gezet (pad relatief aan HTML) */
   background-size: cover;
   background-position: center top;
   background-repeat: no-repeat;
