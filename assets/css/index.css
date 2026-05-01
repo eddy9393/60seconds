@@ -6083,16 +6083,3 @@ body.is-logged-out #conceptSection {
   display: none !important;
   content: none !important;
 }
-
-
-/* HEADER FULL BLACK */
-header, .header, .topbar {
-  background: #000 !important;
-}
-
-/* REMOVE COIN CONTAINER STYLING */
-.coin-container, .coins-container, .coin-box {
-  background: transparent !important;
-  border: none !important;
-  box-shadow: none !important;
-}
