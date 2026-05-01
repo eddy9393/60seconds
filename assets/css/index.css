@@ -106,13 +106,18 @@ body {
   margin: 0;
   min-height: 100vh;
   background:
-    linear-gradient(180deg, rgba(7, 7, 7, 0.46) 0%, rgba(7, 7, 7, 0.72) 45%, rgba(7, 7, 7, 0.84) 100%),
-    radial-gradient(circle at top, rgba(212, 175, 55, 0.14), transparent 30%),
+    linear-gradient(180deg,
+      rgba(7,7,7,0.10) 0%,
+      rgba(7,7,7,0.30) 50%,
+      rgba(7,7,7,0.88) 78%,
+      rgba(7,7,7,1.00) 92%
+    ),
+    url("../../icons/background-radio.jpg"),
     url("../../bg-mobile-final-1080x1920.webp");
-  background-size: cover, auto, cover;
-  background-position: center top, center top, center center;
+  background-size: 100% 620px, 100% 620px, cover;
+  background-position: top center, top center, center center;
   background-repeat: no-repeat, no-repeat, no-repeat;
-  background-attachment: fixed, scroll, fixed;
+  background-attachment: scroll, scroll, fixed;
   color: var(--text);
   font-family: 'Manrope', sans-serif;
   text-align: center;
