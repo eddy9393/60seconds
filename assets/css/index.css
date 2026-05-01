@@ -193,17 +193,10 @@ img {
   padding: 0 10px;
   border-radius: 12px;
   border: none;
-  background: none;
-  backdrop-filter: none;
-  -webkit-backdrop-filter: none;
-  box-shadow: none;
-  /* old background: */
-    linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02)),
-    linear-gradient(180deg, rgba(14,14,14,0.88), rgba(10,10,10,0.94));
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.05),
-    0 10px 22px rgba(0,0,0,0.22);
-  backdrop-filter: blur(6px);
+  background: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  box-shadow: none !important;
   white-space: nowrap;
   flex-shrink: 0;
 }
@@ -6095,12 +6088,20 @@ body.is-logged-out #conceptSection {
 
 .header-center {
   position: absolute;
+  /* Centreer het logo boven de radio player zone */
+  /* Radio player begint op calc(--desktop-rail-width + 68px) = ~248px */
   left: calc(var(--desktop-rail-width, 180px) + 68px);
   right: 0;
   display: flex;
   align-items: center;
   justify-content: center;
   pointer-events: none;
+}
+
+/* Correctie voor witruimte in logo afbeelding:
+   visueel centrum zit op 50% breedte → verschuif naar links */
+.header-center .header-logo {
+  transform: translateX(-25%);
 }
 
 .header-center * {
