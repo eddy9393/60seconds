@@ -6052,8 +6052,11 @@ body.is-logged-out #conceptSection {
   left: 0;
   width: 100vw;
   /* hoogte wordt via JS gezet */
-  min-height: 400px;
+  min-height: 520px;
   /* background-image wordt via inline style gezet (pad relatief aan HTML) */
+  background-size: cover;
+  background-position: center top;
+  background-repeat: no-repeat;
   background-size: cover;
   background-position: center top;
   background-repeat: no-repeat;
