@@ -143,15 +143,17 @@ img {
   width: 100%;
   max-width: none;
   margin: 0;
-  padding-top: 8px;
+  padding-top: 82px;
   padding-right: 0;
 }
 
 .header-wrap {
-  position: sticky;
+  position: fixed;
   top: 0;
+  left: 0;
+  right: 0;
+  width: 100vw;
   z-index: 125;
-  width: 100%;
   background: #000000;
   backdrop-filter: none;
 }
