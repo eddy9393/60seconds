@@ -425,25 +425,27 @@
       function setRadioBgHeight() {
         var bg = document.getElementById('radioBg');
         if (!bg) return;
-        // Meet de top van de featured artist sectie
-        var fa = document.getElementById('featuredArtistSection');
-        if (fa) {
-          var rect = fa.getBoundingClientRect();
+        // Gebruik radio-stage (altijd zichtbaar) als hoogte referentie
+        // hoogte = positie van radio-stage bottom t.o.v. pagina top
+        var stage = document.querySelector('.radio-stage');
+        var header = document.querySelector('.header-wrap');
+        if (stage) {
+          var stageRect = stage.getBoundingClientRect();
           var scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-          bg.style.height = (rect.top + scrollTop) + 'px';
+          var bottom = stageRect.top + scrollTop + stageRect.height;
+          bg.style.height = bottom + 'px';
+        } else if (header) {
+          var headerRect = header.getBoundingClientRect();
+          bg.style.height = (headerRect.height + 480) + 'px';
         } else {
-          // Fallback: header + radio shell hoogte
-          bg.style.height = '520px';
+          bg.style.height = '560px';
         }
       }
-      // Zet hoogte na load en na resize
+      document.addEventListener('DOMContentLoaded', setRadioBgHeight);
       window.addEventListener('load', setRadioBgHeight);
       window.addEventListener('resize', setRadioBgHeight);
-      // Zet ook direct op DOMContentLoaded
-      document.addEventListener('DOMContentLoaded', setRadioBgHeight);
-      // En na een korte delay voor dynamische content
-      setTimeout(setRadioBgHeight, 800);
-      setTimeout(setRadioBgHeight, 2000);
+      setTimeout(setRadioBgHeight, 500);
+      setTimeout(setRadioBgHeight, 1500);
     })();
   </script>
 </body>
