@@ -420,33 +420,5 @@
 
   <script src="assets/js/waveform.js"></script>
 
-  <script>
-    (function() {
-      function setRadioBgHeight() {
-        var bg = document.getElementById('radioBg');
-        if (!bg) return;
-        // Gebruik radio-stage (altijd zichtbaar) als hoogte referentie
-        // hoogte = positie van radio-stage bottom t.o.v. pagina top
-        var stage = document.querySelector('.radio-stage');
-        var header = document.querySelector('.header-wrap');
-        if (stage) {
-          var stageRect = stage.getBoundingClientRect();
-          var scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-          var bottom = stageRect.top + scrollTop + stageRect.height;
-          bg.style.height = bottom + 'px';
-        } else if (header) {
-          var headerRect = header.getBoundingClientRect();
-          bg.style.height = (headerRect.height + 480) + 'px';
-        } else {
-          bg.style.height = '560px';
-        }
-      }
-      document.addEventListener('DOMContentLoaded', setRadioBgHeight);
-      window.addEventListener('load', setRadioBgHeight);
-      window.addEventListener('resize', setRadioBgHeight);
-      setTimeout(setRadioBgHeight, 500);
-      setTimeout(setRadioBgHeight, 1500);
-    })();
-  </script>
 </body>
 </html>
