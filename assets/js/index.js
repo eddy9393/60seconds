@@ -77,6 +77,7 @@ const els = {
 const state = {
   tracks: [],
   current: -1,
+  profileCache: {},
   liked: false,
   listenerIdentity: null,
   isLiveActivated: false,
@@ -575,8 +576,10 @@ async function restoreExactPlaybackState() {
   if (!state.liveBooted || !els.audio.src) return;
 
   // Herstel de artist UI (foto + vlag kunnen weg zijn na page navigation)
+  // Haal de DOM referentie opnieuw op want outerHTML-replace maakt hem stale
+  els.artistEl = document.getElementById('artist');
   const currentTrack = state.tracks[state.current ?? 0];
-  if (currentTrack && els.artistEl) {
+  if (currentTrack) {
     renderArtist(currentTrack);
     setTrackGenre(currentTrack);
   }
@@ -1196,6 +1199,17 @@ async function loadTrackNationalities() {
     if (error || !data) return;
 
     const profileByUserId = new Map(data.map((row) => [String(row.user_id), row]));
+
+    // Sla op in permanente cache (overleeft track-changes)
+    data.forEach(row => {
+      if (row.user_id) {
+        state.profileCache[String(row.user_id)] = {
+          photo_url: row.photo_url || null,
+          nationality: row.nationality || null,
+        };
+      }
+    });
+
     state.tracks = state.tracks.map((track) => {
       const profile = profileByUserId.get(String(track.user_id || ""));
       return {
@@ -1216,10 +1230,16 @@ async function loadTrackNationalities() {
 function renderArtist(track) {
   if (!els.artistEl) return;
 
+  // Gebruik altijd de meest recente data: track → state.tracks → profileCache
+  const enriched = state.tracks.find(t => String(t.id) === String(track.id)) || track;
+  const cached = state.profileCache[String(enriched.user_id || '')] || {};
+  const photoUrl = enriched.photo_url || cached.photo_url || null;
+  const nationality = enriched.nationality || cached.nationality || null;
+
   // Foto links van naam
-  const photoHtml = track.photo_url
-    ? `<img class="artist-player-photo" src="${escapeHtml(track.photo_url)}" alt="" aria-hidden="true" />`
-    : `<span class="artist-player-photo artist-player-photo--fallback">${escapeHtml((track.artist || 'A').charAt(0).toUpperCase())}</span>`;
+  const photoHtml = photoUrl
+    ? `<img class="artist-player-photo" src="${escapeHtml(photoUrl)}" alt="" aria-hidden="true" />`
+    : `<span class="artist-player-photo artist-player-photo--fallback">${escapeHtml((enriched.artist || track.artist || 'A').charAt(0).toUpperCase())}</span>`;
 
   const nameHtml = `<span class="artist-name-text">${escapeHtml(track.artist)}</span>`;
 
@@ -1233,7 +1253,7 @@ function renderArtist(track) {
   // Vlag badge in tune-title-row NA genre (zelfde tune-genre stijl)
   const natBadge = document.getElementById('nationalityBadge');
   if (natBadge) {
-    const flagEmoji = getFlagEmoji(track.nationality);
+    const flagEmoji = getFlagEmoji(nationality); // gebruikt al de verrijkte nationality
     if (flagEmoji) {
       natBadge.textContent = flagEmoji;
       natBadge.classList.remove('hidden');
@@ -1241,6 +1261,9 @@ function renderArtist(track) {
       natBadge.classList.add('hidden');
     }
   }
+
+  // Update els.artistEl referentie (outerHTML vervangt het DOM element)
+  els.artistEl = document.getElementById('artist');
 }
 
 function setTrackUI(track) {
