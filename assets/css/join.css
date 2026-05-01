@@ -1,3 +1,4 @@
+@import url("https://api.fontshare.com/v2/css?f[]=clash-display@400,500,600,700&display=swap");
 @import url("buttons.css");
 
 :root {
@@ -34,14 +35,14 @@ body {
   background-repeat: no-repeat, no-repeat, no-repeat;
   background-attachment: fixed, scroll, fixed;
   color: var(--text);
-  font-family: 'Manrope', sans-serif;
+  font-family: 'Clash Display', sans-serif;
   padding: 0 18px 44px calc(var(--desktop-rail-width) + 28px);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 h1, h2, h3 {
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: 'Clash Display', sans-serif;
   margin: 0;
 }
 
@@ -136,7 +137,7 @@ img {
   font-size: 16px;
   font-weight: 700;
   line-height: 1;
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: 'Clash Display', sans-serif;
   letter-spacing: 0.3px;
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
@@ -261,7 +262,7 @@ img {
   color: #fff;
   font-weight: 700;
   font-size: 15px;
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: 'Clash Display', sans-serif;
 }
 
 .account-menu {
@@ -345,7 +346,7 @@ img {
   box-shadow:
     inset 0 1px 0 rgba(255,255,255,0.04),
     0 6px 16px rgba(0,0,0,0.18);
-  font-family: 'Manrope', sans-serif;
+  font-family: 'Clash Display', sans-serif;
 }
 
 .compact-auth input {
@@ -466,7 +467,7 @@ img {
   cursor: pointer;
   overflow: hidden;
   white-space: nowrap;
-  font-family: 'Manrope', sans-serif;
+  font-family: 'Clash Display', sans-serif;
   transition: transform 0.18s ease, opacity 0.18s ease, color 0.18s ease, background 0.18s ease;
   text-align: left;
   position: relative;
@@ -569,7 +570,7 @@ img {
   font-size: 16px;
   font-weight: 500;
   letter-spacing: 0.1px;
-  font-family: 'Manrope', sans-serif;
+  font-family: 'Clash Display', sans-serif;
   opacity: 0;
   transform: translateX(-10px);
   transition:
@@ -613,7 +614,7 @@ img {
 }
 
 .section-kicker {
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: 'Clash Display', sans-serif;
   text-transform: uppercase;
   letter-spacing: 2px;
   font-size: 12px;
@@ -663,7 +664,7 @@ img {
   font-size: 12px;
   text-transform: uppercase;
   letter-spacing: 2px;
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: 'Clash Display', sans-serif;
   opacity: 0.82;
 }
 
@@ -767,7 +768,7 @@ img {
     inset 0 -2px 4px rgba(90,50,0,0.28),
     0 12px 26px rgba(212,175,55,0.22),
     0 0 0 1px rgba(212,175,55,0.08);
-  font-family: 'Manrope', sans-serif;
+  font-family: 'Clash Display', sans-serif;
   cursor: pointer;
 }
 
@@ -786,7 +787,7 @@ img {
     inset 0 2px 0 rgba(255,255,255,0.72),
     inset 0 -2px 3px rgba(0,0,0,0.18),
     0 10px 22px rgba(0,0,0,0.25);
-  font-family: 'Manrope', sans-serif;
+  font-family: 'Clash Display', sans-serif;
 }
 
 .metal-btn .icon {
@@ -850,7 +851,7 @@ img {
     font-size: 10px;
     font-weight: 600;
     letter-spacing: 0.2px;
-    font-family: 'Manrope', sans-serif;
+    font-family: 'Clash Display', sans-serif;
     padding: 6px 2px;
     background: transparent;
   }

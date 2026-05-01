@@ -1,3 +1,4 @@
+@import url("https://api.fontshare.com/v2/css?f[]=clash-display@400,500,600,700&display=swap");
 :root {
   --stats-gold: #d4af37;
   --stats-gold-soft: rgba(212, 175, 55, 0.34);
@@ -37,7 +38,7 @@ body {
 
 .empty-title {
   margin-top: 12px;
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: 'Clash Display', sans-serif;
   font-size: 28px;
 }
 
@@ -87,13 +88,13 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: 'Clash Display', sans-serif;
   font-size: 40px;
   background: radial-gradient(circle at 30% 20%, rgba(255,255,255,0.12), rgba(0,0,0,0.8));
 }
 
 .stats-hero-name {
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: 'Clash Display', sans-serif;
   font-size: clamp(40px, 8vw, 72px);
   line-height: 0.95;
   letter-spacing: -0.04em;
@@ -140,7 +141,7 @@ body {
 
 .stats-value {
   color: #fff;
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: 'Clash Display', sans-serif;
   font-size: clamp(18px, 2.1vw, 28px);
   line-height: 1.35;
   text-align: left;
@@ -175,7 +176,7 @@ body {
 
 .stats-chart-title {
   margin: 0;
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: 'Clash Display', sans-serif;
   font-size: clamp(28px, 4vw, 44px);
   line-height: 1;
 }
