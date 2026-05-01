@@ -150,7 +150,7 @@ img {
 .header-wrap {
   position: sticky;
   top: 0;
-  z-index: 80;
+  z-index: 125;
   width: 100%;
   background: #000000;
   backdrop-filter: none;
@@ -3203,10 +3203,21 @@ body::before {
 
 body{
   background:
+    linear-gradient(180deg,
+      rgba(7,7,7,0.10) 0%,
+      rgba(7,7,7,0.30) 50%,
+      rgba(7,7,7,0.88) 78%,
+      rgba(7,7,7,1.00) 92%
+    ),
+    url("../../icons/background-radio.jpg"),
     radial-gradient(circle at 50% -12%, rgba(245,200,75,.14), transparent 34%),
     radial-gradient(circle at 86% 18%, rgba(146,74,255,.10), transparent 26%),
     radial-gradient(circle at 16% 72%, rgba(245,200,75,.08), transparent 28%),
     var(--premium-bg) !important;
+  background-size: 100% 620px, 100% 620px, auto, auto, auto, cover !important;
+  background-position: top center, top center, center, center, center, center !important;
+  background-repeat: no-repeat, no-repeat, no-repeat, no-repeat, no-repeat, no-repeat !important;
+  background-attachment: scroll, scroll, scroll, scroll, scroll, fixed !important;
   color:var(--premium-text) !important;
 }
 body::before{
