@@ -105,15 +105,19 @@ html {
 body {
   margin: 0;
   min-height: 100vh;
-  position: relative;
   background:
-    linear-gradient(180deg, rgba(7, 7, 7, 0.46) 0%, rgba(7, 7, 7, 0.72) 45%, rgba(7, 7, 7, 0.84) 100%),
-    radial-gradient(circle at top, rgba(212, 175, 55, 0.14), transparent 30%),
+    linear-gradient(180deg,
+      rgba(7,7,7,0.18) 0%,
+      rgba(7,7,7,0.42) 45%,
+      rgba(7,7,7,0.78) 68%,
+      rgba(7,7,7,1.00) 85%
+    ),
+    url("../../icons/background-radio.jpg"),
     url("../../bg-mobile-final-1080x1920.webp");
-  background-size: cover, auto, cover;
-  background-position: center top, center top, center center;
+  background-size: 100% 640px, 100% 640px, cover;
+  background-position: top center, top center, center center;
   background-repeat: no-repeat, no-repeat, no-repeat;
-  background-attachment: fixed, scroll, fixed;
+  background-attachment: scroll, scroll, fixed;
   color: var(--text);
   font-family: 'Manrope', sans-serif;
   text-align: center;
@@ -6043,41 +6047,4 @@ body.is-logged-out #conceptSection {
 
 .artist-link:hover .artist-name-text {
   color: #fff8dc;
-}
-
-/* ── Radio hero background ──────────────────────────────────── */
-.radio-hero-bg {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  /* hoogte wordt via JS gezet */
-  min-height: 520px;
-  /* background-image wordt via inline style gezet (pad relatief aan HTML) */
-  background-size: cover;
-  background-position: center top;
-  background-repeat: no-repeat;
-  background-size: cover;
-  background-position: center top;
-  background-repeat: no-repeat;
-  z-index: 0;
-  pointer-events: none;
-}
-
-/* Zorg dat alle content boven de achtergrond staat */
-.header-wrap {
-  position: relative;
-  z-index: 10;
-}
-
-.site-shell {
-  position: relative;
-  z-index: 2;
-}
-
-#currencyBadge,
-#pageLoader,
-.desktop-side-nav,
-.currency-badge {
-  z-index: 120;
 }
