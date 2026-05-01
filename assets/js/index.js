@@ -1519,19 +1519,21 @@ async function handleStartRadio() {
     desiredPlaying: true
   });
 
-  await registerListener();
-  await updateListeners();
-  await loadTrackStats();
-  await loadMyTotalPlays();
-
+  // UI direct bijwerken — vóór async calls zodat het altijd werkt
+  // ook voor niet-ingelogde gebruikers
   els.radioShell.classList.remove("pre-live");
-  setHidden(els.startOverlay, true);
+  els.radioShell.style.visibility = "visible";
+  els.radioShell.style.opacity = "1";
   if (els.startOverlay) {
-    els.startOverlay.style.visibility = '';
-    els.startOverlay.style.opacity = '';
+    els.startOverlay.style.display = "none";
+    els.startOverlay.style.visibility = "hidden";
+    els.startOverlay.style.opacity = "0";
+    els.startOverlay.style.pointerEvents = "none";
   }
+  setHidden(els.startOverlay, true);
   updateConceptVisibility();
 
+  // Start audio
   if (!els.audio.src && state.tracks.length) {
     const nextIndex = chooseNextTrackIndex();
     const previewDuration = nextIndex >= 0 ? getTrackPreviewDuration(state.tracks[nextIndex]) : 60;
@@ -1550,6 +1552,12 @@ async function handleStartRadio() {
   els.audio.play().catch(err => {
     console.error("Start Radio play error:", err);
   });
+
+  // Async calls daarna — mogen falen zonder UI te breken
+  try { await registerListener(); } catch(e) {}
+  try { await updateListeners(); } catch(e) {}
+  try { await loadTrackStats(); } catch(e) {}
+  try { await loadMyTotalPlays(); } catch(e) {}
 }
 
 async function advanceAfterTrackCompletion() {
