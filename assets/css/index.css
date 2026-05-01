@@ -106,18 +106,13 @@ body {
   margin: 0;
   min-height: 100vh;
   background:
-    linear-gradient(180deg,
-      rgba(7,7,7,0.18) 0%,
-      rgba(7,7,7,0.42) 45%,
-      rgba(7,7,7,0.78) 68%,
-      rgba(7,7,7,1.00) 85%
-    ),
-    url("../../icons/background-radio.jpg"),
+    linear-gradient(180deg, rgba(7, 7, 7, 0.46) 0%, rgba(7, 7, 7, 0.72) 45%, rgba(7, 7, 7, 0.84) 100%),
+    radial-gradient(circle at top, rgba(212, 175, 55, 0.14), transparent 30%),
     url("../../bg-mobile-final-1080x1920.webp");
-  background-size: 100% 640px, 100% 640px, cover;
-  background-position: top center, top center, center center;
+  background-size: cover, auto, cover;
+  background-position: center top, center top, center center;
   background-repeat: no-repeat, no-repeat, no-repeat;
-  background-attachment: scroll, scroll, fixed;
+  background-attachment: fixed, scroll, fixed;
   color: var(--text);
   font-family: 'Manrope', sans-serif;
   text-align: center;
@@ -6047,4 +6042,26 @@ body.is-logged-out #conceptSection {
 
 .artist-link:hover .artist-name-text {
   color: #fff8dc;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   Radio shell container verwijderd — alleen content zichtbaar
+   ══════════════════════════════════════════════════════════════ */
+.radio-shell:not(.pre-live),
+.radio-shell:not(.pre-live):hover {
+  background: transparent !important;
+  background-image: none !important;
+  border: none !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  isolation: auto !important;
+}
+
+.radio-shell:not(.pre-live)::before,
+.radio-shell:not(.pre-live)::after {
+  display: none !important;
+  background: none !important;
+  box-shadow: none !important;
+  content: none !important;
 }
