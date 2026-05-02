@@ -1553,6 +1553,11 @@ async function handleStartRadio() {
 
   const startVolume = getSafeVolume(els.volume.value);
   els.audio.volume = startVolume;
+  // Init slider kleur
+  if (els.volume) {
+    const pct = (els.volume.value / els.volume.max) * 100;
+    els.volume.style.background = `linear-gradient(90deg, rgba(180,130,30,0.9) 0%, #d4af37 ${pct}%, rgba(255,255,255,0.15) ${pct}%, rgba(255,255,255,0.15) 100%)`;
+  }
   els.audio.muted = startVolume === 0;
 
   updateVolumeButtonState();
@@ -1739,6 +1744,11 @@ function bindUIEvents() {
   els.likeBtn.onclick = handleLike;
 
   els.volume.addEventListener("input", (e) => {
+    // Kleur het gevulde deel van de slider
+    const pct = (parseFloat(e.target.value) / parseFloat(e.target.max)) * 100;
+    e.target.style.setProperty('background',
+      `linear-gradient(90deg, rgba(180,130,30,0.9) 0%, #d4af37 ${pct}%, rgba(255,255,255,0.15) ${pct}%, rgba(255,255,255,0.15) 100%)`
+    );
     const v = getSafeVolume(e.target.value);
     els.audio.volume = v;
     els.audio.muted = v === 0;
