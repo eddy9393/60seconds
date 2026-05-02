@@ -724,13 +724,7 @@ function updateVolumeButtonState() {
 
   const icon = document.getElementById('volumeIcon');
   if (icon) {
-    if (isMuted) {
-      icon.src = 'icons/mute.png';
-    } else if (vol < 0.5) {
-      icon.src = 'icons/vol-low.png';
-    } else {
-      icon.src = 'icons/vol-high.png';
-    }
+    icon.src = isMuted ? 'icons/mute.png' : 'icons/vol-high.png';
   }
 }
 
