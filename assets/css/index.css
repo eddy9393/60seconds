@@ -6237,3 +6237,117 @@ body {
 .volume-slider-inline input[type="range"] {
   accent-color: rgba(255,255,255,0.8) !important;
 }
+
+/* ════════════════════════════════════════════════════════════════
+   FINALE OVERRIDES — wint van alles
+   ════════════════════════════════════════════════════════════════ */
+
+/* 1. Achtergrond volledig zwart — geen gradients, geen glow */
+body {
+  background-color: #000000 !important;
+  background-image: url("../../icons/background-radio.jpg") !important;
+  background-size: 100% 580px !important;
+  background-position: top center !important;
+  background-repeat: no-repeat !important;
+  background-attachment: scroll !important;
+}
+
+body::before,
+body::after {
+  display: none !important;
+  opacity: 0 !important;
+  content: none !important;
+}
+
+/* 2. Featured card: geen glow, geen radiale gloed links */
+.fa-card,
+#featuredArtistCard,
+.fa-card:hover,
+#featuredArtistCard:hover {
+  background:
+    linear-gradient(135deg, rgba(20,18,10,0.92) 0%, rgba(12,10,5,0.96) 100%) !important;
+  border-color: rgba(255,255,255,0.10) !important;
+  box-shadow: none !important;
+}
+
+.fa-card::before,
+.fa-card::after,
+#featuredArtistCard::before,
+#featuredArtistCard::after {
+  display: none !important;
+  opacity: 0 !important;
+  content: none !important;
+}
+
+/* 3. Iconen radiospeler: wavetable goudkleur */
+.player-icon-img {
+  filter: none !important;
+  /* Goud gradient via drop-shadow is niet mogelijk op img
+     Gebruik een CSS filter die de kleur naar goud verschuift */
+  filter:
+    brightness(0)
+    saturate(100%)
+    invert(75%)
+    sepia(60%)
+    saturate(400%)
+    hue-rotate(5deg)
+    brightness(105%) !important;
+  opacity: 1 !important;
+}
+
+/* 4. Volume knop hover — gouden rand zoals skip/like */
+#radioShell .volume-button.icon-btn,
+.player-actions .volume-button.icon-btn,
+.volume-button.icon-btn {
+  width: 56px !important;
+  height: 56px !important;
+  min-width: 56px !important;
+  min-height: 56px !important;
+  border-radius: 999px !important;
+  border: 1px solid rgba(255,255,255,0.13) !important;
+  background: rgba(255,255,255,0.055) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.08) !important;
+  transition: transform 0.15s ease, border-color 0.18s ease, background 0.18s ease !important;
+  transform: none !important;
+}
+
+#radioShell .volume-button.icon-btn:hover,
+.player-actions .volume-button.icon-btn:hover,
+.volume-button.icon-btn:hover {
+  transform: translateY(-2px) !important;
+  border-color: rgba(245,200,75,0.58) !important;
+  background: rgba(245,200,75,0.09) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.12),
+    0 0 14px rgba(245,200,75,0.18) !important;
+}
+
+/* 5. Volume slider: goud gevuld, geen glow */
+input[type="range"] {
+  accent-color: #d4af37;
+}
+
+#radioShell .volume-slider-inline input[type="range"]::-webkit-slider-runnable-track {
+  background: rgba(255,255,255,0.12) !important;
+  box-shadow: none !important;
+}
+
+#radioShell .volume-slider-inline input[type="range"]::-webkit-slider-thumb {
+  background: #d4af37 !important;
+  box-shadow: none !important;
+}
+
+#radioShell .volume-slider-inline input[type="range"]::-moz-range-track {
+  background: rgba(255,255,255,0.12) !important;
+  box-shadow: none !important;
+}
+
+#radioShell .volume-slider-inline input[type="range"]::-moz-range-thumb {
+  background: #d4af37 !important;
+  box-shadow: none !important;
+}
+
+#radioShell .volume-slider-inline input[type="range"]::-moz-range-progress {
+  background: linear-gradient(90deg, rgba(180,130,30,0.9), #d4af37, rgba(244,215,122,1)) !important;
+  box-shadow: none !important;
+}
