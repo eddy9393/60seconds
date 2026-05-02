@@ -1155,8 +1155,10 @@ img {
   opacity: 0;
   overflow: hidden;
   transition: width 0.22s ease, opacity 0.18s ease;
-  background: rgba(20,16,8,0.95);
-  border: 1px solid rgba(212,175,55,0.2);
+  background: rgba(255,255,255,0.055);
+  border: 1px solid rgba(255,255,255,0.15);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
   border-radius: 12px;
   padding: 0;
   backdrop-filter: blur(12px);
@@ -6182,7 +6184,6 @@ body.is-logged-out #conceptSection {
 #featuredArtistCard::before,
 #featuredArtistCard::after {
   box-shadow: none !important;
-  opacity: 0 !important;
 }
 
 /* ── Pagina achtergrond: zwart ──────────────────────────────── */
@@ -6385,9 +6386,8 @@ body::before, body::after {
 
 .fa-card::before, .fa-card::after,
 #featuredArtistCard::before, #featuredArtistCard::after {
-  display: none !important;
-  opacity: 0 !important;
-  content: none !important;
+  /* Foto via ::before hersteld — alleen box-shadow uitzetten */
+  box-shadow: none !important;
 }
 
 /* 3. Radio iconen: wavetable gradient */
@@ -6603,4 +6603,23 @@ input[type="range"]::-moz-range-thumb {
   border: none !important;
   width: 14px !important;
   height: 14px !important;
+}
+
+/* ── Tune-genre en nationality badge = fa-pill stijl ───────── */
+.tune-genre,
+.tune-nationality {
+  background: rgba(255,255,255,0.06) !important;
+  border: 1px solid rgba(255,255,255,0.10) !important;
+  color: rgba(255,255,255,0.65) !important;
+  font-family: 'Space Grotesk', sans-serif !important;
+  font-size: 11px !important;
+  font-weight: 500 !important;
+  padding: 3px 10px !important;
+  border-radius: 999px !important;
+  letter-spacing: 0.3px !important;
+  text-transform: none !important;
+  box-shadow: none !important;
+  min-height: auto !important;
+  display: inline-flex !important;
+  align-items: center !important;
 }
