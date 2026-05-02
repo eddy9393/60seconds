@@ -269,7 +269,7 @@ function ensureCurrencyStoreButton(doc = document) {
     button.className = 'currency-store-btn';
     button.href = 'store.html';
     button.setAttribute('aria-label', 'Open Seconds store');
-    button.textContent = '+';
+    button.innerHTML = '<img src="icons/plus.png" alt="+" class="currency-plus-icon" />';
     badge.appendChild(button);
   }
 
