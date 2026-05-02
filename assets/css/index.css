@@ -2905,17 +2905,8 @@ body {
 }
 
 body::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: -1;
-  background:
-    linear-gradient(rgba(255,255,255,0.018) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255,255,255,0.012) 1px, transparent 1px);
-  background-size: 72px 72px;
-  mask-image: radial-gradient(circle at 50% 20%, black 0%, transparent 74%);
-  opacity: 0.22;
+  display: none !important;
+  opacity: 0 !important;
 }
 
 .header-slogan {
@@ -6143,7 +6134,8 @@ body.is-logged-out #conceptSection {
   box-shadow: inset 0 1px 0 rgba(255,255,255,0.08) !important;
 }
 
-.icon-btn:hover {
+.icon-btn:hover,
+.volume-button.icon-btn:hover {
   transform: translateY(-2px) !important;
   border-color: rgba(245,200,75,0.58) !important;
   background: rgba(245,200,75,0.09) !important;
@@ -6175,4 +6167,73 @@ body.is-logged-out #conceptSection {
 .radio-icon-btn .player-icon-img {
   opacity: 1;
   filter: brightness(0) saturate(100%) invert(85%) sepia(40%) saturate(500%) hue-rotate(5deg);
+}
+
+/* ── Featured card: geen glow ──────────────────────────────── */
+.fa-card,
+.fa-card:hover,
+#featuredArtistCard,
+#featuredArtistCard:hover {
+  box-shadow: none !important;
+}
+
+.fa-card::before,
+.fa-card::after,
+#featuredArtistCard::before,
+#featuredArtistCard::after {
+  box-shadow: none !important;
+  opacity: 0 !important;
+}
+
+/* ── Pagina achtergrond: zwart ──────────────────────────────── */
+
+body {
+  background-color: #000000 !important;
+}
+
+/* ── Volume button: zelfde stijl als icon-btn ───────────────── */
+#radioShell .volume-button.icon-btn,
+.player-actions .volume-button.icon-btn {
+  width: 56px !important;
+  height: 56px !important;
+  min-width: 56px !important;
+  min-height: 56px !important;
+  border-radius: 999px !important;
+  border: 1px solid rgba(255,255,255,0.13) !important;
+  background: rgba(255,255,255,0.055) !important;
+  padding: 0 !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.08) !important;
+  transition: transform 0.15s ease, border-color 0.18s ease, background 0.18s ease !important;
+}
+
+#radioShell .volume-button.icon-btn:hover,
+.player-actions .volume-button.icon-btn:hover {
+  transform: translateY(-2px) !important;
+  border-color: rgba(245,200,75,0.58) !important;
+  background: rgba(245,200,75,0.09) !important;
+}
+
+/* ── Volume slider: geen glow ────────────────────────────────── */
+#radioShell .volume-slider-inline input[type="range"]::-webkit-slider-runnable-track {
+  background: rgba(255,255,255,0.15) !important;
+  box-shadow: none !important;
+}
+
+#radioShell .volume-slider-inline input[type="range"]::-webkit-slider-thumb {
+  box-shadow: none !important;
+  background: #ffffff !important;
+}
+
+#radioShell .volume-slider-inline input[type="range"]::-moz-range-track {
+  background: rgba(255,255,255,0.15) !important;
+  box-shadow: none !important;
+}
+
+#radioShell .volume-slider-inline input[type="range"]::-moz-range-thumb {
+  box-shadow: none !important;
+  background: #ffffff !important;
+}
+
+.volume-slider-inline input[type="range"] {
+  accent-color: rgba(255,255,255,0.8) !important;
 }
