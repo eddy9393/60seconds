@@ -534,9 +534,13 @@ function updatePauseButtonState() {
   if (!els.pauseBtn) return;
   const isPlaying = state.isLiveActivated && !els.audio.paused;
   els.pauseBtn.setAttribute("aria-label", isPlaying ? "Pause" : "Play");
-  els.pauseBtn.innerHTML = isPlaying
-    ? `<span class="icon">⏸</span>`
-    : `<span class="icon">▶</span>`;
+  const icon = document.getElementById('playPauseIcon');
+  if (icon) {
+    // Wissel tussen play.png en pause icoon via CSS filter
+    icon.src = isPlaying ? 'icons/play.png' : 'icons/play.png';
+    icon.style.opacity = isPlaying ? '1' : '0.6';
+    els.pauseBtn.classList.toggle('is-playing', isPlaying);
+  }
 }
 
 function syncWaveformState() {
@@ -713,9 +717,21 @@ function hideUserStats() {
 }
 
 function updateVolumeButtonState() {
-  const isMuted = els.audio.muted || Number(els.audio.volume) === 0;
+  const vol = Number(els.audio.volume);
+  const isMuted = els.audio.muted || vol === 0;
   els.volumeBtn.classList.toggle("muted", isMuted);
   els.volumeBtn.setAttribute("aria-label", isMuted ? "Volume muted" : "Volume");
+
+  const icon = document.getElementById('volumeIcon');
+  if (icon) {
+    if (isMuted) {
+      icon.src = 'icons/mute.png';
+    } else if (vol < 0.5) {
+      icon.src = 'icons/vol-low.png';
+    } else {
+      icon.src = 'icons/vol-high.png';
+    }
+  }
 }
 
 function closeVolumeControl() {
