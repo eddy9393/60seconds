@@ -9,6 +9,12 @@
   <link rel="stylesheet" href="assets/css/index.css" />
 </head>
 <body class="is-loading">
+  <!-- Coins badge: buiten header zodat fixed werkt -->
+  <div id="currencyBadge" class="currency-badge hidden" aria-label="Seconds balance">
+    <img src="coin.webp" alt="" class="currency-badge-icon" />
+    <span id="currencyValue" class="currency-badge-value">0</span>
+  </div>
+
   <!-- Fullscreen loader -->
   <div id="pageLoader" class="page-loader">
     <div class="page-loader-inner">
@@ -186,10 +192,6 @@
   <div class="header-wrap">
     <header class="header-bar">
       <div class="header-left">
-        <div id="currencyBadge" class="currency-badge hidden" aria-label="Seconds balance">
-          <img src="coin.webp" alt="" class="currency-badge-icon" />
-          <span id="currencyValue" class="currency-badge-value">0</span>
-        </div>
       </div>
 
       <div class="header-center">
@@ -263,29 +265,12 @@
               <img src="icons/like.png" alt="" class="btn-icon-img like-icon" aria-hidden="true" />
               </button>
 
-            <button id="pauseBtn" class="metal-btn radio-icon-btn" type="button" aria-label="Play or pause"><span class="icon">▶</span></button>
+            <button id="pauseBtn" class="icon-btn radio-icon-btn" type="button" aria-label="Play or pause"><img src="icons/play.png" alt="" class="player-icon-img" id="playPauseIcon" /></button>
 
-            <button id="skip" class="metal-btn" type="button">
-              <span class="skip-button-content">
-                <span class="skip-label">Skip</span>
-                <img src="coin.webp" alt="" class="skip-coin-icon" />
-                <span class="skip-cost">-1</span>
-              </span>
-            </button>
+            <button id="skip" class="icon-btn" type="button" aria-label="Skip"><img src="icons/skip.png" alt="" class="player-icon-img" /></button>
 
             <div id="volumeControl" class="volume-control">
-              <button id="volumeBtn" class="volume-button metal-btn" type="button" aria-label="Volume">
-                <svg class="icon-on" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                  <path d="M11 5L6 9H3a1 1 0 00-1 1v4a1 1 0 001 1h3l5 4V5z" fill="currentColor"/>
-                  <path d="M15.54 8.46a5 5 0 010 7.07" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-                  <path d="M19.07 4.93a10 10 0 010 14.14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-                </svg>
-                <svg class="icon-muted" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                  <path d="M11 5L6 9H3a1 1 0 00-1 1v4a1 1 0 001 1h3l5 4V5z" fill="currentColor"/>
-                  <line x1="23" y1="9" x2="17" y2="15" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-                  <line x1="17" y1="9" x2="23" y2="15" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-                </svg>
-              </button>
+              <button id="volumeBtn" class="icon-btn volume-button" type="button" aria-label="Volume"><img src="icons/vol-high.png" alt="" class="player-icon-img" id="volumeIcon" /></button>
               <div class="volume-slider-inline">
                 <input id="volume" type="range" min="0" max="1" step="0.01" value="0.3" />
               </div>
