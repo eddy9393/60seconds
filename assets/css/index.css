@@ -225,7 +225,7 @@ img {
   display: inline-block;
   flex: 0 0 auto;
   min-width: 0;
-  color: #f7e6ac;
+  color: #ffffff;
   font-size: 16px;
   font-weight: 700;
   line-height: 1;
@@ -3127,7 +3127,7 @@ body::before {
 }
 
 .fa-card.has-fa-bg::before {
-  opacity: 0.32;
+  opacity: 0.66;
 }
 
 .fa-card::after {
@@ -3371,7 +3371,7 @@ body::before{
   background-image:var(--fa-bg-image) !important;
   background-size:cover !important;
   background-position:center !important;
-  opacity:.16 !important;
+  opacity:0.33 !important;
   filter:grayscale(.08) blur(1px) saturate(1.06) !important;
   transform:scale(1.06) !important;
 }
@@ -4249,7 +4249,7 @@ button:not(.side-nav button):not(.desktop-side-nav-panel button){
 
 /* Make the featured artist profile image background more visible, less black, with a premium glow. */
 .fa-card.has-fa-bg::before {
-  opacity: .34 !important;
+  opacity: 0.7 !important;
   filter: blur(1px) saturate(1.22) contrast(1.06) brightness(1.08) !important;
   transform: scale(1.07) !important;
 }
@@ -4999,7 +4999,7 @@ button:not(.side-nav button):not(.desktop-side-nav-panel button){
 }
 
 #featuredArtistCard.fa-card.has-fa-bg::before {
-  opacity: 0.24 !important;
+  opacity: 0.49 !important;
   filter: blur(1px) saturate(1.14) contrast(1.06) !important;
 }
 
@@ -5531,7 +5531,7 @@ button:not(.side-nav button):not(.desktop-side-nav-panel button){
 }
 
 .fa-card.has-fa-bg::before {
-  opacity: .22 !important;
+  opacity: 0.44 !important;
   filter: grayscale(.02) blur(.7px) saturate(1.10) brightness(1.08) !important;
 }
 
@@ -6681,4 +6681,35 @@ input[type="range"]::-moz-range-thumb {
   box-shadow: 0 0 6px rgba(212,175,55,0.4) !important;
   border: none !important;
   cursor: pointer !important;
+}
+
+/* ── Currency plus knop: radio knop stijl ──────────────────── */
+.currency-store-btn {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border-radius: 999px !important;
+  border: 1px solid rgba(255,255,255,0.15) !important;
+  background: rgba(255,255,255,0.055) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.08) !important;
+  transition: transform 0.15s ease, border-color 0.18s ease, background 0.18s ease !important;
+  cursor: pointer !important;
+  text-decoration: none !important;
+  padding: 0 !important;
+  flex-shrink: 0 !important;
+}
+
+.currency-store-btn:hover {
+  transform: translateY(-2px) !important;
+  border-color: rgba(245,200,75,0.58) !important;
+  background: rgba(245,200,75,0.09) !important;
+}
+
+.currency-plus-icon {
+  width: 16px !important;
+  height: 16px !important;
+  object-fit: contain !important;
+  display: block !important;
+  filter: brightness(0) invert(1) !important;
+  opacity: 0.85 !important;
 }
