@@ -6123,3 +6123,47 @@ body.is-logged-out #conceptSection {
   align-items: center;
   gap: 8px;
 }
+
+/* ── Player icon knoppen (play, skip, volume) ───────────────── */
+.icon-btn {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px;
+  transition: transform 0.15s ease, opacity 0.15s ease;
+  flex-shrink: 0;
+}
+
+.icon-btn:hover {
+  transform: scale(1.1);
+  opacity: 0.85;
+}
+
+.icon-btn:active {
+  transform: scale(0.95);
+}
+
+.player-icon-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+  filter: drop-shadow(0 0 6px rgba(212,175,55,0.25));
+}
+
+/* Play knop iets groter */
+.radio-icon-btn {
+  width: 56px;
+  height: 56px;
+}
+
+/* Play state indicator */
+.radio-icon-btn.is-playing .player-icon-img {
+  filter: drop-shadow(0 0 10px rgba(212,175,55,0.45));
+}
