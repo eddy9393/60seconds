@@ -1686,21 +1686,39 @@ img[class*="avatar"],.avatar,.profile-photo,.artist-photo{box-shadow:0 0 0 1px r
   opacity: 1 !important;
 }
 
+/* ============================================================
+   v28 artist containers — radio player container style reapplied
+   Scope: artist page content only. Removes the unintended dark bar
+   caused by broad section styling and applies the index radio shell
+   look to the real artist content containers.
+   ============================================================ */
+:root {
+  --artist-radio-gold: #f5c84b;
+  --artist-radio-gold-2: #ffe69a;
+}
 
-/* v27 tune card aligned with index radio player style; artist page dimensions restored */
-.submission-header,
-.submission-title {
+/* The Tune section itself is a layout wrapper, not a visual card. */
+main .submission-section,
+main .submission-header,
+main .submission-title,
+.page-wrap .submission-section,
+.page-wrap .submission-header,
+.page-wrap .submission-title {
   background: transparent !important;
+  background-image: none !important;
   border: 0 !important;
   box-shadow: none !important;
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
 }
 
-.tune-card {
+/* Keep original artist page dimensions while giving containers the index radio-shell styling. */
+.artist-stage,
+.tune-card,
+.status-box,
+.empty-box {
   isolation: isolate !important;
   position: relative !important;
-  padding: clamp(18px, 2.4vw, 26px) clamp(18px, 3.2vw, 36px) !important;
   border-radius: 34px !important;
   border: 1px solid rgba(255, 230, 151, .34) !important;
   background:
@@ -1722,7 +1740,20 @@ img[class*="avatar"],.avatar,.profile-photo,.artist-photo{box-shadow:0 0 0 1px r
   transform: translateZ(0) !important;
 }
 
-.tune-card::before {
+.artist-stage {
+  padding: clamp(22px, 3vw, 34px) !important;
+}
+
+.tune-card,
+.status-box,
+.empty-box {
+  padding: clamp(18px, 2.4vw, 26px) clamp(18px, 3.2vw, 36px) !important;
+}
+
+.artist-stage::before,
+.tune-card::before,
+.status-box::before,
+.empty-box::before {
   content: "" !important;
   position: absolute !important;
   inset: 1px !important;
@@ -1738,7 +1769,10 @@ img[class*="avatar"],.avatar,.profile-photo,.artist-photo{box-shadow:0 0 0 1px r
   -webkit-mask-image: linear-gradient(180deg, rgba(0,0,0,.85), rgba(0,0,0,.35)) !important;
 }
 
-.tune-card::after {
+.artist-stage::after,
+.tune-card::after,
+.status-box::after,
+.empty-box::after {
   content: "" !important;
   position: absolute !important;
   inset: auto 10% -54px 10% !important;
@@ -1751,18 +1785,36 @@ img[class*="avatar"],.avatar,.profile-photo,.artist-photo{box-shadow:0 0 0 1px r
   opacity: .82 !important;
 }
 
-.tune-card > * {
+.artist-stage > *,
+.tune-card > *,
+.status-box > *,
+.empty-box > * {
   position: relative !important;
   z-index: 1 !important;
 }
 
 @media (max-width: 760px) {
-  .tune-card {
+  .artist-stage,
+  .tune-card,
+  .status-box,
+  .empty-box {
     border-radius: 28px !important;
+  }
+
+  .artist-stage {
     padding: 20px 18px !important;
   }
 
-  .tune-card::before {
+  .tune-card,
+  .status-box,
+  .empty-box {
+    padding: 20px 18px !important;
+  }
+
+  .artist-stage::before,
+  .tune-card::before,
+  .status-box::before,
+  .empty-box::before {
     border-radius: 27px !important;
   }
 }
