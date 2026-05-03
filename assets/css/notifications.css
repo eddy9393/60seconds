@@ -1227,40 +1227,115 @@ body{background:radial-gradient(circle at 50% -10%,rgba(245,200,75,.12),transpar
 .auth-card,.auth-panel-wrap,.hero-card,.panel-card,.dashboard-card,.metrics-card,.priority-card,.store-hero-card,.store-balance-card,.store-card,.empty-card,.state-card,.check-card,.playlist-card,main section:not(.desktop-side-nav-panel){background:rgba(18,18,22,.74)!important;border-color:rgba(255,255,255,.105)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 24px 70px rgba(0,0,0,.50),0 0 42px rgba(245,200,75,.08)!important;backdrop-filter:blur(20px) saturate(1.18)!important;-webkit-backdrop-filter:blur(20px) saturate(1.18)!important}
 .auth-card:hover,.hero-card:hover,.panel-card:hover,.dashboard-card:hover,.store-card:hover,.playlist-card:hover{border-color:rgba(245,200,75,.38)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.10),0 28px 78px rgba(0,0,0,.54),0 0 48px rgba(245,200,75,.15)!important}
 
-/* === Notifications glass override (FINAL, non-destructive) === */
-
-.empty-card {
-  background: rgba(255, 255, 255, 0.06) !important;
-  backdrop-filter: blur(16px) !important;
-  -webkit-backdrop-filter: blur(16px) !important;
-  border: 1px solid rgba(255, 255, 255, 0.12) !important;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25) !important;
+/* ============================================================
+   Notifications visual reset — lighter index/artist-style glass
+   Scope: notifications page cards only. No layout/spacing changes.
+   ============================================================ */
+:root {
+  --notifications-glass-border: rgba(255, 255, 255, .18);
+  --notifications-glass-border-hover: rgba(245, 200, 75, .44);
+  --notifications-glass-bg: rgba(255, 255, 255, .072);
+  --notifications-glass-shadow: rgba(0, 0, 0, .26);
 }
 
-.empty-title {
-  color: rgba(255, 255, 255, 0.9) !important;
+/* Empty notification state + real notification cards */
+.page-wrap .empty-card,
+.page-wrap .notification-card {
+  border: 1px solid var(--notifications-glass-border) !important;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.105), rgba(255,255,255,.045)) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.16),
+    inset 0 -1px 0 rgba(255,255,255,.035),
+    0 18px 42px var(--notifications-glass-shadow),
+    0 0 34px rgba(255,255,255,.035) !important;
+  backdrop-filter: blur(22px) saturate(1.18) !important;
+  -webkit-backdrop-filter: blur(22px) saturate(1.18) !important;
 }
 
-.empty-text {
-  color: rgba(255, 255, 255, 0.65) !important;
+/* Unread state keeps only a subtle accent, not a heavy gold container */
+.page-wrap .notification-card.unread {
+  border-color: rgba(245, 200, 75, .34) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.18),
+    inset 0 -1px 0 rgba(255,255,255,.035),
+    0 18px 42px rgba(0,0,0,.28),
+    0 0 26px rgba(245,200,75,.08) !important;
 }
 
-.empty-icon {
-  opacity: 0.85;
+/* Icon/avatar/reward chips: neutral glass base with restrained gold accent */
+.page-wrap .notification-card .notification-icon,
+.page-wrap .notification-avatar-link,
+.page-wrap .notification-reward {
+  background:
+    radial-gradient(circle at 30% 18%, rgba(255,255,255,.16), transparent 30%),
+    linear-gradient(145deg, rgba(255,255,255,.10), rgba(255,255,255,.035)) !important;
+  border: 1px solid rgba(255,255,255,.15) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.14),
+    0 10px 24px rgba(0,0,0,.20) !important;
+  backdrop-filter: blur(14px) saturate(1.12) !important;
+  -webkit-backdrop-filter: blur(14px) saturate(1.12) !important;
 }
 
-.back-link {
-  background: rgba(255, 255, 255, 0.08) !important;
-  border: 1px solid rgba(255, 255, 255, 0.15) !important;
-  backdrop-filter: blur(10px) !important;
-  -webkit-backdrop-filter: blur(10px) !important;
-  color: white !important;
-  border-radius: 999px;
-  padding: 10px 16px;
-  text-decoration: none;
-  transition: all 0.2s ease;
+.page-wrap .notification-reward {
+  color: rgba(255, 236, 173, .94) !important;
 }
 
-.back-link:hover {
-  box-shadow: 0 0 12px rgba(255, 215, 0, 0.35);
+/* Delete button: same neutral glass-button language */
+.page-wrap .notification-delete-btn {
+  background:
+    radial-gradient(circle at 30% 18%, rgba(255,255,255,.18), transparent 28%),
+    linear-gradient(145deg, rgba(255,255,255,.105), rgba(255,255,255,.035)) !important;
+  border: 1px solid rgba(255,255,255,.16) !important;
+  color: rgba(255,255,255,.9) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.16),
+    0 10px 22px rgba(0,0,0,.24) !important;
+  backdrop-filter: blur(14px) saturate(1.12) !important;
+  -webkit-backdrop-filter: blur(14px) saturate(1.12) !important;
 }
+
+.page-wrap .notification-delete-btn:hover {
+  border-color: var(--notifications-glass-border-hover) !important;
+  background:
+    radial-gradient(circle at 30% 18%, rgba(255,255,255,.24), transparent 30%),
+    linear-gradient(145deg, rgba(255,255,255,.12), rgba(245,200,75,.075)) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.20),
+    0 14px 30px rgba(0,0,0,.30),
+    0 0 22px rgba(245,200,75,.14) !important;
+}
+
+/* Back link in empty state follows the same neutral glass button system */
+.page-wrap .back-link {
+  border: 1px solid rgba(255,255,255,.16) !important;
+  border-bottom: 1px solid rgba(255,255,255,.16) !important;
+  background:
+    radial-gradient(circle at 30% 18%, rgba(255,255,255,.18), transparent 28%),
+    linear-gradient(145deg, rgba(255,255,255,.105), rgba(255,255,255,.035)) !important;
+  color: #ffffff !important;
+  text-shadow: none !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.16),
+    inset 0 -14px 28px rgba(0,0,0,.18),
+    0 14px 30px rgba(0,0,0,.28),
+    0 0 0 rgba(245,200,75,0) !important;
+  backdrop-filter: blur(16px) saturate(1.16) !important;
+  -webkit-backdrop-filter: blur(16px) saturate(1.16) !important;
+}
+
+.page-wrap .back-link:hover,
+.page-wrap .back-link:focus-visible {
+  border-color: var(--notifications-glass-border-hover) !important;
+  background:
+    radial-gradient(circle at 30% 18%, rgba(255,255,255,.24), transparent 30%),
+    linear-gradient(145deg, rgba(255,255,255,.12), rgba(245,200,75,.075)) !important;
+  color: #ffffff !important;
+  opacity: 1 !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.20),
+    0 18px 38px rgba(0,0,0,.34),
+    0 0 28px rgba(245,200,75,.16) !important;
+}
+
