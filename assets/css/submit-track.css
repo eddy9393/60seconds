@@ -1694,3 +1694,188 @@ img[class*="avatar"],.avatar,.profile-photo,.artist-photo{box-shadow:0 0 0 1px r
 .submit-main .submit-link:hover {
   color: #ffffff !important;
 }
+
+/* ============================================================
+   Submit track — glass update matched to notifications/liked
+   Scope: submit-track page only. CSS-only, no layout/HTML changes.
+   ============================================================ */
+:root {
+  --submit-glass-bg: rgba(255,255,255,0.06);
+  --submit-glass-border: rgba(255,255,255,0.14);
+  --submit-glass-border-top: rgba(255,255,255,0.22);
+  --submit-glass-hover: rgba(212,175,55,0.45);
+}
+
+/* Keep hero text clean; make the actual form/status surfaces glass instead of dark blocks. */
+.page-wrap .hero-card {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+.page-wrap .panel-card,
+.page-wrap .notice-box,
+.page-wrap .cta-empty-state,
+.page-wrap .tune-status-box,
+.page-wrap .clip-wave {
+  background: var(--submit-glass-bg) !important;
+  background-image: none !important;
+  border: 1px solid var(--submit-glass-border) !important;
+  border-top: 1px solid var(--submit-glass-border-top) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.12),
+    0 8px 32px rgba(0,0,0,0.28) !important;
+  backdrop-filter: blur(24px) saturate(160%) !important;
+  -webkit-backdrop-filter: blur(24px) saturate(160%) !important;
+}
+
+.page-wrap .panel-card {
+  border-radius: 28px !important;
+  padding: 28px !important;
+}
+
+.page-wrap .notice-box,
+.page-wrap .cta-empty-state,
+.page-wrap .tune-status-box {
+  border-radius: 24px !important;
+}
+
+/* Inputs/selects/textarea/file/dropdowns: glass, not black rectangle. */
+.page-wrap .field-input,
+.page-wrap .field-textarea,
+.page-wrap .field-file,
+.page-wrap .field-select,
+.page-wrap .feelings-toggle-btn,
+.page-wrap .feelings-dropdown-menu,
+.page-wrap .feeling-dropdown-option,
+.page-wrap .check-card,
+.page-wrap .checkbox-row,
+.page-wrap .toggle-row,
+.page-wrap .clip-badge,
+.page-wrap .clip-progress,
+.page-wrap .clip-slider {
+  background: rgba(255,255,255,0.06) !important;
+  background-image: none !important;
+  border: 1px solid rgba(255,255,255,0.14) !important;
+  border-top: 1px solid rgba(255,255,255,0.22) !important;
+  color: #ffffff !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.10),
+    0 8px 24px rgba(0,0,0,0.20) !important;
+  backdrop-filter: blur(18px) saturate(145%) !important;
+  -webkit-backdrop-filter: blur(18px) saturate(145%) !important;
+}
+
+.page-wrap .field-input:focus,
+.page-wrap .field-textarea:focus,
+.page-wrap .field-file:focus,
+.page-wrap .field-select:focus,
+.page-wrap .feelings-toggle-btn:focus-visible {
+  border-color: rgba(212,175,55,0.55) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.12),
+    0 0 0 3px rgba(212,175,55,0.12),
+    0 0 22px rgba(212,175,55,0.14) !important;
+  outline: none !important;
+}
+
+.page-wrap .field-input::placeholder,
+.page-wrap .field-textarea::placeholder {
+  color: rgba(255,255,255,0.48) !important;
+}
+
+.page-wrap .field-select option {
+  background: #141416;
+  color: #ffffff;
+}
+
+.page-wrap .check-card:hover,
+.page-wrap .checkbox-row:hover,
+.page-wrap .toggle-row:hover,
+.page-wrap .feeling-dropdown-option:hover {
+  border-color: rgba(212,175,55,0.34) !important;
+  background: rgba(255,255,255,0.075) !important;
+}
+
+/* Buttons: artist-style neutral glass with gold only on hover/accent. */
+.page-wrap .gold-btn,
+.page-wrap .ghost-btn,
+.page-wrap .metal-btn,
+.page-wrap .submit-link,
+.page-wrap .clip-play-btn,
+.page-wrap .feelings-toggle-btn,
+.page-wrap button:not(.desktop-nav-button):not(.mobile-nav-link):not(.desktop-nav-link) {
+  background: rgba(255,255,255,0.055) !important;
+  background-image: none !important;
+  color: #ffffff !important;
+  border: 1px solid rgba(255,255,255,0.14) !important;
+  border-top: 1px solid rgba(255,255,255,0.22) !important;
+  border-radius: 999px !important;
+  text-shadow: none !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.10),
+    0 12px 30px rgba(0,0,0,0.30) !important;
+  backdrop-filter: blur(18px) saturate(145%) !important;
+  -webkit-backdrop-filter: blur(18px) saturate(145%) !important;
+  transition:
+    transform .18s ease,
+    border-color .18s ease,
+    box-shadow .18s ease,
+    background-color .18s ease,
+    color .18s ease !important;
+}
+
+.page-wrap .gold-btn:hover,
+.page-wrap .ghost-btn:hover,
+.page-wrap .metal-btn:hover,
+.page-wrap .submit-link:hover,
+.page-wrap .clip-play-btn:hover,
+.page-wrap .feelings-toggle-btn:hover,
+.page-wrap button:not(.desktop-nav-button):not(.mobile-nav-link):not(.desktop-nav-link):hover {
+  transform: translateY(-2px) !important;
+  background: rgba(255,255,255,0.075) !important;
+  background-image: none !important;
+  color: #ffffff !important;
+  border-color: var(--submit-glass-hover) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.12),
+    0 16px 38px rgba(0,0,0,0.36),
+    0 0 24px rgba(212,175,55,0.18) !important;
+}
+
+/* Keep inline text links subtle; no solid gold base. */
+.page-wrap .ghost-link {
+  color: rgba(255,255,255,0.86) !important;
+  border-bottom-color: rgba(255,255,255,0.18) !important;
+}
+
+.page-wrap .ghost-link:hover {
+  color: #ffffff !important;
+  border-bottom-color: rgba(212,175,55,0.45) !important;
+  opacity: 1 !important;
+}
+
+/* Switch remains functional but follows the same glass language. */
+.page-wrap .switch-slider {
+  background: rgba(255,255,255,0.10) !important;
+  border: 1px solid rgba(255,255,255,0.14) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.10) !important;
+}
+
+.page-wrap .switch input:checked + .switch-slider {
+  background: rgba(212,175,55,0.22) !important;
+  border-color: rgba(212,175,55,0.42) !important;
+}
+
+.page-wrap .switch input:checked + .switch-slider::after {
+  background: linear-gradient(180deg, #fff5c9, #d4af37) !important;
+}
+
+@media (max-width: 760px) {
+  .page-wrap .panel-card {
+    padding: 22px 16px !important;
+    border-radius: 24px !important;
+  }
+}
