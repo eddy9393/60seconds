@@ -273,21 +273,7 @@ function ensureCurrencyStoreButton(doc = document) {
     badge.appendChild(button);
   }
 
-  button.style.display = 'inline-flex';
-  button.style.alignItems = 'center';
-  button.style.justifyContent = 'center';
-  button.style.width = '22px';
-  button.style.height = '22px';
-  button.style.marginLeft = '2px';
-  button.style.borderRadius = '999px';
-  button.style.border = '1px solid rgba(255,255,255,0.12)';
-  button.style.background = 'rgba(255,255,255,0.06)';
-  button.style.color = '#f7e6ac';
-  button.style.fontSize = '15px';
-  button.style.fontWeight = '700';
-  button.style.lineHeight = '1';
-  button.style.textDecoration = 'none';
-  button.style.flex = '0 0 auto';
+  // Stijl via CSS (currency-store-btn klasse)
 }
 
   function buildStandardShellEls(doc = document) {
