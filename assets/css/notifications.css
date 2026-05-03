@@ -1412,125 +1412,38 @@ body{background:radial-gradient(circle at 50% -10%,rgba(245,200,75,.12),transpar
 }
 
 /* ============================================================
-   FINAL FIX — notification-card must visually match empty-card
-   Scope: real notification cards only. Empty state remains unchanged.
+   Notifications filled-state fix — remove dark wrapper rectangle
+   Scope: notifications page only. Keeps layout/HTML unchanged.
    ============================================================ */
-.page-wrap .notifications-list .notification-card,
-.page-wrap .notifications-list .notification-card.unread {
-  background:
-    linear-gradient(180deg, rgba(255,255,255,.105), rgba(255,255,255,.045)) !important;
-  border: 1px solid rgba(255,255,255,.18) !important;
-  border-top-color: rgba(255,255,255,.18) !important;
-  border-radius: 28px !important;
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,.16),
-    inset 0 -1px 0 rgba(255,255,255,.035),
-    0 18px 42px rgba(0,0,0,.26),
-    0 0 34px rgba(255,255,255,.035) !important;
-  backdrop-filter: blur(22px) saturate(1.18) !important;
-  -webkit-backdrop-filter: blur(22px) saturate(1.18) !important;
-}
-
-.page-wrap .notifications-list .notification-card.unread {
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,.16),
-    inset 0 -1px 0 rgba(255,255,255,.035),
-    0 18px 42px rgba(0,0,0,.26),
-    0 0 34px rgba(255,255,255,.035) !important;
-}
-
-.page-wrap .notifications-list .notification-card.swipe-delete-ready {
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,.16),
-    inset 0 -1px 0 rgba(255,255,255,.035),
-    0 18px 42px rgba(0,0,0,.26),
-    0 0 34px rgba(255,255,255,.035),
-    0 0 0 1px rgba(255,90,90,.18) inset !important;
-}
-
-.page-wrap .notifications-list .notification-card .notification-icon,
-.page-wrap .notifications-list .notification-card .notification-avatar-link,
-.page-wrap .notifications-list .notification-card .notification-reward,
-.page-wrap .notifications-list .notification-card .notification-delete-btn {
-  background:
-    linear-gradient(180deg, rgba(255,255,255,.12), rgba(255,255,255,.04)) !important;
-  border: 1px solid rgba(255,255,255,.16) !important;
-  border-top-color: rgba(255,255,255,.22) !important;
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,.14),
-    0 8px 20px rgba(0,0,0,.18) !important;
-  backdrop-filter: blur(14px) saturate(1.12) !important;
-  -webkit-backdrop-filter: blur(14px) saturate(1.12) !important;
-}
-
-.page-wrap .notifications-list .notification-card .notification-reward {
-  color: rgba(255,255,255,.92) !important;
-}
-
-.page-wrap .notifications-list .notification-card .notification-delete-btn:hover {
-  border-color: rgba(212,175,55,.42) !important;
-  background:
-    linear-gradient(180deg, rgba(255,255,255,.14), rgba(212,175,55,.06)) !important;
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,.18),
-    0 10px 24px rgba(0,0,0,.22),
-    0 0 18px rgba(212,175,55,.12) !important;
-}
-
-/* ============================================================
-   FINAL HARD OVERRIDE — filled notification matches the visible
-   empty-state container, not the darker original card.
-   Scope: notification cards only. No HTML/layout/spacing changes.
-   ============================================================ */
-.page-wrap .notifications-list > .notification-card,
-.page-wrap .notifications-list > .notification-card.unread,
-.page-wrap .notifications-list > .notification-card[style] {
-  background-color: rgba(132, 118, 88, 0.50) !important;
-  background-image:
-    linear-gradient(180deg, rgba(255,255,255,0.20), rgba(255,255,255,0.075)) !important;
-  background-blend-mode: normal !important;
-  border: 1px solid rgba(255,255,255,0.20) !important;
-  border-top-color: rgba(255,255,255,0.28) !important;
-  border-radius: 28px !important;
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.18),
-    inset 0 -1px 0 rgba(255,255,255,0.045),
-    0 20px 60px rgba(0,0,0,0.32),
-    0 0 35px rgba(212,175,55,0.08) !important;
-  backdrop-filter: blur(22px) saturate(1.18) !important;
-  -webkit-backdrop-filter: blur(22px) saturate(1.18) !important;
-}
-
-.page-wrap .notifications-list > .notification-card.unread {
-  border-color: rgba(255,255,255,0.20) !important;
-  border-top-color: rgba(255,255,255,0.28) !important;
-}
-
-.page-wrap .notifications-list > .notification-card::before,
-.page-wrap .notifications-list > .notification-card::after {
+.page-wrap #notificationsList,
+.page-wrap .notifications-list {
   background: transparent !important;
+  border: 0 !important;
   box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
 }
 
-.page-wrap .notifications-list > .notification-card .notification-swipe-hint {
-  background: transparent !important;
-}
-
-.page-wrap .notifications-list > .notification-card .notification-icon,
-.page-wrap .notifications-list > .notification-card .notification-avatar-link,
-.page-wrap .notifications-list > .notification-card .notification-reward,
-.page-wrap .notifications-list > .notification-card .notification-delete-btn {
-  background-color: rgba(255,255,255,0.10) !important;
-  background-image: linear-gradient(180deg, rgba(255,255,255,0.16), rgba(255,255,255,0.055)) !important;
-  border: 1px solid rgba(255,255,255,0.18) !important;
-  border-top-color: rgba(255,255,255,0.26) !important;
+/* Filled notification uses the same visual surface as the empty state. */
+.page-wrap #notificationsList .notification-card,
+.page-wrap .notifications-list .notification-card {
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.015)),
+    linear-gradient(180deg, rgba(24,24,24,0.88) 0%, rgba(17,17,17,0.94) 100%) !important;
+  border: 1px solid rgba(212,175,55,0.15) !important;
   box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.16),
-    0 8px 20px rgba(0,0,0,0.18) !important;
-  backdrop-filter: blur(14px) saturate(1.12) !important;
-  -webkit-backdrop-filter: blur(14px) saturate(1.12) !important;
+    0 20px 60px rgba(0,0,0,0.32),
+    0 0 35px rgba(212,175,55,0.08),
+    inset 0 1px 0 rgba(255,255,255,0.04) !important;
+  backdrop-filter: blur(6px) !important;
+  -webkit-backdrop-filter: blur(6px) !important;
 }
 
-.page-wrap .notifications-list > .notification-card .notification-reward {
-  color: rgba(255,255,255,0.94) !important;
+.page-wrap #notificationsList .notification-card.unread,
+.page-wrap .notifications-list .notification-card.unread {
+  border-color: rgba(212,175,55,0.15) !important;
+  box-shadow:
+    0 20px 60px rgba(0,0,0,0.32),
+    0 0 35px rgba(212,175,55,0.08),
+    inset 0 1px 0 rgba(255,255,255,0.04) !important;
 }
