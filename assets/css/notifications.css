@@ -1411,41 +1411,41 @@ body{background:radial-gradient(circle at 50% -10%,rgba(245,200,75,.12),transpar
     0 0 16px rgba(212,175,55,0.15) !important;
 }
 
+
 /* ============================================================
-   Notifications — match populated notification cards to empty-card
-   Scope: only real notification cards on notifications page.
-   Empty state is intentionally untouched.
+   FINAL FIX — notification cards match the existing empty state
+   Scope: real notification items only. Empty state remains untouched.
    ============================================================ */
-.page-wrap .notification-card {
+.page-wrap .notifications-list .notification-card {
+  border: 1px solid var(--notifications-glass-border, rgba(255,255,255,.18)) !important;
+  border-top: 1px solid rgba(255,255,255,.22) !important;
+  border-radius: 28px !important;
   background:
-    linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.015)),
-    linear-gradient(180deg, rgba(24,24,24,0.88) 0%, rgba(17,17,17,0.94) 100%) !important;
-  border: 1px solid rgba(212,175,55,0.15) !important;
-  border-top: 1px solid rgba(212,175,55,0.15) !important;
+    linear-gradient(180deg, rgba(255,255,255,.105), rgba(255,255,255,.045)) !important;
   box-shadow:
-    0 20px 60px rgba(0,0,0,0.32),
-    0 0 35px rgba(212,175,55,0.08),
-    inset 0 1px 0 rgba(255,255,255,0.04) !important;
-  backdrop-filter: blur(6px) !important;
-  -webkit-backdrop-filter: blur(6px) !important;
+    inset 0 1px 0 rgba(255,255,255,.16),
+    inset 0 -1px 0 rgba(255,255,255,.035),
+    0 18px 42px var(--notifications-glass-shadow, rgba(0,0,0,.26)),
+    0 0 34px rgba(255,255,255,.035) !important;
+  backdrop-filter: blur(22px) saturate(1.18) !important;
+  -webkit-backdrop-filter: blur(22px) saturate(1.18) !important;
 }
 
-.page-wrap .notification-card.unread {
-  background:
-    linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.015)),
-    linear-gradient(180deg, rgba(24,24,24,0.88) 0%, rgba(17,17,17,0.94) 100%) !important;
-  border: 1px solid rgba(212,175,55,0.15) !important;
-  border-top: 1px solid rgba(212,175,55,0.15) !important;
+.page-wrap .notifications-list .notification-card.unread {
+  border: 1px solid var(--notifications-glass-border, rgba(255,255,255,.18)) !important;
+  border-top: 1px solid rgba(255,255,255,.22) !important;
   box-shadow:
-    0 20px 60px rgba(0,0,0,0.32),
-    0 0 35px rgba(212,175,55,0.08),
-    inset 0 1px 0 rgba(255,255,255,0.04) !important;
+    inset 0 1px 0 rgba(255,255,255,.16),
+    inset 0 -1px 0 rgba(255,255,255,.035),
+    0 18px 42px var(--notifications-glass-shadow, rgba(0,0,0,.26)),
+    0 0 34px rgba(255,255,255,.035) !important;
 }
 
-.page-wrap .notification-card.swipe-delete-ready {
+.page-wrap .notifications-list .notification-card.swipe-delete-ready {
   box-shadow:
-    0 20px 60px rgba(0,0,0,0.32),
-    0 0 35px rgba(212,175,55,0.08),
-    inset 0 1px 0 rgba(255,255,255,0.04),
-    0 0 0 1px rgba(255,90,90,0.18) inset !important;
+    inset 0 1px 0 rgba(255,255,255,.16),
+    inset 0 -1px 0 rgba(255,255,255,.035),
+    0 18px 42px var(--notifications-glass-shadow, rgba(0,0,0,.26)),
+    0 0 34px rgba(255,255,255,.035),
+    0 0 0 1px rgba(255,90,90,.18) inset !important;
 }
