@@ -1685,3 +1685,292 @@ img[class*="avatar"],.avatar,.profile-photo,.artist-photo{box-shadow:0 0 0 1px r
   stroke: currentColor !important;
   opacity: 1 !important;
 }
+
+/* ============================================================
+   v26 artist page alignment — index-inspired visual language
+   Scope: artist.html only. Index page stays untouched.
+   ============================================================ */
+.artist-page {
+  --desktop-rail-width: 180px;
+  --desktop-rail-expanded: 320px;
+  --mobile-bottom-nav-height: 86px;
+  --mobile-nav-bg: rgba(10, 10, 10, 0.94);
+  text-align: left;
+  background:
+    linear-gradient(180deg,
+      rgba(7,7,7,0.10) 0%,
+      rgba(7,7,7,0.30) 50%,
+      rgba(7,7,7,0.88) 78%,
+      rgba(7,7,7,1.00) 92%
+    ),
+    url("../../icons/background-radio.jpg"),
+    url("../../bg-mobile-final-1080x1920.webp") !important;
+  background-size: 100% 620px, 100% 620px, cover !important;
+  background-position: top center, top center, center center !important;
+  background-repeat: no-repeat, no-repeat, no-repeat !important;
+  background-attachment: scroll, scroll, fixed !important;
+  padding: 0 20px 44px calc(var(--desktop-rail-width) + 68px) !important;
+}
+
+.artist-page .header-wrap {
+  position: fixed !important;
+  top: 0 !important;
+  left: var(--desktop-rail-width) !important;
+  right: 0 !important;
+  width: auto !important;
+  z-index: 125 !important;
+  background: transparent !important;
+  border-bottom: 0 !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+.artist-page .header-bar {
+  min-height: 74px;
+  grid-template-columns: 60px 1fr 60px;
+  padding: 8px 16px 4px;
+}
+
+.artist-page .site-shell {
+  max-width: 1180px;
+  padding-top: 104px !important;
+}
+
+.artist-page .page-wrap {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding-top: 0 !important;
+}
+
+.artist-page .artist-stage {
+  grid-template-columns: 320px minmax(0, 1fr);
+  gap: 42px;
+  align-items: start;
+}
+
+.artist-page .portrait-stage,
+.artist-page .artist-photo,
+.artist-page .artist-photo-fallback {
+  border-radius: 28px;
+}
+
+.artist-page .artist-photo,
+.artist-page .artist-photo-fallback {
+  border: 1px solid rgba(244, 215, 122, 0.28);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.055),
+    inset 0 -1px 0 rgba(0,0,0,0.46),
+    0 24px 64px rgba(0,0,0,0.40),
+    0 0 34px rgba(212,175,55,0.075) !important;
+}
+
+.artist-page .portrait-column::before {
+  background:
+    radial-gradient(circle at center, rgba(244,215,122,0.18) 0%, rgba(212,175,55,0.08) 44%, transparent 74%);
+  filter: blur(26px);
+}
+
+.artist-page .section-kicker {
+  color: rgba(244,215,122,0.72);
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 600;
+  letter-spacing: 2px;
+}
+
+.artist-page .artist-name {
+  color: rgba(255,255,255,0.97);
+  letter-spacing: -0.04em;
+  text-shadow: 0 8px 30px rgba(0,0,0,0.40);
+}
+
+.artist-page .artist-bio {
+  color: rgba(255,255,255,0.70);
+  font-size: 16px;
+  line-height: 1.85;
+}
+
+.artist-page .meta-pill,
+.artist-page .mini-pill,
+.artist-page .tune-status {
+  background: rgba(255,255,255,0.06) !important;
+  border: 1px solid rgba(255,255,255,0.10) !important;
+  color: rgba(255,255,255,0.68) !important;
+  border-radius: 999px !important;
+  font-family: 'Space Grotesk', sans-serif !important;
+}
+
+.artist-page .meta-pill.member-since-pill,
+.artist-page .meta-pill.birthday-pill {
+  color: rgba(244,215,122,0.82) !important;
+  border-color: rgba(212,175,55,0.26) !important;
+  background: rgba(212,175,55,0.08) !important;
+}
+
+.artist-page .section-divider {
+  background: linear-gradient(90deg, transparent, rgba(212,175,55,0.85), transparent);
+  opacity: 0.62;
+}
+
+.artist-page .tune-card,
+.artist-page .status-box,
+.artist-page .empty-box,
+.artist-page .artist-cta-card {
+  border-color: rgba(244, 215, 122, 0.22) !important;
+  background:
+    linear-gradient(160deg, rgba(255,232,140,0.16) 0%, rgba(212,175,55,0.07) 48%, rgba(255,255,255,0.025) 100%),
+    linear-gradient(180deg, rgba(18,18,20,0.82), rgba(8,8,9,0.88)) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.055),
+    inset 0 -1px 0 rgba(0,0,0,0.46),
+    0 22px 64px rgba(0,0,0,0.40),
+    0 0 34px rgba(212,175,55,0.075) !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+}
+
+.artist-page .tune-card:hover,
+.artist-page .artist-cta-card:hover {
+  border-color: rgba(244, 215, 122, 0.34) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.07),
+    inset 0 -1px 0 rgba(0,0,0,0.50),
+    0 26px 74px rgba(0,0,0,0.46),
+    0 0 46px rgba(212,175,55,0.13) !important;
+}
+
+.artist-page .progress-wrap {
+  height: 12px;
+  background: rgba(255,255,255,0.08);
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.25);
+}
+
+.artist-page .progress-bar {
+  background: linear-gradient(90deg, rgba(212,175,55,0.45), rgba(244,215,122,0.95));
+  box-shadow: 0 0 16px rgba(212,175,55,0.18);
+}
+
+.artist-page .hero-actions a,
+.artist-page .hero-actions button,
+.artist-page .tune-action-btn,
+.artist-page .player-btn,
+.artist-page .gold-btn,
+.artist-page .metal-btn,
+.artist-page .ghost-btn {
+  min-height: 42px !important;
+  padding: 0 20px !important;
+  border-radius: 999px !important;
+  border: 1px solid rgba(212,175,55,0.46) !important;
+  background: rgba(18,18,20,0.76) !important;
+  background-image: none !important;
+  color: #f4d77a !important;
+  font-family: 'Manrope', sans-serif !important;
+  font-size: 14px !important;
+  font-weight: 700 !important;
+  text-shadow: none !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.07),
+    0 12px 28px rgba(0,0,0,0.30),
+    0 0 20px rgba(212,175,55,0.10) !important;
+  transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease, background-color .18s ease, color .18s ease !important;
+}
+
+.artist-page .hero-actions a:hover,
+.artist-page .hero-actions button:hover,
+.artist-page .tune-action-btn:hover,
+.artist-page .player-btn:hover,
+.artist-page .gold-btn:hover,
+.artist-page .metal-btn:hover,
+.artist-page .ghost-btn:hover {
+  transform: translateY(-2px) !important;
+  background: rgba(24,24,26,0.88) !important;
+  border-color: rgba(244,215,122,0.70) !important;
+  color: #ffffff !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.09),
+    0 16px 34px rgba(0,0,0,0.34),
+    0 0 28px rgba(212,175,55,0.18) !important;
+}
+
+.artist-page .player-btn {
+  width: 56px !important;
+  height: 56px !important;
+  padding: 0 !important;
+  border-color: rgba(244,215,122,0.46) !important;
+  color: #ffffff !important;
+}
+
+.artist-page .tune-action-btn.is-disabled,
+.artist-page .tune-action-btn:disabled {
+  opacity: 0.42;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+.artist-page .tune-like-btn.is-liked {
+  background: rgba(212,175,55,0.16) !important;
+  color: #f4d77a !important;
+  border-color: rgba(244,215,122,0.70) !important;
+}
+
+@media (max-width: 980px) {
+  .artist-page .artist-stage {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+
+  .artist-page .portrait-column {
+    max-width: 360px;
+    margin: 0 auto;
+  }
+}
+
+@media (max-width: 768px) {
+  .artist-page {
+    background:
+      linear-gradient(180deg, rgba(7,7,7,0.50) 0%, rgba(7,7,7,0.76) 42%, rgba(7,7,7,0.86) 100%),
+      radial-gradient(circle at top, rgba(212,175,55,0.12), transparent 26%),
+      url("../../bg-mobile-final-1080x1920.webp") !important;
+    background-size: cover, auto, 100% auto !important;
+    background-position: center top, center top, center top !important;
+    background-repeat: no-repeat, no-repeat, no-repeat !important;
+    background-attachment: scroll, scroll, scroll !important;
+    padding: 0 14px calc(var(--mobile-bottom-nav-height) + 18px) !important;
+  }
+
+  .artist-page .header-wrap {
+    left: 0 !important;
+    width: 100vw !important;
+  }
+
+  .artist-page .site-shell {
+    padding-top: 86px !important;
+  }
+
+  .artist-page .header-bar {
+    grid-template-columns: 72px 1fr 72px;
+    min-height: 68px;
+    gap: 8px;
+    padding: 6px 8px 2px 6px;
+  }
+
+  .artist-page .header-logo {
+    width: min(150px, 46vw);
+  }
+
+  .artist-page .artist-name {
+    font-size: 36px;
+  }
+
+  .artist-page .hero-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .artist-page .hero-actions a,
+  .artist-page .hero-actions button,
+  .artist-page .gold-btn,
+  .artist-page .metal-btn,
+  .artist-page .ghost-btn {
+    width: 100%;
+  }
+}
