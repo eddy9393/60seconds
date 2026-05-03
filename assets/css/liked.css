@@ -497,3 +497,76 @@ img[class*="avatar"],.avatar,.profile-photo,.artist-photo{box-shadow:0 0 0 1px r
   stroke: currentColor !important;
   opacity: 1 !important;
 }
+
+/* ============================================================
+   Liked page glass reset — match notifications glass surface
+   Scope: liked page playlist only. No HTML/layout changes.
+   ============================================================ */
+.liked-page .playlist-card {
+  background: transparent !important;
+  background-image:
+    linear-gradient(180deg, rgba(255,255,255,.105), rgba(255,255,255,.045)) !important;
+  border: 1px solid rgba(255,255,255,.18) !important;
+  border-top-color: rgba(255,255,255,.26) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.16),
+    inset 0 -1px 0 rgba(255,255,255,.035),
+    0 18px 42px rgba(0,0,0,.26),
+    0 0 34px rgba(255,255,255,.035) !important;
+  backdrop-filter: blur(22px) saturate(1.18) !important;
+  -webkit-backdrop-filter: blur(22px) saturate(1.18) !important;
+}
+
+.liked-page .playlist-card:hover {
+  border-color: rgba(255,255,255,.20) !important;
+  border-top-color: rgba(255,255,255,.28) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.17),
+    inset 0 -1px 0 rgba(255,255,255,.035),
+    0 18px 42px rgba(0,0,0,.26),
+    0 0 34px rgba(255,255,255,.035) !important;
+}
+
+.liked-page .playlist-header,
+.liked-page .playlist-row {
+  background: transparent !important;
+}
+
+.liked-page .playlist-header {
+  border-bottom: 1px solid rgba(255,255,255,.12) !important;
+}
+
+.liked-page .playlist-row {
+  border-top: 1px solid rgba(255,255,255,.08) !important;
+}
+
+.liked-page .playlist-pill,
+.liked-page .playlist-open,
+.liked-page .gold-btn,
+.liked-page .tune-action-btn,
+.liked-page button:not(.desktop-nav-button):not(.mobile-nav-link):not(.desktop-nav-link) {
+  background: rgba(255,255,255,.06) !important;
+  background-image: none !important;
+  border: 1px solid rgba(255,255,255,.14) !important;
+  border-top-color: rgba(255,255,255,.22) !important;
+  color: rgba(255,255,255,.9) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.12),
+    0 8px 24px rgba(0,0,0,.22) !important;
+  backdrop-filter: blur(18px) saturate(1.16) !important;
+  -webkit-backdrop-filter: blur(18px) saturate(1.16) !important;
+}
+
+.liked-page .playlist-open:hover,
+.liked-page .gold-btn:hover,
+.liked-page .tune-action-btn:hover,
+.liked-page button:not(.desktop-nav-button):not(.mobile-nav-link):not(.desktop-nav-link):hover {
+  background: rgba(255,255,255,.075) !important;
+  background-image: none !important;
+  border-color: rgba(212,175,55,.45) !important;
+  color: #ffffff !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.14),
+    0 10px 26px rgba(0,0,0,.26),
+    0 0 16px rgba(212,175,55,.15) !important;
+}
