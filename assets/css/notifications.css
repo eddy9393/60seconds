@@ -1339,3 +1339,91 @@ body{background:radial-gradient(circle at 50% -10%,rgba(245,200,75,.12),transpar
     0 0 28px rgba(245,200,75,.16) !important;
 }
 
+
+/* ============================================================
+   Notifications final glass override
+   Scope: notification visuals only. No HTML/layout/spacing changes.
+   ============================================================ */
+:root {
+  --notifications-final-glass-bg: rgba(255, 255, 255, .108);
+  --notifications-final-glass-bg-soft: rgba(255, 255, 255, .075);
+  --notifications-final-glass-border: rgba(255, 255, 255, .20);
+  --notifications-final-gold-hover: rgba(245, 200, 75, .42);
+}
+
+.page-wrap .notifications-list .notification-card,
+.page-wrap .notification-card {
+  background: var(--notifications-final-glass-bg) !important;
+  background-image: none !important;
+  border-color: var(--notifications-final-glass-border) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.18),
+    inset 0 -1px 0 rgba(255,255,255,.04),
+    0 16px 38px rgba(0,0,0,.24),
+    0 0 26px rgba(255,255,255,.035) !important;
+  backdrop-filter: blur(22px) saturate(1.16) !important;
+  -webkit-backdrop-filter: blur(22px) saturate(1.16) !important;
+}
+
+.page-wrap .notifications-list .notification-card.unread,
+.page-wrap .notification-card.unread {
+  background: rgba(255,255,255,.118) !important;
+  background-image: none !important;
+  border-color: rgba(245,200,75,.30) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.20),
+    inset 0 -1px 0 rgba(255,255,255,.04),
+    0 16px 38px rgba(0,0,0,.25),
+    0 0 22px rgba(245,200,75,.07) !important;
+}
+
+.page-wrap .notification-card.swipe-delete-ready {
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.18),
+    0 16px 38px rgba(0,0,0,.25),
+    0 0 0 1px rgba(255,90,90,.20) inset !important;
+}
+
+.page-wrap .notification-card .notification-icon,
+.page-wrap .notification-card .notification-avatar-link,
+.page-wrap .notification-card .notification-avatar-fallback,
+.page-wrap .notification-card .notification-reward {
+  background: var(--notifications-final-glass-bg-soft) !important;
+  background-image: none !important;
+  border-color: rgba(255,255,255,.17) !important;
+  color: rgba(255,255,255,.92) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.15),
+    0 10px 22px rgba(0,0,0,.18) !important;
+  backdrop-filter: blur(14px) saturate(1.10) !important;
+  -webkit-backdrop-filter: blur(14px) saturate(1.10) !important;
+}
+
+.page-wrap .notification-card .notification-reward {
+  color: rgba(255,236,173,.92) !important;
+  border-color: rgba(255,255,255,.18) !important;
+}
+
+.page-wrap .notification-delete-btn {
+  background: rgba(255,255,255,.082) !important;
+  background-image: none !important;
+  border: 1px solid rgba(255,255,255,.17) !important;
+  color: rgba(255,255,255,.9) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.15),
+    0 10px 22px rgba(0,0,0,.22) !important;
+  backdrop-filter: blur(14px) saturate(1.10) !important;
+  -webkit-backdrop-filter: blur(14px) saturate(1.10) !important;
+}
+
+.page-wrap .notification-delete-btn:hover,
+.page-wrap .notification-delete-btn:focus-visible {
+  background: rgba(255,255,255,.105) !important;
+  background-image: none !important;
+  border-color: var(--notifications-final-gold-hover) !important;
+  color: #ffffff !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.18),
+    0 14px 28px rgba(0,0,0,.28),
+    0 0 22px rgba(245,200,75,.12) !important;
+}
