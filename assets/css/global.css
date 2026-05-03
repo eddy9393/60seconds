@@ -65,14 +65,13 @@ html body::after {
   padding-top: 82px !important;
 }
 
-/* Coins badge: gelijk aan de index pagina: geen container/pill/glass rondom de coins */
+/* Coins badge: identiek aan index pagina */
 .currency-badge {
   position: fixed !important;
   top: 14px !important;
   left: 18px !important;
   width: 180px !important;
   z-index: 130 !important;
-
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
@@ -81,36 +80,25 @@ html body::after {
   padding: 0 10px !important;
   border-radius: 12px !important;
   border: none !important;
-  outline: none !important;
   background: none !important;
-  background-image: none !important;
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
   box-shadow: none !important;
   white-space: nowrap !important;
-  flex-shrink: 0 !important;
 }
 
 .currency-badge-icon {
   width: 28px !important;
   height: 28px !important;
   object-fit: contain !important;
-  display: block !important;
-  flex: 0 0 auto !important;
+  flex-shrink: 0 !important;
 }
 
 .currency-badge-value {
-  display: inline-block !important;
-  flex: 0 0 auto !important;
-  min-width: 0 !important;
   color: #ffffff !important;
   font-size: 16px !important;
   font-weight: 700 !important;
-  line-height: 1 !important;
   font-family: 'Space Grotesk', sans-serif !important;
-  letter-spacing: 0.3px !important;
-  font-variant-numeric: tabular-nums !important;
-  white-space: nowrap !important;
 }
 
 .currency-store-btn {
@@ -119,12 +107,11 @@ html body::after {
   justify-content: center !important;
   width: 22px !important;
   height: 22px !important;
-  padding: 0 !important;
   border-radius: 999px !important;
   border: 1px solid rgba(255,255,255,0.15) !important;
   background: rgba(255,255,255,0.055) !important;
   box-shadow: inset 0 1px 0 rgba(255,255,255,0.08) !important;
-  transition: transform 0.15s ease, border-color 0.18s ease, background 0.18s ease !important;
+  transition: transform 0.15s ease, border-color 0.18s ease !important;
   cursor: pointer !important;
   text-decoration: none !important;
   flex-shrink: 0 !important;
@@ -132,35 +119,17 @@ html body::after {
 
 .currency-store-btn:hover {
   transform: translateY(-2px) !important;
-  border-color: rgba(245,200,75,0.58) !important;
+  border-color: rgba(245,200,75,0.55) !important;
   background: rgba(245,200,75,0.09) !important;
 }
 
 .currency-plus-icon {
-  width: 16px !important;
-  height: 16px !important;
+  width: 14px !important;
+  height: 14px !important;
   object-fit: contain !important;
-  display: block !important;
   filter: brightness(0) invert(1) !important;
   opacity: 0.85 !important;
-}
-
-@media (max-width: 768px) {
-  .currency-badge {
-    position: relative !important;
-    top: auto !important;
-    left: auto !important;
-    width: auto !important;
-    border-radius: 999px !important;
-    min-height: 46px !important;
-    padding: 0 16px 0 12px !important;
-    border: none !important;
-    background: none !important;
-    background-image: none !important;
-    box-shadow: none !important;
-    backdrop-filter: none !important;
-    -webkit-backdrop-filter: none !important;
-  }
+  display: block !important;
 }
 
 /* Containers: glass stijl */
@@ -212,13 +181,25 @@ select:focus {
 
 /* Badges */
 .badge, .pill, .tag,
-[class*="-badge"]:not(.currency-badge),
+[class*="-badge"]:not(.currency-badge):not(.currency-badge-icon):not(.currency-badge-value),
 [class*="-pill"] {
   background: rgba(255,255,255,0.06) !important;
   border: 1px solid rgba(255,255,255,0.10) !important;
   color: rgba(255,255,255,0.70) !important;
   border-radius: 999px !important;
   font-family: 'Space Grotesk', sans-serif !important;
+}
+
+/* Coins: voorkom dat algemene badge-stijlen een container op icon/waarde zetten */
+.currency-badge,
+.currency-badge-icon,
+.currency-badge-value {
+  background: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
 }
 
 /* Scrollbar */
