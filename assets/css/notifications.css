@@ -1410,3 +1410,42 @@ body{background:radial-gradient(circle at 50% -10%,rgba(245,200,75,.12),transpar
     0 8px 24px rgba(0,0,0,0.22),
     0 0 16px rgba(212,175,55,0.15) !important;
 }
+
+/* ============================================================
+   Notifications — match populated notification cards to empty-card
+   Scope: only real notification cards on notifications page.
+   Empty state is intentionally untouched.
+   ============================================================ */
+.page-wrap .notification-card {
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.015)),
+    linear-gradient(180deg, rgba(24,24,24,0.88) 0%, rgba(17,17,17,0.94) 100%) !important;
+  border: 1px solid rgba(212,175,55,0.15) !important;
+  border-top: 1px solid rgba(212,175,55,0.15) !important;
+  box-shadow:
+    0 20px 60px rgba(0,0,0,0.32),
+    0 0 35px rgba(212,175,55,0.08),
+    inset 0 1px 0 rgba(255,255,255,0.04) !important;
+  backdrop-filter: blur(6px) !important;
+  -webkit-backdrop-filter: blur(6px) !important;
+}
+
+.page-wrap .notification-card.unread {
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.015)),
+    linear-gradient(180deg, rgba(24,24,24,0.88) 0%, rgba(17,17,17,0.94) 100%) !important;
+  border: 1px solid rgba(212,175,55,0.15) !important;
+  border-top: 1px solid rgba(212,175,55,0.15) !important;
+  box-shadow:
+    0 20px 60px rgba(0,0,0,0.32),
+    0 0 35px rgba(212,175,55,0.08),
+    inset 0 1px 0 rgba(255,255,255,0.04) !important;
+}
+
+.page-wrap .notification-card.swipe-delete-ready {
+  box-shadow:
+    0 20px 60px rgba(0,0,0,0.32),
+    0 0 35px rgba(212,175,55,0.08),
+    inset 0 1px 0 rgba(255,255,255,0.04),
+    0 0 0 1px rgba(255,90,90,0.18) inset !important;
+}
