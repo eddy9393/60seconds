@@ -1687,10 +1687,8 @@ img[class*="avatar"],.avatar,.profile-photo,.artist-photo{box-shadow:0 0 0 1px r
 }
 
 /* ============================================================
-   v28 artist containers — radio player container style reapplied
-   Scope: artist page content only. Removes the unintended dark bar
-   caused by broad section styling and applies the index radio shell
-   look to the real artist content containers.
+   v28 artist containers — index radio-player glass match
+   Scope: artist page content only. Layout dimensions preserved.
    ============================================================ */
 :root {
   --artist-radio-gold: #f5c84b;
@@ -1712,7 +1710,7 @@ main .submission-title,
   -webkit-backdrop-filter: none !important;
 }
 
-/* Keep original artist page dimensions while giving containers the index radio-shell styling. */
+/* Same light-through glass character as the index radio-player container. */
 .artist-stage,
 .tune-card,
 .status-box,
@@ -1720,23 +1718,20 @@ main .submission-title,
   isolation: isolate !important;
   position: relative !important;
   border-radius: 34px !important;
-  border: 1px solid rgba(255, 230, 151, .34) !important;
+  border: 1px solid rgba(255, 230, 151, .28) !important;
   background:
-    radial-gradient(circle at 50% -18%, rgba(255,230,151,.14), transparent 34%),
-    radial-gradient(circle at 8% 18%, rgba(245,200,75,.08), transparent 26%),
-    radial-gradient(circle at 94% 74%, rgba(245,200,75,.06), transparent 30%),
-    linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.025)),
-    rgba(20,20,24,.52) !important;
+    radial-gradient(circle at 86% 18%, rgba(245,200,75,.32), transparent 42%),
+    radial-gradient(circle at 52% -16%, rgba(255,230,151,.16), transparent 34%),
+    linear-gradient(180deg, rgba(255,255,255,.075), rgba(255,255,255,.025)),
+    rgba(42,42,46,.34) !important;
   box-shadow:
-    inset 0 1px 0 rgba(255,255,255,.14),
-    inset 0 -1px 0 rgba(0,0,0,.72),
-    inset 0 0 70px rgba(245,200,75,.06),
-    0 18px 42px rgba(0,0,0,.48),
-    0 0 0 1px rgba(245,200,75,.06),
-    0 0 42px rgba(245,200,75,.20),
-    0 0 110px rgba(245,200,75,.10) !important;
-  backdrop-filter: blur(20px) saturate(1.2) !important;
-  -webkit-backdrop-filter: blur(20px) saturate(1.2) !important;
+    inset 0 1px 0 rgba(255,255,255,.13),
+    inset 0 -1px 0 rgba(0,0,0,.34),
+    0 18px 44px rgba(0,0,0,.34),
+    0 0 0 1px rgba(245,200,75,.04),
+    0 0 44px rgba(245,200,75,.12) !important;
+  backdrop-filter: blur(22px) saturate(1.22) !important;
+  -webkit-backdrop-filter: blur(22px) saturate(1.22) !important;
   overflow: hidden !important;
   transform: translateZ(0) !important;
 }
@@ -1762,12 +1757,9 @@ main .submission-title,
   pointer-events: none !important;
   z-index: 0 !important;
   background:
-    linear-gradient(120deg, rgba(255,255,255,.13), transparent 21%, transparent 76%, rgba(255,230,151,.12)),
-    radial-gradient(ellipse at 50% 50%, rgba(245,200,75,.13), transparent 35%),
-    repeating-linear-gradient(90deg, rgba(255,255,255,.035) 0 1px, transparent 1px 92px) !important;
-  opacity: .46 !important;
-  mask-image: linear-gradient(180deg, rgba(0,0,0,.85), rgba(0,0,0,.35)) !important;
-  -webkit-mask-image: linear-gradient(180deg, rgba(0,0,0,.85), rgba(0,0,0,.35)) !important;
+    linear-gradient(115deg, rgba(255,255,255,.10), transparent 28%, transparent 66%, rgba(245,200,75,.22)),
+    radial-gradient(ellipse at 88% 50%, rgba(245,200,75,.26), transparent 54%) !important;
+  opacity: .78 !important;
 }
 
 .artist-stage::after,
@@ -1776,14 +1768,14 @@ main .submission-title,
 .empty-box::after {
   content: "" !important;
   position: absolute !important;
-  inset: auto 10% -54px 10% !important;
-  height: 92px !important;
+  inset: auto 7% -58px 7% !important;
+  height: 96px !important;
   pointer-events: none !important;
   z-index: 0 !important;
   border-radius: 999px !important;
-  background: radial-gradient(ellipse at center, rgba(245,200,75,.22), transparent 68%) !important;
-  filter: blur(18px) !important;
-  opacity: .56 !important;
+  background: radial-gradient(ellipse at center, rgba(245,200,75,.22), transparent 70%) !important;
+  filter: blur(20px) !important;
+  opacity: .62 !important;
 }
 
 .artist-stage > *,
