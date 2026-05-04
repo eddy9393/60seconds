@@ -6715,18 +6715,16 @@ input[type="range"]::-moz-range-thumb {
 }
 
 /* ============================================================
-   Featured artist photo ring — exact statistics avatar enclosure
-   Scope: index featured artist photo only.
+   Featured artist photo ring — match statistics profile border
+   Scope: index featured artist card only.
    ============================================================ */
 #featuredArtistCard .fa-photo-wrap {
   padding: 3px !important;
   border: 0 !important;
-  outline: 0 !important;
+  border-radius: 50% !important;
   background: linear-gradient(180deg, #f5d876 0%, #d4af37 45%, #6e5212 100%) !important;
   box-shadow: 0 18px 50px rgba(0,0,0,0.42) !important;
-  border-radius: 50% !important;
   overflow: hidden !important;
-  box-sizing: border-box !important;
 }
 
 #featuredArtistCard .fa-photo {
@@ -6736,30 +6734,26 @@ input[type="range"]::-moz-range-thumb {
   object-fit: cover !important;
   display: block !important;
   background: #0e0e0e !important;
+  transform: none !important;
+}
+
+#featuredArtistCard .fa-photo-wrap.fa-no-photo::after {
+  width: 100% !important;
+  height: 100% !important;
+  border-radius: 50% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  background: radial-gradient(circle at 30% 20%, rgba(255,255,255,0.12), rgba(0,0,0,0.8)) !important;
 }
 
 
-/* === sidebar icons: white with gold glow === */
-.desktop-side-nav .nav-icon-mask,
-.mobile-bottom-nav .nav-icon-mask {
+/* === FINAL sidebar icon override (ultra specific) === */
+body .desktop-side-nav .nav-icon-mask,
+body .mobile-bottom-nav .nav-icon-mask {
   background: #ffffff !important;
   background-image: none !important;
   filter:
-    drop-shadow(0 0 5px rgba(212,175,55,0.46))
-    drop-shadow(0 0 13px rgba(212,175,55,0.28)) !important;
+    drop-shadow(0 0 6px rgba(212,175,55,0.6))
+    drop-shadow(0 0 16px rgba(212,175,55,0.4)) !important;
 }
-
-.desktop-side-nav .desktop-nav-link:hover .nav-icon-mask,
-.desktop-side-nav .desktop-nav-button:hover .nav-icon-mask,
-.mobile-bottom-nav .mobile-nav-link:hover .nav-icon-mask,
-.desktop-side-nav .desktop-nav-link.active .nav-icon-mask,
-.desktop-side-nav .desktop-nav-button.active .nav-icon-mask,
-.mobile-bottom-nav .mobile-nav-link.active .nav-icon-mask {
-  background: #ffffff !important;
-  background-image: none !important;
-  filter:
-    drop-shadow(0 0 6px rgba(244,215,122,0.58))
-    drop-shadow(0 0 16px rgba(212,175,55,0.34)) !important;
-}
-/* === end sidebar icons: white with gold glow === */
-
