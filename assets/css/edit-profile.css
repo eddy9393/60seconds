@@ -1333,3 +1333,20 @@ body{background:radial-gradient(circle at 50% -10%,rgba(245,200,75,.12),transpar
   filter: drop-shadow(0 0 16px rgba(212,175,55,0.18)) !important;
 }
 /* Sidebar icon progress-bar visual match end */
+
+
+/* === FORCE sidebar icons white + gold glow (high specificity) === */
+.desktop-side-nav .nav-icon-mask,
+.desktop-side-nav .nav-icon-mask::before,
+.mobile-bottom-nav .nav-icon-mask {
+  background: #ffffff !important;
+  background-image: none !important;
+  filter:
+    drop-shadow(0 0 6px rgba(212,175,55,0.5))
+    drop-shadow(0 0 14px rgba(212,175,55,0.35)) !important;
+}
+
+/* kill original gradient explicitly */
+.nav-icon-mask {
+  background-image: none !important;
+}
