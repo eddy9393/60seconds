@@ -1499,3 +1499,44 @@ body{background:radial-gradient(circle at 50% -10%,rgba(245,200,75,.12),transpar
 .page-wrap .notifications-list .notification-reward {
   color: rgba(255,255,255,0.92) !important;
 }
+
+/* Sidebar icon progress-bar visual match start */
+/* Matches the main progress bar treatment without changing button backgrounds. */
+.nav-icon-mask {
+  position: relative !important;
+  overflow: visible !important;
+  background: linear-gradient(90deg, #b98816 0%, #d4af37 42%, #f4d77a 100%) !important;
+  filter: drop-shadow(0 0 16px rgba(212,175,55,0.18)) !important;
+  opacity: 1 !important;
+}
+
+.nav-icon-mask::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  display: block;
+  background: linear-gradient(90deg, #b98816 0%, #d4af37 42%, #f4d77a 100%);
+  -webkit-mask-image: var(--icon-url);
+  mask-image: var(--icon-url);
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  filter: blur(6px);
+  opacity: 0.34;
+  pointer-events: none;
+  z-index: -1;
+}
+
+.desktop-nav-link:hover .nav-icon-mask,
+.desktop-nav-button:hover .nav-icon-mask,
+.mobile-nav-link:hover .nav-icon-mask,
+.desktop-nav-link.active .nav-icon-mask,
+.desktop-nav-button.active .nav-icon-mask,
+.mobile-nav-link.active .nav-icon-mask {
+  background: linear-gradient(90deg, #b98816 0%, #d4af37 42%, #f4d77a 100%) !important;
+  filter: drop-shadow(0 0 16px rgba(212,175,55,0.18)) !important;
+}
+/* Sidebar icon progress-bar visual match end */
