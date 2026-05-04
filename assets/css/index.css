@@ -6715,16 +6715,18 @@ input[type="range"]::-moz-range-thumb {
 }
 
 /* ============================================================
-   Featured artist photo ring — match statistics profile border
-   Scope: index featured artist card only.
+   Featured artist photo ring — exact statistics avatar enclosure
+   Scope: index featured artist photo only.
    ============================================================ */
 #featuredArtistCard .fa-photo-wrap {
   padding: 3px !important;
   border: 0 !important;
-  border-radius: 50% !important;
+  outline: 0 !important;
   background: linear-gradient(180deg, #f5d876 0%, #d4af37 45%, #6e5212 100%) !important;
   box-shadow: 0 18px 50px rgba(0,0,0,0.42) !important;
+  border-radius: 50% !important;
   overflow: hidden !important;
+  box-sizing: border-box !important;
 }
 
 #featuredArtistCard .fa-photo {
@@ -6734,30 +6736,51 @@ input[type="range"]::-moz-range-thumb {
   object-fit: cover !important;
   display: block !important;
   background: #0e0e0e !important;
-  transform: none !important;
-}
-
-#featuredArtistCard .fa-photo-wrap.fa-no-photo::after {
-  width: 100% !important;
-  height: 100% !important;
-  border-radius: 50% !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  background: radial-gradient(circle at 30% 20%, rgba(255,255,255,0.12), rgba(0,0,0,0.8)) !important;
 }
 
 
-/* === header logo fit fix === */
+/* === header logo fit fix v2 === */
+.header-center .header-logo,
 .header-logo {
   width: auto !important;
-  max-width: 220px;
-  height: auto;
-  object-fit: contain;
+  height: clamp(82px, 8.2vw, 118px) !important;
+  max-width: min(220px, 24vw) !important;
+  max-height: 118px !important;
+  object-fit: contain !important;
 }
 
-@media (max-width:768px){
-  .header-logo{
-    max-width:140px;
+.header-center .header-logo-link {
+  line-height: 0 !important;
+  overflow: visible !important;
+}
+
+.header-bar {
+  min-height: 132px;
+  align-items: flex-start;
+  padding-top: 8px;
+}
+
+.header-center {
+  top: 0;
+}
+
+@media (max-width: 768px) {
+  .header-center .header-logo,
+  .header-logo {
+    height: 66px !important;
+    max-height: 66px !important;
+    max-width: 112px !important;
+  }
+
+  .header-bar {
+    min-height: 82px;
+    align-items: center;
+    padding-top: 6px;
+  }
+
+  .header-center {
+    top: auto;
   }
 }
+/* === end header logo fit fix v2 === */
+
