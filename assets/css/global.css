@@ -219,19 +219,19 @@ select:focus {
 }
 
 
-/* === Sidebar icon gold enhancement === */
+/* Sidebar icon gold style start */
 .sidebar i,
-.sidebar svg,
-.nav i,
-.nav svg {
-  color: transparent;
-  background: linear-gradient(135deg, #f5c807 0%, #ffd86b 50%, #f5c807 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  filter: drop-shadow(0 0 6px rgba(245, 200, 7, 0.6)) drop-shadow(0 0 12px rgba(255, 216, 107, 0.35));
+.sidebar svg {
+    color: #d4af37;
+    filter: drop-shadow(0 0 4px rgba(212, 175, 55, 0.5))
+            drop-shadow(0 0 8px rgba(255, 215, 0, 0.25));
+    transition: all 0.2s ease;
 }
 
-.sidebar svg path,
-.nav svg path {
-  fill: currentColor;
+.sidebar i:hover,
+.sidebar svg:hover {
+    color: #ffd700;
+    filter: drop-shadow(0 0 6px rgba(255, 215, 0, 0.7))
+            drop-shadow(0 0 12px rgba(255, 215, 0, 0.4));
 }
+/* Sidebar icon gold style end */
