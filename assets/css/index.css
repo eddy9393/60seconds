@@ -519,7 +519,8 @@ img {
   width: 100%;
   height: 100%;
   display: block;
-  /* background via global.css */
+  background:
+    linear-gradient(180deg, #fff3b6 0%, #f4d77a 20%, #d4af37 52%, #b98714 76%, #7d5a10 100%);
   -webkit-mask-image: var(--icon-url);
   mask-image: var(--icon-url);
   -webkit-mask-repeat: no-repeat;
@@ -540,14 +541,16 @@ img {
 .mobile-nav-link:hover .nav-icon-mask {
   transform: scale(1.04);
   opacity: 1;
-  /* background via global.css */
+  background:
+    linear-gradient(180deg, #fff7cf 0%, #ffe08d 18%, #f4d77a 36%, #d4af37 58%, #b98714 80%, #7d5a10 100%);
   filter: drop-shadow(0 2px 11px rgba(212,175,55,0.22));
 }
 
 .desktop-nav-link.active .nav-icon-mask,
 .desktop-nav-button.active .nav-icon-mask,
 .mobile-nav-link.active .nav-icon-mask {
-  /* background via global.css */
+  background:
+    linear-gradient(180deg, #fff9da 0%, #ffe9a7 18%, #f7dd82 36%, #d4af37 58%, #ba8a18 80%, #7d5a10 100%);
   filter:
     drop-shadow(0 2px 12px rgba(212,175,55,0.24))
     drop-shadow(0 0 15px rgba(212,175,55,0.20));
