@@ -250,10 +250,16 @@ img {
 }
 
 .header-logo-link {
-  /* layout via global.css */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
 }
 
 .header-logo {
+  display: block;
+  width: min(288px, 45vw);
+  height: auto;
   filter:
     drop-shadow(0 8px 18px rgba(0, 0, 0, 0.35))
     drop-shadow(0 0 20px rgba(212, 175, 55, 0.08));
@@ -1468,7 +1474,9 @@ img {
     white-space: nowrap;
   }
 
-  /* header-logo width via global.css */
+  .header-logo {
+    width: min(200px, 40vw);
+  }
 
   .header-icon-btn,
   .header-avatar-btn {
@@ -1592,7 +1600,9 @@ img {
   display: block !important;
 }
 
-/* header-logo width via global.css */
+.header-logo {
+  width: min(216px, 33.75vw);
+}
 
 @media (max-width: 768px) {
   .header-wrap .site-shell > header,
