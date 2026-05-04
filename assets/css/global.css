@@ -256,9 +256,14 @@ select:focus {
    Header logo — consistent op alle pagina's
    ================================================================ */
 
-/* Iets meer ruimte van de bovenrand */
+/* Glass header + ruimte van bovenrand — alle pagina's */
 .header-bar {
   padding-top: 14px !important;
+  background: rgba(10, 10, 10, 0.45) !important;
+  backdrop-filter: blur(18px) saturate(160%) !important;
+  -webkit-backdrop-filter: blur(18px) saturate(160%) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07) !important;
+  box-shadow: 0 2px 24px rgba(0, 0, 0, 0.35) !important;
 }
 
 /* Logo gecentreerd op volledig scherm + 70px offset (logobreed/2) */
