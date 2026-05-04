@@ -219,27 +219,100 @@ select:focus {
 }
 
 
-/* === sidebar icons: white with gold glow === */
-.desktop-side-nav .nav-icon-mask,
-.mobile-bottom-nav .nav-icon-mask {
-  background: #ffffff !important;
-  background-image: none !important;
-  filter:
-    drop-shadow(0 0 5px rgba(212,175,55,0.46))
-    drop-shadow(0 0 13px rgba(212,175,55,0.28)) !important;
+/* Sidebar icon gold style start */
+
+/* force override */
+.sidebar * svg,
+.sidebar * svg path,
+.sidebar * i {
+    color: #d4af37 !important;
+    fill: #d4af37 !important;
+    stroke: #d4af37 !important;
+
+    filter:
+        drop-shadow(0 0 6px rgba(255, 215, 0, 0.6))
+        drop-shadow(0 0 12px rgba(255, 215, 0, 0.45))
+        drop-shadow(0 0 18px rgba(255, 215, 0, 0.25));
+
+    transition: all 0.2s ease;
 }
 
-.desktop-side-nav .desktop-nav-link:hover .nav-icon-mask,
-.desktop-side-nav .desktop-nav-button:hover .nav-icon-mask,
-.mobile-bottom-nav .mobile-nav-link:hover .nav-icon-mask,
-.desktop-side-nav .desktop-nav-link.active .nav-icon-mask,
-.desktop-side-nav .desktop-nav-button.active .nav-icon-mask,
-.mobile-bottom-nav .mobile-nav-link.active .nav-icon-mask {
-  background: #ffffff !important;
-  background-image: none !important;
-  filter:
-    drop-shadow(0 0 6px rgba(244,215,122,0.58))
-    drop-shadow(0 0 16px rgba(212,175,55,0.34)) !important;
-}
-/* === end sidebar icons: white with gold glow === */
+.sidebar * svg:hover,
+.sidebar * svg:hover path,
+.sidebar * i:hover {
+    color: #ffd700 !important;
+    fill: #ffd700 !important;
+    stroke: #ffd700 !important;
 
+    filter:
+        drop-shadow(0 0 8px rgba(255, 215, 0, 0.9))
+        drop-shadow(0 0 16px rgba(255, 215, 0, 0.6))
+        drop-shadow(0 0 24px rgba(255, 215, 0, 0.35));
+}
+
+/* Sidebar icon gold style end */
+
+/* ================================================================
+   Header logo — consistent op alle pagina's
+   ================================================================ */
+
+/* Header — geen glass, alle pagina's */
+.header-bar {
+  position: relative !important;
+  min-height: 96px !important;
+}
+
+/* Logo + slogan gecentreerd op volledig scherm */
+.header-center {
+  position: absolute !important;
+  left: 70px !important;
+  right: -70px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  pointer-events: none !important;
+}
+
+.header-center > * {
+  pointer-events: auto !important;
+}
+
+.header-logo-link {
+  display: inline-flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  text-decoration: none !important;
+  cursor: pointer !important;
+  pointer-events: auto !important;
+  gap: 3px !important;
+  margin-top: 5px !important;
+}
+
+.header-logo-link:hover {
+  opacity: 0.85 !important;
+}
+
+.header-logo {
+  display: block !important;
+  width: 126px !important;
+  height: auto !important;
+  object-fit: contain !important;
+}
+
+.header-slogan {
+  font-size: 10px !important;
+  letter-spacing: 0.2em !important;
+}
+
+/* Mobiel: reset naar gewone flow */
+@media (max-width: 768px) {
+  .header-center {
+    position: relative !important;
+    left: auto !important;
+    right: auto !important;
+  }
+  .header-logo {
+    width: 110px !important;
+  }
+}
