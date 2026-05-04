@@ -6738,94 +6738,152 @@ input[type="range"]::-moz-range-thumb {
   background: #0e0e0e !important;
 }
 
-/* ============================================================
-   Volume slider progress-bar match update
-   Scope: index radio player volume range only.
-   ============================================================ */
-#radioShell .player-actions #volumeControl .volume-slider-inline {
-  border-color: rgba(255,255,255,.08) !important;
-  background: rgba(10,10,13,0.94) !important;
-  box-shadow:
-    inset 0 1px 2px rgba(0,0,0,.70),
-    0 18px 40px rgba(0,0,0,0.44),
-    0 0 26px rgba(245,200,75,.09) !important;
+
+/* === 60S UPDATE: volume slider progress-match no black drawer === */
+#radioShell .player-actions #volumeControl.volume-control,
+#radioShell .player-actions #volumeControl.volume-control.open,
+.player-actions #volumeControl.volume-control,
+.player-actions #volumeControl.volume-control.open {
+  background: transparent !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
 }
 
-#radioShell .player-actions #volumeControl .volume-slider-inline input[type="range"],
-#radioShell .volume-slider-inline input[type="range"] {
-  width: 122px !important;
-  height: 9px !important;
-  margin: 0 !important;
-  padding: 0 !important;
-  border: 1px solid rgba(255,255,255,.08) !important;
+#radioShell .player-actions #volumeControl.volume-control.open {
+  width: 190px !important;
+  min-width: 190px !important;
+  max-width: 190px !important;
+  overflow: visible !important;
+}
+
+#radioShell .player-actions #volumeControl .volume-button,
+#radioShell .player-actions #volumeControl .volume-button.icon-btn,
+#radioShell .player-actions #volumeControl .volume-button.metal-btn {
+  background: rgba(255,255,255,0.055) !important;
+  border: 1px solid rgba(255,255,255,0.13) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.10),
+    0 10px 24px rgba(0,0,0,0.28) !important;
+}
+
+#radioShell .player-actions #volumeControl.volume-control.open .volume-button,
+#radioShell .player-actions #volumeControl .volume-button:hover {
+  border-color: rgba(245,200,75,0.54) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.13),
+    0 10px 24px rgba(0,0,0,0.30),
+    0 0 20px rgba(245,200,75,0.18) !important;
+}
+
+#radioShell .player-actions #volumeControl .volume-slider-inline,
+#radioShell .player-actions #volumeControl.volume-control.open .volume-slider-inline {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+#radioShell .player-actions #volumeControl.volume-control.open .volume-slider-inline {
+  width: 124px !important;
+  min-width: 124px !important;
+  max-width: 124px !important;
+  padding-right: 8px !important;
+  padding-left: 6px !important;
+}
+
+#radioShell .player-actions #volumeControl .volume-slider-inline input[type="range"] {
+  --volume-pct: 30%;
+  width: 112px !important;
+  min-width: 112px !important;
+  max-width: 112px !important;
+  height: 14px !important;
   border-radius: 999px !important;
-  background: linear-gradient(90deg, #b88618 0%, #f5c84b 12.6%, #ffe69a 21.6%, #d9a72f 30%, rgba(255,255,255,.075) 30%, rgba(255,255,255,.075) 100%) !important;
+  border: 1px solid rgba(255,255,255,0.08) !important;
+  background:
+    linear-gradient(90deg,
+      #b88618 0%,
+      #f5c84b calc(var(--volume-pct) * 0.42),
+      #ffe69a calc(var(--volume-pct) * 0.72),
+      #d9a72f var(--volume-pct),
+      rgba(255,255,255,0.075) var(--volume-pct),
+      rgba(255,255,255,0.075) 100%) !important;
   box-shadow:
-    inset 0 1px 2px rgba(0,0,0,.70),
-    0 0 26px rgba(245,200,75,.09) !important;
-  appearance: none !important;
-  -webkit-appearance: none !important;
-  cursor: pointer !important;
-  accent-color: #f5c84b !important;
+    inset 0 1px 2px rgba(0,0,0,0.70),
+    0 0 26px rgba(245,200,75,0.09) !important;
+  overflow: visible !important;
 }
 
-#radioShell .player-actions #volumeControl .volume-slider-inline input[type="range"]::-webkit-slider-runnable-track,
-#radioShell .volume-slider-inline input[type="range"]::-webkit-slider-runnable-track {
-  height: 9px !important;
+#radioShell .player-actions #volumeControl .volume-slider-inline input[type="range"]::-webkit-slider-runnable-track {
+  height: 14px !important;
   border-radius: 999px !important;
   background: transparent !important;
   border: 0 !important;
   box-shadow: none !important;
 }
 
-#radioShell .player-actions #volumeControl .volume-slider-inline input[type="range"]::-webkit-slider-thumb,
-#radioShell .volume-slider-inline input[type="range"]::-webkit-slider-thumb {
+#radioShell .player-actions #volumeControl .volume-slider-inline input[type="range"]::-webkit-slider-thumb {
   -webkit-appearance: none !important;
-  width: 18px !important;
-  height: 18px !important;
-  margin-top: -4.5px !important;
-  border-radius: 50% !important;
-  border: 1px solid rgba(255,255,255,.45) !important;
-  background: radial-gradient(circle at 35% 28%, #fff4b8 0%, #ffe69a 28%, #f5c84b 54%, #b88618 100%) !important;
-  box-shadow:
-    0 0 14px rgba(245,200,75,.72),
-    0 0 34px rgba(245,200,75,.34),
-    inset 0 1px 1px rgba(255,255,255,.42) !important;
-  cursor: pointer !important;
-}
-
-#radioShell .player-actions #volumeControl .volume-slider-inline input[type="range"]::-moz-range-track,
-#radioShell .volume-slider-inline input[type="range"]::-moz-range-track {
-  height: 9px !important;
+  appearance: none !important;
+  width: 28px !important;
+  height: 28px !important;
+  margin-top: -8px !important;
   border-radius: 999px !important;
-  background: rgba(255,255,255,.075) !important;
-  border: 1px solid rgba(255,255,255,.08) !important;
+  border: 1px solid rgba(255,255,255,0.58) !important;
+  background: radial-gradient(circle at 35% 30%, #fff6bf 0%, #ffe69a 28%, #f5c84b 62%, #b88618 100%) !important;
   box-shadow:
-    inset 0 1px 2px rgba(0,0,0,.70),
-    0 0 26px rgba(245,200,75,.09) !important;
+    inset 0 1px 2px rgba(255,255,255,0.52),
+    0 0 14px rgba(245,200,75,0.72),
+    0 0 34px rgba(245,200,75,0.34) !important;
 }
 
-#radioShell .player-actions #volumeControl .volume-slider-inline input[type="range"]::-moz-range-progress,
-#radioShell .volume-slider-inline input[type="range"]::-moz-range-progress {
-  height: 9px !important;
+#radioShell .player-actions #volumeControl .volume-slider-inline input[type="range"]::-moz-range-track {
+  height: 14px !important;
+  border-radius: 999px !important;
+  background: rgba(255,255,255,0.075) !important;
+  border: 1px solid rgba(255,255,255,0.08) !important;
+  box-shadow:
+    inset 0 1px 2px rgba(0,0,0,0.70),
+    0 0 26px rgba(245,200,75,0.09) !important;
+}
+
+#radioShell .player-actions #volumeControl .volume-slider-inline input[type="range"]::-moz-range-progress {
+  height: 14px !important;
   border-radius: 999px !important;
   background: linear-gradient(90deg, #b88618, #f5c84b 42%, #ffe69a 72%, #d9a72f) !important;
   box-shadow:
-    0 0 14px rgba(245,200,75,.72),
-    0 0 34px rgba(245,200,75,.34) !important;
+    0 0 14px rgba(245,200,75,0.72),
+    0 0 34px rgba(245,200,75,0.34) !important;
 }
 
-#radioShell .player-actions #volumeControl .volume-slider-inline input[type="range"]::-moz-range-thumb,
-#radioShell .volume-slider-inline input[type="range"]::-moz-range-thumb {
-  width: 18px !important;
-  height: 18px !important;
-  border-radius: 50% !important;
-  border: 1px solid rgba(255,255,255,.45) !important;
-  background: radial-gradient(circle at 35% 28%, #fff4b8 0%, #ffe69a 28%, #f5c84b 54%, #b88618 100%) !important;
+#radioShell .player-actions #volumeControl .volume-slider-inline input[type="range"]::-moz-range-thumb {
+  width: 28px !important;
+  height: 28px !important;
+  border-radius: 999px !important;
+  border: 1px solid rgba(255,255,255,0.58) !important;
+  background: radial-gradient(circle at 35% 30%, #fff6bf 0%, #ffe69a 28%, #f5c84b 62%, #b88618 100%) !important;
   box-shadow:
-    0 0 14px rgba(245,200,75,.72),
-    0 0 34px rgba(245,200,75,.34),
-    inset 0 1px 1px rgba(255,255,255,.42) !important;
-  cursor: pointer !important;
+    inset 0 1px 2px rgba(255,255,255,0.52),
+    0 0 14px rgba(245,200,75,0.72),
+    0 0 34px rgba(245,200,75,0.34) !important;
 }
-/* ============================================================ */
+
+@media (max-width: 900px) {
+  #radioShell .player-actions #volumeControl.volume-control.open {
+    width: 166px !important;
+    min-width: 166px !important;
+    max-width: 166px !important;
+  }
+
+  #radioShell .player-actions #volumeControl.volume-control.open .volume-slider-inline {
+    width: 100px !important;
+    min-width: 100px !important;
+    max-width: 100px !important;
+    padding-right: 6px !important;
+  }
+
+  #radioShell .player-actions #volumeControl .volume-slider-inline input[type="range"] {
+    width: 88px !important;
+    min-width: 88px !important;
+    max-width: 88px !important;
+  }
+}
+/* === END 60S UPDATE === */
