@@ -256,17 +256,13 @@ select:focus {
    Header logo — consistent op alle pagina's
    ================================================================ */
 
-/* Glass header + ruimte van bovenrand — alle pagina's */
+/* Header — geen glass, alle pagina's */
 .header-bar {
-  padding-top: 14px !important;
-  background: rgba(10, 10, 10, 0.45) !important;
-  backdrop-filter: blur(18px) saturate(160%) !important;
-  -webkit-backdrop-filter: blur(18px) saturate(160%) !important;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.07) !important;
-  box-shadow: 0 2px 24px rgba(0, 0, 0, 0.35) !important;
+  position: relative !important;
+  min-height: 96px !important;
 }
 
-/* Logo gecentreerd op volledig scherm + 70px offset (logobreed/2) */
+/* Logo + slogan gecentreerd op volledig scherm */
 .header-center {
   position: absolute !important;
   left: 70px !important;
@@ -281,11 +277,32 @@ select:focus {
   pointer-events: auto !important;
 }
 
+.header-logo-link {
+  display: inline-flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  text-decoration: none !important;
+  cursor: pointer !important;
+  pointer-events: auto !important;
+  gap: 3px !important;
+  margin-top: 15px !important;
+}
+
+.header-logo-link:hover {
+  opacity: 0.85 !important;
+}
+
 .header-logo {
   display: block !important;
-  width: 140px !important;
+  width: 126px !important;
   height: auto !important;
   object-fit: contain !important;
+}
+
+.header-slogan {
+  font-size: 10px !important;
+  letter-spacing: 0.2em !important;
 }
 
 /* Mobiel: reset naar gewone flow */
