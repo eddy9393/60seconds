@@ -260,8 +260,6 @@ select:focus {
 .header-bar {
   padding-top: 10px !important;
   padding-bottom: 10px !important;
-  min-height: 96px !important;
-  position: relative !important;
   background: rgba(10, 10, 10, 0.22) !important;
   backdrop-filter: blur(18px) saturate(160%) !important;
   -webkit-backdrop-filter: blur(18px) saturate(160%) !important;
@@ -290,28 +288,27 @@ select:focus {
   align-items: center !important;
   justify-content: center !important;
   text-decoration: none !important;
-  cursor: pointer !important;
-  pointer-events: auto !important;
   gap: 3px !important;
   margin-top: 10px !important;
 }
 
-.header-logo-link:hover {
-  opacity: 0.85 !important;
-}
-
 .header-logo {
   display: block !important;
-  width: 126px !important;
+  width: 140px !important;
   height: auto !important;
   object-fit: contain !important;
 }
 
-.header-slogan {
-  font-size: 10px !important;
-  letter-spacing: 0.2em !important;
+.header-tagline {
+  display: block !important;
+  font-size: 9px !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.18em !important;
+  color: rgba(255, 255, 255, 0.55) !important;
+  text-transform: uppercase !important;
+  white-space: nowrap !important;
+  line-height: 1 !important;
 }
-
 
 /* Mobiel: reset naar gewone flow */
 @media (max-width: 768px) {
