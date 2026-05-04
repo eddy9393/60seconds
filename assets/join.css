@@ -1146,31 +1146,18 @@ body{background:radial-gradient(circle at 50% -10%,rgba(245,200,75,.12),transpar
 /* Sidebar icon progress-bar visual match end */
 
 
-/* === sidebar icons white + gold glow override === */
+/* === FORCE sidebar icons white + gold glow (high specificity) === */
 .desktop-side-nav .nav-icon-mask,
+.desktop-side-nav .nav-icon-mask::before,
 .mobile-bottom-nav .nav-icon-mask {
   background: #ffffff !important;
+  background-image: none !important;
   filter:
-    drop-shadow(0 0 5px rgba(212,175,55,0.42))
-    drop-shadow(0 0 12px rgba(212,175,55,0.24)) !important;
+    drop-shadow(0 0 6px rgba(212,175,55,0.5))
+    drop-shadow(0 0 14px rgba(212,175,55,0.35)) !important;
 }
 
-.desktop-side-nav .desktop-nav-link:hover .nav-icon-mask,
-.desktop-side-nav .desktop-nav-button:hover .nav-icon-mask,
-.mobile-bottom-nav .mobile-nav-link:hover .nav-icon-mask {
-  background: #ffffff !important;
-  filter:
-    drop-shadow(0 0 6px rgba(244,215,122,0.52))
-    drop-shadow(0 0 15px rgba(212,175,55,0.30)) !important;
+/* kill original gradient explicitly */
+.nav-icon-mask {
+  background-image: none !important;
 }
-
-.desktop-side-nav .desktop-nav-link.active .nav-icon-mask,
-.desktop-side-nav .desktop-nav-button.active .nav-icon-mask,
-.mobile-bottom-nav .mobile-nav-link.active .nav-icon-mask {
-  background: #ffffff !important;
-  filter:
-    drop-shadow(0 0 7px rgba(244,215,122,0.58))
-    drop-shadow(0 0 18px rgba(212,175,55,0.34)) !important;
-}
-/* === end sidebar icons white + gold glow override === */
-
