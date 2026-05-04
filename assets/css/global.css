@@ -258,15 +258,16 @@ select:focus {
 
 /* Glass header + ruimte van bovenrand — alle pagina's */
 .header-bar {
-  padding-top: 14px !important;
-  background: rgba(10, 10, 10, 0.45) !important;
+  padding-top: 10px !important;
+  padding-bottom: 10px !important;
+  background: rgba(10, 10, 10, 0.22) !important;
   backdrop-filter: blur(18px) saturate(160%) !important;
   -webkit-backdrop-filter: blur(18px) saturate(160%) !important;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.07) !important;
-  box-shadow: 0 2px 24px rgba(0, 0, 0, 0.35) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06) !important;
+  box-shadow: 0 2px 24px rgba(0, 0, 0, 0.25) !important;
 }
 
-/* Logo gecentreerd op volledig scherm + 70px offset (logobreed/2) */
+/* Logo + tagline gecentreerd op volledig scherm — alle pagina's */
 .header-center {
   position: absolute !important;
   left: 70px !important;
@@ -281,11 +282,32 @@ select:focus {
   pointer-events: auto !important;
 }
 
+.header-logo-link {
+  display: inline-flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  text-decoration: none !important;
+  gap: 3px !important;
+  margin-top: 10px !important;
+}
+
 .header-logo {
   display: block !important;
   width: 140px !important;
   height: auto !important;
   object-fit: contain !important;
+}
+
+.header-tagline {
+  display: block !important;
+  font-size: 9px !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.18em !important;
+  color: rgba(255, 255, 255, 0.55) !important;
+  text-transform: uppercase !important;
+  white-space: nowrap !important;
+  line-height: 1 !important;
 }
 
 /* Mobiel: reset naar gewone flow */
