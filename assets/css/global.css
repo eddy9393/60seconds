@@ -296,7 +296,7 @@ select:focus {
 
 .header-logo {
   display: block !important;
-  width: 140px !important;
+  width: 112px !important;
   height: auto !important;
   object-fit: contain !important;
 }
