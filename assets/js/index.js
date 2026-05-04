@@ -1556,7 +1556,7 @@ async function handleStartRadio() {
   // Init slider kleur
   if (els.volume) {
     const pct = (els.volume.value / els.volume.max) * 100;
-    els.volume.style.background = `linear-gradient(90deg, rgba(180,130,30,0.9) 0%, #d4af37 ${pct}%, rgba(255,255,255,0.15) ${pct}%, rgba(255,255,255,0.15) 100%)`;
+    els.volume.style.background = `linear-gradient(90deg, #b88618 0%, #f5c84b ${Math.min(pct * 0.42, pct)}%, #ffe69a ${Math.min(pct * 0.72, pct)}%, #d9a72f ${pct}%, rgba(255,255,255,.075) ${pct}%, rgba(255,255,255,.075) 100%)`;
   }
   els.audio.muted = startVolume === 0;
 
@@ -1747,7 +1747,7 @@ function bindUIEvents() {
     // Kleur het gevulde deel van de slider
     const pct = (parseFloat(e.target.value) / parseFloat(e.target.max)) * 100;
     e.target.style.setProperty('background',
-      `linear-gradient(90deg, rgba(180,130,30,0.9) 0%, #d4af37 ${pct}%, rgba(255,255,255,0.15) ${pct}%, rgba(255,255,255,0.15) 100%)`
+      `linear-gradient(90deg, #b88618 0%, #f5c84b ${Math.min(pct * 0.42, pct)}%, #ffe69a ${Math.min(pct * 0.72, pct)}%, #d9a72f ${pct}%, rgba(255,255,255,.075) ${pct}%, rgba(255,255,255,.075) 100%)`
     );
     const v = getSafeVolume(e.target.value);
     els.audio.volume = v;
