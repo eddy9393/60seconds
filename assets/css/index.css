@@ -6074,41 +6074,11 @@ body.is-logged-out #conceptSection {
   content: none !important;
 }
 
-/* ── Logo gecentreerd boven radio player ─────────────────── */
+/* ── Logo positie afgehandeld via global.css ─────────────── */
 .header-left {
   flex: 0 0 auto;
   display: flex;
   align-items: center;
-}
-
-.header-center {
-  position: absolute;
-  /* Exact boven radio player: left=sidebar+padding, right=community-col breedte */
-  left: 70px;
-  right: -70px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  pointer-events: none;
-  text-align: center;
-}
-
-.header-center .header-logo {
-  transform: none;
-  display: block;
-}
-
-.header-center .header-logo-link {
-  display: flex !important;
-  flex-direction: column !important;
-  align-items: center !important;
-  justify-content: center !important;
-  gap: 4px !important;
-}
-
-.header-center * {
-  pointer-events: auto;
 }
 
 .header-right {

@@ -255,6 +255,27 @@ select:focus {
 /* ================================================================
    Header logo — consistent op alle pagina's
    ================================================================ */
+
+/* Iets meer ruimte van de bovenrand */
+.header-bar {
+  padding-top: 14px !important;
+}
+
+/* Logo gecentreerd op volledig scherm + 70px offset (logobreed/2) */
+.header-center {
+  position: absolute !important;
+  left: 70px !important;
+  right: -70px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  pointer-events: none !important;
+}
+
+.header-center > * {
+  pointer-events: auto !important;
+}
+
 .header-logo {
   display: block !important;
   width: 140px !important;
@@ -262,8 +283,13 @@ select:focus {
   object-fit: contain !important;
 }
 
-/* Mobiel: iets kleiner */
-@media (max-width: 600px) {
+/* Mobiel: reset naar gewone flow */
+@media (max-width: 768px) {
+  .header-center {
+    position: relative !important;
+    left: auto !important;
+    right: auto !important;
+  }
   .header-logo {
     width: 110px !important;
   }
