@@ -217,3 +217,21 @@ select:focus {
     width: auto !important;
   }
 }
+
+
+/* === Sidebar icon gold enhancement === */
+.sidebar i,
+.sidebar svg,
+.nav i,
+.nav svg {
+  color: transparent;
+  background: linear-gradient(135deg, #f5c807 0%, #ffd86b 50%, #f5c807 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  filter: drop-shadow(0 0 6px rgba(245, 200, 7, 0.6)) drop-shadow(0 0 12px rgba(255, 216, 107, 0.35));
+}
+
+.sidebar svg path,
+.nav svg path {
+  fill: currentColor;
+}
