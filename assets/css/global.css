@@ -221,25 +221,32 @@ select:focus {
 
 /* === sidebar icons: white with gold glow === */
 .desktop-side-nav .nav-icon-mask,
+.desktop-side-nav-panel .nav-icon-mask,
 .mobile-bottom-nav .nav-icon-mask {
   background: #ffffff !important;
   background-image: none !important;
+  background-blend-mode: normal !important;
   filter:
-    drop-shadow(0 0 5px rgba(212,175,55,0.46))
-    drop-shadow(0 0 13px rgba(212,175,55,0.28)) !important;
+    drop-shadow(0 0 5px rgba(212,175,55,0.5))
+    drop-shadow(0 0 13px rgba(212,175,55,0.3)) !important;
 }
 
 .desktop-side-nav .desktop-nav-link:hover .nav-icon-mask,
 .desktop-side-nav .desktop-nav-button:hover .nav-icon-mask,
+.desktop-side-nav-panel .desktop-nav-link:hover .nav-icon-mask,
+.desktop-side-nav-panel .desktop-nav-button:hover .nav-icon-mask,
 .mobile-bottom-nav .mobile-nav-link:hover .nav-icon-mask,
 .desktop-side-nav .desktop-nav-link.active .nav-icon-mask,
 .desktop-side-nav .desktop-nav-button.active .nav-icon-mask,
+.desktop-side-nav-panel .desktop-nav-link.active .nav-icon-mask,
+.desktop-side-nav-panel .desktop-nav-button.active .nav-icon-mask,
 .mobile-bottom-nav .mobile-nav-link.active .nav-icon-mask {
   background: #ffffff !important;
   background-image: none !important;
+  background-blend-mode: normal !important;
   filter:
-    drop-shadow(0 0 6px rgba(244,215,122,0.58))
-    drop-shadow(0 0 16px rgba(212,175,55,0.34)) !important;
+    drop-shadow(0 0 7px rgba(244,215,122,0.65))
+    drop-shadow(0 0 18px rgba(212,175,55,0.4)) !important;
 }
 /* === end sidebar icons: white with gold glow === */
 
