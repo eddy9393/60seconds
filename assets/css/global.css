@@ -299,16 +299,6 @@ select:focus {
   object-fit: contain !important;
 }
 
-.header-tagline {
-  display: block !important;
-  font-size: 9px !important;
-  font-weight: 600 !important;
-  letter-spacing: 0.18em !important;
-  color: rgba(255, 255, 255, 0.55) !important;
-  text-transform: uppercase !important;
-  white-space: nowrap !important;
-  line-height: 1 !important;
-}
 
 /* Mobiel: reset naar gewone flow */
 @media (max-width: 768px) {
