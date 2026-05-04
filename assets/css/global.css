@@ -290,15 +290,26 @@ select:focus {
   align-items: center !important;
   justify-content: center !important;
   text-decoration: none !important;
+  cursor: pointer !important;
+  pointer-events: auto !important;
   gap: 3px !important;
   margin-top: 10px !important;
 }
 
+.header-logo-link:hover {
+  opacity: 0.85 !important;
+}
+
 .header-logo {
   display: block !important;
-  width: 112px !important;
+  width: 140px !important;
   height: auto !important;
   object-fit: contain !important;
+}
+
+.header-slogan {
+  font-size: 8px !important;
+  letter-spacing: 0.2em !important;
 }
 
 
