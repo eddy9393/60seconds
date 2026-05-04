@@ -251,3 +251,35 @@ select:focus {
 }
 
 /* Sidebar icon gold style end */
+
+/* ================================================================
+   Header logo — consistent op alle pagina's
+   ================================================================ */
+.header-logo-link {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  text-decoration: none !important;
+}
+
+.header-logo {
+  display: block !important;
+  width: 140px !important;
+  height: auto !important;
+  object-fit: contain !important;
+  /* Verwijder eventuele nep-transparantie effecten */
+  mix-blend-mode: normal !important;
+}
+
+/* Mobiel: iets kleiner */
+@media (max-width: 600px) {
+  .header-logo {
+    width: 110px !important;
+  }
+}
+
+/* Desktop sidebar: logo in zijbalk */
+.desktop-side-nav .header-logo,
+.desktop-side-nav-panel .header-logo {
+  width: 120px !important;
+}
