@@ -6738,49 +6738,238 @@ input[type="range"]::-moz-range-thumb {
   background: #0e0e0e !important;
 }
 
-
-/* === header logo fit fix v2 === */
-.header-center .header-logo,
-.header-logo {
-  width: auto !important;
-  height: clamp(82px, 8.2vw, 118px) !important;
-  max-width: min(220px, 24vw) !important;
-  max-height: 118px !important;
-  object-fit: contain !important;
-}
-
-.header-center .header-logo-link {
-  line-height: 0 !important;
+/* === 60S UPDATE: minimalist volume slider, no glass rectangle === */
+#radioShell .player-actions #volumeControl.volume-control,
+#radioShell .player-actions #volumeControl.volume-control.open,
+.player-actions #volumeControl.volume-control,
+.player-actions #volumeControl.volume-control.open {
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
   overflow: visible !important;
 }
 
-.header-bar {
-  min-height: 132px;
-  align-items: flex-start;
-  padding-top: 8px;
+#radioShell .player-actions #volumeControl.volume-control::before,
+#radioShell .player-actions #volumeControl.volume-control::after,
+#radioShell .player-actions #volumeControl .volume-slider-inline::before,
+#radioShell .player-actions #volumeControl .volume-slider-inline::after {
+  content: none !important;
+  display: none !important;
 }
 
-.header-center {
-  top: 0;
+#radioShell .player-actions #volumeControl.volume-control.open {
+  width: 176px !important;
+  min-width: 176px !important;
+  max-width: 176px !important;
 }
 
-@media (max-width: 768px) {
-  .header-center .header-logo,
-  .header-logo {
-    height: 66px !important;
-    max-height: 66px !important;
-    max-width: 112px !important;
+#radioShell .player-actions #volumeControl .volume-button,
+#radioShell .player-actions #volumeControl .volume-button.icon-btn,
+#radioShell .player-actions #volumeControl .volume-button.metal-btn {
+  background: rgba(255,255,255,0.045) !important;
+  border: 1px solid rgba(245,200,75,0.45) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.10),
+    0 8px 18px rgba(0,0,0,0.22) !important;
+}
+
+#radioShell .player-actions #volumeControl.volume-control.open .volume-button,
+#radioShell .player-actions #volumeControl .volume-button:hover {
+  background: rgba(255,255,255,0.055) !important;
+  border-color: rgba(245,200,75,0.58) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.12),
+    0 8px 18px rgba(0,0,0,0.24),
+    0 0 14px rgba(245,200,75,0.13) !important;
+}
+
+#radioShell .player-actions #volumeControl .volume-slider-inline,
+#radioShell .player-actions #volumeControl.volume-control.open .volume-slider-inline,
+.player-actions #volumeControl .volume-slider-inline,
+.player-actions #volumeControl.volume-control.open .volume-slider-inline {
+  position: static !important;
+  inset: auto !important;
+  transform: none !important;
+  height: 52px !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  outline: 0 !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border-radius: 0 !important;
+  overflow: visible !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+}
+
+#radioShell .player-actions #volumeControl.volume-control.open .volume-slider-inline {
+  width: 108px !important;
+  min-width: 108px !important;
+  max-width: 108px !important;
+  padding: 0 0 0 8px !important;
+  opacity: 1 !important;
+}
+
+#radioShell .player-actions #volumeControl .volume-slider-inline input[type="range"] {
+  --volume-pct: 30%;
+  -webkit-appearance: none !important;
+  appearance: none !important;
+  width: 96px !important;
+  min-width: 96px !important;
+  max-width: 96px !important;
+  height: 22px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  outline: 0 !important;
+  cursor: pointer !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  overflow: visible !important;
+}
+
+#radioShell .player-actions #volumeControl .volume-slider-inline input[type="range"]::-webkit-slider-runnable-track {
+  height: 8px !important;
+  border-radius: 999px !important;
+  border: 1px solid rgba(255,255,255,0.10) !important;
+  background:
+    linear-gradient(90deg,
+      #c69422 0%,
+      #f2c44c calc(var(--volume-pct) * 0.60),
+      #ffe38a var(--volume-pct),
+      rgba(255,255,255,0.10) var(--volume-pct),
+      rgba(255,255,255,0.10) 100%) !important;
+  box-shadow:
+    inset 0 1px 1px rgba(0,0,0,0.45),
+    0 0 10px rgba(245,200,75,0.13) !important;
+}
+
+#radioShell .player-actions #volumeControl .volume-slider-inline input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none !important;
+  appearance: none !important;
+  width: 20px !important;
+  height: 20px !important;
+  margin-top: -7px !important;
+  border-radius: 50% !important;
+  border: 1px solid rgba(255,255,255,0.58) !important;
+  background: radial-gradient(circle at 35% 30%, #fff0b0 0%, #ffd966 36%, #d8a22c 100%) !important;
+  box-shadow:
+    inset 0 1px 1px rgba(255,255,255,0.42),
+    0 0 10px rgba(245,200,75,0.42) !important;
+}
+
+#radioShell .player-actions #volumeControl .volume-slider-inline input[type="range"]::-moz-range-track {
+  height: 8px !important;
+  border-radius: 999px !important;
+  border: 1px solid rgba(255,255,255,0.10) !important;
+  background: rgba(255,255,255,0.10) !important;
+  box-shadow: inset 0 1px 1px rgba(0,0,0,0.45) !important;
+}
+
+#radioShell .player-actions #volumeControl .volume-slider-inline input[type="range"]::-moz-range-progress {
+  height: 8px !important;
+  border-radius: 999px !important;
+  background: linear-gradient(90deg, #c69422 0%, #f2c44c 60%, #ffe38a 100%) !important;
+  box-shadow: 0 0 10px rgba(245,200,75,0.13) !important;
+}
+
+#radioShell .player-actions #volumeControl .volume-slider-inline input[type="range"]::-moz-range-thumb {
+  width: 20px !important;
+  height: 20px !important;
+  border-radius: 50% !important;
+  border: 1px solid rgba(255,255,255,0.58) !important;
+  background: radial-gradient(circle at 35% 30%, #fff0b0 0%, #ffd966 36%, #d8a22c 100%) !important;
+  box-shadow:
+    inset 0 1px 1px rgba(255,255,255,0.42),
+    0 0 10px rgba(245,200,75,0.42) !important;
+}
+
+@media (max-width: 900px) {
+  #radioShell .player-actions #volumeControl.volume-control.open {
+    width: 158px !important;
+    min-width: 158px !important;
+    max-width: 158px !important;
   }
 
-  .header-bar {
-    min-height: 82px;
-    align-items: center;
-    padding-top: 6px;
+  #radioShell .player-actions #volumeControl.volume-control.open .volume-slider-inline {
+    width: 90px !important;
+    min-width: 90px !important;
+    max-width: 90px !important;
+    padding-left: 6px !important;
   }
 
-  .header-center {
-    top: auto;
+  #radioShell .player-actions #volumeControl .volume-slider-inline input[type="range"] {
+    width: 82px !important;
+    min-width: 82px !important;
+    max-width: 82px !important;
   }
 }
-/* === end header logo fit fix v2 === */
+/* === END 60S UPDATE === */
 
+/* Community/top supporters item cleanup: remove dark item plates and match hover to site style */
+.community-col .news-feed-item,
+.community-col .top-supporters-section .news-feed-item,
+#newsFeedList .news-feed-item,
+#topSupportersList .news-feed-item {
+  background: transparent !important;
+  background-image: none !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border-color: rgba(255,255,255,0.13) !important;
+}
+
+.community-col .news-feed-item:hover,
+.community-col .top-supporters-section .news-feed-item:hover,
+#newsFeedList .news-feed-item:hover,
+#topSupportersList .news-feed-item:hover {
+  background:
+    radial-gradient(circle at 18% 50%, rgba(245,200,75,0.10), transparent 42%),
+    linear-gradient(90deg, rgba(245,200,75,0.075), rgba(255,255,255,0.025)) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.08),
+    0 0 22px rgba(245,200,75,0.10) !important;
+  border-color: rgba(245,200,75,0.28) !important;
+}
+
+.community-col .news-feed-item a,
+.community-col .news-feed-item button,
+.community-col .news-feed-name,
+.community-col .news-feed-track,
+.community-col .news-feed-tune {
+  background: transparent !important;
+  background-image: none !important;
+  box-shadow: none !important;
+  border-color: transparent !important;
+}
+
+.community-col .news-feed-item a:hover,
+.community-col .news-feed-item button:hover,
+.community-col .news-feed-name:hover,
+.community-col .news-feed-track:hover,
+.community-col .news-feed-tune:hover {
+  background: transparent !important;
+  background-image: none !important;
+  box-shadow: none !important;
+  border-color: transparent !important;
+  color: #f5c84b !important;
+  text-shadow:
+    0 0 10px rgba(245,200,75,0.42),
+    0 0 22px rgba(245,200,75,0.18) !important;
+}
+
+.community-col .news-feed-name::selection,
+.community-col .news-feed-track::selection,
+.community-col .news-feed-tune::selection,
+.community-col .news-feed-copy::selection {
+  color: #ffffff !important;
+  background: rgba(245,200,75,0.28) !important;
+}
