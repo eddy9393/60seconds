@@ -260,6 +260,8 @@ select:focus {
 .header-bar {
   padding-top: 10px !important;
   padding-bottom: 10px !important;
+  min-height: 84px !important;
+  position: relative !important;
   background: rgba(10, 10, 10, 0.22) !important;
   backdrop-filter: blur(18px) saturate(160%) !important;
   -webkit-backdrop-filter: blur(18px) saturate(160%) !important;
