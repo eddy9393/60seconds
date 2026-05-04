@@ -540,6 +540,12 @@ function updatePauseButtonState() {
     icon.src = isPlaying ? 'icons/play.png' : 'icons/play.png';
     icon.style.opacity = isPlaying ? '1' : '0.6';
     els.pauseBtn.classList.toggle('is-playing', isPlaying);
+
+  const pauseIcon = els.pauseBtn.querySelector("img");
+  if (pauseIcon) {
+    pauseIcon.src = isPlaying ? "icons/pause.png" : "icons/play.png";
+  }
+
   }
 }
 
