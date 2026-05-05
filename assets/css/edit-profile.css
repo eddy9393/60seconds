@@ -451,7 +451,7 @@ img {
 .desktop-nav-button.active .nav-icon-mask,
 .mobile-nav-link.active .nav-icon-mask {
   background:
-    linear-gradient(180deg, #ffffff 0%, #ffe08d 35%, #f5c84b 100%) !important;
+    linear-gradient(180deg, #ffffff 0%, #ff8c00 100%) !important;
   filter: none;
 }
 
@@ -1322,7 +1322,7 @@ body{background:radial-gradient(circle at 50% -10%,rgba(245,200,75,.12),transpar
 .desktop-nav-button.active .nav-icon-mask,
 .mobile-nav-link.active .nav-icon-mask {
   background:
-    linear-gradient(180deg, #ffffff 0%, #ffe08d 35%, #f5c84b 100%) !important;
+    linear-gradient(180deg, #ffffff 0%, #ff8c00 100%) !important;
   filter: none;
 }
 /* Sidebar icon progress-bar visual match end */
