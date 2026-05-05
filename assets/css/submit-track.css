@@ -474,7 +474,7 @@ select {
 .desktop-nav-button.active .nav-icon-mask,
 .mobile-nav-link.active .nav-icon-mask {
   background:
-    linear-gradient(180deg, #fff3b6 0%, #f4d77a 20%, #d4af37 52%, #b98714 76%, #7d5a10 100%) !important;
+    linear-gradient(180deg, #ffffff 0%, #ffe08d 35%, #f5c84b 100%) !important;
   filter: none;
 }
 
@@ -1909,7 +1909,7 @@ img[class*="avatar"],.avatar,.profile-photo,.artist-photo{box-shadow:0 0 0 1px r
 .desktop-nav-button.active .nav-icon-mask,
 .mobile-nav-link.active .nav-icon-mask {
   background:
-    linear-gradient(180deg, #fff3b6 0%, #f4d77a 20%, #d4af37 52%, #b98714 76%, #7d5a10 100%) !important;
+    linear-gradient(180deg, #ffffff 0%, #ffe08d 35%, #f5c84b 100%) !important;
   filter: none;
 }
 /* Sidebar icon progress-bar visual match end */
