@@ -401,3 +401,14 @@ select:focus {
     display: none !important;
   }
 }
+
+/* ================================================================
+   Coins badge: verborgen tenzij expliciet ingelogd (alle pagina's)
+   ================================================================ */
+#currencyBadge {
+  display: none !important;
+}
+
+body.is-authenticated #currencyBadge {
+  display: inline-flex !important;
+}
