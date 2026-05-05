@@ -68,7 +68,7 @@ html body::after {
 @media (max-width: 768px) {
   .site-shell,
   [class*="content-wrap"] {
-    padding-top: 68px !important;
+    padding-top: 48px !important;
   }
 }
 
