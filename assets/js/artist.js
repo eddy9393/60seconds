@@ -217,17 +217,27 @@ async function loadCurrentUserState() {
 }
 
 async function fetchArtistProfile(userId) {
+  // Try public_artist_profiles first (works for anon if RLS/view is set up correctly)
   const { data, error } = await supabaseClient
     .from("public_artist_profiles")
     .select("user_id, artist_name, photo_url, bio, social_link, nationality, created_at, date_of_birth, music_roles, city")
     .eq("user_id", userId)
     .maybeSingle();
 
-  if (error) {
-    throw new Error("Could not load artist profile: " + error.message);
+  if (!error && data) return data;
+
+  // Fallback: try profiles table directly (may work if RLS allows public SELECT)
+  const fallback = await supabaseClient
+    .from("profiles")
+    .select("user_id, artist_name, photo_url, bio, social_link, nationality, created_at, date_of_birth, music_roles, city")
+    .eq("user_id", userId)
+    .maybeSingle();
+
+  if (fallback.error) {
+    throw new Error("Could not load artist profile: " + (error?.message || fallback.error.message));
   }
 
-  return data || null;
+  return fallback.data || null;
 }
 
 async function fetchApprovedTracks(userId) {
@@ -524,10 +534,12 @@ function renderArtistProfile(profile, isOwnPage, hasOwnTrack) {
     setHidden(els.page.socialLinkBtn, true);
   }
 
-  setHidden(els.page.editProfileBtn, !isOwnPage || !state.currentProfileData);
-  setHidden(els.page.viewStatisticsBtn, !isOwnPage || !state.currentProfileData);
+  // Only show edit/stats/submit buttons when logged in AND on own page
+  const canEdit = isOwnPage && Boolean(state.currentUserId) && Boolean(state.currentProfileData);
+  setHidden(els.page.editProfileBtn, !canEdit);
+  setHidden(els.page.viewStatisticsBtn, !canEdit);
 
-  if (isOwnPage && state.currentProfileData) {
+  if (canEdit) {
     setHidden(els.page.submitTrackBtn, false);
     setText(els.page.submitTrackBtn, state.currentTrackData ? "Edit Your Track" : "Submit Your Tune");
     els.page.submitTrackBtn.href = "submit-track.html";
@@ -807,7 +819,12 @@ async function loadViewedArtistPage(userId) {
   }
 
   if (!profile) {
-    showCreateArtistProfileCTA();
+    // Only show "create profile" CTA when logged in but profile doesn't exist yet
+    if (state.currentUserId) {
+      showCreateArtistProfileCTA();
+    } else {
+      setArtistStatus("Artist profile not found.", false);
+    }
     return;
   }
 
