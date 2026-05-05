@@ -510,7 +510,7 @@ img {
   width: 100%;
   height: 100%;
   display: block;
-  background: #f5c84b;
+  background: #B0B0B0;
   -webkit-mask-image: var(--icon-url);
   mask-image: var(--icon-url);
   -webkit-mask-repeat: no-repeat;
@@ -538,7 +538,7 @@ img {
 .desktop-nav-link.active .nav-icon-mask,
 .desktop-nav-button.active .nav-icon-mask,
 .mobile-nav-link.active .nav-icon-mask {
-  background: #f5c84b;
+  background: #FFD76A;
   filter: none;
 }
 

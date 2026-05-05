@@ -236,9 +236,9 @@ select:focus {
 .sidebar * svg,
 .sidebar * svg path,
 .sidebar * i {
-    color: #f5c84b !important;
-    fill: #f5c84b !important;
-    stroke: #f5c84b !important;
+    color: #B0B0B0 !important;
+    fill: #B0B0B0 !important;
+    stroke: #B0B0B0 !important;
     filter: none;
     transition: all 0.2s ease;
 }
