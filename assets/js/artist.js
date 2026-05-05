@@ -930,11 +930,19 @@ function bindEvents() {
     }
   });
 
-  supabaseClient.auth.onAuthStateChange(() => {
-    refreshWholePage().catch((err) => {
-      console.error(err);
-      setArtistStatus("The page could not be refreshed correctly.", true);
-    });
+  // Only re-run on real auth changes, not initial session load
+  // and guard against concurrent loads
+  let _authChangeTimer = null;
+  supabaseClient.auth.onAuthStateChange((event) => {
+    if (event === 'INITIAL_SESSION') return; // already handled by initPage
+    clearTimeout(_authChangeTimer);
+    _authChangeTimer = setTimeout(() => {
+      if (state._pageLoading) return;
+      refreshWholePage().catch((err) => {
+        console.error(err);
+        setArtistStatus("The page could not be refreshed correctly.", true);
+      });
+    }, 300);
   });
 }
 
@@ -942,7 +950,12 @@ async function initPage() {
   applyRuntimeCurrencySnapshot();
 
   bindEvents();
-  await refreshWholePage();
+  state._pageLoading = true;
+  try {
+    await refreshWholePage();
+  } finally {
+    state._pageLoading = false;
+  }
 }
 
 initPage().catch((err) => {
