@@ -239,13 +239,7 @@ function advanceNewsFeed() {
 }
 
 async function loadNewsFeed() {
-  if (!state.currentUser) {
-    clearNewsFeedTimers();
-    state.newsFeedItems = [];
-    state.newsFeedIndex = 0;
-    setHidden(els.newsFeedSectionEl, true);
-    return;
-  }
+  // Community updates visible for everyone
 
   try {
     const todayKey = getTodayDateKey();
