@@ -388,21 +388,13 @@ img {
 .desktop-nav-link.active,
 .desktop-nav-button.active {
   color: #fff5d2;
-  background:
-    linear-gradient(90deg, rgba(212,175,55,0.18), rgba(212,175,55,0.06) 58%, transparent);
+  background: transparent;
 }
 
 .desktop-nav-link.active::after,
+.desktop-nav-link.active::after,
 .desktop-nav-button.active::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  top: 9px;
-  bottom: 9px;
-  width: 3px;
-  border-radius: 999px;
-  background: linear-gradient(180deg, #ffe08d, #d4af37 52%, #8f6b13);
-  box-shadow: 0 0 14px rgba(212,175,55,0.30);
+  display: none;
 }
 
 .desktop-nav-icon,
@@ -437,7 +429,7 @@ img {
   mask-position: center;
   -webkit-mask-size: contain;
   mask-size: contain;
-  filter: drop-shadow(0 2px 10px rgba(212,175,55,0.18));
+  filter: none;
   opacity: 0.98;
   transition: transform 0.18s ease, filter 0.18s ease, opacity 0.18s ease, background 0.18s ease;
   pointer-events: none;
@@ -449,17 +441,17 @@ img {
 .mobile-nav-link:hover .nav-icon-mask {
   transform: scale(1.04);
   opacity: 1;
-  background: #B0B0B0;
-  filter: drop-shadow(0 2px 11px rgba(212,175,55,0.22));
+  background:
+    linear-gradient(180deg, #fff3b6 0%, #f4d77a 20%, #d4af37 52%, #b98714 76%, #7d5a10 100%);
+  filter: none;
 }
 
 .desktop-nav-link.active .nav-icon-mask,
 .desktop-nav-button.active .nav-icon-mask,
 .mobile-nav-link.active .nav-icon-mask {
-  background: #B0B0B0;
-  filter:
-    drop-shadow(0 2px 12px rgba(212,175,55,0.24))
-    drop-shadow(0 0 15px rgba(212,175,55,0.20));
+  background:
+    linear-gradient(180deg, #fff3b6 0%, #f4d77a 20%, #d4af37 52%, #b98714 76%, #7d5a10 100%);
+  filter: none;
 }
 
 .desktop-nav-label {
@@ -1296,7 +1288,7 @@ body{background:radial-gradient(circle at 50% -10%,rgba(245,200,75,.12),transpar
   position: relative !important;
   overflow: visible !important;
   background: linear-gradient(90deg, #b98816 0%, #d4af37 42%, #f4d77a 100%) !important;
-  filter: drop-shadow(0 0 16px rgba(212,175,55,0.18)) !important;
+  filter: none;
   opacity: 1 !important;
 }
 
@@ -1326,8 +1318,9 @@ body{background:radial-gradient(circle at 50% -10%,rgba(245,200,75,.12),transpar
 .desktop-nav-link.active .nav-icon-mask,
 .desktop-nav-button.active .nav-icon-mask,
 .mobile-nav-link.active .nav-icon-mask {
-  background: linear-gradient(90deg, #b98816 0%, #d4af37 42%, #f4d77a 100%) !important;
-  filter: drop-shadow(0 0 16px rgba(212,175,55,0.18)) !important;
+  background:
+    linear-gradient(180deg, #fff3b6 0%, #f4d77a 20%, #d4af37 52%, #b98714 76%, #7d5a10 100%);
+  filter: none;
 }
 /* Sidebar icon progress-bar visual match end */
 
