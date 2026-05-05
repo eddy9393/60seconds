@@ -239,7 +239,9 @@ async function fetchApprovedTracks(userId) {
     .order("created_at", { ascending: false });
 
   if (error) {
-    throw new Error("Could not load approved track: " + error.message);
+    // RLS may block anon users on tracks table — return empty instead of crashing
+    console.warn("fetchApprovedTracks error (may be RLS):", error.message);
+    return [];
   }
 
   return data || [];

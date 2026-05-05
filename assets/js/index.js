@@ -1850,6 +1850,40 @@ function bindUIEvents() {
     });
   });
 
+  // Recovery: als audio vastloopt (stalled/error), wissel naar volgende track
+  let _stallTimer = null;
+  function clearStallTimer() {
+    if (_stallTimer) { clearTimeout(_stallTimer); _stallTimer = null; }
+  }
+  function scheduleStallRecovery(ms = 8000) {
+    clearStallTimer();
+    _stallTimer = setTimeout(() => {
+      if (!state.isLiveActivated || !state.desiredPlayback) return;
+      console.warn('Radio: stall detected, advancing to next track');
+      nextTrack(0, false, true);
+    }, ms);
+  }
+
+  els.audio.addEventListener('waiting', () => {
+    if (state.isLiveActivated && state.desiredPlayback) scheduleStallRecovery(8000);
+  });
+  els.audio.addEventListener('playing', () => clearStallTimer());
+  els.audio.addEventListener('stalled', () => {
+    if (state.isLiveActivated && state.desiredPlayback) scheduleStallRecovery(6000);
+  });
+  els.audio.addEventListener('error', () => {
+    if (!state.isLiveActivated) return;
+    console.warn('Radio: audio error, advancing to next track');
+    clearStallTimer();
+    setTimeout(() => nextTrack(0, false, state.desiredPlayback), 1500);
+  });
+  els.audio.addEventListener('suspend', () => {
+    // Reload src if suspended unexpectedly while we want to play
+    if (state.isLiveActivated && state.desiredPlayback && els.audio.paused && els.audio.src) {
+      scheduleStallRecovery(10000);
+    }
+  });
+
   window.addEventListener("beforeunload", () => {
     clearUnexpectedPauseTimer();
     persistRadioSession();

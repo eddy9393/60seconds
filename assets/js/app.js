@@ -436,6 +436,9 @@ function ensureCurrencyStoreButton(doc = document) {
     if (els?.header?.headerAvatarImage) els.header.headerAvatarImage.src = '';
     if (els?.header?.accountProfileLink) els.header.accountProfileLink.href = 'javascript:void(0)';
     setHidden(els?.header?.currencyBadge, true);
+    // Also hide the global #currencyBadge element directly (belt + suspenders)
+    const globalBadge = document.getElementById('currencyBadge');
+    if (globalBadge) globalBadge.classList.add('hidden');
     setCurrencyText(els?.header?.currencyValue, 0);
   }
 
