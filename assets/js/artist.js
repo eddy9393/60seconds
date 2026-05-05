@@ -845,6 +845,7 @@ async function refreshWholePage() {
   const urlUserId = getArtistUserIdFromUrl();
 
   if (urlUserId) {
+    // Load artist page for everyone — logged in or not
     await userPromise;
     await loadViewedArtistPage(urlUserId);
     return;
@@ -862,6 +863,7 @@ async function refreshWholePage() {
     return;
   }
 
+  // No user_id in URL and not logged in — show login prompt
   setText(els.page.artistName, "");
   setArtistStatus("", false);
 }

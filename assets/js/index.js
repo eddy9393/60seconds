@@ -707,9 +707,9 @@ function broadcastCurrencyUpdate(coins, dailySecondsEarned = state.dailySecondsE
 }
 
 function updateConceptVisibility() {
-  const shouldShow = !state.currentUser;
+  // concept section is permanently hidden
   setAuthBodyState(Boolean(state.currentUser));
-  setHidden(els.conceptSectionEl, !shouldShow);
+  setHidden(els.conceptSectionEl, true);
   updateJoinButtonHref();
 }
 
@@ -921,8 +921,9 @@ function setLoggedOutView() {
   updateInteractiveControls();
   updateCurrencyVisibility(null);
   setCurrency(0);
-  setHidden(els.newsFeedSectionEl, true);
-  clearNewsFeedTimers();
+  // Load community updates + top supporters even when logged out
+  loadNewsFeed().catch(err => console.error('loadNewsFeed error:', err));
+  loadTopSupporters().catch(err => console.error('loadTopSupporters error:', err));
   updateJoinButtonHref();
 }
 
