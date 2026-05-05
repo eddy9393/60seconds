@@ -259,7 +259,7 @@ async function loadNewsFeed() {
         .order("created_at", { ascending: false })
         .limit(24),
       supabaseClient
-        .from("profiles")
+        .from("public_artist_profiles")
         .select("artist_name, user_id, photo_url, daily_seconds_earned, daily_seconds_earned_date")
         .not("artist_name", "is", null)
         .gte("daily_seconds_earned", DAILY_SECONDS_LIMIT)
@@ -368,7 +368,7 @@ async function loadTopSupporters() {
 
   try {
     const { data, error } = await supabaseClient
-      .from('profiles')
+      .from('public_artist_profiles')
       .select('artist_name, user_id, photo_url, coins')
       .not('artist_name', 'is', null)
       .gt('coins', 0)
@@ -881,6 +881,8 @@ function setHeaderAvatar(photoUrl, artistName) {
 }
 
 function setLoggedOutView() {
+  // Always hide coins when logged out
+  if (els.currencyBadge) els.currencyBadge.classList.add('hidden');
   setAuthBodyState(false);
   closeHeaderPanels();
   setStandardLoggedOutState({

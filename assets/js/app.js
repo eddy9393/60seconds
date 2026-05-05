@@ -55,7 +55,7 @@
   }
 
   function setCurrencyText(valueEl, value, badgeEl) {
-    if (badgeEl) badgeEl.classList.remove('hidden');
+    // Badge visibility is controlled by updateCurrencyVisibility — not here
     if (valueEl) valueEl.textContent = normalizeCoins(value);
   }
 
