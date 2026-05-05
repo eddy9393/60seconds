@@ -1982,3 +1982,18 @@ main .submission-title,
   filter: drop-shadow(0 0 16px rgba(212,175,55,0.18)) !important;
 }
 /* Sidebar icon progress-bar visual match end */
+
+/* ================================================================
+   HIDDEN always wins — overrides any display: inline-flex/flex/block
+   ================================================================ */
+.page-wrap .hidden,
+.page-wrap a.hidden,
+.page-wrap button.hidden,
+.hero-actions .hidden,
+#editProfileBtn.hidden,
+#viewStatisticsBtn.hidden,
+#submitTrackBtn.hidden {
+  display: none !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
