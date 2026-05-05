@@ -236,9 +236,9 @@ select:focus {
 .sidebar * svg,
 .sidebar * svg path,
 .sidebar * i {
-    color: #ffffff !important;
-    fill: #ffffff !important;
-    stroke: #ffffff !important;
+    color: #f5c84b !important;
+    fill: #f5c84b !important;
+    stroke: #f5c84b !important;
     filter: none;
     transition: all 0.2s ease;
 }
@@ -246,9 +246,9 @@ select:focus {
 .sidebar * svg:hover,
 .sidebar * svg:hover path,
 .sidebar * i:hover {
-    color: #ffffff !important;
-    fill: #ffffff !important;
-    stroke: #ffffff !important;
+    color: #f5c84b !important;
+    fill: #f5c84b !important;
+    stroke: #f5c84b !important;
     filter: none;
 }
 

@@ -420,7 +420,7 @@ img {
   width: 100%;
   height: 100%;
   display: block;
-  background: #ffffff;
+  background: #f5c84b;
   -webkit-mask-image: var(--icon-url);
   mask-image: var(--icon-url);
   -webkit-mask-repeat: no-repeat;
@@ -441,14 +441,14 @@ img {
 .mobile-nav-link:hover .nav-icon-mask {
   transform: scale(1.04);
   opacity: 1;
-  background: #ffffff;
+  background: #f5c84b;
   filter: drop-shadow(0 2px 11px rgba(212,175,55,0.22));
 }
 
 .desktop-nav-link.active .nav-icon-mask,
 .desktop-nav-button.active .nav-icon-mask,
 .mobile-nav-link.active .nav-icon-mask {
-  background: #ffffff;
+  background: #f5c84b;
   filter:
     drop-shadow(0 2px 12px rgba(212,175,55,0.24))
     drop-shadow(0 0 15px rgba(212,175,55,0.20));
