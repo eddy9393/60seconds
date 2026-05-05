@@ -66,9 +66,14 @@ html body::after {
 }
 
 @media (max-width: 768px) {
+  /* Index: ruimte behouden */
   .site-shell,
   [class*="content-wrap"] {
     padding-top: 68px !important;
+  }
+  /* Overige pagina's: dichter bij header */
+  body.page-other .site-shell {
+    padding-top: 24px !important;
   }
 }
 
