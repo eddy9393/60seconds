@@ -162,7 +162,7 @@
     tuneTitleEl.style.display = artist.track_title ? '' : 'none';
 
     if (linkEl) {
-      linkEl.href = 'artist.html?id=' + encodeURIComponent(artist.user_id);
+      linkEl.href = 'artist.html?user_id=' + encodeURIComponent(artist.user_id);
     }
   }
 
