@@ -5955,40 +5955,13 @@ button:not(.side-nav button):not(.desktop-side-nav-panel button){
 }
 
 /* ============================================================
-   What is 60 Seconds: visible only while logged out
+   What is 60 Seconds: always hidden
    ============================================================ */
-body.is-logged-out #conceptSection {
-  display: block !important;
-  visibility: visible !important;
-  opacity: 1 !important;
-}
-
-body.is-authenticated #conceptSection {
+#conceptSection {
   display: none !important;
   visibility: hidden !important;
   opacity: 0 !important;
   pointer-events: none !important;
-}
-
-
-/* Hide 'What is 60 Seconds' when logged in */
-body.is-authenticated #conceptSection {
-  display: none !important;
-}
-
-
-/* FINAL conceptSection logged-out only override */
-body.is-authenticated #conceptSection {
-  display: none !important;
-  visibility: hidden !important;
-  opacity: 0 !important;
-  pointer-events: none !important;
-}
-
-body.is-logged-out #conceptSection {
-  display: block !important;
-  visibility: visible !important;
-  opacity: 1 !important;
 }
 
 
