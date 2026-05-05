@@ -6916,3 +6916,14 @@ input[type="range"]::-moz-range-thumb {
   color: #ffffff !important;
   background: rgba(245,200,75,0.28) !important;
 }
+
+/* ================================================================
+   Coins badge: altijd verborgen als niet ingelogd
+   ================================================================ */
+body:not(.is-authenticated) #currencyBadge,
+body.is-logged-out #currencyBadge {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
