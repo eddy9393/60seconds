@@ -67,10 +67,8 @@ html body::after {
 
 @media (max-width: 768px) {
   .site-shell,
-  .page-wrap,
-  [class*="page-wrap"],
   [class*="content-wrap"] {
-    padding-top: 76px !important;
+    padding-top: 68px !important;
   }
 }
 
@@ -351,7 +349,7 @@ select:focus {
   /* --- Minder ruimte onder header: alle pagina's --- */
   .site-shell .page-wrap,
   .page-wrap {
-    margin-top: 8px !important;
+    margin-top: 0 !important;
   }
 
   /* Community col: zelfde breedte als radio --- */
@@ -375,6 +373,11 @@ select:focus {
     margin: 0 0 16px 0 !important;
     max-width: 100% !important;
     box-sizing: border-box !important;
+  }
+
+  /* Gap between artist spotlight and community col (same as between sections) */
+  .community-col {
+    margin-top: 16px !important;
   }
 
   /* --- Logo gecentreerd --- */

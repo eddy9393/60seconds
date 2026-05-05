@@ -1333,3 +1333,140 @@ body{background:radial-gradient(circle at 50% -10%,rgba(245,200,75,.12),transpar
   filter: drop-shadow(0 0 16px rgba(212,175,55,0.18)) !important;
 }
 /* Sidebar icon progress-bar visual match end */
+
+/* ================================================================
+   Edit Profile — glass style (desktop + mobile)
+   Matched to submit-track page glass language
+   ================================================================ */
+:root {
+  --edit-glass-bg: rgba(255,255,255,0.06);
+  --edit-glass-border: rgba(255,255,255,0.14);
+  --edit-glass-border-top: rgba(255,255,255,0.22);
+  --edit-glass-hover: rgba(212,175,55,0.45);
+}
+
+/* Cards & containers */
+.page-wrap .panel-card,
+.page-wrap .notice-box,
+.page-wrap .state-card,
+.page-wrap .auth-card,
+.page-wrap .auth-panel-wrap {
+  background: var(--edit-glass-bg) !important;
+  background-image: none !important;
+  border: 1px solid var(--edit-glass-border) !important;
+  border-top: 1px solid var(--edit-glass-border-top) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.12),
+    0 8px 32px rgba(0,0,0,0.28) !important;
+  backdrop-filter: blur(24px) saturate(160%) !important;
+  -webkit-backdrop-filter: blur(24px) saturate(160%) !important;
+  border-radius: 28px !important;
+  padding: 28px !important;
+}
+
+/* Inputs / selects / textarea */
+.page-wrap .field-input,
+.page-wrap .field-textarea,
+.page-wrap .field-file,
+.page-wrap .field-select {
+  background: rgba(255,255,255,0.06) !important;
+  background-image: none !important;
+  border: 1px solid rgba(255,255,255,0.14) !important;
+  border-top: 1px solid rgba(255,255,255,0.22) !important;
+  color: #ffffff !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.10),
+    0 8px 24px rgba(0,0,0,0.20) !important;
+  backdrop-filter: blur(18px) saturate(145%) !important;
+  -webkit-backdrop-filter: blur(18px) saturate(145%) !important;
+}
+
+.page-wrap .field-input:focus,
+.page-wrap .field-textarea:focus,
+.page-wrap .field-file:focus,
+.page-wrap .field-select:focus {
+  border-color: rgba(212,175,55,0.55) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.12),
+    0 0 0 3px rgba(212,175,55,0.12),
+    0 0 22px rgba(212,175,55,0.14) !important;
+  outline: none !important;
+}
+
+.page-wrap .field-input::placeholder,
+.page-wrap .field-textarea::placeholder {
+  color: rgba(255,255,255,0.48) !important;
+}
+
+.page-wrap .field-select option {
+  background: #141416;
+  color: #ffffff;
+}
+
+/* Buttons */
+.page-wrap .gold-btn,
+.page-wrap .ghost-btn,
+.page-wrap .metal-btn,
+.page-wrap button:not(.desktop-nav-button):not(.mobile-nav-link):not(.desktop-nav-link) {
+  background: rgba(255,255,255,0.055) !important;
+  background-image: none !important;
+  color: #ffffff !important;
+  border: 1px solid rgba(255,255,255,0.14) !important;
+  border-top: 1px solid rgba(255,255,255,0.22) !important;
+  border-radius: 999px !important;
+  text-shadow: none !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.10),
+    0 12px 30px rgba(0,0,0,0.30) !important;
+  backdrop-filter: blur(18px) saturate(145%) !important;
+  -webkit-backdrop-filter: blur(18px) saturate(145%) !important;
+  transition:
+    transform .18s ease,
+    border-color .18s ease,
+    box-shadow .18s ease,
+    background-color .18s ease !important;
+}
+
+.page-wrap .gold-btn:hover,
+.page-wrap .ghost-btn:hover,
+.page-wrap .metal-btn:hover,
+.page-wrap button:not(.desktop-nav-button):not(.mobile-nav-link):not(.desktop-nav-link):hover {
+  transform: translateY(-2px) !important;
+  background: rgba(255,255,255,0.075) !important;
+  color: #ffffff !important;
+  border-color: var(--edit-glass-hover) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.12),
+    0 16px 38px rgba(0,0,0,0.36),
+    0 0 24px rgba(212,175,55,0.18) !important;
+}
+
+/* Ghost link */
+.page-wrap .ghost-link {
+  color: rgba(255,255,255,0.86) !important;
+  border-bottom-color: rgba(255,255,255,0.18) !important;
+}
+.page-wrap .ghost-link:hover {
+  color: #ffffff !important;
+  border-bottom-color: rgba(212,175,55,0.45) !important;
+}
+
+/* Profile photo upload area */
+.page-wrap .photo-upload-wrap,
+.page-wrap .photo-dropzone {
+  background: rgba(255,255,255,0.04) !important;
+  border: 1px dashed rgba(255,255,255,0.18) !important;
+  backdrop-filter: blur(18px) !important;
+  -webkit-backdrop-filter: blur(18px) !important;
+  border-radius: 20px !important;
+}
+
+/* Mobile tweaks */
+@media (max-width: 768px) {
+  .page-wrap .panel-card,
+  .page-wrap .auth-card,
+  .page-wrap .auth-panel-wrap {
+    padding: 22px 16px !important;
+    border-radius: 24px !important;
+  }
+}
