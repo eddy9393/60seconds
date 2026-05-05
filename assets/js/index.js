@@ -245,19 +245,22 @@ async function loadNewsFeed() {
     const todayKey = getTodayDateKey();
     const nowMs = Date.now();
 
+    // Fetch each source individually so one RLS failure doesn't block the rest
     const [profilesRes, approvedTracksRes, supportersRes, trackArtistsRes] = await Promise.all([
       supabaseClient
         .from("public_artist_profiles")
         .select("artist_name, created_at, user_id, photo_url")
         .not("artist_name", "is", null)
         .order("created_at", { ascending: false })
-        .limit(24),
+        .limit(24)
+        .then(r => r).catch(() => ({ data: [], error: null })),
       supabaseClient
         .from("tracks")
         .select("title, artist, user_id, created_at, status")
         .eq("status", "approved")
         .order("created_at", { ascending: false })
-        .limit(24),
+        .limit(24)
+        .then(r => r).catch(() => ({ data: [], error: null })),
       supabaseClient
         .from("public_artist_profiles")
         .select("artist_name, user_id, photo_url, daily_seconds_earned, daily_seconds_earned_date")
@@ -265,12 +268,14 @@ async function loadNewsFeed() {
         .gte("daily_seconds_earned", DAILY_SECONDS_LIMIT)
         .order("daily_seconds_earned_date", { ascending: false })
         .order("daily_seconds_earned", { ascending: false })
-        .limit(48),
+        .limit(48)
+        .then(r => r).catch(() => ({ data: [], error: null })),
       supabaseClient
         .from("public_artist_profiles")
         .select("user_id, artist_name, photo_url")
         .not("artist_name", "is", null)
         .limit(400)
+        .then(r => r).catch(() => ({ data: [], error: null }))
     ]);
 
     const items = [];
