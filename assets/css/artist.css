@@ -1984,16 +1984,13 @@ main .submission-title,
 /* Sidebar icon progress-bar visual match end */
 
 /* ================================================================
-   HIDDEN always wins — overrides any display: inline-flex/flex/block
+   HIDDEN always wins for action buttons — overrides display: inline-flex
+   Only targets the specific buttons, NOT general content elements
    ================================================================ */
-.page-wrap .hidden,
-.page-wrap a.hidden,
-.page-wrap button.hidden,
-.hero-actions .hidden,
 #editProfileBtn.hidden,
 #viewStatisticsBtn.hidden,
-#submitTrackBtn.hidden {
+#submitTrackBtn.hidden,
+.hero-actions a.hidden,
+.hero-actions button.hidden {
   display: none !important;
-  visibility: hidden !important;
-  pointer-events: none !important;
 }
