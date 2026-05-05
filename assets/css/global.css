@@ -65,6 +65,15 @@ html body::after {
   padding-top: 82px !important;
 }
 
+@media (max-width: 768px) {
+  .site-shell,
+  .page-wrap,
+  [class*="page-wrap"],
+  [class*="content-wrap"] {
+    padding-top: 76px !important;
+  }
+}
+
 /* Coins badge: identiek aan index pagina */
 .currency-badge {
   position: fixed !important;
@@ -337,6 +346,35 @@ select:focus {
     align-items: center !important;
     min-height: 72px !important;
     padding: 10px 12px !important;
+  }
+
+  /* --- Minder ruimte onder header: alle pagina's --- */
+  .site-shell .page-wrap,
+  .page-wrap {
+    margin-top: 8px !important;
+  }
+
+  /* Community col: zelfde breedte als radio --- */
+  .content-layout {
+    grid-template-columns: 1fr !important;
+    padding: 0 !important;
+  }
+
+  .community-col {
+    position: static !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    width: 100% !important;
+  }
+
+  .community-col .news-feed-section,
+  .community-col .top-supporters-section,
+  #newsFeedSection,
+  #topSupportersSection {
+    width: 100% !important;
+    margin: 0 0 16px 0 !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
   }
 
   /* --- Logo gecentreerd --- */
