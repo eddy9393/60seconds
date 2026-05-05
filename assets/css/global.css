@@ -71,9 +71,9 @@ html body::after {
   [class*="content-wrap"] {
     padding-top: 68px !important;
   }
-  /* Overige pagina's: dichter bij header */
+  /* Overige pagina's: direct onder de header (header is 68px hoog) */
   body.page-other .site-shell {
-    padding-top: 24px !important;
+    padding-top: 72px !important;
   }
 }
 
