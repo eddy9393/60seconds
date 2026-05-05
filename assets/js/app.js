@@ -64,7 +64,11 @@
       const raw = localStorage.getItem(PROFILE_RUNTIME_STATE_KEY);
       if (!raw) return null;
       const data = JSON.parse(raw);
-      if (typeof data.coins !== 'undefined') setCurrencyText(valueEl, data.coins, badgeEl);
+      // Only update the text — never show the badge here
+      // Badge visibility is controlled by auth state (updateCurrencyVisibility)
+      if (typeof data.coins !== 'undefined' && valueEl) {
+        valueEl.textContent = normalizeCoins(data.coins);
+      }
       return data;
     } catch {
       return null;

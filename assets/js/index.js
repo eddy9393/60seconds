@@ -195,7 +195,7 @@ function buildNewsFeedText(item) {
 function renderNewsFeedSlice() {
   if (!els.newsFeedListEl) return;
 
-  if (!state.currentUser || !state.newsFeedItems.length) {
+  if (!state.newsFeedItems.length) {
     els.newsFeedListEl.innerHTML = '<div class="news-feed-item news-feed-empty">No community updates yet.</div>';
     return;
   }
