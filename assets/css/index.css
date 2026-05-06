@@ -7236,3 +7236,24 @@ button#volumeBtn,
   box-shadow: none !important;
   filter: none !important;
 }
+
+/* PCB spacing final */
+button#skip, .pcb button#skip, #radioShell .player-actions #skip {
+  padding: 0 16px !important;
+}
+button#volumeBtn, .pcb button#volumeBtn {
+  padding: 0 32px !important;
+}
+/* Play same look as skip — no glow, same padding */
+button#pauseBtn, div.pcb button#pauseBtn, .pcb button#pauseBtn {
+  padding: 0 16px !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  filter: none !important;
+  color: rgba(255,255,255,0.88) !important;
+}
+button#pauseBtn:hover, div.pcb button#pauseBtn:hover {
+  background: rgba(255,255,255,0.07) !important;
+  box-shadow: none !important;
+  filter: none !important;
+}
