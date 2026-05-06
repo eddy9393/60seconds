@@ -12,17 +12,17 @@
 
   <style id="edit-profile-title-style">
     .edit-profile-page-hero {
-      max-width: 1180px;
-      margin: 0 auto 34px;
-      text-align: left;
+      width: min(100%, 760px);
+      margin: 0 auto 28px;
+      text-align: center;
     }
 
     .edit-profile-page-hero h1 {
       margin: 0;
       font-family: 'Space Grotesk', sans-serif;
-      font-size: clamp(48px, 8vw, 96px);
-      line-height: 0.95;
-      letter-spacing: -0.045em;
+      font-size: clamp(42px, 6vw, 76px);
+      line-height: 1;
+      letter-spacing: -0.035em;
       font-weight: 700;
       color: #ffffff;
       text-shadow:
@@ -32,17 +32,16 @@
 
     @media (max-width: 768px) {
       .edit-profile-page-hero {
-        margin-bottom: 24px;
-        text-align: left;
+        margin-bottom: 22px;
+        text-align: center;
       }
 
       .edit-profile-page-hero h1 {
-        font-size: clamp(42px, 15vw, 68px);
+        font-size: clamp(38px, 12vw, 56px);
       }
     }
   </style>
-
-  <style id="edit-profile-auth-toggle-only-fix">
+<style id="edit-profile-auth-toggle-only-fix">
     /* Keep auth elements available for JS, but move the visual panel fully out of view */
     #authPanelWrap.auth-panel-wrap {
       position: fixed !important;
