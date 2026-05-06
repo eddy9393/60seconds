@@ -6037,11 +6037,17 @@ button:not(.side-nav button):not(.desktop-side-nav-panel button){
 }
 .top-supporter-rank {
   font-size: 11px; font-weight: 700;
-  color: rgba(212,175,55,0.6); width: 16px; flex-shrink: 0;
+  color: #ffffff;
+  display: inline-flex; align-items: center; gap: 4px;
+  flex-shrink: 0;
+}
+.top-supporter-medal {
+  font-size: 14px;
+  line-height: 1;
 }
 .top-supporter-coins {
   margin-left: auto; font-size: 11px; font-weight: 600;
-  color: rgba(212,175,55,0.8); flex-shrink: 0; white-space: nowrap;
+  color: #FFD76A; flex-shrink: 0; white-space: nowrap;
 }
 .top-supporter-item .news-feed-name {
   font-size: 13px; font-weight: 600;
