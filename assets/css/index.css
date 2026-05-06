@@ -6969,3 +6969,131 @@ body.is-logged-out #currencyBadge {
   opacity: 0 !important;
   pointer-events: none !important;
 }
+
+/* ================================================================
+   PCB — Player Controls Bar (glass pill, all equal height)
+   ================================================================ */
+
+/* The glass container */
+.pcb {
+  display: inline-flex;
+  align-items: stretch;
+  height: 52px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-top-color: rgba(255, 255, 255, 0.26);
+  border-radius: 999px;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.10), 0 8px 28px rgba(0,0,0,0.28);
+  backdrop-filter: blur(20px) saturate(160%);
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
+  overflow: visible;
+  position: relative;
+}
+
+/* Thin vertical dividers */
+.pcb-divider {
+  width: 1px;
+  background: rgba(255, 255, 255, 0.10);
+  flex-shrink: 0;
+  align-self: stretch;
+}
+
+/* All buttons — equal height, no individual container */
+.pcb-btn,
+.pcb .pcb-btn,
+.pcb #likeBtn,
+.pcb #pauseBtn,
+.pcb #skip,
+.pcb #volumeBtn {
+  all: unset !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  height: 52px !important;
+  min-width: 56px !important;
+  padding: 0 20px !important;
+  background: transparent !important;
+  border: none !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  cursor: pointer !important;
+  color: rgba(255,255,255,0.80) !important;
+  transition: background 0.15s ease !important;
+  transform: none !important;
+  filter: none !important;
+}
+
+.pcb #likeBtn { border-radius: 999px 0 0 999px !important; }
+.pcb .pcb-vol { border-radius: 0 999px 999px 0 !important; display: inline-flex !important; align-items: stretch !important; }
+.pcb #volumeBtn { border-radius: 0 999px 999px 0 !important; }
+
+.pcb-btn:hover,
+.pcb #likeBtn:hover,
+.pcb #pauseBtn:hover,
+.pcb #skip:hover,
+.pcb #volumeBtn:hover {
+  background: rgba(255,255,255,0.07) !important;
+}
+
+/* Play button: gold tint, no glow, no circle */
+.pcb .pcb-play,
+.pcb #pauseBtn {
+  color: #f4d77a !important;
+  min-width: 64px !important;
+  filter: none !important;
+  box-shadow: none !important;
+  border: none !important;
+  background: transparent !important;
+  width: auto !important;
+  height: 52px !important;
+  border-radius: 0 !important;
+}
+
+.pcb #pauseBtn:hover { background: rgba(212,175,55,0.09) !important; }
+
+/* Images inside buttons */
+.pcb img {
+  width: 20px !important;
+  height: 20px !important;
+  display: block !important;
+  object-fit: contain !important;
+  filter: none !important;
+  border: none !important;
+  background: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+/* Volume: slider pops above, no rounding on control div */
+.pcb .pcb-vol {
+  position: relative;
+  height: 52px;
+}
+
+.pcb .volume-slider-inline {
+  bottom: calc(100% + 10px);
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+/* Center bar */
+.player-actions {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  margin-top: 14px !important;
+  gap: 0 !important;
+}
+
+@media (max-width: 768px) {
+  .pcb { height: 48px; }
+  .pcb-btn, .pcb #likeBtn, .pcb #pauseBtn, .pcb #skip, .pcb #volumeBtn {
+    height: 48px !important;
+    min-width: 48px !important;
+    padding: 0 14px !important;
+  }
+  .pcb .pcb-play, .pcb #pauseBtn { height: 48px !important; }
+  .pcb .pcb-vol { height: 48px !important; }
+  .pcb img { width: 18px !important; height: 18px !important; }
+}
