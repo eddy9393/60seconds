@@ -7195,3 +7195,44 @@ button#pauseBtn {
 }
 button#likeBtn { padding: 0 16px !important; }
 button#volumeBtn { padding: 0 16px !important; }
+
+/* ================================================================
+   PCB final: correct padding + kill all glows
+   ================================================================ */
+
+/* Skip: 16px padding */
+button#skip,
+.pcb button#skip,
+#radioShell .player-actions #skip {
+  padding: 0 16px !important;
+  min-width: auto !important;
+}
+
+/* Volume: 16px padding */
+button#volumeBtn,
+.pcb button#volumeBtn {
+  padding: 0 16px !important;
+}
+
+/* Kill ALL glow/shadow on ALL pcb buttons */
+.pcb button,
+.pcb #likeBtn,
+.pcb #pauseBtn,
+.pcb #skip,
+.pcb #volumeBtn,
+.pcb .pcb-btn,
+.pcb .metal-btn,
+.pcb .icon-btn {
+  box-shadow: none !important;
+  filter: none !important;
+  text-shadow: none !important;
+}
+
+.pcb button:hover,
+.pcb #likeBtn:hover,
+.pcb #pauseBtn:hover,
+.pcb #skip:hover,
+.pcb #volumeBtn:hover {
+  box-shadow: none !important;
+  filter: none !important;
+}
