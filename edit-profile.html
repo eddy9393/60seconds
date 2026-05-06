@@ -119,7 +119,7 @@
   </div>
 
   <div class="site-shell">
-    <div class="auth-panel-wrap">
+    <div class="auth-panel-wrap" id="authPanelWrap">
       <div id="authBox" class="auth-box hidden">
         <h3>Log in</h3>
 
@@ -172,6 +172,21 @@
             </select>
           </div>
 
+          <div class="field-group">
+            <div class="field-label-row">
+              <label class="field-label" for="city">City</label>
+              <div class="inline-toggle">
+                <span class="inline-toggle-label">Show on profile</span>
+                <label class="toggle-switch" for="showCityOnArtistPage">
+                  <input id="showCityOnArtistPage" type="checkbox" />
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>
+            </div>
+            <input id="city" class="field-input" type="text" placeholder="Type to search cities..." autocomplete="off" id="citySearch" />
+            <ul id="citySuggestions" class="city-suggestions"></ul>
+          </div>
+
           <div class="field-group field-group-wide">
             <div class="field-label-row">
               <label class="field-label">Musical role</label>
@@ -188,20 +203,7 @@
             <div class="form-meta">Optional. Choose one or more roles. Select none if you do not want to show a role.</div>
           </div>
 
-          <div class="field-group">
-            <div class="field-label-row">
-              <label class="field-label" for="city">City</label>
-              <div class="inline-toggle">
-                <span class="inline-toggle-label">Show on profile</span>
-                <label class="toggle-switch" for="showCityOnArtistPage">
-                  <input id="showCityOnArtistPage" type="checkbox" />
-                  <span class="toggle-slider"></span>
-                </label>
-              </div>
-            </div>
-            <input id="city" class="field-input" type="text" placeholder="Search city..." autocomplete="off" />
-            <datalist id="cityList"></datalist>
-          </div>
+
 
           <div class="field-group">
             <div class="field-label-row">
