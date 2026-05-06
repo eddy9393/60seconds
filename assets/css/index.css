@@ -478,22 +478,13 @@ img {
 
 .desktop-nav-link.active,
 .desktop-nav-button.active {
-  color: #fff5d2;
-  background:
-    linear-gradient(90deg, rgba(212,175,55,0.18), rgba(212,175,55,0.06) 58%, transparent);
+  color: #f5c84b;
+  background: transparent;
 }
 
 .desktop-nav-link.active::after,
 .desktop-nav-button.active::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  top: 9px;
-  bottom: 9px;
-  width: 3px;
-  border-radius: 999px;
-  background: linear-gradient(180deg, #ffe08d, #d4af37 52%, #8f6b13);
-  box-shadow: 0 0 14px rgba(212,175,55,0.30);
+  display: none;
 }
 
 .desktop-nav-icon,
@@ -519,8 +510,7 @@ img {
   width: 100%;
   height: 100%;
   display: block;
-  background:
-    linear-gradient(180deg, #fff3b6 0%, #f4d77a 20%, #d4af37 52%, #b98714 76%, #7d5a10 100%);
+  background: #B0B0B0;
   -webkit-mask-image: var(--icon-url);
   mask-image: var(--icon-url);
   -webkit-mask-repeat: no-repeat;
@@ -529,9 +519,9 @@ img {
   mask-position: center;
   -webkit-mask-size: contain;
   mask-size: contain;
-  filter: drop-shadow(0 2px 10px rgba(212,175,55,0.18));
+  filter: none;
   opacity: 0.98;
-  transition: transform 0.18s ease, filter 0.18s ease, opacity 0.18s ease, background 0.18s ease;
+  transition: transform 0.18s ease, opacity 0.18s ease, background 0.18s ease;
   pointer-events: none;
   user-select: none;
 }
@@ -541,19 +531,15 @@ img {
 .mobile-nav-link:hover .nav-icon-mask {
   transform: scale(1.04);
   opacity: 1;
-  background:
-    linear-gradient(180deg, #fff7cf 0%, #ffe08d 18%, #f4d77a 36%, #d4af37 58%, #b98714 80%, #7d5a10 100%);
-  filter: drop-shadow(0 2px 11px rgba(212,175,55,0.22));
+  background: #f5c84b !important;
+  filter: none;
 }
 
 .desktop-nav-link.active .nav-icon-mask,
 .desktop-nav-button.active .nav-icon-mask,
 .mobile-nav-link.active .nav-icon-mask {
-  background:
-    linear-gradient(180deg, #fff9da 0%, #ffe9a7 18%, #f7dd82 36%, #d4af37 58%, #ba8a18 80%, #7d5a10 100%);
-  filter:
-    drop-shadow(0 2px 12px rgba(212,175,55,0.24))
-    drop-shadow(0 0 15px rgba(212,175,55,0.20));
+  background: #FFD76A !important;
+  filter: none;
 }
 
 .desktop-nav-label {
@@ -2336,9 +2322,59 @@ img {
 
 /* ── Sectie ─────────────────────────────────────────────────── */
 .fa-section {
-  max-width: 780px;
+  max-width: 100%;
   margin: 32px auto 0;
   padding: 0 20px;
+}
+
+/* 3-column grid: 50% large left / 25% small / 25% small */
+.fa-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  gap: 12px;
+  align-items: stretch;
+}
+
+/* Small cards: stacked layout */
+.fa-card--small .fa-body {
+  display: flex !important;
+  flex-direction: column !important;
+  grid-template-columns: unset !important;
+  padding: 18px 16px 14px !important;
+  gap: 10px !important;
+  align-items: flex-start !important;
+}
+
+.fa-card--small .fa-photo-wrap {
+  width: 56px !important;
+  height: 56px !important;
+}
+
+.fa-card--small .fa-name {
+  font-size: 15px !important;
+  white-space: normal !important;
+}
+
+.fa-card--small .fa-bio {
+  display: none !important;
+}
+
+.fa-card--small .fa-footer {
+  display: none !important;
+}
+
+.fa-card--small .fa-divider {
+  display: none !important;
+}
+
+/* On mobile: stack vertically, hide small cards */
+@media (max-width: 768px) {
+  .fa-grid {
+    grid-template-columns: 1fr;
+  }
+  .fa-card--small {
+    display: none;
+  }
 }
 
 .fa-kicker {
@@ -5955,40 +5991,13 @@ button:not(.side-nav button):not(.desktop-side-nav-panel button){
 }
 
 /* ============================================================
-   What is 60 Seconds: visible only while logged out
+   What is 60 Seconds: always hidden
    ============================================================ */
-body.is-logged-out #conceptSection {
-  display: block !important;
-  visibility: visible !important;
-  opacity: 1 !important;
-}
-
-body.is-authenticated #conceptSection {
+#conceptSection {
   display: none !important;
   visibility: hidden !important;
   opacity: 0 !important;
   pointer-events: none !important;
-}
-
-
-/* Hide 'What is 60 Seconds' when logged in */
-body.is-authenticated #conceptSection {
-  display: none !important;
-}
-
-
-/* FINAL conceptSection logged-out only override */
-body.is-authenticated #conceptSection {
-  display: none !important;
-  visibility: hidden !important;
-  opacity: 0 !important;
-  pointer-events: none !important;
-}
-
-body.is-logged-out #conceptSection {
-  display: block !important;
-  visibility: visible !important;
-  opacity: 1 !important;
 }
 
 
@@ -6028,11 +6037,17 @@ body.is-logged-out #conceptSection {
 }
 .top-supporter-rank {
   font-size: 11px; font-weight: 700;
-  color: rgba(212,175,55,0.6); width: 16px; flex-shrink: 0;
+  color: #ffffff;
+  display: inline-flex; align-items: center; gap: 4px;
+  flex-shrink: 0;
+}
+.top-supporter-medal {
+  font-size: 14px;
+  line-height: 1;
 }
 .top-supporter-coins {
   margin-left: auto; font-size: 11px; font-weight: 600;
-  color: rgba(212,175,55,0.8); flex-shrink: 0; white-space: nowrap;
+  color: #FFD76A; flex-shrink: 0; white-space: nowrap;
 }
 .top-supporter-item .news-feed-name {
   font-size: 13px; font-weight: 600;
@@ -6942,4 +6957,15 @@ input[type="range"]::-moz-range-thumb {
 .community-col .news-feed-copy::selection {
   color: #ffffff !important;
   background: rgba(245,200,75,0.28) !important;
+}
+
+/* ================================================================
+   Coins badge: altijd verborgen als niet ingelogd
+   ================================================================ */
+body:not(.is-authenticated) #currencyBadge,
+body.is-logged-out #currencyBadge {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
 }
