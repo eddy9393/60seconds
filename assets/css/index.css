@@ -7241,10 +7241,12 @@ button#volumeBtn,
 
 /* === radio player button glow/equal width update === */
 .radio-shell .player-actions {
-  gap: 0 !important;
-  padding-right: 14px !important;
+  gap: 10px !important;
+  padding-right: 0 !important;
+  align-items: center !important;
 }
 
+/* Equal sizing for every radio control button */
 .radio-shell .player-actions .metal-btn,
 .radio-shell .player-actions .icon-btn,
 .radio-shell .player-actions #pauseBtn,
@@ -7257,7 +7259,11 @@ button#volumeBtn,
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
-  border-color: rgba(244, 215, 122, 0.24) !important;
+  border: 1px solid rgba(244,215,122,0.24) !important;
+  border-radius: 999px !important;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.09), rgba(255,255,255,0.025)),
+    linear-gradient(180deg, rgba(34,34,34,0.78), rgba(14,14,14,0.88)) !important;
   box-shadow:
     inset 0 1px 0 rgba(255,255,255,0.10),
     inset 0 -1px 0 rgba(0,0,0,0.28),
@@ -7265,11 +7271,44 @@ button#volumeBtn,
     0 10px 24px rgba(0,0,0,0.24) !important;
 }
 
+/* Remove visual dividers between segmented buttons */
+.radio-shell .player-actions .metal-btn,
+.radio-shell .player-actions .icon-btn,
+.radio-shell .player-actions #pauseBtn,
+.radio-shell .player-actions .volume-button,
+.radio-shell .player-actions .volume-control {
+  border-left-color: rgba(244,215,122,0.24) !important;
+  border-right-color: rgba(244,215,122,0.24) !important;
+}
+
+.radio-shell .player-actions .metal-btn::before,
+.radio-shell .player-actions .metal-btn::after,
+.radio-shell .player-actions .icon-btn::before,
+.radio-shell .player-actions .icon-btn::after,
+.radio-shell .player-actions #pauseBtn::before,
+.radio-shell .player-actions #pauseBtn::after,
+.radio-shell .player-actions .volume-button::before,
+.radio-shell .player-actions .volume-button::after,
+.radio-shell .player-actions .volume-control::before,
+.radio-shell .player-actions .volume-control::after {
+  display: none !important;
+  content: none !important;
+}
+
+/* Equal spacing: no extra offset on volume */
+.radio-shell .player-actions .volume-control {
+  margin-right: 0 !important;
+  margin-left: 0 !important;
+  padding-right: 0 !important;
+  display: inline-flex !important;
+}
+
+/* Hover glow */
 .radio-shell .player-actions .metal-btn:hover,
 .radio-shell .player-actions .icon-btn:hover,
 .radio-shell .player-actions #pauseBtn:hover,
 .radio-shell .player-actions .volume-button:hover {
-  border-color: rgba(244, 215, 122, 0.40) !important;
+  border-color: rgba(244,215,122,0.42) !important;
   box-shadow:
     inset 0 1px 0 rgba(255,255,255,0.14),
     inset 0 -1px 0 rgba(0,0,0,0.30),
@@ -7278,31 +7317,35 @@ button#volumeBtn,
     0 12px 28px rgba(0,0,0,0.28) !important;
 }
 
+/* Make play button glow match skip button */
+.radio-shell .player-actions #pauseBtn,
+.radio-shell .player-actions #pauseBtn.is-playing,
+.radio-shell .player-actions .pause-btn-playing {
+  border-color: rgba(255,220,120,0.35) !important;
+  box-shadow:
+    inset 0 2px 0 rgba(255,255,255,0.45),
+    inset 0 -2px 4px rgba(90,50,0,0.28),
+    0 12px 26px rgba(212,175,55,0.22),
+    0 0 0 1px rgba(212,175,55,0.08),
+    0 0 18px rgba(244,215,122,0.22) !important;
+}
+
+.radio-shell .player-actions #pauseBtn:hover,
+.radio-shell .player-actions #pauseBtn.is-playing:hover,
+.radio-shell .player-actions .pause-btn-playing:hover {
+  box-shadow:
+    inset 0 2px 0 rgba(255,255,255,0.48),
+    inset 0 -2px 4px rgba(90,50,0,0.28),
+    0 14px 30px rgba(212,175,55,0.28),
+    0 0 0 1px rgba(212,175,55,0.10),
+    0 0 24px rgba(244,215,122,0.28) !important;
+}
+
 .radio-shell .player-actions .metal-btn:active,
 .radio-shell .player-actions .icon-btn:active,
 .radio-shell .player-actions #pauseBtn:active,
 .radio-shell .player-actions .volume-button:active {
   transform: scale(0.96) !important;
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.10),
-    inset 0 -1px 0 rgba(0,0,0,0.32),
-    0 0 14px rgba(244,215,122,0.20),
-    0 8px 18px rgba(0,0,0,0.22) !important;
-}
-
-.radio-shell .player-actions .liked,
-.radio-shell .player-actions .pause-btn-playing,
-.radio-shell .player-actions #pauseBtn.is-playing {
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.22),
-    inset 0 -2px 4px rgba(90,50,0,0.24),
-    0 0 18px rgba(244,215,122,0.32),
-    0 0 34px rgba(212,175,55,0.20),
-    0 12px 28px rgba(0,0,0,0.28) !important;
-}
-
-.radio-shell .player-actions .volume-control {
-  margin-right: 10px !important;
 }
 
 .radio-shell .player-actions .volume-button svg {
@@ -7324,10 +7367,6 @@ button#volumeBtn,
     min-width: 0 !important;
     height: 52px !important;
     min-height: 52px !important;
-  }
-
-  .radio-shell .player-actions .volume-control {
-    margin-right: 0 !important;
   }
 }
 /* === end radio player button glow/equal width update === */
