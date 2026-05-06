@@ -7239,97 +7239,42 @@ button#volumeBtn,
 
 
 
-/* === radio controls final visual reset === */
+/* === radio player button glow/equal width update === */
 
-/*
-  Scope: only the main radio player buttons.
-  Requested:
-  - glass container extends through the full volume button
-  - like and play/pause icons 10% smaller
-  - skip and volume icon sizes unchanged
-  - volume slider fill/track/thumb follows the backup progress-style look
-*/
-
-/* Outer glass capsule extends through volume */
-#radioShell .player-actions {
-  display: inline-flex !important;
+/* One calm glass capsule, no visible segment lines */
+.radio-shell .player-actions {
+  gap: 0 !important;
+  padding: 0 18px 0 0 !important;
   align-items: center !important;
   justify-content: center !important;
-  gap: 0 !important;
-  margin-top: 14px !important;
-  padding: 0 !important;
+  overflow: hidden !important;
   border-radius: 999px !important;
-  border: 1px solid rgba(255,255,255,0.18) !important;
-  border-top-color: rgba(255,255,255,0.28) !important;
+  border: 1px solid rgba(255,255,255,0.16) !important;
   background:
-    linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.025)),
-    linear-gradient(90deg, rgba(38,38,38,0.74), rgba(18,18,18,0.76), rgba(48,38,24,0.62)) !important;
+    linear-gradient(180deg, rgba(255,255,255,0.095), rgba(255,255,255,0.025)),
+    linear-gradient(90deg, rgba(32,32,32,0.72), rgba(20,20,20,0.76) 45%, rgba(44,34,18,0.68)) !important;
   box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.10),
-    inset 0 -1px 0 rgba(0,0,0,0.28),
-    0 10px 26px rgba(0,0,0,0.28) !important;
-  backdrop-filter: blur(20px) saturate(150%) !important;
-  -webkit-backdrop-filter: blur(20px) saturate(150%) !important;
-  overflow: hidden !important;
-  position: relative !important;
+    inset 0 1px 0 rgba(255,255,255,0.12),
+    inset 0 -1px 0 rgba(0,0,0,0.30),
+    0 0 18px rgba(212,175,55,0.13),
+    0 12px 28px rgba(0,0,0,0.28) !important;
 }
 
-/* Neutralize optional pcb wrapper if present */
-#radioShell .player-actions .pcb {
+/* All controls share the same visual base */
+.radio-shell .player-actions .metal-btn,
+.radio-shell .player-actions .icon-btn,
+.radio-shell .player-actions #pauseBtn,
+.radio-shell .player-actions .volume-button {
+  width: 66px !important;
+  min-width: 66px !important;
+  height: 56px !important;
+  min-height: 56px !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  flex: 0 0 66px !important;
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
-  gap: 0 !important;
-  padding: 0 !important;
-  margin: 0 !important;
-  border: 0 !important;
-  border-radius: inherit !important;
-  background: transparent !important;
-  background-image: none !important;
-  box-shadow: none !important;
-  filter: none !important;
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
-  overflow: hidden !important;
-}
-
-/* Hide dividers completely */
-#radioShell .player-actions .pcb-divider {
-  display: none !important;
-  width: 0 !important;
-  min-width: 0 !important;
-  max-width: 0 !important;
-  height: 0 !important;
-  opacity: 0 !important;
-  background: transparent !important;
-  border: 0 !important;
-  box-shadow: none !important;
-  flex: 0 0 0 !important;
-}
-
-/* Base controls */
-#radioShell .player-actions #likeBtn,
-#radioShell .player-actions #pauseBtn,
-#radioShell .player-actions #skip,
-#radioShell .player-actions #volumeBtn,
-#radioShell .player-actions .metal-btn,
-#radioShell .player-actions .icon-btn,
-#radioShell .player-actions .radio-icon-btn,
-#radioShell .player-actions .volume-button,
-#radioShell .player-actions .pcb-btn,
-#radioShell .player-actions .pcb-play {
-  width: 68px !important;
-  min-width: 68px !important;
-  max-width: 68px !important;
-  height: 58px !important;
-  min-height: 58px !important;
-  max-height: 58px !important;
-  flex: 0 0 68px !important;
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  padding: 0 !important;
-  margin: 0 !important;
   border: 0 !important;
   border-radius: 0 !important;
   outline: 0 !important;
@@ -7337,363 +7282,133 @@ button#volumeBtn,
   background-image: none !important;
   box-shadow: none !important;
   filter: none !important;
-  text-shadow: none !important;
-  transform: none !important;
-  color: rgba(255,255,255,0.88) !important;
-  cursor: pointer !important;
-  transition: background 0.15s ease, transform 0.12s ease, opacity 0.15s ease !important;
 }
 
-/* Remove pseudo dividers/highlights */
-#radioShell .player-actions #likeBtn::before,
-#radioShell .player-actions #likeBtn::after,
-#radioShell .player-actions #pauseBtn::before,
-#radioShell .player-actions #pauseBtn::after,
-#radioShell .player-actions #skip::before,
-#radioShell .player-actions #skip::after,
-#radioShell .player-actions #volumeBtn::before,
-#radioShell .player-actions #volumeBtn::after,
-#radioShell .player-actions .metal-btn::before,
-#radioShell .player-actions .metal-btn::after,
-#radioShell .player-actions .icon-btn::before,
-#radioShell .player-actions .icon-btn::after,
-#radioShell .player-actions .radio-icon-btn::before,
-#radioShell .player-actions .radio-icon-btn::after,
-#radioShell .player-actions .volume-control::before,
-#radioShell .player-actions .volume-control::after {
+/* Kill every possible divider/highlight layer inside the segments */
+.radio-shell .player-actions .metal-btn::before,
+.radio-shell .player-actions .metal-btn::after,
+.radio-shell .player-actions .icon-btn::before,
+.radio-shell .player-actions .icon-btn::after,
+.radio-shell .player-actions #pauseBtn::before,
+.radio-shell .player-actions #pauseBtn::after,
+.radio-shell .player-actions .volume-button::before,
+.radio-shell .player-actions .volume-button::after,
+.radio-shell .player-actions .volume-control::before,
+.radio-shell .player-actions .volume-control::after {
   content: none !important;
   display: none !important;
   opacity: 0 !important;
-  border: 0 !important;
   background: transparent !important;
+  border: 0 !important;
   box-shadow: none !important;
 }
 
-/* Play/pause no unique container */
-#radioShell .player-actions #pauseBtn,
-#radioShell .player-actions #pauseBtn:hover,
-#radioShell .player-actions #pauseBtn:focus,
-#radioShell .player-actions #pauseBtn:active,
-#radioShell .player-actions #pauseBtn.is-playing,
-#radioShell .player-actions #pauseBtn.pause-btn-playing,
-#radioShell .player-actions .pause-btn-playing,
-#radioShell .player-actions .radio-icon-btn {
-  border: 0 !important;
-  border-radius: 0 !important;
-  background: transparent !important;
-  background-image: none !important;
-  box-shadow: none !important;
-  filter: none !important;
-}
-
-/* Default icons: skip and volume stay unchanged at 30px */
-#radioShell .player-actions img,
-#radioShell .player-actions .btn-icon-img,
-#radioShell .player-actions .player-icon-img,
-#radioShell .player-actions svg {
-  width: 30px !important;
-  height: 30px !important;
-  max-width: 30px !important;
-  max-height: 30px !important;
-  display: block !important;
-  object-fit: contain !important;
-  padding: 0 !important;
+/* Neutralize segmented-border leftovers from nested wrappers */
+.radio-shell .player-actions > *,
+.radio-shell .player-actions .volume-control {
   margin: 0 !important;
   border: 0 !important;
+  box-shadow: none !important;
+  background: transparent !important;
+}
+
+/* Add only one consistent glow layer per icon, not per segment */
+.radio-shell .player-actions .metal-btn .icon,
+.radio-shell .player-actions .icon-btn .icon,
+.radio-shell .player-actions #pauseBtn .icon,
+.radio-shell .player-actions .volume-button svg {
+  color: rgba(255,255,255,0.92) !important;
+  filter:
+    drop-shadow(0 0 6px rgba(244,215,122,0.20))
+    drop-shadow(0 0 12px rgba(212,175,55,0.12)) !important;
+}
+
+/* Make play match skip: no separate circle, same glow family */
+.radio-shell .player-actions #pauseBtn,
+.radio-shell .player-actions #pauseBtn.is-playing,
+.radio-shell .player-actions .pause-btn-playing {
+  border-radius: 0 !important;
   background: transparent !important;
   box-shadow: none !important;
-  filter: brightness(0) invert(1) !important;
-  opacity: 0.82 !important;
 }
 
-/* Like and play/pause icons 10% smaller */
-#radioShell .player-actions #likeBtn img,
-#radioShell .player-actions #likeBtn .btn-icon-img,
-#radioShell .player-actions #likeBtn .like-icon,
-#radioShell .player-actions #pauseBtn img,
-#radioShell .player-actions #pauseBtn #playPauseIcon {
-  width: 27px !important;
-  height: 27px !important;
-  max-width: 27px !important;
-  max-height: 27px !important;
+.radio-shell .player-actions #pauseBtn .icon,
+.radio-shell .player-actions #skipBtn .icon,
+.radio-shell .player-actions .skip-button-content .icon {
+  filter:
+    drop-shadow(0 0 7px rgba(244,215,122,0.24))
+    drop-shadow(0 0 14px rgba(212,175,55,0.14)) !important;
 }
 
-/* Hover/active: no glow */
-#radioShell .player-actions #likeBtn:hover,
-#radioShell .player-actions #pauseBtn:hover,
-#radioShell .player-actions #skip:hover,
-#radioShell .player-actions #volumeBtn:hover {
-  background: rgba(255,255,255,0.045) !important;
+/* Hover: glow the whole capsule consistently, not individual vertical dividers */
+.radio-shell .player-actions:has(.metal-btn:hover),
+.radio-shell .player-actions:has(.icon-btn:hover),
+.radio-shell .player-actions:has(#pauseBtn:hover),
+.radio-shell .player-actions:has(.volume-button:hover) {
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.14),
+    inset 0 -1px 0 rgba(0,0,0,0.30),
+    0 0 22px rgba(244,215,122,0.20),
+    0 0 34px rgba(212,175,55,0.12),
+    0 14px 30px rgba(0,0,0,0.30) !important;
+}
+
+.radio-shell .player-actions .metal-btn:hover,
+.radio-shell .player-actions .icon-btn:hover,
+.radio-shell .player-actions #pauseBtn:hover,
+.radio-shell .player-actions .volume-button:hover {
+  transform: none !important;
+  border: 0 !important;
+  background: rgba(255,255,255,0.035) !important;
   box-shadow: none !important;
-  filter: none !important;
 }
 
-#radioShell .player-actions #likeBtn:active,
-#radioShell .player-actions #pauseBtn:active,
-#radioShell .player-actions #skip:active,
-#radioShell .player-actions #volumeBtn:active {
+/* Volume: same button width, but more breathing room inside the capsule on the right */
+.radio-shell .player-actions .volume-control {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding-right: 12px !important;
+  flex: 0 0 78px !important;
+}
+
+.radio-shell .player-actions .volume-button {
+  flex: 0 0 66px !important;
+}
+
+.radio-shell .player-actions .volume-button svg {
+  width: 22px !important;
+  height: 22px !important;
+}
+
+/* Active press only, no visual divider/circle */
+.radio-shell .player-actions .metal-btn:active,
+.radio-shell .player-actions .icon-btn:active,
+.radio-shell .player-actions #pauseBtn:active,
+.radio-shell .player-actions .volume-button:active {
   transform: scale(0.96) !important;
 }
 
-/* Volume segment is part of the capsule and reaches the end */
-#radioShell .player-actions #volumeControl.volume-control {
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: flex-start !important;
-  width: 78px !important;
-  min-width: 78px !important;
-  max-width: 78px !important;
-  height: 58px !important;
-  min-height: 58px !important;
-  max-height: 58px !important;
-  flex: 0 0 78px !important;
-  padding: 0 10px 0 0 !important;
-  margin: 0 !important;
-  border: 0 !important;
-  border-radius: 0 999px 999px 0 !important;
-  background: transparent !important;
-  background-image: none !important;
-  box-shadow: none !important;
-  filter: none !important;
-  overflow: visible !important;
-  position: relative !important;
-}
-
-#radioShell .player-actions #volumeBtn.volume-button {
-  width: 68px !important;
-  min-width: 68px !important;
-  max-width: 68px !important;
-  height: 58px !important;
-  min-height: 58px !important;
-  max-height: 58px !important;
-  flex: 0 0 68px !important;
-}
-
-/* No dark background/container when volume opens */
-#radioShell .player-actions #volumeControl.volume-control.open {
-  background: transparent !important;
-  background-image: none !important;
-  border: 0 !important;
-  box-shadow: none !important;
-  filter: none !important;
-}
-
-/* Volume slider: backup-like fill/track styling, no dark rectangle */
-#radioShell .player-actions #volumeControl .volume-slider-inline {
-  position: absolute !important;
-  left: 50% !important;
-  bottom: calc(100% + 10px) !important;
-  transform: translateX(-50%) !important;
-  width: 0 !important;
-  min-width: 0 !important;
-  max-width: 0 !important;
-  opacity: 0 !important;
-  pointer-events: none !important;
-  overflow: visible !important;
-  padding: 0 !important;
-  margin: 0 !important;
-  border: 0 !important;
-  border-radius: 999px !important;
-  background: transparent !important;
-  background-image: none !important;
-  box-shadow: none !important;
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  transition: width 0.22s ease, opacity 0.16s ease !important;
-  z-index: 500 !important;
-}
-
-#radioShell .player-actions #volumeControl.volume-control.open .volume-slider-inline {
-  width: 122px !important;
-  min-width: 122px !important;
-  max-width: 122px !important;
-  opacity: 1 !important;
-  pointer-events: auto !important;
-}
-
-#radioShell .player-actions #volumeControl .volume-slider-inline input[type="range"] {
-  -webkit-appearance: none !important;
-  appearance: none !important;
-  width: 112px !important;
-  height: 14px !important;
-  margin: 0 !important;
-  padding: 0 !important;
-  cursor: pointer !important;
-  background: linear-gradient(
-    90deg,
-    #d4af37 0%,
-    #f4d77a var(--volume-fill, 100%),
-    rgba(20,20,20,0.92) var(--volume-fill, 100%),
-    rgba(10,10,10,0.96) 100%
-  ) !important;
-  border-radius: 999px !important;
-  outline: none !important;
-  border: 1px solid rgba(244,215,122,0.22) !important;
-  box-shadow:
-    inset 0 1px 2px rgba(255,255,255,0.05),
-    inset 0 -2px 4px rgba(0,0,0,0.42),
-    0 0 12px rgba(212,175,55,0.12) !important;
-}
-
-/* WebKit range track transparent so input background is the fill */
-#radioShell .player-actions #volumeControl .volume-slider-inline input[type="range"]::-webkit-slider-runnable-track {
-  height: 6px !important;
-  border-radius: 999px !important;
-  background: transparent !important;
-  border: 0 !important;
-  box-shadow: none !important;
-}
-
-/* Small circular WebKit thumb */
-#radioShell .player-actions #volumeControl .volume-slider-inline input[type="range"]::-webkit-slider-thumb {
-  -webkit-appearance: none !important;
-  appearance: none !important;
-  width: 16px !important;
-  height: 16px !important;
-  border-radius: 50% !important;
-  border: 1px solid rgba(255,245,200,0.85) !important;
-  background:
-    radial-gradient(circle at 35% 30%, #fff7ce 0%, #f4d77a 38%, #d4af37 72%, #8f6b13 100%) !important;
-  box-shadow:
-    0 0 10px rgba(244,215,122,0.34),
-    0 0 18px rgba(212,175,55,0.18) !important;
-  margin-top: -5px !important;
-}
-
-/* Firefox range */
-#radioShell .player-actions #volumeControl .volume-slider-inline input[type="range"]::-moz-range-track {
-  height: 6px !important;
-  border-radius: 999px !important;
-  border: 0 !important;
-  background: transparent !important;
-  box-shadow: none !important;
-}
-
-#radioShell .player-actions #volumeControl .volume-slider-inline input[type="range"]::-moz-range-progress {
-  height: 6px !important;
-  border-radius: 999px !important;
-  background: linear-gradient(90deg, #d4af37, #f4d77a) !important;
-}
-
-#radioShell .player-actions #volumeControl .volume-slider-inline input[type="range"]::-moz-range-thumb {
-  width: 16px !important;
-  height: 16px !important;
-  border-radius: 50% !important;
-  border: 1px solid rgba(255,245,200,0.85) !important;
-  background:
-    radial-gradient(circle at 35% 30%, #fff7ce 0%, #f4d77a 38%, #d4af37 72%, #8f6b13 100%) !important;
-  box-shadow:
-    0 0 10px rgba(244,215,122,0.34),
-    0 0 18px rgba(212,175,55,0.18) !important;
-}
-
-/* Mobile proportional */
 @media (max-width: 900px) {
-  #radioShell .player-actions #likeBtn,
-  #radioShell .player-actions #pauseBtn,
-  #radioShell .player-actions #skip,
-  #radioShell .player-actions #volumeBtn,
-  #radioShell .player-actions .metal-btn,
-  #radioShell .player-actions .icon-btn,
-  #radioShell .player-actions .radio-icon-btn,
-  #radioShell .player-actions .volume-button {
+  .radio-shell .player-actions {
+    padding-right: 12px !important;
+  }
+
+  .radio-shell .player-actions .metal-btn,
+  .radio-shell .player-actions .icon-btn,
+  .radio-shell .player-actions #pauseBtn,
+  .radio-shell .player-actions .volume-button {
     width: 60px !important;
     min-width: 60px !important;
-    max-width: 60px !important;
+    flex-basis: 60px !important;
     height: 52px !important;
     min-height: 52px !important;
-    max-height: 52px !important;
-    flex-basis: 60px !important;
   }
 
-  #radioShell .player-actions #volumeControl.volume-control {
-    width: 70px !important;
-    min-width: 70px !important;
-    max-width: 70px !important;
-    height: 52px !important;
-    min-height: 52px !important;
-    max-height: 52px !important;
-    flex-basis: 70px !important;
+  .radio-shell .player-actions .volume-control {
+    flex-basis: 72px !important;
     padding-right: 10px !important;
   }
-
-  #radioShell .player-actions img,
-  #radioShell .player-actions .btn-icon-img,
-  #radioShell .player-actions .player-icon-img {
-    width: 27px !important;
-    height: 27px !important;
-    max-width: 27px !important;
-    max-height: 27px !important;
-  }
-
-  #radioShell .player-actions #likeBtn img,
-  #radioShell .player-actions #pauseBtn img,
-  #radioShell .player-actions #pauseBtn #playPauseIcon {
-    width: 24px !important;
-    height: 24px !important;
-    max-width: 24px !important;
-    max-height: 24px !important;
-  }
 }
-/* === end radio controls final visual reset === */
-
-
-
-/* === volume actual fill and glass controls refinement === */
-
-/* Make the complete radio button capsule more clearly glass */
-#radioShell .player-actions {
-  background:
-    linear-gradient(180deg, rgba(255,255,255,0.13), rgba(255,255,255,0.035)),
-    radial-gradient(circle at 18% 0%, rgba(255,255,255,0.10), transparent 34%),
-    linear-gradient(90deg, rgba(42,42,42,0.62), rgba(18,18,18,0.58), rgba(78,58,30,0.46)) !important;
-  border: 1px solid rgba(255,255,255,0.22) !important;
-  border-top-color: rgba(255,255,255,0.34) !important;
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.16),
-    inset 0 -1px 0 rgba(0,0,0,0.30),
-    0 16px 36px rgba(0,0,0,0.30) !important;
-  backdrop-filter: blur(26px) saturate(165%) !important;
-  -webkit-backdrop-filter: blur(26px) saturate(165%) !important;
-}
-
-/* Keep optional nested pcb wrapper transparent so the parent is the only glass layer */
-#radioShell .player-actions .pcb {
-  background: transparent !important;
-  background-image: none !important;
-  box-shadow: none !important;
-  border: 0 !important;
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
-}
-
-/* Volume slider fill is driven by JS through --volume-fill */
-#radioShell .player-actions #volumeControl .volume-slider-inline input[type="range"] {
-  background:
-    linear-gradient(
-      90deg,
-      #8f6b13 0%,
-      #d4af37 calc(var(--volume-fill, 100%) * 0.55),
-      #f4d77a var(--volume-fill, 100%),
-      rgba(20,20,20,0.92) var(--volume-fill, 100%),
-      rgba(10,10,10,0.96) 100%
-    ) !important;
-}
-
-/* Make sure browser-native range fill does not fight the custom fill */
-#radioShell .player-actions #volumeControl .volume-slider-inline input[type="range"]::-webkit-slider-runnable-track {
-  background: transparent !important;
-}
-
-#radioShell .player-actions #volumeControl .volume-slider-inline input[type="range"]::-moz-range-track {
-  background: rgba(10,10,10,0.96) !important;
-}
-
-#radioShell .player-actions #volumeControl .volume-slider-inline input[type="range"]::-moz-range-progress {
-  background: linear-gradient(90deg, #8f6b13, #d4af37, #f4d77a) !important;
-}
-/* === end volume actual fill and glass controls refinement === */
+/* === end radio player button glow/equal width update === */
 
