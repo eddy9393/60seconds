@@ -10,6 +10,38 @@
   <link rel="stylesheet" href="assets/css/buttons.css" />
   <link rel="stylesheet" href="assets/css/global.css" />
 
+  <style id="edit-profile-title-style">
+    .edit-profile-page-hero {
+      max-width: 1180px;
+      margin: 0 auto 34px;
+      text-align: left;
+    }
+
+    .edit-profile-page-hero h1 {
+      margin: 0;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(48px, 8vw, 96px);
+      line-height: 0.95;
+      letter-spacing: -0.045em;
+      font-weight: 700;
+      color: #ffffff;
+      text-shadow:
+        0 2px 18px rgba(0,0,0,0.34),
+        0 0 18px rgba(255,255,255,0.08);
+    }
+
+    @media (max-width: 768px) {
+      .edit-profile-page-hero {
+        margin-bottom: 24px;
+        text-align: left;
+      }
+
+      .edit-profile-page-hero h1 {
+        font-size: clamp(42px, 15vw, 68px);
+      }
+    }
+  </style>
+
   <style id="edit-profile-auth-toggle-only-fix">
     /* Keep auth elements available for JS, but move the visual panel fully out of view */
     #authPanelWrap.auth-panel-wrap {
@@ -152,6 +184,11 @@
   </div>
 
   <div class="site-shell">
+
+    <section class="edit-profile-page-hero" aria-label="Edit profile page title">
+      <h1>Edit your profile</h1>
+    </section>
+
     <div class="auth-panel-wrap" id="authPanelWrap">
       <div id="authBox" class="auth-box hidden">
         <h3>Log in</h3>
