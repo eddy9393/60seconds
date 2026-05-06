@@ -7308,3 +7308,106 @@ body.is-logged-out #currencyBadge {
     padding: 0 18px !important;
   }
 }
+
+/* ================================================================
+   Player Controls Bar — reset all individual button containers
+   ================================================================ */
+.player-controls-bar .pcb-btn,
+.player-controls-bar #likeBtn,
+.player-controls-bar #pauseBtn,
+.player-controls-bar #skip,
+.player-controls-bar #volumeBtn,
+.player-controls-bar .metal-btn,
+.player-controls-bar .icon-btn,
+.player-controls-bar .radio-icon-btn {
+  all: unset !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  height: 52px !important;
+  min-width: 56px !important;
+  padding: 0 20px !important;
+  background: transparent !important;
+  border: none !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  cursor: pointer !important;
+  color: rgba(255,255,255,0.78) !important;
+  transition: background 0.15s ease !important;
+  transform: none !important;
+  width: auto !important;
+  font-size: inherit !important;
+}
+
+.player-controls-bar .pcb-btn:hover,
+.player-controls-bar #likeBtn:hover,
+.player-controls-bar #pauseBtn:hover,
+.player-controls-bar #skip:hover,
+.player-controls-bar #volumeBtn:hover {
+  background: rgba(255,255,255,0.07) !important;
+  border: none !important;
+  box-shadow: none !important;
+  transform: none !important;
+}
+
+.player-controls-bar #likeBtn {
+  border-radius: 999px 0 0 999px !important;
+}
+
+.player-controls-bar .pcb-volume {
+  border-radius: 0 999px 999px 0 !important;
+}
+
+.player-controls-bar #volumeBtn {
+  border-radius: 0 999px 999px 0 !important;
+}
+
+/* Play button: gold tint */
+.player-controls-bar #pauseBtn {
+  color: #f4d77a !important;
+  min-width: 68px !important;
+}
+
+.player-controls-bar #pauseBtn:hover {
+  background: rgba(212,175,55,0.08) !important;
+}
+
+/* Images inside buttons */
+.player-controls-bar img {
+  width: 20px !important;
+  height: 20px !important;
+  object-fit: contain !important;
+  display: block !important;
+  pointer-events: none !important;
+}
+
+.player-controls-bar #pauseBtn img {
+  width: 22px !important;
+  height: 22px !important;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .player-controls-bar .pcb-btn,
+  .player-controls-bar #likeBtn,
+  .player-controls-bar #pauseBtn,
+  .player-controls-bar #skip,
+  .player-controls-bar #volumeBtn,
+  .player-controls-bar .metal-btn,
+  .player-controls-bar .icon-btn {
+    height: 48px !important;
+    min-width: 48px !important;
+    padding: 0 14px !important;
+  }
+
+  .player-controls-bar img {
+    width: 18px !important;
+    height: 18px !important;
+  }
+
+  .player-controls-bar #pauseBtn {
+    min-width: 58px !important;
+  }
+}
