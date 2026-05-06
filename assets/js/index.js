@@ -195,7 +195,7 @@ function buildNewsFeedText(item) {
 function renderNewsFeedSlice() {
   if (!els.newsFeedListEl) return;
 
-  if (!state.newsFeedItems.length) {
+  if (!state.currentUser || !state.newsFeedItems.length) {
     els.newsFeedListEl.innerHTML = '<div class="news-feed-item news-feed-empty">No community updates yet.</div>';
     return;
   }
@@ -239,43 +239,44 @@ function advanceNewsFeed() {
 }
 
 async function loadNewsFeed() {
-  // Community updates visible for everyone
+  if (!state.currentUser) {
+    clearNewsFeedTimers();
+    state.newsFeedItems = [];
+    state.newsFeedIndex = 0;
+    setHidden(els.newsFeedSectionEl, true);
+    return;
+  }
 
   try {
     const todayKey = getTodayDateKey();
     const nowMs = Date.now();
 
-    // Fetch each source individually so one RLS failure doesn't block the rest
     const [profilesRes, approvedTracksRes, supportersRes, trackArtistsRes] = await Promise.all([
       supabaseClient
         .from("public_artist_profiles")
         .select("artist_name, created_at, user_id, photo_url")
         .not("artist_name", "is", null)
         .order("created_at", { ascending: false })
-        .limit(24)
-        .then(r => r).catch(() => ({ data: [], error: null })),
+        .limit(24),
       supabaseClient
         .from("tracks")
         .select("title, artist, user_id, created_at, status")
         .eq("status", "approved")
         .order("created_at", { ascending: false })
-        .limit(24)
-        .then(r => r).catch(() => ({ data: [], error: null })),
+        .limit(24),
       supabaseClient
-        .from("public_artist_profiles")
+        .from("profiles")
         .select("artist_name, user_id, photo_url, daily_seconds_earned, daily_seconds_earned_date")
         .not("artist_name", "is", null)
         .gte("daily_seconds_earned", DAILY_SECONDS_LIMIT)
         .order("daily_seconds_earned_date", { ascending: false })
         .order("daily_seconds_earned", { ascending: false })
-        .limit(48)
-        .then(r => r).catch(() => ({ data: [], error: null })),
+        .limit(48),
       supabaseClient
         .from("public_artist_profiles")
         .select("user_id, artist_name, photo_url")
         .not("artist_name", "is", null)
         .limit(400)
-        .then(r => r).catch(() => ({ data: [], error: null }))
     ]);
 
     const items = [];
@@ -373,7 +374,7 @@ async function loadTopSupporters() {
 
   try {
     const { data, error } = await supabaseClient
-      .from('public_artist_profiles')
+      .from('profiles')
       .select('artist_name, user_id, photo_url, coins')
       .not('artist_name', 'is', null)
       .gt('coins', 0)
@@ -391,12 +392,10 @@ async function loadTopSupporters() {
       const avatarHtml = p.photo_url
         ? `<img class="news-feed-avatar" src="${escapeHtml(p.photo_url)}" alt="${name}" />`
         : `<span class="news-feed-avatar-fallback">${escapeHtml((p.artist_name || 'A').charAt(0).toUpperCase())}</span>`;
-      const medals = ['🥇', '🥈', '🥉'];
-      const rankDisplay = i < 3 ? `<span class="top-supporter-medal">${medals[i]}</span>` : `${i + 1}`;
       return `<div class="news-feed-item top-supporter-item">
         <a class="news-feed-item-avatar" href="${href}">${avatarHtml}</a>
         <div class="news-feed-item-body">
-          <span class="top-supporter-rank">${rankDisplay}</span>
+          <span class="top-supporter-rank">${i + 1}</span>
           <a class="news-feed-name" href="${href}">${name}</a>
           <span class="top-supporter-coins">${coins} sec</span>
         </div>
@@ -541,12 +540,6 @@ function updatePauseButtonState() {
     icon.src = isPlaying ? 'icons/play.png' : 'icons/play.png';
     icon.style.opacity = isPlaying ? '1' : '0.6';
     els.pauseBtn.classList.toggle('is-playing', isPlaying);
-
-  const pauseIcon = els.pauseBtn.querySelector("img");
-  if (pauseIcon) {
-    pauseIcon.src = isPlaying ? "icons/pause.png" : "icons/play.png";
-  }
-
   }
 }
 
@@ -708,9 +701,9 @@ function broadcastCurrencyUpdate(coins, dailySecondsEarned = state.dailySecondsE
 }
 
 function updateConceptVisibility() {
-  // concept section is permanently hidden
+  const shouldShow = !state.currentUser;
   setAuthBodyState(Boolean(state.currentUser));
-  setHidden(els.conceptSectionEl, true);
+  setHidden(els.conceptSectionEl, !shouldShow);
   updateJoinButtonHref();
 }
 
@@ -888,8 +881,6 @@ function setHeaderAvatar(photoUrl, artistName) {
 }
 
 function setLoggedOutView() {
-  // Always hide coins when logged out
-  if (els.currencyBadge) els.currencyBadge.classList.add('hidden');
   setAuthBodyState(false);
   closeHeaderPanels();
   setStandardLoggedOutState({
@@ -924,9 +915,8 @@ function setLoggedOutView() {
   updateInteractiveControls();
   updateCurrencyVisibility(null);
   setCurrency(0);
-  // Load community updates + top supporters even when logged out
-  loadNewsFeed().catch(err => console.error('loadNewsFeed error:', err));
-  loadTopSupporters().catch(err => console.error('loadTopSupporters error:', err));
+  setHidden(els.newsFeedSectionEl, true);
+  clearNewsFeedTimers();
   updateJoinButtonHref();
 }
 
@@ -1852,40 +1842,6 @@ function bindUIEvents() {
     });
   });
 
-  // Recovery: als audio vastloopt (stalled/error), wissel naar volgende track
-  let _stallTimer = null;
-  function clearStallTimer() {
-    if (_stallTimer) { clearTimeout(_stallTimer); _stallTimer = null; }
-  }
-  function scheduleStallRecovery(ms = 8000) {
-    clearStallTimer();
-    _stallTimer = setTimeout(() => {
-      if (!state.isLiveActivated || !state.desiredPlayback) return;
-      console.warn('Radio: stall detected, advancing to next track');
-      nextTrack(0, false, true);
-    }, ms);
-  }
-
-  els.audio.addEventListener('waiting', () => {
-    if (state.isLiveActivated && state.desiredPlayback) scheduleStallRecovery(8000);
-  });
-  els.audio.addEventListener('playing', () => clearStallTimer());
-  els.audio.addEventListener('stalled', () => {
-    if (state.isLiveActivated && state.desiredPlayback) scheduleStallRecovery(6000);
-  });
-  els.audio.addEventListener('error', () => {
-    if (!state.isLiveActivated) return;
-    console.warn('Radio: audio error, advancing to next track');
-    clearStallTimer();
-    setTimeout(() => nextTrack(0, false, state.desiredPlayback), 1500);
-  });
-  els.audio.addEventListener('suspend', () => {
-    // Reload src if suspended unexpectedly while we want to play
-    if (state.isLiveActivated && state.desiredPlayback && els.audio.paused && els.audio.src) {
-      scheduleStallRecovery(10000);
-    }
-  });
-
   window.addEventListener("beforeunload", () => {
     clearUnexpectedPauseTimer();
     persistRadioSession();
@@ -1947,3 +1903,52 @@ async function initPage() {
 initPage().catch(err => {
   console.error("initPage error:", err);
 });
+
+
+// === volume slider fill sync ===
+(function syncVolumeSliderFill() {
+  function updateVolumeFill(range) {
+    if (!range) return;
+
+    const min = Number(range.min || 0);
+    const max = Number(range.max || 1);
+    const rawValue = Number(range.value || 0);
+    const safeMax = max === min ? 1 : max - min;
+    const percent = Math.max(0, Math.min(100, ((rawValue - min) / safeMax) * 100));
+
+    range.style.setProperty("--volume-fill", percent + "%");
+  }
+
+  function bindVolumeFill() {
+    const range = document.getElementById("volume");
+    if (!range || range.dataset.volumeFillSync === "ready") return;
+
+    range.dataset.volumeFillSync = "ready";
+    updateVolumeFill(range);
+
+    range.addEventListener("input", function () {
+      updateVolumeFill(range);
+    });
+
+    range.addEventListener("change", function () {
+      updateVolumeFill(range);
+    });
+
+    const volumeBtn = document.getElementById("volumeBtn");
+    if (volumeBtn) {
+      volumeBtn.addEventListener("click", function () {
+        requestAnimationFrame(function () {
+          updateVolumeFill(range);
+        });
+      });
+    }
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", bindVolumeFill, { once: true });
+  } else {
+    bindVolumeFill();
+  }
+})();
+// === end volume slider fill sync ===
+
