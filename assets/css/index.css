@@ -7185,7 +7185,7 @@ div.pcb button#skip,
 /* ABSOLUTE FINAL: element+id specificity to beat all old rules */
 button#skip { padding: 0 !important; min-width: 44px !important; }
 button#pauseBtn { 
-  padding: 0 16px !important;
+  padding: 0px !important;
   background: transparent !important;
   background-color: transparent !important;
   background-image: none !important;
