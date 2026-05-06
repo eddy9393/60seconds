@@ -262,26 +262,18 @@
           </div>
 
           <div class="player-actions">
-            <div class="pcb">
-              <button id="likeBtn" class="pcb-btn" type="button" aria-label="Like">
-                <img src="icons/like.png" alt="" class="btn-icon-img like-icon" aria-hidden="true" />
+            <button id="likeBtn" class="metal-btn" type="button">
+              <img src="icons/like.png" alt="" class="btn-icon-img like-icon" aria-hidden="true" />
               </button>
-              <div class="pcb-divider"></div>
-              <button id="pauseBtn" class="pcb-btn pcb-play" type="button" aria-label="Play or pause">
-                <img src="icons/play.png" alt="" class="player-icon-img" id="playPauseIcon" />
-              </button>
-              <div class="pcb-divider"></div>
-              <button id="skip" class="pcb-btn" type="button" aria-label="Skip">
-                <img src="icons/skip.png" alt="" class="player-icon-img" />
-              </button>
-              <div class="pcb-divider"></div>
-              <div id="volumeControl" class="volume-control pcb-vol">
-                <button id="volumeBtn" class="pcb-btn" type="button" aria-label="Volume">
-                  <img src="icons/vol-high.png" alt="" class="player-icon-img" id="volumeIcon" />
-                </button>
-                <div class="volume-slider-inline">
-                  <input id="volume" type="range" min="0" max="1" step="0.01" value="0.3" />
-                </div>
+
+            <button id="pauseBtn" class="icon-btn radio-icon-btn" type="button" aria-label="Play or pause"><img src="icons/play.png" alt="" class="player-icon-img" id="playPauseIcon" /></button>
+
+            <button id="skip" class="icon-btn" type="button" aria-label="Skip"><img src="icons/skip.png" alt="" class="player-icon-img" /></button>
+
+            <div id="volumeControl" class="volume-control">
+              <button id="volumeBtn" class="icon-btn volume-button" type="button" aria-label="Volume"><img src="icons/vol-high.png" alt="" class="player-icon-img" id="volumeIcon" /></button>
+              <div class="volume-slider-inline">
+                <input id="volume" type="range" min="0" max="1" step="0.01" value="0.3" />
               </div>
             </div>
           </div>
@@ -308,70 +300,36 @@
 
     <section id="featuredArtistSection" class="fa-section hidden">
       <div class="fa-kicker">Artist Spotlight</div>
+      <div class="fa-card" id="featuredArtistCard">
 
-      <div class="fa-grid">
+        <div class="fa-progress-bar">
+          <div class="fa-progress-fill" id="featuredArtistProgress"></div>
+        </div>
 
-        <!-- Large card (50%) -->
-        <div class="fa-card fa-card--large" id="featuredArtistCard">
-          <div class="fa-progress-bar"><div class="fa-progress-fill" id="featuredArtistProgress"></div></div>
-          <div class="fa-body">
-            <div class="fa-photo-wrap" id="featuredArtistPhotoWrap">
-              <img id="featuredArtistPhoto" class="fa-photo" src="" alt="" />
-            </div>
-            <div class="fa-info">
-              <div class="fa-name" id="featuredArtistName"></div>
-              <div class="fa-role" id="featuredArtistRole" style="display:none"></div>
-              <div class="fa-meta" id="featuredArtistMeta"></div>
-              <div class="fa-tune" id="featuredArtistTuneTitle" style="display:none"></div>
-              <div class="fa-bio" id="featuredArtistBio" style="display:none"></div>
-              <a id="featuredArtistLink" class="fa-link" href="#">View profile →</a>
-            </div>
+        <div class="fa-body">
+          <div class="fa-photo-wrap" id="featuredArtistPhotoWrap">
+            <img id="featuredArtistPhoto" class="fa-photo" src="" alt="" />
           </div>
-          <div class="fa-divider"></div>
-          <div class="fa-footer">
-            <button class="fa-nav-btn" id="featuredArtistPrev" aria-label="Previous artist">&#8249;</button>
-            <div class="fa-dots" id="featuredArtistDots"></div>
-            <button class="fa-nav-btn" id="featuredArtistNext" aria-label="Next artist">&#8250;</button>
+
+          <div class="fa-info">
+            <div class="fa-name" id="featuredArtistName"></div>
+            <div class="fa-role" id="featuredArtistRole" style="display:none"></div>
+            <div class="fa-meta" id="featuredArtistMeta"></div>
+            <div class="fa-tune" id="featuredArtistTuneTitle" style="display:none"></div>
+            <div class="fa-bio" id="featuredArtistBio" style="display:none"></div>
+            <a id="featuredArtistLink" class="fa-link" href="#">View profile →</a>
           </div>
         </div>
 
-        <!-- Small card 1 (25%) -->
-        <div class="fa-card fa-card--small" id="featuredArtistCard1">
-          <div class="fa-progress-bar"><div class="fa-progress-fill" id="featuredArtistProgress1"></div></div>
-          <div class="fa-body">
-            <div class="fa-photo-wrap" id="featuredArtistPhotoWrap1">
-              <img id="featuredArtistPhoto1" class="fa-photo" src="" alt="" />
-            </div>
-            <div class="fa-info">
-              <div class="fa-name" id="featuredArtistName1"></div>
-              <div class="fa-role" id="featuredArtistRole1" style="display:none"></div>
-              <div class="fa-meta" id="featuredArtistMeta1"></div>
-              <div class="fa-tune" id="featuredArtistTuneTitle1" style="display:none"></div>
-              <a id="featuredArtistLink1" class="fa-link" href="#">View profile →</a>
-            </div>
-          </div>
+        <div class="fa-divider"></div>
+
+        <div class="fa-footer">
+          <button class="fa-nav-btn" id="featuredArtistPrev" aria-label="Previous artist">&#8249;</button>
+          <div class="fa-dots" id="featuredArtistDots"></div>
+          <button class="fa-nav-btn" id="featuredArtistNext" aria-label="Next artist">&#8250;</button>
         </div>
 
-        <!-- Small card 2 (25%) -->
-        <div class="fa-card fa-card--small" id="featuredArtistCard2">
-          <div class="fa-progress-bar"><div class="fa-progress-fill" id="featuredArtistProgress2"></div></div>
-          <div class="fa-body">
-            <div class="fa-photo-wrap" id="featuredArtistPhotoWrap2">
-              <img id="featuredArtistPhoto2" class="fa-photo" src="" alt="" />
-            </div>
-            <div class="fa-info">
-              <div class="fa-name" id="featuredArtistName2"></div>
-              <div class="fa-role" id="featuredArtistRole2" style="display:none"></div>
-              <div class="fa-meta" id="featuredArtistMeta2"></div>
-              <div class="fa-tune" id="featuredArtistTuneTitle2" style="display:none"></div>
-              <a id="featuredArtistLink2" class="fa-link" href="#">View profile →</a>
-            </div>
-          </div>
-        </div>
-
-        <!-- Small card right column wrapper -->
-
-      </div><!-- /fa-grid -->
+      </div>
     </section>
     </div><!-- /radio-col -->
 
