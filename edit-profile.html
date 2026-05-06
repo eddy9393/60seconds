@@ -487,5 +487,47 @@
     })();
   </script>
 
+
+  <script id="artist-photo-preview-direct-fallback">
+    (function () {
+      function initArtistPhotoPreviewFallback() {
+        var input = document.getElementById("photoFile");
+        var preview = document.getElementById("photoPreview");
+        var empty = document.getElementById("photoPreviewEmpty");
+
+        if (!input || !preview || input.dataset.artistPhotoPreviewFallback === "ready") return;
+
+        input.dataset.artistPhotoPreviewFallback = "ready";
+
+        input.addEventListener("change", function () {
+          var file = input.files && input.files[0];
+
+          if (!file) return;
+
+          var reader = new FileReader();
+
+          reader.onload = function (event) {
+            preview.src = event.target.result;
+            preview.classList.remove("hidden");
+            preview.style.display = "block";
+
+            if (empty) {
+              empty.classList.add("hidden");
+              empty.style.display = "none";
+            }
+          };
+
+          reader.readAsDataURL(file);
+        });
+      }
+
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", initArtistPhotoPreviewFallback, { once: true });
+      } else {
+        initArtistPhotoPreviewFallback();
+      }
+    })();
+  </script>
+
 </body>
 </html>
