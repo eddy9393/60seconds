@@ -9,8 +9,21 @@
   <link rel="stylesheet" href="assets/css/edit-profile.css">
   <link rel="stylesheet" href="assets/css/buttons.css" />
   <link rel="stylesheet" href="assets/css/global.css" />
+
+  <style id="edit-profile-header-rectangle-fix">
+    body.edit-profile-page .header-wrap,
+    body.edit-profile-page .header-bar {
+      background: transparent !important;
+      background-image: none !important;
+      border: 0 !important;
+      border-bottom: 0 !important;
+      box-shadow: none !important;
+      backdrop-filter: none !important;
+      -webkit-backdrop-filter: none !important;
+    }
+  </style>
 </head>
-<body>
+<body class="edit-profile-page">
   <div id="currencyBadge" class="currency-badge hidden" aria-label="Seconds balance">
     <img src="coin.webp" alt="" class="currency-badge-icon" />
     <span id="currencyValue" class="currency-badge-value">0</span>
