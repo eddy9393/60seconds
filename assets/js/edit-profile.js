@@ -238,20 +238,5 @@ function bindEvents() { els.header.showLoginBtn.onclick = () => { setHidden(els.
 populateCountryOptions();
 renderRoleRows();
 bindEvents();
+setupCityAutocomplete();
 refreshAuthUI().catch((err) => console.error('init edit profile error:', err));
-
-// === City autocomplete guaranteed init ===
-(function ensureCityAutocompleteStarts() {
-  function startCityAutocomplete() {
-    if (typeof setupCityAutocomplete === "function") {
-      setupCityAutocomplete();
-    }
-  }
-
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", startCityAutocomplete, { once: true });
-  } else {
-    startCityAutocomplete();
-  }
-})();
-// === End city autocomplete guaranteed init ===
