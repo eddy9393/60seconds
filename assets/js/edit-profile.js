@@ -89,6 +89,10 @@ const els = {
     showBirthOnArtistPageInput: document.getElementById("showBirthOnArtistPage"),
     socialLinkInput: document.getElementById("socialLink"),
     photoFileInput: document.getElementById("photoFile"),
+    photoPreview: document.getElementById("photoPreview"),
+    photoPreviewFallback: document.getElementById("photoPreviewFallback"),
+    bioCount: document.getElementById("bioCount"),
+    cityList: document.getElementById("cityList"),
     wantsPromotionsInput: document.getElementById("wantsPromotions"),
     saveProfileBtn: document.getElementById("saveProfileBtn"),
     status: document.getElementById("status")
@@ -134,6 +138,60 @@ function setProfileMissingView() { setHidden(els.page.profileMissingBox, false);
 function setProfileReadyView() { setHidden(els.page.profileMissingBox, true); setHidden(els.page.editFormWrap, false); setHidden(els.page.actionRow, false); }
 function renderRoleRows() { const values = state.roleValues.length ? state.roleValues : ['none']; els.page.rolesWrap.innerHTML = ''; values.forEach((value, index) => { const row = document.createElement('div'); row.className = 'role-row'; const select = document.createElement('select'); select.className = 'field-select'; ROLE_OPTIONS.forEach((role) => { const option = document.createElement('option'); option.value = role; option.textContent = getRoleLabel(role); if (role === normalizeRoleValue(value)) option.selected = true; select.appendChild(option); }); const removeBtn = document.createElement('button'); removeBtn.type = 'button'; removeBtn.className = 'role-remove-btn'; removeBtn.setAttribute('aria-label', 'Remove role'); removeBtn.innerHTML = '<span aria-hidden="true">−</span>'; removeBtn.disabled = values.length === 1; removeBtn.addEventListener('click', () => { state.roleValues.splice(index, 1); if (!state.roleValues.length) state.roleValues = ['none']; renderRoleRows(); }); select.addEventListener('change', (event) => { const nextValue = normalizeRoleValue(event.target.value); state.roleValues[index] = nextValue; if (nextValue === 'none') { state.roleValues = ['none']; renderRoleRows(); return; } state.roleValues = state.roleValues.filter((role, roleIndex) => roleIndex === index || normalizeRoleValue(role) !== 'none'); }); row.appendChild(select); row.appendChild(removeBtn); els.page.rolesWrap.appendChild(row); }); }
 function getCleanRoles() { const normalized = state.roleValues.map(normalizeRoleValue); if (normalized.includes('none')) return ['none']; const unique = []; normalized.forEach((role) => { if (!unique.includes(role)) unique.push(role); }); return unique.length ? unique : ['none']; }
+// City autocomplete via GeoDB / open-meteo workaround using a local popular cities list
+const POPULAR_CITIES = ["Amsterdam","Rotterdam","The Hague","Utrecht","Eindhoven","Groningen","Tilburg","Almere","Breda","Nijmegen","London","Manchester","Birmingham","Glasgow","Liverpool","Bristol","Leeds","Sheffield","Edinburgh","Cardiff","Paris","Lyon","Marseille","Toulouse","Nice","Nantes","Bordeaux","Strasbourg","Lille","Rennes","Berlin","Munich","Hamburg","Frankfurt","Cologne","Stuttgart","Düsseldorf","Leipzig","Dortmund","Essen","Madrid","Barcelona","Valencia","Seville","Zaragoza","Málaga","Murcia","Palma","Las Palmas","Bilbao","Rome","Milan","Naples","Turin","Palermo","Genoa","Bologna","Florence","Catania","Bari","New York","Los Angeles","Chicago","Houston","Phoenix","Philadelphia","San Antonio","San Diego","Dallas","San Jose","Austin","Jacksonville","Fort Worth","Columbus","Charlotte","Indianapolis","San Francisco","Seattle","Denver","Nashville","Oklahoma City","El Paso","Washington","Boston","Las Vegas","Portland","Louisville","Memphis","Baltimore","Milwaukee","Albuquerque","Tucson","Fresno","Sacramento","Kansas City","Mesa","Atlanta","Omaha","Colorado Springs","Raleigh","Long Beach","Virginia Beach","Minneapolis","Tampa","New Orleans","Arlington","Wichita","Bakersfield","Aurora","Anaheim","Santa Ana","Corpus Christi","Riverside","Lexington","St. Louis","Pittsburgh","Anchorage","Stockton","Cincinnati","St. Paul","Greensboro","Toledo","Newark","Plano","Henderson","Orlando","Lincoln","Jersey City","Chandler","St. Petersburg","Laredo","Norfolk","Madison","Durham","Lubbock","Winston–Salem","Garland","Glendale","Hialeah","Reno","Baton Rouge","Irvine","Chesapeake","Irving","Scottsdale","North Las Vegas","Fremont","Gilbert","San Bernardino","Birmingham (AL)","Boise","Birmingham","Rochester","Richmond","Spokane","Des Moines","Montgomery","Modesto","Fayetteville","Tacoma","Shreveport","Akron","Aurora (CO)","Yonkers","Huntington Beach","Little Rock","Columbus (GA)","Glendale (AZ)","Salt Lake City","Tallahassee","Huntsville","Worcester","Knoxville","Brownsville","Santa Clarita","Providence","Garden Grove","Oceanside","Chattanooga","Fort Lauderdale","Rancho Cucamonga","Santa Rosa","Ontario","Vancouver","Toronto","Montreal","Calgary","Edmonton","Winnipeg","Quebec City","Hamilton","Kitchener","London (ON)","Victoria","Halifax","Saskatoon","Regina","Sydney","Melbourne","Brisbane","Perth","Adelaide","Canberra","Hobart","Darwin","Gold Coast","Newcastle","Tokyo","Osaka","Yokohama","Nagoya","Sapporo","Fukuoka","Kobe","Kyoto","Kawasaki","Saitama","Beijing","Shanghai","Guangzhou","Shenzhen","Chengdu","Wuhan","Chongqing","Xi'an","Nanjing","Hangzhou","Seoul","Busan","Incheon","Daegu","Daejeon","Gwangju","Suwon","Ulsan","Mumbai","Delhi","Bengaluru","Hyderabad","Chennai","Kolkata","Pune","Ahmedabad","Surat","Jaipur","São Paulo","Rio de Janeiro","Salvador","Fortaleza","Belo Horizonte","Manaus","Curitiba","Recife","Porto Alegre","Belém","Mexico City","Guadalajara","Monterrey","Puebla","Tijuana","León","Juárez","Zapopan","Nezahualcóyotl","Monterrey","Buenos Aires","Córdoba","Rosario","Mendoza","La Plata","Tucumán","Mar del Plata","Salta","Santa Fe","Santiago","Lima","Bogotá","Medellín","Cali","Barranquilla","Cartagena","Lagos","Kano","Ibadan","Kaduna","Port Harcourt","Benin City","Maiduguri","Zaria","Aba","Nairobi","Cairo","Alexandria","Giza","Casablanca","Rabat","Marrakech","Fez","Tangier","Johannesburg","Cape Town","Durban","Pretoria","Istanbul","Ankara","Izmir","Bursa","Adana","Moscow","Saint Petersburg","Novosibirsk","Yekaterinburg","Kazan","Dubai","Abu Dhabi","Riyadh","Jeddah","Mecca","Medina","Doha","Kuwait City","Manama","Muscat","Tel Aviv","Jerusalem","Beirut","Damascus","Baghdad","Tehran","Kabul","Karachi","Lahore","Islamabad","Bangkok","Kuala Lumpur","Jakarta","Manila","Ho Chi Minh City","Hanoi","Singapore","Taipei","Hong Kong","Phnom Penh","Yangon","Dhaka","Kathmandu","Colombo"];
+
+function setupCityAutocomplete() {
+  const input = document.getElementById('city');
+  const datalist = document.getElementById('cityList');
+  if (!input || !datalist) return;
+
+  input.addEventListener('input', function() {
+    const val = this.value.trim().toLowerCase();
+    datalist.innerHTML = '';
+    if (val.length < 2) return;
+    const matches = POPULAR_CITIES.filter(c => c.toLowerCase().startsWith(val)).slice(0, 8);
+    matches.forEach(city => {
+      const opt = document.createElement('option');
+      opt.value = city;
+      datalist.appendChild(opt);
+    });
+  });
+}
+
+function setupBioCounter() {
+  const bio = document.getElementById('bio');
+  const counter = document.getElementById('bioCount');
+  if (!bio || !counter) return;
+  function update() {
+    const len = bio.value.length;
+    counter.textContent = len + '/250';
+    counter.style.color = len > 220 ? 'rgba(255,140,0,0.8)' : 'rgba(255,255,255,0.35)';
+  }
+  bio.addEventListener('input', update);
+  update();
+}
+
+function setupPhotoPreview() {
+  const input = document.getElementById('photoFile');
+  if (!input) return;
+  input.addEventListener('change', function() {
+    const file = this.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      const preview = document.getElementById('photoPreview');
+      const fallback = document.getElementById('photoPreviewFallback');
+      if (preview) {
+        preview.src = e.target.result;
+        preview.classList.remove('hidden');
+      }
+      if (fallback) fallback.classList.add('hidden');
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
 function fillProfileForm(profile) { els.page.artistNameInput.value = profile?.artist_name || ''; els.page.bioInput.value = profile?.bio || ''; els.page.nationalityInput.value = profile?.nationality || ''; const roles = Array.isArray(profile?.music_roles) && profile.music_roles.length ? profile.music_roles : [profile?.music_role || 'none']; state.roleValues = roles.map(normalizeRoleValue); renderRoleRows(); els.page.cityInput.value = profile?.city || ''; els.page.dateOfBirthInput.value = profile?.date_of_birth || ''; els.page.showRoleOnArtistPageInput.checked = Boolean(profile?.show_role_on_artist_page); els.page.showCityOnArtistPageInput.checked = Boolean(profile?.show_city_on_artist_page); els.page.showBirthOnArtistPageInput.checked = Boolean(profile?.show_birth_on_artist_page); els.page.socialLinkInput.value = profile?.social_link || ''; els.page.wantsPromotionsInput.checked = Boolean(profile?.wants_promotions); }
 async function ensureProfileRecord(userId) { if (!userId) return null; const { error } = await supabaseClient.from('profiles').insert([{ user_id: userId }]); if (error && error.code !== '23505') throw error; const { data, error: reloadError } = await supabaseClient.from('profiles').select('artist_name, bio, nationality, music_roles, music_role, city, date_of_birth, social_link, photo_url, wants_promotions, accepted_terms, user_id, coins, show_role_on_artist_page, show_city_on_artist_page, show_birth_on_artist_page').eq('user_id', userId).maybeSingle(); if (reloadError) throw reloadError; return data || null; }
 async function loadMyProfile(userId) { let { data, error } = await supabaseClient.from('profiles').select('artist_name, bio, nationality, music_roles, music_role, city, date_of_birth, social_link, photo_url, wants_promotions, accepted_terms, user_id, coins, show_role_on_artist_page, show_city_on_artist_page, show_birth_on_artist_page').eq('user_id', userId).maybeSingle(); if (error) { state.currentProfile = null; els.auth.profileLink.href = '#'; els.page.viewArtistLink.href = '#'; setHeaderAvatar('', 'A'); fillProfileForm(null); setProfileMissingView(); applyMenuState({ id: userId }, null); return null; } if (!data) { try { data = await ensureProfileRecord(userId); } catch (ensureError) { console.error('ensureProfileRecord error:', ensureError); state.currentProfile = null; els.auth.profileLink.href = '#'; els.page.viewArtistLink.href = '#'; setHeaderAvatar('', 'A'); fillProfileForm(null); setProfileMissingView(); applyMenuState({ id: userId }, null); return null; } } state.currentProfile = data; setCurrency(data.coins || 0); setHeaderAvatar(data.photo_url, data.artist_name); const profileHref = String(data.artist_name || '').trim() ? `artist.html?user_id=${encodeURIComponent(data.user_id)}` : 'edit-profile.html?welcome=1'; els.auth.profileLink.href = profileHref; els.page.viewArtistLink.href = String(data.artist_name || '').trim() ? profileHref : '#'; fillProfileForm(data); setProfileReadyView(); applyMenuState({ id: userId }, data); return data; }
