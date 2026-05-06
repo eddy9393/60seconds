@@ -140,66 +140,55 @@ function renderRoleRows() { const values = state.roleValues.length ? state.roleV
 function getCleanRoles() { const normalized = state.roleValues.map(normalizeRoleValue); if (normalized.includes('none')) return ['none']; const unique = []; normalized.forEach((role) => { if (!unique.includes(role)) unique.push(role); }); return unique.length ? unique : ['none']; }
 function setupCityAutocomplete() {
   const input = document.getElementById('city');
-  const suggestions = document.getElementById('citySuggestions');
-  if (!input || !suggestions) return;
+  const list = document.getElementById('citySuggestions');
+  if (!input || !list) return;
 
-  let debounceTimer = null;
-  let confirmedValue = input.value || '';
+  let timer = null;
+  let picked = input.value || '';
 
-  // Position dropdown below input
-  function positionDropdown() {
-    const rect = input.getBoundingClientRect();
-    const wrap = input.closest('.field-group');
-    if (wrap) {
-      suggestions.style.width = input.offsetWidth + 'px';
-    }
-  }
-
-  function showSuggestions(cities) {
-    suggestions.innerHTML = '';
-    if (!cities || !cities.length) {
-      suggestions.style.display = 'none';
-      return;
-    }
-    cities.forEach(function(city) {
+  function render(results) {
+    list.innerHTML = '';
+    if (!results || !results.length) { list.style.display = 'none'; return; }
+    results.slice(0, 8).forEach(function(r) {
+      const parts = [r.name];
+      if (r.admin1 && r.admin1 !== r.name) parts.push(r.admin1);
+      if (r.country) parts.push(r.country);
+      const label = parts.join(', ');
       const li = document.createElement('li');
-      const label = city.name + (city.admin1 ? ', ' + city.admin1 : '') + ', ' + city.country;
       li.textContent = label;
       li.addEventListener('mousedown', function(e) {
         e.preventDefault();
-        confirmedValue = city.name;
-        input.value = city.name;
-        suggestions.style.display = 'none';
-        suggestions.innerHTML = '';
+        picked = r.name;
+        input.value = r.name;
+        list.style.display = 'none';
       });
-      suggestions.appendChild(li);
+      list.appendChild(li);
     });
-    positionDropdown();
-    suggestions.style.display = 'block';
+    list.style.display = 'block';
   }
 
   input.addEventListener('input', function() {
-    const val = this.value.trim();
-    confirmedValue = '';
-    clearTimeout(debounceTimer);
-    if (val.length < 2) { suggestions.style.display = 'none'; return; }
-    debounceTimer = setTimeout(function() {
-      fetch('https://geocoding-api.open-meteo.com/v1/search?name=' + encodeURIComponent(val) + '&count=10&language=en&format=json')
-        .then(function(r) { return r.json(); })
-        .then(function(data) {
-          showSuggestions(data && data.results ? data.results : []);
-        })
-        .catch(function() { suggestions.style.display = 'none'; });
-    }, 300);
+    const q = input.value.trim();
+    picked = '';
+    clearTimeout(timer);
+    if (q.length < 2) { list.style.display = 'none'; return; }
+    timer = setTimeout(function() {
+      fetch('https://geocoding-api.open-meteo.com/v1/search?name=' + encodeURIComponent(q) + '&count=8&language=en&format=json')
+        .then(function(res) { return res.json(); })
+        .then(function(data) { render(data.results || []); })
+        .catch(function(err) { console.warn('City lookup failed:', err); list.style.display = 'none'; });
+    }, 350);
   });
 
   input.addEventListener('blur', function() {
     setTimeout(function() {
-      suggestions.style.display = 'none';
-      if (!confirmedValue) {
-        input.value = '';
-      }
-    }, 200);
+      list.style.display = 'none';
+      if (!picked) input.value = '';
+    }, 250);
+  });
+
+  input.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') { list.style.display = 'none'; input.value = picked; }
   });
 }
 
