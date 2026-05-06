@@ -332,5 +332,102 @@
   <script src="assets/js/app.js"></script>
   <script src="assets/js/edit-profile.js"></script>
   <script src="assets/js/radio-mini-player.js"></script>
+
+  <script id="city-autocomplete-direct-fallback">
+    (function () {
+      function initCityAutocompleteFallback() {
+        var input = document.getElementById("city");
+        var list = document.getElementById("citySuggestions");
+
+        if (!input || !list || input.dataset.cityAutocompleteFallback === "ready") return;
+
+        input.dataset.cityAutocompleteFallback = "ready";
+
+        var timer = null;
+        var selectedValue = input.value || "";
+
+        function hideList() {
+          list.style.display = "none";
+        }
+
+        function renderResults(results) {
+          list.innerHTML = "";
+
+          if (!results || !results.length) {
+            hideList();
+            return;
+          }
+
+          results.slice(0, 8).forEach(function (item) {
+            var parts = [item.name];
+
+            if (item.admin1 && item.admin1 !== item.name) parts.push(item.admin1);
+            if (item.country) parts.push(item.country);
+
+            var label = parts.join(", ");
+            var option = document.createElement("li");
+
+            option.textContent = label;
+            option.addEventListener("mousedown", function (event) {
+              event.preventDefault();
+              selectedValue = item.name;
+              input.value = item.name;
+              hideList();
+            });
+
+            list.appendChild(option);
+          });
+
+          list.style.display = "block";
+        }
+
+        input.addEventListener("input", function () {
+          var query = input.value.trim();
+
+          selectedValue = "";
+          clearTimeout(timer);
+
+          if (query.length < 2) {
+            hideList();
+            return;
+          }
+
+          timer = setTimeout(function () {
+            fetch("https://geocoding-api.open-meteo.com/v1/search?name=" + encodeURIComponent(query) + "&count=8&language=en&format=json")
+              .then(function (response) {
+                return response.json();
+              })
+              .then(function (data) {
+                renderResults(data.results || []);
+              })
+              .catch(function () {
+                hideList();
+              });
+          }, 350);
+        });
+
+        input.addEventListener("blur", function () {
+          setTimeout(function () {
+            hideList();
+            if (!selectedValue) input.value = "";
+          }, 250);
+        });
+
+        input.addEventListener("keydown", function (event) {
+          if (event.key === "Escape") {
+            hideList();
+            input.value = selectedValue;
+          }
+        });
+      }
+
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", initCityAutocompleteFallback, { once: true });
+      } else {
+        initCityAutocompleteFallback();
+      }
+    })();
+  </script>
+
 </body>
 </html>
