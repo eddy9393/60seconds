@@ -63,7 +63,7 @@ img {
 .site-shell {
   max-width: 1180px;
   margin: 0 auto;
-  padding-top: 8px;
+  padding-top: 100px;
 }
 
 .header-wrap {
@@ -622,7 +622,7 @@ img {
 
 .page-wrap {
   max-width: 760px;
-  margin: 80px auto 0;
+  margin: 0 auto;
 }
 
 .hero-card {
@@ -1578,6 +1578,7 @@ body{background:radial-gradient(circle at 50% -10%,rgba(245,200,75,.12),transpar
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
   padding: 0 !important;
+  min-height: 0 !important;
 }
 
 /* 2. Add role button: bigger + spacing */
