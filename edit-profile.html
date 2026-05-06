@@ -9,6 +9,39 @@
   <link rel="stylesheet" href="assets/css/edit-profile.css">
   <link rel="stylesheet" href="assets/css/buttons.css" />
   <link rel="stylesheet" href="assets/css/global.css" />
+
+  <style id="edit-profile-auth-toggle-only-fix">
+    /* Keep auth elements available for JS, but move the visual panel fully out of view */
+    #authPanelWrap.auth-panel-wrap {
+      position: fixed !important;
+      left: 0 !important;
+      right: 0 !important;
+      bottom: 0 !important;
+      transform: translateY(calc(100% + 32px)) !important;
+      opacity: 0 !important;
+      visibility: hidden !important;
+      pointer-events: none !important;
+      z-index: -1 !important;
+    }
+
+    /* Put every "Show on profile" label left of its toggle */
+    .inline-toggle--left {
+      display: flex !important;
+      flex-direction: row !important;
+      align-items: center !important;
+      justify-content: flex-start !important;
+      gap: 10px !important;
+    }
+
+    .inline-toggle--left .inline-toggle-label {
+      order: 1 !important;
+    }
+
+    .inline-toggle--left .toggle-switch {
+      order: 2 !important;
+      flex: 0 0 auto !important;
+    }
+  </style>
 </head>
 <body class="page-other page-other">
   <div id="currencyBadge" class="currency-badge hidden" aria-label="Seconds balance">
