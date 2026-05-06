@@ -392,11 +392,11 @@ async function loadTopSupporters() {
         ? `<img class="news-feed-avatar" src="${escapeHtml(p.photo_url)}" alt="${name}" />`
         : `<span class="news-feed-avatar-fallback">${escapeHtml((p.artist_name || 'A').charAt(0).toUpperCase())}</span>`;
       const medals = ['🥇', '🥈', '🥉'];
-      const medal = i < 3 ? `<span class="top-supporter-medal">${medals[i]}</span>` : '';
+      const rankDisplay = i < 3 ? `<span class="top-supporter-medal">${medals[i]}</span>` : `${i + 1}`;
       return `<div class="news-feed-item top-supporter-item">
         <a class="news-feed-item-avatar" href="${href}">${avatarHtml}</a>
         <div class="news-feed-item-body">
-          <span class="top-supporter-rank">${i + 1}${medal}</span>
+          <span class="top-supporter-rank">${rankDisplay}</span>
           <a class="news-feed-name" href="${href}">${name}</a>
           <span class="top-supporter-coins">${coins} sec</span>
         </div>
