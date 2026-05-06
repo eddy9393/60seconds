@@ -144,57 +144,62 @@ function setupCityAutocomplete() {
   if (!input || !suggestions) return;
 
   let debounceTimer = null;
-  let selectedCity = input.value || '';
+  let confirmedValue = input.value || '';
+
+  // Position dropdown below input
+  function positionDropdown() {
+    const rect = input.getBoundingClientRect();
+    const wrap = input.closest('.field-group');
+    if (wrap) {
+      suggestions.style.width = input.offsetWidth + 'px';
+    }
+  }
 
   function showSuggestions(cities) {
     suggestions.innerHTML = '';
-    if (!cities.length) { suggestions.classList.remove('active'); return; }
+    if (!cities || !cities.length) {
+      suggestions.style.display = 'none';
+      return;
+    }
     cities.forEach(function(city) {
       const li = document.createElement('li');
-      li.textContent = city.name + (city.admin1 ? ', ' + city.admin1 : '') + ', ' + city.country;
+      const label = city.name + (city.admin1 ? ', ' + city.admin1 : '') + ', ' + city.country;
+      li.textContent = label;
       li.addEventListener('mousedown', function(e) {
         e.preventDefault();
-        selectedCity = li.textContent;
-        input.value = selectedCity;
-        suggestions.classList.remove('active');
+        confirmedValue = city.name;
+        input.value = city.name;
+        suggestions.style.display = 'none';
         suggestions.innerHTML = '';
       });
       suggestions.appendChild(li);
     });
-    suggestions.classList.add('active');
+    positionDropdown();
+    suggestions.style.display = 'block';
   }
 
   input.addEventListener('input', function() {
     const val = this.value.trim();
-    selectedCity = '';
+    confirmedValue = '';
     clearTimeout(debounceTimer);
-    if (val.length < 2) { suggestions.classList.remove('active'); return; }
+    if (val.length < 2) { suggestions.style.display = 'none'; return; }
     debounceTimer = setTimeout(function() {
-      fetch('https://geocoding-api.open-meteo.com/v1/search?name=' + encodeURIComponent(val) + '&count=8&language=en&format=json')
+      fetch('https://geocoding-api.open-meteo.com/v1/search?name=' + encodeURIComponent(val) + '&count=10&language=en&format=json')
         .then(function(r) { return r.json(); })
         .then(function(data) {
-          if (data && data.results) showSuggestions(data.results);
-          else suggestions.classList.remove('active');
+          showSuggestions(data && data.results ? data.results : []);
         })
-        .catch(function() { suggestions.classList.remove('active'); });
-    }, 280);
+        .catch(function() { suggestions.style.display = 'none'; });
+    }, 300);
   });
 
-  // Prevent free typing — must select from list
   input.addEventListener('blur', function() {
     setTimeout(function() {
-      suggestions.classList.remove('active');
-      // If typed something but didn't select, restore last selected
-      if (!selectedCity && input.value.trim()) {
+      suggestions.style.display = 'none';
+      if (!confirmedValue) {
         input.value = '';
-      } else if (selectedCity) {
-        input.value = selectedCity;
       }
-    }, 150);
-  });
-
-  input.addEventListener('focus', function() {
-    if (input.value.trim().length >= 2) input.dispatchEvent(new Event('input'));
+    }, 200);
   });
 }
 
