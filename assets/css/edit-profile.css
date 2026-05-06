@@ -1702,8 +1702,31 @@ body{background:radial-gradient(circle at 50% -10%,rgba(245,200,75,.12),transpar
   border-radius: 10px !important;
 }
 
-/* === hide auth panel but keep auth elements for JS === */
+
+/* === auth panel bottom fix === */
 #authPanelWrap.auth-panel-wrap {
-  display: none !important;
+  position: fixed !important;
+  bottom: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  transform: translateY(100%) !important;
+  pointer-events: none !important;
 }
-/* === end hide auth panel but keep auth elements for JS === */
+/* === end auth panel bottom fix === */
+
+
+/* === toggle left fix === */
+.inline-toggle--left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.inline-toggle--left .inline-toggle-label {
+  order: 1;
+}
+
+.inline-toggle--left .toggle-switch {
+  order: 2;
+}
+/* === end toggle left fix === */
