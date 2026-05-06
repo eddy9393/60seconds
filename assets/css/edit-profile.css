@@ -622,7 +622,7 @@ img {
 
 .page-wrap {
   max-width: 760px;
-  margin: 10px auto 0;
+  margin: 80px auto 0;
 }
 
 .hero-card {
@@ -1611,13 +1611,11 @@ body{background:radial-gradient(circle at 50% -10%,rgba(245,200,75,.12),transpar
   overflow-y: auto;
   display: none;
   position: absolute;
-  z-index: 99;
-  width: 100%;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.4);
-}
-
-.city-suggestions.active {
-  display: block;
+  left: 0;
+  right: 0;
+  top: calc(100% + 4px);
+  z-index: 999;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.5);
 }
 
 .city-suggestions li {
@@ -1671,4 +1669,34 @@ body{background:radial-gradient(circle at 50% -10%,rgba(245,200,75,.12),transpar
   font-size: 32px !important;
   font-weight: 700 !important;
   color: rgba(255,255,255,0.45) !important;
+}
+
+/* Toggle left-aligned inside field */
+.inline-toggle--left {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  gap: 10px !important;
+  margin: 8px 0 10px !important;
+}
+
+.inline-toggle--left .inline-toggle-label {
+  font-size: 12px !important;
+  color: rgba(255,255,255,0.45) !important;
+}
+
+/* Square photo preview */
+.photo-preview-wrap--square {
+  width: 120px !important;
+  height: 120px !important;
+  border-radius: 12px !important;
+}
+
+.photo-preview-wrap--square .photo-preview {
+  border-radius: 10px !important;
+}
+
+.photo-preview-wrap--square .photo-preview-fallback {
+  border-radius: 10px !important;
 }
