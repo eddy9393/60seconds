@@ -167,6 +167,7 @@
 
           <div class="field-group">
             <label class="field-label" for="dateOfBirth">Date of Birth</label>
+            <input id="dateOfBirth" class="field-input" type="date" />
             <div class="inline-toggle inline-toggle--left">
               <label class="toggle-switch" for="showBirthOnArtistPage">
                 <input id="showBirthOnArtistPage" type="checkbox" />
@@ -174,7 +175,6 @@
               </label>
               <span class="inline-toggle-label">Show on profile</span>
             </div>
-            <input id="dateOfBirth" class="field-input" type="date" />
           </div>
 
           <div class="field-group">
@@ -186,6 +186,8 @@
 
           <div class="field-group">
             <label class="field-label" for="city">City</label>
+            <input id="city" class="field-input" type="text" placeholder="Type to search cities..." autocomplete="off" />
+            <ul id="citySuggestions" class="city-suggestions"></ul>
             <div class="inline-toggle inline-toggle--left">
               <label class="toggle-switch" for="showCityOnArtistPage">
                 <input id="showCityOnArtistPage" type="checkbox" />
@@ -193,12 +195,13 @@
               </label>
               <span class="inline-toggle-label">Show on profile</span>
             </div>
-            <input id="city" class="field-input" type="text" placeholder="Type to search cities..." autocomplete="off" id="citySearch" />
-            <ul id="citySuggestions" class="city-suggestions"></ul>
           </div>
 
           <div class="field-group field-group-wide">
             <label class="field-label">Musical role</label>
+            <div id="musicRolesWrap" class="role-list"></div>
+            <button id="addRoleBtn" class="glass-add-btn" type="button">+ Add role</button>
+            <div class="form-meta">Optional. Choose one or more roles. Select none if you do not want to show a role.</div>
             <div class="inline-toggle inline-toggle--left">
               <label class="toggle-switch" for="showRoleOnArtistPage">
                 <input id="showRoleOnArtistPage" type="checkbox" />
@@ -206,9 +209,6 @@
               </label>
               <span class="inline-toggle-label">Show on profile</span>
             </div>
-            <div id="musicRolesWrap" class="role-list"></div>
-            <button id="addRoleBtn" class="glass-add-btn" type="button">+ Add role</button>
-            <div class="form-meta">Optional. Choose one or more roles. Select none if you do not want to show a role.</div>
           </div>
 
 
@@ -225,7 +225,7 @@
             <label class="field-label" for="photoFile">Artist Photo</label>
             <div class="photo-preview-wrap photo-preview-wrap--square">
               <img id="photoPreview" class="photo-preview hidden" src="" alt="Photo preview" />
-              <div id="photoPreviewFallback" class="photo-preview-fallback hidden">A</div>
+              <div id="photoPreviewFallback" class="photo-preview-fallback">A</div>
             </div>
             <input id="photoFile" class="field-file" type="file" accept="image/jpeg,image/png,image/webp" />
             <div class="form-meta">Accepted: JPG, PNG or WebP. Leave empty to keep your current photo.</div>
