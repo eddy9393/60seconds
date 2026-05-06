@@ -25,6 +25,32 @@
   const nextBtn      = document.getElementById('featuredArtistNext');
   const progressEl   = document.getElementById('featuredArtistProgress');
 
+  // Small card refs
+  const smallCards = [
+    {
+      card: document.getElementById('featuredArtistCard1'),
+      photo: document.getElementById('featuredArtistPhoto1'),
+      photoWrap: document.getElementById('featuredArtistPhotoWrap1'),
+      name: document.getElementById('featuredArtistName1'),
+      role: document.getElementById('featuredArtistRole1'),
+      meta: document.getElementById('featuredArtistMeta1'),
+      tune: document.getElementById('featuredArtistTuneTitle1'),
+      link: document.getElementById('featuredArtistLink1'),
+      progress: document.getElementById('featuredArtistProgress1'),
+    },
+    {
+      card: document.getElementById('featuredArtistCard2'),
+      photo: document.getElementById('featuredArtistPhoto2'),
+      photoWrap: document.getElementById('featuredArtistPhotoWrap2'),
+      name: document.getElementById('featuredArtistName2'),
+      role: document.getElementById('featuredArtistRole2'),
+      meta: document.getElementById('featuredArtistMeta2'),
+      tune: document.getElementById('featuredArtistTuneTitle2'),
+      link: document.getElementById('featuredArtistLink2'),
+      progress: document.getElementById('featuredArtistProgress2'),
+    }
+  ];
+
   if (!sectionEl) return;
 
   function esc(str) {
@@ -166,6 +192,48 @@
     }
   }
 
+  function renderSmallCard(els, artist) {
+    if (!els.card || !artist) return;
+    if (artist.photo_url) {
+      els.photo.src = esc(artist.photo_url);
+      els.photo.alt = esc(artist.artist_name || 'Artist');
+      els.photo.style.display = 'block';
+      els.photoWrap.classList.remove('fa-no-photo');
+      els.photoWrap.removeAttribute('data-initials');
+      els.card.style.setProperty('--fa-bg-image', 'url("' + artist.photo_url.replace(/["\\]/g, '') + '")');
+      els.card.classList.add('has-fa-bg');
+    } else {
+      els.photo.style.display = 'none';
+      els.photoWrap.classList.add('fa-no-photo');
+      els.photoWrap.setAttribute('data-initials', (artist.artist_name || 'A').charAt(0).toUpperCase());
+      els.card.style.removeProperty('--fa-bg-image');
+      els.card.classList.remove('has-fa-bg');
+    }
+    els.name.textContent = artist.artist_name || 'Unknown Artist';
+    var roles = formatRoles(artist.music_roles);
+    els.role.textContent = roles;
+    els.role.style.display = roles ? '' : 'none';
+    els.meta.innerHTML = '';
+    if (artist.nationality) {
+      var pill = document.createElement('span');
+      pill.className = 'fa-pill';
+      var flag = getFlagEmoji(artist.nationality);
+      pill.textContent = (flag ? flag + ' ' : '') + artist.nationality.toUpperCase();
+      els.meta.appendChild(pill);
+    }
+    els.tune.textContent = artist.track_title ? String.fromCodePoint(0x1F3B5) + ' ' + artist.track_title : '';
+    els.tune.style.display = artist.track_title ? '' : 'none';
+    if (els.link) els.link.href = 'artist.html?user_id=' + encodeURIComponent(artist.user_id);
+  }
+
+  function updateSmallCards() {
+    // Show the next 2 artists after the current main one
+    for (var s = 0; s < smallCards.length; s++) {
+      var idx = ((currentIndex + s + 1) % artists.length);
+      renderSmallCard(smallCards[s], artists[idx]);
+    }
+  }
+
   function showArtist(artist, direction) {
     var outX = direction === 'next' ? '-28px' : '28px';
     var inX  = direction === 'next' ?  '28px' : '-28px';
@@ -191,6 +259,7 @@
     var dir = direction || (index > currentIndex ? 'next' : 'prev');
     currentIndex = ((index % artists.length) + artists.length) % artists.length;
     showArtist(artists[currentIndex], dir);
+    updateSmallCards();
     buildDots(artists.length, currentIndex);
     restartProgress();
     clearInterval(timer);
@@ -255,6 +324,7 @@
       sectionEl.classList.remove('hidden');
 
       renderArtist(artists[0]);
+      updateSmallCards();
       buildDots(artists.length, 0);
       restartProgress();
       timer = setInterval(function() { goTo(currentIndex + 1, 'next'); }, INTERVAL_MS);
