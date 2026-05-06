@@ -7122,3 +7122,62 @@ body.is-logged-out #currencyBadge {
   position: relative !important;
   overflow: visible !important;
 }
+
+/* ================================================================
+   PCB final fixes — skip padding 0, play no yellow bg
+   ================================================================ */
+.pcb #skip {
+  padding: 0 12px !important;
+  min-width: 44px !important;
+}
+
+/* Remove ALL yellow/gold background from play button — any state */
+.pcb #pauseBtn,
+.pcb .pcb-play,
+.pcb #pauseBtn:hover,
+.pcb #pauseBtn:focus,
+.pcb #pauseBtn:active,
+.pcb .pcb-play:hover {
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+
+/* Kill ALL old pauseBtn gold/glow — highest specificity needed */
+div.pcb > button#pauseBtn,
+div.pcb button#pauseBtn,
+.pcb button#pauseBtn {
+  background: transparent !important;
+  background-image: none !important;
+  background-color: transparent !important;
+  border-radius: 0 !important;
+  border: none !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+  filter: none !important;
+  transform: none !important;
+  width: auto !important;
+  height: 52px !important;
+  min-width: 52px !important;
+  min-height: unset !important;
+  padding: 0 16px !important;
+  color: rgba(255,255,255,0.88) !important;
+}
+
+div.pcb > button#pauseBtn:hover,
+div.pcb button#pauseBtn:hover {
+  background: rgba(255,255,255,0.07) !important;
+  background-image: none !important;
+  box-shadow: none !important;
+  transform: none !important;
+}
+
+/* Skip: truly zero padding */
+div.pcb > button#skip,
+div.pcb button#skip,
+.pcb button#skip {
+  padding: 0 10px !important;
+  min-width: 40px !important;
+}
