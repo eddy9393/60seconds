@@ -7181,3 +7181,17 @@ div.pcb button#skip,
   padding: 0 10px !important;
   min-width: 40px !important;
 }
+
+/* ABSOLUTE FINAL: element+id specificity to beat all old rules */
+button#skip { padding: 0 !important; min-width: 44px !important; }
+button#pauseBtn { 
+  padding: 0 16px !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  box-shadow: none !important;
+  border: none !important;
+  border-radius: 0 !important;
+}
+button#likeBtn { padding: 0 16px !important; }
+button#volumeBtn { padding: 0 16px !important; }
