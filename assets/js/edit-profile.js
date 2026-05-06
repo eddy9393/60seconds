@@ -138,24 +138,63 @@ function setProfileMissingView() { setHidden(els.page.profileMissingBox, false);
 function setProfileReadyView() { setHidden(els.page.profileMissingBox, true); setHidden(els.page.editFormWrap, false); setHidden(els.page.actionRow, false); }
 function renderRoleRows() { const values = state.roleValues.length ? state.roleValues : ['none']; els.page.rolesWrap.innerHTML = ''; values.forEach((value, index) => { const row = document.createElement('div'); row.className = 'role-row'; const select = document.createElement('select'); select.className = 'field-select'; ROLE_OPTIONS.forEach((role) => { const option = document.createElement('option'); option.value = role; option.textContent = getRoleLabel(role); if (role === normalizeRoleValue(value)) option.selected = true; select.appendChild(option); }); const removeBtn = document.createElement('button'); removeBtn.type = 'button'; removeBtn.className = 'role-remove-btn'; removeBtn.setAttribute('aria-label', 'Remove role'); removeBtn.innerHTML = '<span aria-hidden="true">−</span>'; removeBtn.disabled = values.length === 1; removeBtn.addEventListener('click', () => { state.roleValues.splice(index, 1); if (!state.roleValues.length) state.roleValues = ['none']; renderRoleRows(); }); select.addEventListener('change', (event) => { const nextValue = normalizeRoleValue(event.target.value); state.roleValues[index] = nextValue; if (nextValue === 'none') { state.roleValues = ['none']; renderRoleRows(); return; } state.roleValues = state.roleValues.filter((role, roleIndex) => roleIndex === index || normalizeRoleValue(role) !== 'none'); }); row.appendChild(select); row.appendChild(removeBtn); els.page.rolesWrap.appendChild(row); }); }
 function getCleanRoles() { const normalized = state.roleValues.map(normalizeRoleValue); if (normalized.includes('none')) return ['none']; const unique = []; normalized.forEach((role) => { if (!unique.includes(role)) unique.push(role); }); return unique.length ? unique : ['none']; }
-// City autocomplete via GeoDB / open-meteo workaround using a local popular cities list
-const POPULAR_CITIES = ["Amsterdam","Rotterdam","The Hague","Utrecht","Eindhoven","Groningen","Tilburg","Almere","Breda","Nijmegen","London","Manchester","Birmingham","Glasgow","Liverpool","Bristol","Leeds","Sheffield","Edinburgh","Cardiff","Paris","Lyon","Marseille","Toulouse","Nice","Nantes","Bordeaux","Strasbourg","Lille","Rennes","Berlin","Munich","Hamburg","Frankfurt","Cologne","Stuttgart","Düsseldorf","Leipzig","Dortmund","Essen","Madrid","Barcelona","Valencia","Seville","Zaragoza","Málaga","Murcia","Palma","Las Palmas","Bilbao","Rome","Milan","Naples","Turin","Palermo","Genoa","Bologna","Florence","Catania","Bari","New York","Los Angeles","Chicago","Houston","Phoenix","Philadelphia","San Antonio","San Diego","Dallas","San Jose","Austin","Jacksonville","Fort Worth","Columbus","Charlotte","Indianapolis","San Francisco","Seattle","Denver","Nashville","Oklahoma City","El Paso","Washington","Boston","Las Vegas","Portland","Louisville","Memphis","Baltimore","Milwaukee","Albuquerque","Tucson","Fresno","Sacramento","Kansas City","Mesa","Atlanta","Omaha","Colorado Springs","Raleigh","Long Beach","Virginia Beach","Minneapolis","Tampa","New Orleans","Arlington","Wichita","Bakersfield","Aurora","Anaheim","Santa Ana","Corpus Christi","Riverside","Lexington","St. Louis","Pittsburgh","Anchorage","Stockton","Cincinnati","St. Paul","Greensboro","Toledo","Newark","Plano","Henderson","Orlando","Lincoln","Jersey City","Chandler","St. Petersburg","Laredo","Norfolk","Madison","Durham","Lubbock","Winston–Salem","Garland","Glendale","Hialeah","Reno","Baton Rouge","Irvine","Chesapeake","Irving","Scottsdale","North Las Vegas","Fremont","Gilbert","San Bernardino","Birmingham (AL)","Boise","Birmingham","Rochester","Richmond","Spokane","Des Moines","Montgomery","Modesto","Fayetteville","Tacoma","Shreveport","Akron","Aurora (CO)","Yonkers","Huntington Beach","Little Rock","Columbus (GA)","Glendale (AZ)","Salt Lake City","Tallahassee","Huntsville","Worcester","Knoxville","Brownsville","Santa Clarita","Providence","Garden Grove","Oceanside","Chattanooga","Fort Lauderdale","Rancho Cucamonga","Santa Rosa","Ontario","Vancouver","Toronto","Montreal","Calgary","Edmonton","Winnipeg","Quebec City","Hamilton","Kitchener","London (ON)","Victoria","Halifax","Saskatoon","Regina","Sydney","Melbourne","Brisbane","Perth","Adelaide","Canberra","Hobart","Darwin","Gold Coast","Newcastle","Tokyo","Osaka","Yokohama","Nagoya","Sapporo","Fukuoka","Kobe","Kyoto","Kawasaki","Saitama","Beijing","Shanghai","Guangzhou","Shenzhen","Chengdu","Wuhan","Chongqing","Xi'an","Nanjing","Hangzhou","Seoul","Busan","Incheon","Daegu","Daejeon","Gwangju","Suwon","Ulsan","Mumbai","Delhi","Bengaluru","Hyderabad","Chennai","Kolkata","Pune","Ahmedabad","Surat","Jaipur","São Paulo","Rio de Janeiro","Salvador","Fortaleza","Belo Horizonte","Manaus","Curitiba","Recife","Porto Alegre","Belém","Mexico City","Guadalajara","Monterrey","Puebla","Tijuana","León","Juárez","Zapopan","Nezahualcóyotl","Monterrey","Buenos Aires","Córdoba","Rosario","Mendoza","La Plata","Tucumán","Mar del Plata","Salta","Santa Fe","Santiago","Lima","Bogotá","Medellín","Cali","Barranquilla","Cartagena","Lagos","Kano","Ibadan","Kaduna","Port Harcourt","Benin City","Maiduguri","Zaria","Aba","Nairobi","Cairo","Alexandria","Giza","Casablanca","Rabat","Marrakech","Fez","Tangier","Johannesburg","Cape Town","Durban","Pretoria","Istanbul","Ankara","Izmir","Bursa","Adana","Moscow","Saint Petersburg","Novosibirsk","Yekaterinburg","Kazan","Dubai","Abu Dhabi","Riyadh","Jeddah","Mecca","Medina","Doha","Kuwait City","Manama","Muscat","Tel Aviv","Jerusalem","Beirut","Damascus","Baghdad","Tehran","Kabul","Karachi","Lahore","Islamabad","Bangkok","Kuala Lumpur","Jakarta","Manila","Ho Chi Minh City","Hanoi","Singapore","Taipei","Hong Kong","Phnom Penh","Yangon","Dhaka","Kathmandu","Colombo"];
-
 function setupCityAutocomplete() {
   const input = document.getElementById('city');
-  const datalist = document.getElementById('cityList');
-  if (!input || !datalist) return;
+  const suggestions = document.getElementById('citySuggestions');
+  if (!input || !suggestions) return;
+
+  let debounceTimer = null;
+  let selectedCity = input.value || '';
+
+  function showSuggestions(cities) {
+    suggestions.innerHTML = '';
+    if (!cities.length) { suggestions.classList.remove('active'); return; }
+    cities.forEach(function(city) {
+      const li = document.createElement('li');
+      li.textContent = city.name + (city.admin1 ? ', ' + city.admin1 : '') + ', ' + city.country;
+      li.addEventListener('mousedown', function(e) {
+        e.preventDefault();
+        selectedCity = li.textContent;
+        input.value = selectedCity;
+        suggestions.classList.remove('active');
+        suggestions.innerHTML = '';
+      });
+      suggestions.appendChild(li);
+    });
+    suggestions.classList.add('active');
+  }
 
   input.addEventListener('input', function() {
-    const val = this.value.trim().toLowerCase();
-    datalist.innerHTML = '';
-    if (val.length < 2) return;
-    const matches = POPULAR_CITIES.filter(c => c.toLowerCase().startsWith(val)).slice(0, 8);
-    matches.forEach(city => {
-      const opt = document.createElement('option');
-      opt.value = city;
-      datalist.appendChild(opt);
-    });
+    const val = this.value.trim();
+    selectedCity = '';
+    clearTimeout(debounceTimer);
+    if (val.length < 2) { suggestions.classList.remove('active'); return; }
+    debounceTimer = setTimeout(function() {
+      fetch('https://geocoding-api.open-meteo.com/v1/search?name=' + encodeURIComponent(val) + '&count=8&language=en&format=json')
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+          if (data && data.results) showSuggestions(data.results);
+          else suggestions.classList.remove('active');
+        })
+        .catch(function() { suggestions.classList.remove('active'); });
+    }, 280);
+  });
+
+  // Prevent free typing — must select from list
+  input.addEventListener('blur', function() {
+    setTimeout(function() {
+      suggestions.classList.remove('active');
+      // If typed something but didn't select, restore last selected
+      if (!selectedCity && input.value.trim()) {
+        input.value = '';
+      } else if (selectedCity) {
+        input.value = selectedCity;
+      }
+    }, 150);
+  });
+
+  input.addEventListener('focus', function() {
+    if (input.value.trim().length >= 2) input.dispatchEvent(new Event('input'));
   });
 }
 
