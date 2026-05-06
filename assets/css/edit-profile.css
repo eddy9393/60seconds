@@ -63,7 +63,7 @@ img {
 .site-shell {
   max-width: 1180px;
   margin: 0 auto;
-  padding-top: 100px;
+  padding-top: 8px;
 }
 
 .header-wrap {
@@ -388,13 +388,21 @@ img {
 .desktop-nav-link.active,
 .desktop-nav-button.active {
   color: #fff5d2;
-  background: transparent;
+  background:
+    linear-gradient(90deg, rgba(212,175,55,0.18), rgba(212,175,55,0.06) 58%, transparent);
 }
 
 .desktop-nav-link.active::after,
-.desktop-nav-link.active::after,
 .desktop-nav-button.active::after {
-  display: none;
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 9px;
+  bottom: 9px;
+  width: 3px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #ffe08d, #d4af37 52%, #8f6b13);
+  box-shadow: 0 0 14px rgba(212,175,55,0.30);
 }
 
 .desktop-nav-icon,
@@ -421,7 +429,7 @@ img {
   height: 100%;
   display: block;
   background:
-    #B0B0B0 !important;
+    linear-gradient(180deg, #fff3b6 0%, #f4d77a 20%, #d4af37 52%, #b98714 76%, #7d5a10 100%);
   -webkit-mask-image: var(--icon-url);
   mask-image: var(--icon-url);
   -webkit-mask-repeat: no-repeat;
@@ -430,7 +438,7 @@ img {
   mask-position: center;
   -webkit-mask-size: contain;
   mask-size: contain;
-  filter: none;
+  filter: drop-shadow(0 2px 10px rgba(212,175,55,0.18));
   opacity: 0.98;
   transition: transform 0.18s ease, filter 0.18s ease, opacity 0.18s ease, background 0.18s ease;
   pointer-events: none;
@@ -442,15 +450,19 @@ img {
 .mobile-nav-link:hover .nav-icon-mask {
   transform: scale(1.04);
   opacity: 1;
-  background: #f5c84b !important;
-  filter: none;
+  background:
+    linear-gradient(180deg, #fff7cf 0%, #ffe08d 18%, #f4d77a 36%, #d4af37 58%, #b98714 80%, #7d5a10 100%);
+  filter: drop-shadow(0 2px 11px rgba(212,175,55,0.22));
 }
 
 .desktop-nav-link.active .nav-icon-mask,
 .desktop-nav-button.active .nav-icon-mask,
 .mobile-nav-link.active .nav-icon-mask {
-  background: #FFD76A !important;
-  filter: none;
+  background:
+    linear-gradient(180deg, #fff9da 0%, #ffe9a7 18%, #f7dd82 36%, #d4af37 58%, #ba8a18 80%, #7d5a10 100%);
+  filter:
+    drop-shadow(0 2px 12px rgba(212,175,55,0.24))
+    drop-shadow(0 0 15px rgba(212,175,55,0.20));
 }
 
 .desktop-nav-label {
@@ -622,7 +634,7 @@ img {
 
 .page-wrap {
   max-width: 760px;
-  margin: 0 auto;
+  margin: 10px auto 0;
 }
 
 .hero-card {
@@ -1281,423 +1293,109 @@ body{background:radial-gradient(circle at 50% -10%,rgba(245,200,75,.12),transpar
 .auth-card,.auth-panel-wrap,.hero-card,.panel-card,.dashboard-card,.metrics-card,.priority-card,.store-hero-card,.store-balance-card,.store-card,.empty-card,.state-card,.check-card,.playlist-card,main section:not(.desktop-side-nav-panel){background:rgba(18,18,22,.74)!important;border-color:rgba(255,255,255,.105)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 24px 70px rgba(0,0,0,.50),0 0 42px rgba(245,200,75,.08)!important;backdrop-filter:blur(20px) saturate(1.18)!important;-webkit-backdrop-filter:blur(20px) saturate(1.18)!important}
 .auth-card:hover,.hero-card:hover,.panel-card:hover,.dashboard-card:hover,.store-card:hover,.playlist-card:hover{border-color:rgba(245,200,75,.38)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.10),0 28px 78px rgba(0,0,0,.54),0 0 48px rgba(245,200,75,.15)!important}
 
-/* Sidebar icon progress-bar visual match start */
-/* Matches the main progress bar treatment without changing button backgrounds. */
-.nav-icon-mask {
-  position: relative !important;
-  overflow: visible !important;
-  background:
-    #B0B0B0 !important;
-  filter: none;
-  opacity: 1 !important;
+
+/* === Edit Profile final requested fixes === */
+/* Remove the dark rectangle at the top of this page only. */
+.header-wrap {
+  background: transparent !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  box-shadow: none !important;
 }
 
-.nav-icon-mask::before {
-  content: "";
-  position: absolute;
-  inset: -1px;
-  display: block;
-  background:
-    #B0B0B0 !important;
-  -webkit-mask-image: var(--icon-url);
-  mask-image: var(--icon-url);
-  -webkit-mask-repeat: no-repeat;
-  mask-repeat: no-repeat;
-  -webkit-mask-position: center;
-  mask-position: center;
-  -webkit-mask-size: contain;
-  mask-size: contain;
-  filter: blur(6px);
-  opacity: 0.34;
-  pointer-events: none;
-  z-index: -1;
-}
-
-.desktop-nav-link:hover .nav-icon-mask,
-.desktop-nav-button:hover .nav-icon-mask,
-.mobile-nav-link:hover .nav-icon-mask,
-.desktop-nav-link.active .nav-icon-mask,
-.desktop-nav-button.active .nav-icon-mask,
-.mobile-nav-link.active .nav-icon-mask {
-  background: #FFD76A !important;
-  filter: none;
-}
-/* Sidebar icon progress-bar visual match end */
-
-/* ================================================================
-   Edit Profile — glass style (desktop + mobile)
-   Matched to submit-track page glass language
-   ================================================================ */
-:root {
-  --edit-glass-bg: rgba(255,255,255,0.06);
-  --edit-glass-border: rgba(255,255,255,0.14);
-  --edit-glass-border-top: rgba(255,255,255,0.22);
-  --edit-glass-hover: rgba(212,175,55,0.45);
-}
-
-/* Cards & containers */
-.page-wrap .panel-card,
-.page-wrap .notice-box,
-.page-wrap .state-card,
-.page-wrap .auth-card,
-.page-wrap .auth-panel-wrap {
-  background: var(--edit-glass-bg) !important;
-  background-image: none !important;
-  border: 1px solid var(--edit-glass-border) !important;
-  border-top: 1px solid var(--edit-glass-border-top) !important;
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.12),
-    0 8px 32px rgba(0,0,0,0.28) !important;
-  backdrop-filter: blur(24px) saturate(160%) !important;
-  -webkit-backdrop-filter: blur(24px) saturate(160%) !important;
-  border-radius: 28px !important;
-  padding: 28px !important;
-}
-
-/* Inputs / selects / textarea */
-.page-wrap .field-input,
-.page-wrap .field-textarea,
-.page-wrap .field-file,
-.page-wrap .field-select {
-  background: rgba(255,255,255,0.06) !important;
-  background-image: none !important;
-  border: 1px solid rgba(255,255,255,0.14) !important;
-  border-top: 1px solid rgba(255,255,255,0.22) !important;
-  color: #ffffff !important;
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.10),
-    0 8px 24px rgba(0,0,0,0.20) !important;
-  backdrop-filter: blur(18px) saturate(145%) !important;
-  -webkit-backdrop-filter: blur(18px) saturate(145%) !important;
-}
-
-.page-wrap .field-input:focus,
-.page-wrap .field-textarea:focus,
-.page-wrap .field-file:focus,
-.page-wrap .field-select:focus {
-  border-color: rgba(212,175,55,0.55) !important;
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.12),
-    0 0 0 3px rgba(212,175,55,0.12),
-    0 0 22px rgba(212,175,55,0.14) !important;
-  outline: none !important;
-}
-
-.page-wrap .field-input::placeholder,
-.page-wrap .field-textarea::placeholder {
-  color: rgba(255,255,255,0.48) !important;
-}
-
-.page-wrap .field-select option {
-  background: #141416;
-  color: #ffffff;
-}
-
-/* Buttons */
-.page-wrap .gold-btn,
-.page-wrap .ghost-btn,
-.page-wrap .metal-btn,
-.page-wrap button:not(.desktop-nav-button):not(.mobile-nav-link):not(.desktop-nav-link) {
-  background: rgba(255,255,255,0.055) !important;
-  background-image: none !important;
-  color: #ffffff !important;
-  border: 1px solid rgba(255,255,255,0.14) !important;
-  border-top: 1px solid rgba(255,255,255,0.22) !important;
-  border-radius: 999px !important;
-  text-shadow: none !important;
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.10),
-    0 12px 30px rgba(0,0,0,0.30) !important;
-  backdrop-filter: blur(18px) saturate(145%) !important;
-  -webkit-backdrop-filter: blur(18px) saturate(145%) !important;
-  transition:
-    transform .18s ease,
-    border-color .18s ease,
-    box-shadow .18s ease,
-    background-color .18s ease !important;
-}
-
-.page-wrap .gold-btn:hover,
-.page-wrap .ghost-btn:hover,
-.page-wrap .metal-btn:hover,
-.page-wrap button:not(.desktop-nav-button):not(.mobile-nav-link):not(.desktop-nav-link):hover {
-  transform: translateY(-2px) !important;
-  background: rgba(255,255,255,0.075) !important;
-  color: #ffffff !important;
-  border-color: var(--edit-glass-hover) !important;
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.12),
-    0 16px 38px rgba(0,0,0,0.36),
-    0 0 24px rgba(212,175,55,0.18) !important;
-}
-
-/* Ghost link */
-.page-wrap .ghost-link {
-  color: rgba(255,255,255,0.86) !important;
-  border-bottom-color: rgba(255,255,255,0.18) !important;
-}
-.page-wrap .ghost-link:hover {
-  color: #ffffff !important;
-  border-bottom-color: rgba(212,175,55,0.45) !important;
-}
-
-/* Profile photo upload area */
-.page-wrap .photo-upload-wrap,
-.page-wrap .photo-dropzone {
-  background: rgba(255,255,255,0.04) !important;
-  border: 1px dashed rgba(255,255,255,0.18) !important;
-  backdrop-filter: blur(18px) !important;
-  -webkit-backdrop-filter: blur(18px) !important;
-  border-radius: 20px !important;
-}
-
-/* Mobile tweaks */
-@media (max-width: 768px) {
-  .page-wrap .panel-card,
-  .page-wrap .auth-card,
-  .page-wrap .auth-panel-wrap {
-    padding: 22px 16px !important;
-    border-radius: 24px !important;
-  }
-}
-
-/* ================================================================
-   Edit Profile — UI updates
-   ================================================================ */
-
-/* Remove hero-card dark rectangle */
-.hero-card {
-  display: none !important;
-}
-
-/* field-label-row: label + inline toggle side by side */
-.field-label-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 8px;
-}
-
-.field-label-row .field-label {
-  margin-bottom: 0;
-}
-
-/* Inline toggle */
-.inline-toggle {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.inline-toggle-label {
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.05em;
-  color: rgba(255,255,255,0.38);
-  white-space: nowrap;
-}
-
-/* Glass add role button */
-.glass-add-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  margin-top: 12px;
-  padding: 8px 16px;
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0.5px;
-  color: #f4d77a;
-  background: rgba(212,175,55,0.07);
-  border: 1px solid rgba(212,175,55,0.30);
-  border-radius: 999px;
-  cursor: pointer;
-  transition: background 0.18s ease, border-color 0.18s ease;
-}
-
-.glass-add-btn:hover {
-  background: rgba(212,175,55,0.13);
-  border-color: rgba(212,175,55,0.50);
-}
-
-/* Photo preview */
-.photo-preview-wrap {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 96px;
-  height: 96px;
-  border-radius: 50%;
-  overflow: hidden;
-  background: rgba(255,255,255,0.06);
-  border: 1px solid rgba(255,255,255,0.12);
-  margin-bottom: 14px;
-}
-
-.photo-preview {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  border-radius: 50%;
-}
-
-.photo-preview-fallback {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 32px;
-  font-weight: 700;
-  color: rgba(255,255,255,0.45);
-  background: rgba(255,255,255,0.05);
-  border-radius: 50%;
-}
-
-/* Bio counter */
-#bioCount {
-  float: right;
-}
-
-/* Role-list spacing */
-.role-list {
-  margin-bottom: 4px;
-}
-
-
-/* ================================================================
-   Edit Profile — fixes round 2
-   ================================================================ */
-
-/* 1. Remove dark rectangle: auth-panel-wrap */
 #authPanelWrap,
 .auth-panel-wrap {
   background: transparent !important;
-  border: none !important;
+  background-image: none !important;
+  border: 0 !important;
   box-shadow: none !important;
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
-  padding: 0 !important;
-  min-height: 0 !important;
 }
 
-/* 2. Add role button: bigger + spacing */
-.glass-add-btn {
-  padding: 10px 22px !important;
-  font-size: 13px !important;
-  margin-top: 16px !important;
-  margin-bottom: 8px !important;
-}
-
-/* 3. Inline toggle: left-aligned */
-.field-label-row {
-  align-items: flex-start;
-}
-
+/* Keep the "Show on profile" label vertically aligned with the toggle. */
+.inline-toggle--left,
 .inline-toggle {
-  flex-shrink: 0;
-  margin-left: 0;
-}
-
-/* 4. City autocomplete dropdown */
-.city-suggestions {
-  list-style: none;
-  margin: 4px 0 0;
-  padding: 0;
-  background: rgba(18, 16, 10, 0.96);
-  border: 1px solid rgba(212,175,55,0.25);
-  border-radius: 12px;
-  overflow: hidden;
-  max-height: 220px;
-  overflow-y: auto;
-  display: none;
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: calc(100% + 4px);
-  z-index: 999;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.5);
-}
-
-.city-suggestions li {
-  padding: 11px 16px;
-  font-size: 14px;
-  color: rgba(255,255,255,0.78);
-  cursor: pointer;
-  border-bottom: 1px solid rgba(255,255,255,0.05);
-  transition: background 0.12s;
-}
-
-.city-suggestions li:last-child {
-  border-bottom: none;
-}
-
-.city-suggestions li:hover,
-.city-suggestions li.highlighted {
-  background: rgba(212,175,55,0.10);
-  color: #f4d77a;
-}
-
-.field-group {
-  position: relative;
-}
-
-/* 5. Photo preview */
-.photo-preview-wrap {
-  display: flex !important;
-  width: 96px !important;
-  height: 96px !important;
-  border-radius: 50% !important;
-  overflow: hidden !important;
-  background: rgba(255,255,255,0.06) !important;
-  border: 2px solid rgba(212,175,55,0.25) !important;
-  margin-bottom: 14px !important;
-  flex-shrink: 0 !important;
-}
-
-.photo-preview {
-  width: 100% !important;
-  height: 100% !important;
-  object-fit: cover !important;
-}
-
-.photo-preview-fallback {
-  width: 100% !important;
-  height: 100% !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  font-size: 32px !important;
-  font-weight: 700 !important;
-  color: rgba(255,255,255,0.45) !important;
-}
-
-/* Toggle left-aligned inside field */
-.inline-toggle--left {
-  display: flex !important;
-  flex-direction: row !important;
+  display: inline-flex !important;
   align-items: center !important;
   justify-content: flex-start !important;
   gap: 10px !important;
-  margin: 8px 0 10px !important;
+  min-height: 34px !important;
 }
 
-.inline-toggle--left .inline-toggle-label {
-  font-size: 12px !important;
-  color: rgba(255,255,255,0.45) !important;
+.inline-toggle--left .toggle-switch,
+.inline-toggle .toggle-switch {
+  margin: 0 !important;
 }
 
-/* Square photo preview */
-.photo-preview-wrap--square {
-  width: 120px !important;
-  height: 120px !important;
-  border-radius: 12px !important;
+.inline-toggle--left .inline-toggle-label,
+.inline-toggle .inline-toggle-label {
+  display: inline-flex !important;
+  align-items: center !important;
+  min-height: 34px !important;
+  line-height: 1 !important;
+  margin: 0 !important;
 }
 
-.photo-preview-wrap--square .photo-preview {
-  border-radius: 10px !important;
+/* Add clear breathing room above and below the Add role button. */
+#addRoleBtn.glass-add-btn {
+  margin-top: 18px !important;
+  margin-bottom: 18px !important;
 }
 
-.photo-preview-wrap--square .photo-preview-fallback {
-  border-radius: 10px !important;
+#addRoleBtn.glass-add-btn + .form-meta {
+  margin-top: 0 !important;
 }
+
+/* Square artist photo preview, using the same photo_url flow as the header/avatar. */
+.photo-preview-wrap.photo-preview-wrap--square {
+  width: 132px !important;
+  height: 132px !important;
+  aspect-ratio: 1 / 1 !important;
+  border-radius: 18px !important;
+  overflow: hidden !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.055), rgba(255,255,255,0.02)),
+    rgba(10,10,10,0.34) !important;
+  border: 1px solid rgba(212,175,55,0.22) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.08),
+    0 0 0 1px rgba(212,175,55,0.04) !important;
+  margin-bottom: 14px !important;
+}
+
+.photo-preview-wrap.photo-preview-wrap--square .photo-preview,
+.photo-preview-wrap.photo-preview-wrap--square .photo-preview-fallback {
+  width: 100% !important;
+  height: 100% !important;
+  border-radius: 0 !important;
+}
+
+.photo-preview-wrap.photo-preview-wrap--square .photo-preview {
+  object-fit: cover !important;
+  display: block !important;
+}
+
+.photo-preview-wrap.photo-preview-wrap--square .photo-preview.hidden {
+  display: none !important;
+}
+
+.photo-preview-wrap.photo-preview-wrap--square .photo-preview-fallback {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-family: 'Space Grotesk', sans-serif !important;
+  font-size: 34px !important;
+  font-weight: 700 !important;
+  color: rgba(255,255,255,0.42) !important;
+  background: transparent !important;
+}
+
+.photo-preview-wrap.photo-preview-wrap--square .photo-preview-fallback.hidden {
+  display: none !important;
+}
+/* === end Edit Profile final requested fixes === */
+
