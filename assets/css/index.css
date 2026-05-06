@@ -7239,42 +7239,91 @@ button#volumeBtn,
 
 
 
-/* === radio player button glow/equal width update === */
+/* === FINAL PCB radio controls neutral cleanup === */
 
-/* One calm glass capsule, no visible segment lines */
-.radio-shell .player-actions {
-  gap: 0 !important;
-  padding: 0 18px 0 0 !important;
+/*
+  Actual current structure:
+  .player-actions > .pcb > buttons + .pcb-divider + #volumeControl
+
+  This override intentionally targets the real .pcb structure instead of
+  older .metal-btn/.icon-btn radio button structures.
+*/
+
+/* The outer player-actions wrapper should not create a second capsule/glow. */
+#radioShell .player-actions {
+  display: flex !important;
   align-items: center !important;
   justify-content: center !important;
-  overflow: hidden !important;
-  border-radius: 999px !important;
-  border: 1px solid rgba(255,255,255,0.16) !important;
-  background:
-    linear-gradient(180deg, rgba(255,255,255,0.095), rgba(255,255,255,0.025)),
-    linear-gradient(90deg, rgba(32,32,32,0.72), rgba(20,20,20,0.76) 45%, rgba(44,34,18,0.68)) !important;
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.12),
-    inset 0 -1px 0 rgba(0,0,0,0.30),
-    0 0 18px rgba(212,175,55,0.13),
-    0 12px 28px rgba(0,0,0,0.28) !important;
+  gap: 0 !important;
+  padding: 0 !important;
+  margin-top: 14px !important;
+  border: 0 !important;
+  background: transparent !important;
+  background-image: none !important;
+  box-shadow: none !important;
+  filter: none !important;
+  overflow: visible !important;
 }
 
-/* All controls share the same visual base */
-.radio-shell .player-actions .metal-btn,
-.radio-shell .player-actions .icon-btn,
-.radio-shell .player-actions #pauseBtn,
-.radio-shell .player-actions .volume-button {
-  width: 66px !important;
-  min-width: 66px !important;
+/* Single glass capsule only. No gold glow. */
+#radioShell .player-actions .pcb {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
   height: 56px !important;
   min-height: 56px !important;
-  padding: 0 !important;
-  margin: 0 !important;
+  gap: 0 !important;
+  padding: 0 14px 0 0 !important;
+  border-radius: 999px !important;
+  border: 1px solid rgba(255,255,255,0.18) !important;
+  border-top-color: rgba(255,255,255,0.26) !important;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.075), rgba(255,255,255,0.022)),
+    linear-gradient(90deg, rgba(38,38,38,0.70), rgba(18,18,18,0.78), rgba(54,42,24,0.62)) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.10),
+    inset 0 -1px 0 rgba(0,0,0,0.28),
+    0 10px 26px rgba(0,0,0,0.28) !important;
+  backdrop-filter: blur(20px) saturate(150%) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(150%) !important;
+  overflow: hidden !important;
+  position: relative !important;
+}
+
+/* Dividers are technically still in the DOM, but visually gone. */
+#radioShell .player-actions .pcb-divider {
+  display: none !important;
+  width: 0 !important;
+  min-width: 0 !important;
+  max-width: 0 !important;
+  height: 0 !important;
+  opacity: 0 !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  flex: 0 0 0 !important;
+}
+
+/* All four controls use the same base. */
+#radioShell .player-actions .pcb button#likeBtn,
+#radioShell .player-actions .pcb button#pauseBtn,
+#radioShell .player-actions .pcb button#skip,
+#radioShell .player-actions .pcb button#volumeBtn,
+#radioShell .player-actions .pcb .pcb-btn {
+  all: unset !important;
+  box-sizing: border-box !important;
+  width: 66px !important;
+  min-width: 66px !important;
+  max-width: 66px !important;
+  height: 56px !important;
+  min-height: 56px !important;
+  max-height: 56px !important;
   flex: 0 0 66px !important;
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
+  padding: 0 !important;
+  margin: 0 !important;
   border: 0 !important;
   border-radius: 0 !important;
   outline: 0 !important;
@@ -7282,133 +7331,203 @@ button#volumeBtn,
   background-image: none !important;
   box-shadow: none !important;
   filter: none !important;
+  text-shadow: none !important;
+  transform: none !important;
+  color: rgba(255,255,255,0.88) !important;
+  cursor: pointer !important;
+  transition: background 0.15s ease, opacity 0.15s ease, transform 0.12s ease !important;
 }
 
-/* Kill every possible divider/highlight layer inside the segments */
-.radio-shell .player-actions .metal-btn::before,
-.radio-shell .player-actions .metal-btn::after,
-.radio-shell .player-actions .icon-btn::before,
-.radio-shell .player-actions .icon-btn::after,
-.radio-shell .player-actions #pauseBtn::before,
-.radio-shell .player-actions #pauseBtn::after,
-.radio-shell .player-actions .volume-button::before,
-.radio-shell .player-actions .volume-button::after,
-.radio-shell .player-actions .volume-control::before,
-.radio-shell .player-actions .volume-control::after {
-  content: none !important;
-  display: none !important;
-  opacity: 0 !important;
-  background: transparent !important;
+/* Pause/play must not behave as a special larger/gold/round control. */
+#radioShell .player-actions .pcb button#pauseBtn,
+#radioShell .player-actions .pcb button#pauseBtn.is-playing,
+#radioShell .player-actions .pcb button#pauseBtn.pause-btn-playing,
+#radioShell .player-actions .pcb .pcb-play,
+#radioShell .player-actions .pcb .pcb-play:hover,
+#radioShell .player-actions .pcb button#pauseBtn:hover,
+#radioShell .player-actions .pcb button#pauseBtn:focus,
+#radioShell .player-actions .pcb button#pauseBtn:active {
+  width: 66px !important;
+  min-width: 66px !important;
+  max-width: 66px !important;
+  height: 56px !important;
+  min-height: 56px !important;
+  max-height: 56px !important;
+  flex: 0 0 66px !important;
+  padding: 0 !important;
   border: 0 !important;
-  box-shadow: none !important;
-}
-
-/* Neutralize segmented-border leftovers from nested wrappers */
-.radio-shell .player-actions > *,
-.radio-shell .player-actions .volume-control {
-  margin: 0 !important;
-  border: 0 !important;
-  box-shadow: none !important;
-  background: transparent !important;
-}
-
-/* Add only one consistent glow layer per icon, not per segment */
-.radio-shell .player-actions .metal-btn .icon,
-.radio-shell .player-actions .icon-btn .icon,
-.radio-shell .player-actions #pauseBtn .icon,
-.radio-shell .player-actions .volume-button svg {
-  color: rgba(255,255,255,0.92) !important;
-  filter:
-    drop-shadow(0 0 6px rgba(244,215,122,0.20))
-    drop-shadow(0 0 12px rgba(212,175,55,0.12)) !important;
-}
-
-/* Make play match skip: no separate circle, same glow family */
-.radio-shell .player-actions #pauseBtn,
-.radio-shell .player-actions #pauseBtn.is-playing,
-.radio-shell .player-actions .pause-btn-playing {
   border-radius: 0 !important;
   background: transparent !important;
+  background-image: none !important;
   box-shadow: none !important;
-}
-
-.radio-shell .player-actions #pauseBtn .icon,
-.radio-shell .player-actions #skipBtn .icon,
-.radio-shell .player-actions .skip-button-content .icon {
-  filter:
-    drop-shadow(0 0 7px rgba(244,215,122,0.24))
-    drop-shadow(0 0 14px rgba(212,175,55,0.14)) !important;
-}
-
-/* Hover: glow the whole capsule consistently, not individual vertical dividers */
-.radio-shell .player-actions:has(.metal-btn:hover),
-.radio-shell .player-actions:has(.icon-btn:hover),
-.radio-shell .player-actions:has(#pauseBtn:hover),
-.radio-shell .player-actions:has(.volume-button:hover) {
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.14),
-    inset 0 -1px 0 rgba(0,0,0,0.30),
-    0 0 22px rgba(244,215,122,0.20),
-    0 0 34px rgba(212,175,55,0.12),
-    0 14px 30px rgba(0,0,0,0.30) !important;
-}
-
-.radio-shell .player-actions .metal-btn:hover,
-.radio-shell .player-actions .icon-btn:hover,
-.radio-shell .player-actions #pauseBtn:hover,
-.radio-shell .player-actions .volume-button:hover {
+  filter: none !important;
   transform: none !important;
-  border: 0 !important;
-  background: rgba(255,255,255,0.035) !important;
+}
+
+/* Consistent, non-glowing hover for every control. */
+#radioShell .player-actions .pcb button#likeBtn:hover,
+#radioShell .player-actions .pcb button#pauseBtn:hover,
+#radioShell .player-actions .pcb button#skip:hover,
+#radioShell .player-actions .pcb button#volumeBtn:hover {
+  background: rgba(255,255,255,0.055) !important;
   box-shadow: none !important;
+  filter: none !important;
 }
 
-/* Volume: same button width, but more breathing room inside the capsule on the right */
-.radio-shell .player-actions .volume-control {
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  padding-right: 12px !important;
-  flex: 0 0 78px !important;
-}
-
-.radio-shell .player-actions .volume-button {
-  flex: 0 0 66px !important;
-}
-
-.radio-shell .player-actions .volume-button svg {
-  width: 22px !important;
-  height: 22px !important;
-}
-
-/* Active press only, no visual divider/circle */
-.radio-shell .player-actions .metal-btn:active,
-.radio-shell .player-actions .icon-btn:active,
-.radio-shell .player-actions #pauseBtn:active,
-.radio-shell .player-actions .volume-button:active {
+/* Active press is identical for every control. */
+#radioShell .player-actions .pcb button#likeBtn:active,
+#radioShell .player-actions .pcb button#pauseBtn:active,
+#radioShell .player-actions .pcb button#skip:active,
+#radioShell .player-actions .pcb button#volumeBtn:active {
   transform: scale(0.96) !important;
 }
 
+/* Images/icons: no glow, no shadows, same sizing. */
+#radioShell .player-actions .pcb img,
+#radioShell .player-actions .pcb .player-icon-img,
+#radioShell .player-actions .pcb .btn-icon-img,
+#radioShell .player-actions .pcb .like-icon,
+#radioShell .player-actions .pcb #playPauseIcon,
+#radioShell .player-actions .pcb #volumeIcon {
+  width: 24px !important;
+  height: 24px !important;
+  max-width: 24px !important;
+  max-height: 24px !important;
+  display: block !important;
+  object-fit: contain !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  filter: none !important;
+  opacity: 1 !important;
+}
+
+/* Volume gets extra right breathing room, without creating a visible divider. */
+#radioShell .player-actions .pcb #volumeControl.volume-control,
+#radioShell .player-actions .pcb .pcb-vol {
+  all: unset !important;
+  box-sizing: border-box !important;
+  height: 56px !important;
+  min-height: 56px !important;
+  max-height: 56px !important;
+  width: 82px !important;
+  min-width: 82px !important;
+  max-width: 82px !important;
+  flex: 0 0 82px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  padding: 0 16px 0 0 !important;
+  margin: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  background-image: none !important;
+  box-shadow: none !important;
+  filter: none !important;
+  overflow: hidden !important;
+  position: relative !important;
+}
+
+/* Keep the horizontal volume drawer working, but remove gold glow from open state. */
+#radioShell .player-actions .pcb #volumeControl.volume-control.open {
+  width: 214px !important;
+  min-width: 214px !important;
+  max-width: 214px !important;
+  flex-basis: 214px !important;
+  padding-right: 0 !important;
+  background: rgba(20,20,24,0.70) !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+#radioShell .player-actions .pcb #volumeControl .volume-slider-inline {
+  position: static !important;
+  inset: auto !important;
+  transform: none !important;
+  width: 0 !important;
+  min-width: 0 !important;
+  max-width: 0 !important;
+  height: 100% !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  overflow: hidden !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  transition: width 0.28s ease, max-width 0.28s ease, opacity 0.16s ease !important;
+}
+
+#radioShell .player-actions .pcb #volumeControl.volume-control.open .volume-slider-inline {
+  width: 132px !important;
+  min-width: 132px !important;
+  max-width: 132px !important;
+  padding-right: 16px !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
+}
+
+#radioShell .player-actions .pcb #volumeControl .volume-slider-inline input[type="range"] {
+  width: 112px !important;
+  min-width: 112px !important;
+  max-width: 112px !important;
+  margin: 0 !important;
+  background: transparent !important;
+  accent-color: #f5c84b !important;
+}
+
+/* Mobile keeps the same behavior, just slightly smaller. */
 @media (max-width: 900px) {
-  .radio-shell .player-actions {
+  #radioShell .player-actions .pcb {
+    height: 52px !important;
+    min-height: 52px !important;
     padding-right: 12px !important;
   }
 
-  .radio-shell .player-actions .metal-btn,
-  .radio-shell .player-actions .icon-btn,
-  .radio-shell .player-actions #pauseBtn,
-  .radio-shell .player-actions .volume-button {
+  #radioShell .player-actions .pcb button#likeBtn,
+  #radioShell .player-actions .pcb button#pauseBtn,
+  #radioShell .player-actions .pcb button#skip,
+  #radioShell .player-actions .pcb button#volumeBtn,
+  #radioShell .player-actions .pcb .pcb-btn {
     width: 60px !important;
     min-width: 60px !important;
-    flex-basis: 60px !important;
+    max-width: 60px !important;
     height: 52px !important;
     min-height: 52px !important;
+    max-height: 52px !important;
+    flex-basis: 60px !important;
   }
 
-  .radio-shell .player-actions .volume-control {
-    flex-basis: 72px !important;
-    padding-right: 10px !important;
+  #radioShell .player-actions .pcb #volumeControl.volume-control,
+  #radioShell .player-actions .pcb .pcb-vol {
+    width: 74px !important;
+    min-width: 74px !important;
+    max-width: 74px !important;
+    flex-basis: 74px !important;
+    height: 52px !important;
+    min-height: 52px !important;
+    max-height: 52px !important;
+    padding-right: 12px !important;
+  }
+
+  #radioShell .player-actions .pcb img,
+  #radioShell .player-actions .pcb .player-icon-img,
+  #radioShell .player-actions .pcb .btn-icon-img {
+    width: 22px !important;
+    height: 22px !important;
+    max-width: 22px !important;
+    max-height: 22px !important;
   }
 }
-/* === end radio player button glow/equal width update === */
+/* === end FINAL PCB radio controls neutral cleanup === */
 
