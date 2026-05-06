@@ -1563,3 +1563,112 @@ body{background:radial-gradient(circle at 50% -10%,rgba(245,200,75,.12),transpar
 .role-list {
   margin-bottom: 4px;
 }
+
+
+/* ================================================================
+   Edit Profile — fixes round 2
+   ================================================================ */
+
+/* 1. Remove dark rectangle: auth-panel-wrap */
+#authPanelWrap,
+.auth-panel-wrap {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  padding: 0 !important;
+}
+
+/* 2. Add role button: bigger + spacing */
+.glass-add-btn {
+  padding: 10px 22px !important;
+  font-size: 13px !important;
+  margin-top: 16px !important;
+  margin-bottom: 8px !important;
+}
+
+/* 3. Inline toggle: left-aligned */
+.field-label-row {
+  align-items: flex-start;
+}
+
+.inline-toggle {
+  flex-shrink: 0;
+  margin-left: 0;
+}
+
+/* 4. City autocomplete dropdown */
+.city-suggestions {
+  list-style: none;
+  margin: 4px 0 0;
+  padding: 0;
+  background: rgba(18, 16, 10, 0.96);
+  border: 1px solid rgba(212,175,55,0.25);
+  border-radius: 12px;
+  overflow: hidden;
+  max-height: 220px;
+  overflow-y: auto;
+  display: none;
+  position: absolute;
+  z-index: 99;
+  width: 100%;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+}
+
+.city-suggestions.active {
+  display: block;
+}
+
+.city-suggestions li {
+  padding: 11px 16px;
+  font-size: 14px;
+  color: rgba(255,255,255,0.78);
+  cursor: pointer;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  transition: background 0.12s;
+}
+
+.city-suggestions li:last-child {
+  border-bottom: none;
+}
+
+.city-suggestions li:hover,
+.city-suggestions li.highlighted {
+  background: rgba(212,175,55,0.10);
+  color: #f4d77a;
+}
+
+.field-group {
+  position: relative;
+}
+
+/* 5. Photo preview */
+.photo-preview-wrap {
+  display: flex !important;
+  width: 96px !important;
+  height: 96px !important;
+  border-radius: 50% !important;
+  overflow: hidden !important;
+  background: rgba(255,255,255,0.06) !important;
+  border: 2px solid rgba(212,175,55,0.25) !important;
+  margin-bottom: 14px !important;
+  flex-shrink: 0 !important;
+}
+
+.photo-preview {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+}
+
+.photo-preview-fallback {
+  width: 100% !important;
+  height: 100% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 32px !important;
+  font-weight: 700 !important;
+  color: rgba(255,255,255,0.45) !important;
+}
