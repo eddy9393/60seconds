@@ -207,25 +207,40 @@ function setupBioCounter() {
 
 function setupPhotoPreview() {
   const input = document.getElementById('photoFile');
-  if (!input) return;
+  const preview = document.getElementById('photoPreview');
+  const empty = document.getElementById('photoPreviewEmpty');
+
+  if (!input || !preview) return;
+
   input.addEventListener('change', function() {
-    const file = this.files[0];
+    const file = this.files && this.files[0];
     if (!file) return;
+
     const reader = new FileReader();
     reader.onload = function(e) {
-      const preview = document.getElementById('photoPreview');
-      const fallback = document.getElementById('photoPreviewFallback');
-      if (preview) {
-        preview.src = e.target.result;
-        preview.classList.remove('hidden');
-      }
-      if (fallback) fallback.classList.add('hidden');
+      preview.src = e.target.result;
+      preview.classList.remove('hidden');
+      if (empty) empty.classList.add('hidden');
     };
     reader.readAsDataURL(file);
   });
 }
 
-function fillProfileForm(profile) { els.page.artistNameInput.value = profile?.artist_name || ''; els.page.bioInput.value = profile?.bio || ''; els.page.nationalityInput.value = profile?.nationality || ''; const roles = Array.isArray(profile?.music_roles) && profile.music_roles.length ? profile.music_roles : [profile?.music_role || 'none']; state.roleValues = roles.map(normalizeRoleValue); renderRoleRows(); els.page.cityInput.value = profile?.city || ''; els.page.dateOfBirthInput.value = profile?.date_of_birth || ''; els.page.showRoleOnArtistPageInput.checked = Boolean(profile?.show_role_on_artist_page); els.page.showCityOnArtistPageInput.checked = Boolean(profile?.show_city_on_artist_page); els.page.showBirthOnArtistPageInput.checked = Boolean(profile?.show_birth_on_artist_page); els.page.socialLinkInput.value = profile?.social_link || ''; els.page.wantsPromotionsInput.checked = Boolean(profile?.wants_promotions); }
+function fillProfileForm(profile) { els.page.artistNameInput.value = profile?.artist_name || ''; els.page.bioInput.value = profile?.bio || ''; els.page.nationalityInput.value = profile?.nationality || ''; const roles = Array.isArray(profile?.music_roles) && profile.music_roles.length ? profile.music_roles : [profile?.music_role || 'none']; state.roleValues = roles.map(normalizeRoleValue); renderRoleRows(); els.page.cityInput.value = profile?.city || ''; els.page.dateOfBirthInput.value = profile?.date_of_birth || ''; els.page.showRoleOnArtistPageInput.checked = Boolean(profile?.show_role_on_artist_page); els.page.showCityOnArtistPageInput.checked = Boolean(profile?.show_city_on_artist_page); els.page.showBirthOnArtistPageInput.checked = Boolean(profile?.show_birth_on_artist_page); els.page.socialLinkInput.value = profile?.social_link || ''; els.page.wantsPromotionsInput.checked = Boolean(profile?.wants_promotions);
+  const photoPreview = document.getElementById('photoPreview');
+  const photoEmpty = document.getElementById('photoPreviewEmpty');
+  if (photoPreview) {
+    if (profile?.photo_url) {
+      photoPreview.src = profile.photo_url;
+      photoPreview.classList.remove('hidden');
+      if (photoEmpty) photoEmpty.classList.add('hidden');
+    } else {
+      photoPreview.removeAttribute('src');
+      photoPreview.classList.add('hidden');
+      if (photoEmpty) photoEmpty.classList.remove('hidden');
+    }
+  }
+}
 async function ensureProfileRecord(userId) { if (!userId) return null; const { error } = await supabaseClient.from('profiles').insert([{ user_id: userId }]); if (error && error.code !== '23505') throw error; const { data, error: reloadError } = await supabaseClient.from('profiles').select('artist_name, bio, nationality, music_roles, music_role, city, date_of_birth, social_link, photo_url, wants_promotions, accepted_terms, user_id, coins, show_role_on_artist_page, show_city_on_artist_page, show_birth_on_artist_page').eq('user_id', userId).maybeSingle(); if (reloadError) throw reloadError; return data || null; }
 async function loadMyProfile(userId) { let { data, error } = await supabaseClient.from('profiles').select('artist_name, bio, nationality, music_roles, music_role, city, date_of_birth, social_link, photo_url, wants_promotions, accepted_terms, user_id, coins, show_role_on_artist_page, show_city_on_artist_page, show_birth_on_artist_page').eq('user_id', userId).maybeSingle(); if (error) { state.currentProfile = null; els.auth.profileLink.href = '#'; els.page.viewArtistLink.href = '#'; setHeaderAvatar('', 'A'); fillProfileForm(null); setProfileMissingView(); applyMenuState({ id: userId }, null); return null; } if (!data) { try { data = await ensureProfileRecord(userId); } catch (ensureError) { console.error('ensureProfileRecord error:', ensureError); state.currentProfile = null; els.auth.profileLink.href = '#'; els.page.viewArtistLink.href = '#'; setHeaderAvatar('', 'A'); fillProfileForm(null); setProfileMissingView(); applyMenuState({ id: userId }, null); return null; } } state.currentProfile = data; setCurrency(data.coins || 0); setHeaderAvatar(data.photo_url, data.artist_name); const profileHref = String(data.artist_name || '').trim() ? `artist.html?user_id=${encodeURIComponent(data.user_id)}` : 'edit-profile.html?welcome=1'; els.auth.profileLink.href = profileHref; els.page.viewArtistLink.href = String(data.artist_name || '').trim() ? profileHref : '#'; fillProfileForm(data); setProfileReadyView(); applyMenuState({ id: userId }, data); return data; }
 async function refreshAuthUI() { try { const user = await getCurrentUserSafe(); if (user) { setLoggedInView(); const profile = await loadMyProfile(user.id); const params = new URLSearchParams(window.location.search); if (params.get('welcome') === '1' && (!profile || !String(profile.artist_name || '').trim())) { setStatus("You're one step away — create your artist profile to unlock your artist page, submit your tune, and start sharing your sound."); params.delete('welcome'); const nextQuery = params.toString(); history.replaceState({}, document.title, `${window.location.pathname}${nextQuery ? `?${nextQuery}` : ''}`); } return user; } setLoggedOutView(); state.currentProfile = null; fillProfileForm(null); return null; } catch (err) { console.error('refreshAuthUI error:', err); setLoggedOutView(); state.currentProfile = null; fillProfileForm(null); return null; } }
@@ -238,5 +253,5 @@ function bindEvents() { els.header.showLoginBtn.onclick = () => { setHidden(els.
 populateCountryOptions();
 renderRoleRows();
 bindEvents();
-setupCityAutocomplete();
+setupPhotoPreview();
 refreshAuthUI().catch((err) => console.error('init edit profile error:', err));
