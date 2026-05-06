@@ -10,6 +10,55 @@
   <link rel="stylesheet" href="assets/css/buttons.css" />
   <link rel="stylesheet" href="assets/css/global.css" />
 
+  <style id="edit-profile-artist-photo-preview-style">
+    .artist-photo-field .artist-photo-preview-box {
+      width: min(100%, 260px);
+      aspect-ratio: 1 / 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 24px;
+      border: 1px solid rgba(255,255,255,0.14);
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.018)),
+        linear-gradient(180deg, rgba(16,16,16,0.84), rgba(10,10,10,0.92));
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.07),
+        0 12px 30px rgba(0,0,0,0.22);
+      overflow: hidden;
+      cursor: pointer;
+      position: relative;
+      margin-bottom: 14px;
+    }
+
+    .artist-photo-field .artist-photo-preview-box:hover {
+      border-color: rgba(212,175,55,0.38);
+    }
+
+    .artist-photo-field .artist-photo-preview {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .artist-photo-field .artist-photo-preview.hidden {
+      display: none !important;
+    }
+
+    .artist-photo-field .artist-photo-preview-empty {
+      color: rgba(255,255,255,0.58);
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 13px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .artist-photo-field .artist-photo-input {
+      cursor: pointer;
+    }
+  </style>
+
   <style id="edit-profile-dob-toggle-spacing-fix">
     #dateOfBirth + .inline-toggle,
     #dateOfBirth + .inline-toggle--left {
@@ -301,13 +350,15 @@
             <input id="socialLink" class="field-input" type="text" placeholder="https://..." />
           </div>
 
-          <div class="field-group">
+          <div class="field-group artist-photo-field">
             <label class="field-label" for="photoFile">Artist Photo</label>
-            <div class="photo-preview-wrap photo-preview-wrap--square">
-              <img id="photoPreview" class="photo-preview hidden" src="" alt="Photo preview" />
-              <div id="photoPreviewFallback" class="photo-preview-fallback">A</div>
-            </div>
-            <input id="photoFile" class="field-file" type="file" accept="image/jpeg,image/png,image/webp" />
+
+            <label class="artist-photo-preview-box" for="photoFile" aria-label="Choose artist photo">
+              <img id="photoPreview" class="artist-photo-preview hidden" src="" alt="Artist photo preview" />
+              <span id="photoPreviewEmpty" class="artist-photo-preview-empty">Choose file</span>
+            </label>
+
+            <input id="photoFile" class="field-file artist-photo-input" type="file" accept="image/jpeg,image/png,image/webp" />
             <div class="form-meta">Accepted: JPG, PNG or WebP. Leave empty to keep your current photo.</div>
           </div>
 
