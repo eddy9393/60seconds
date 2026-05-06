@@ -2322,9 +2322,59 @@ img {
 
 /* ── Sectie ─────────────────────────────────────────────────── */
 .fa-section {
-  max-width: 780px;
+  max-width: 100%;
   margin: 32px auto 0;
   padding: 0 20px;
+}
+
+/* 3-column grid: 50% large left / 25% small / 25% small */
+.fa-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  gap: 12px;
+  align-items: stretch;
+}
+
+/* Small cards: stacked layout */
+.fa-card--small .fa-body {
+  display: flex !important;
+  flex-direction: column !important;
+  grid-template-columns: unset !important;
+  padding: 18px 16px 14px !important;
+  gap: 10px !important;
+  align-items: flex-start !important;
+}
+
+.fa-card--small .fa-photo-wrap {
+  width: 56px !important;
+  height: 56px !important;
+}
+
+.fa-card--small .fa-name {
+  font-size: 15px !important;
+  white-space: normal !important;
+}
+
+.fa-card--small .fa-bio {
+  display: none !important;
+}
+
+.fa-card--small .fa-footer {
+  display: none !important;
+}
+
+.fa-card--small .fa-divider {
+  display: none !important;
+}
+
+/* On mobile: stack vertically, hide small cards */
+@media (max-width: 768px) {
+  .fa-grid {
+    grid-template-columns: 1fr;
+  }
+  .fa-card--small {
+    display: none;
+  }
 }
 
 .fa-kicker {
