@@ -195,7 +195,7 @@ function buildNewsFeedText(item) {
 function renderNewsFeedSlice() {
   if (!els.newsFeedListEl) return;
 
-  if (!state.currentUser || !state.newsFeedItems.length) {
+  if (!state.newsFeedItems.length) {
     els.newsFeedListEl.innerHTML = '<div class="news-feed-item news-feed-empty">No community updates yet.</div>';
     return;
   }
@@ -239,13 +239,7 @@ function advanceNewsFeed() {
 }
 
 async function loadNewsFeed() {
-  if (!state.currentUser) {
-    clearNewsFeedTimers();
-    state.newsFeedItems = [];
-    state.newsFeedIndex = 0;
-    setHidden(els.newsFeedSectionEl, true);
-    return;
-  }
+  // Community updates visible for everyone
 
   try {
     const todayKey = getTodayDateKey();
@@ -915,8 +909,9 @@ function setLoggedOutView() {
   updateInteractiveControls();
   updateCurrencyVisibility(null);
   setCurrency(0);
-  setHidden(els.newsFeedSectionEl, true);
-  clearNewsFeedTimers();
+  // Load feed for logged-out users too
+  loadNewsFeed().catch(err => console.error('loadNewsFeed error:', err));
+  loadTopSupporters().catch(err => console.error('loadTopSupporters error:', err));
   updateJoinButtonHref();
 }
 
