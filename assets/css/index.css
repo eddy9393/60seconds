@@ -7697,3 +7697,25 @@ button#volumeBtn,
 }
 /* === end volume actual fill and glass controls refinement === */
 
+
+/* Kill volume-button individual container — all contexts */
+.pcb .volume-button,
+.pcb #volumeBtn,
+.pcb #volumeControl .volume-button,
+#radioShell .pcb .volume-button,
+.player-actions .pcb .volume-button,
+.volume-button.pcb-btn {
+  background: transparent !important;
+  background-image: none !important;
+  border: none !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  filter: none !important;
+}
+
+.pcb .volume-button:hover,
+.pcb #volumeBtn:hover {
+  background: rgba(255,255,255,0.07) !important;
+  border: none !important;
+  box-shadow: none !important;
+}
