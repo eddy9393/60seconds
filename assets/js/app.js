@@ -426,6 +426,8 @@ function ensureCurrencyStoreButton(doc = document) {
   }
 
   function setStandardLoggedOutState(els, options = {}) {
+    document.body.classList.remove('is-authenticated');
+    document.body.classList.add('is-logged-out');
     setUnreadNotificationsFlag(false);
     closeStandardHeaderPanels(els, options.closeExtraPanels);
     applyStandardMenuState(els, null, null, null, options);
@@ -443,6 +445,8 @@ function ensureCurrencyStoreButton(doc = document) {
   }
 
   function setStandardLoggedInState(els, options = {}) {
+    document.body.classList.add('is-authenticated');
+    document.body.classList.remove('is-logged-out');
     setHidden(els?.header?.showLoginBtn, true);
     setHidden(els?.header?.headerAvatarBtn, false);
     setHidden(els?.header?.accountMenu, true);
