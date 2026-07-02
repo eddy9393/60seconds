@@ -1,0 +1,1652 @@
+/* ================================================================
+   60 Seconds FM — global styles
+   Ported from assets/css/index.css (shared vars/reset/header/nav/buttons),
+   assets/css/global.css and assets/css/buttons.css.
+   Page-specific styles (radio player, join, login, ...) live in
+   their own page-level CSS files, added as each page is migrated.
+   ================================================================ */
+
+:root {
+  --gold: #d4af37;
+  --gold-2: #f4d77a;
+  --gold-3: #ffd76a;
+  --gold-dark: #8f6b13;
+  --text: #f5f5f5;
+  --muted: #a8a8a8;
+  --top-btn-height: 52px;
+
+  --fs-label: 12px;
+  --fs-body: 14px;
+  --fs-artist: 18px;
+  --fs-stat-label: 12px;
+  --fs-stat-value: clamp(26px, 4vw, 34px);
+  --fs-tune-title: clamp(18px, 2.6vw, 26px);
+
+  --desktop-rail-width: 180px;
+  --desktop-rail-expanded: 320px;
+  --mobile-bottom-nav-height: 86px;
+  --mobile-nav-bg: rgba(10, 10, 10, 0.94);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background:
+    linear-gradient(180deg,
+      rgba(7,7,7,0.10) 0%,
+      rgba(7,7,7,0.30) 50%,
+      rgba(7,7,7,0.88) 78%,
+      rgba(7,7,7,1.00) 92%
+    ),
+    url("/icons/background-radio.jpg"),
+    url("/bg-mobile-final-1080x1920.webp");
+  background-size: 100% 620px, 100% 620px, cover;
+  background-position: top center, top center, center center;
+  background-repeat: no-repeat, no-repeat, no-repeat;
+  background-attachment: scroll, scroll, fixed;
+  color: var(--text);
+  font-family: 'Manrope', sans-serif;
+  text-align: center;
+  padding: 0 20px 44px calc(var(--desktop-rail-width) + 68px);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3 {
+  font-family: 'Space Grotesk', sans-serif;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.site-shell {
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  padding-top: 8px;
+  padding-right: 0;
+}
+
+.header-wrap {
+  position: sticky;
+  top: 0;
+  z-index: 80;
+  width: 100%;
+  background: transparent;
+  backdrop-filter: none;
+}
+
+.header-bar {
+  width: 100%;
+  min-height: 74px;
+  display: flex;
+  align-items: center;
+  padding: 8px 16px 4px;
+  position: relative;
+}
+
+.header-left,
+.header-center,
+.header-right {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+}
+
+.header-left {
+  justify-content: flex-start;
+}
+
+.currency-badge {
+  /* Fixed boven de sidebar */
+  position: fixed;
+  top: 14px;
+  left: 18px;
+  width: var(--desktop-rail-width);
+  z-index: 130;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 40px;
+  padding: 0 10px;
+  border-radius: 12px;
+  border: none;
+  background: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  box-shadow: none !important;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+@media (max-width: 768px) {
+  .currency-badge {
+    position: relative;
+    top: auto;
+    left: auto;
+    width: auto;
+    border-radius: 999px;
+    min-height: 46px;
+    padding: 0 16px 0 12px;
+  }
+}
+
+.currency-badge-icon {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+  display: block;
+  flex: 0 0 auto;
+}
+
+.currency-badge-value {
+  display: inline-block;
+  flex: 0 0 auto;
+  min-width: 0;
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1;
+  font-family: 'Space Grotesk', sans-serif;
+  letter-spacing: 0.3px;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.header-center {
+  justify-content: center;
+  pointer-events: none;
+}
+
+.header-center > * {
+  pointer-events: auto;
+}
+
+.header-right {
+  justify-content: flex-end;
+  position: relative;
+}
+
+.header-logo-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+}
+
+.header-logo {
+  display: block;
+  width: min(288px, 45vw);
+  height: auto;
+  filter:
+    drop-shadow(0 8px 18px rgba(0, 0, 0, 0.35))
+    drop-shadow(0 0 20px rgba(212, 175, 55, 0.08));
+}
+
+.header-icon-btn {
+  width: 42px;
+  height: 42px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.14);
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.12), rgba(255,255,255,0.04)),
+    linear-gradient(180deg, rgba(10,10,10,0.86), rgba(10,10,10,0.92));
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.08),
+    0 10px 22px rgba(0,0,0,0.24);
+  backdrop-filter: blur(4px);
+  transition: transform 0.14s ease, box-shadow 0.14s ease, filter 0.14s ease;
+  padding: 0;
+  text-decoration: none;
+}
+
+.header-icon-btn:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.03);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.10),
+    0 14px 24px rgba(0,0,0,0.28);
+}
+
+.person-icon {
+  position: relative;
+  width: 22px;
+  height: 22px;
+}
+
+.person-icon::before,
+.person-icon::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 2.2px solid #f5f5f5;
+  box-sizing: border-box;
+}
+
+.person-icon::before {
+  top: 0;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+}
+
+.person-icon::after {
+  bottom: -1px;
+  width: 21px;
+  height: 11px;
+  border-top-left-radius: 16px;
+  border-top-right-radius: 16px;
+  border-bottom: 0;
+}
+
+.header-avatar-btn {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  padding: 0;
+  overflow: hidden;
+  border: 2px solid rgba(212,175,55,0.55);
+  background: #111;
+  box-shadow:
+    0 10px 22px rgba(0,0,0,0.24),
+    0 0 0 3px rgba(212,175,55,0.08);
+  cursor: pointer;
+}
+
+.header-avatar-btn img,
+.header-avatar-btn .header-avatar-fallback {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  display: block;
+  object-fit: cover;
+}
+
+.header-avatar-fallback {
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(180deg, #3a2d0d, #a98325);
+  color: #fff;
+  font-weight: 700;
+  font-size: 15px;
+  font-family: 'Space Grotesk', sans-serif;
+}
+
+.account-menu {
+  display: none !important;
+  position: absolute;
+  top: 52px;
+  right: 0;
+  min-width: 210px;
+  padding: 10px;
+  border-radius: 18px;
+  background:
+    linear-gradient(180deg, rgba(20,20,20,0.96), rgba(10,10,10,0.98));
+  border: 1px solid rgba(255,255,255,0.08);
+  box-shadow:
+    0 18px 40px rgba(0,0,0,0.38),
+    inset 0 1px 0 rgba(255,255,255,0.04);
+  backdrop-filter: blur(8px);
+  z-index: 90;
+}
+
+.account-menu-actions {
+  display: grid;
+  gap: 8px;
+}
+
+.account-menu-link,
+.account-menu button {
+  width: 100%;
+  text-decoration: none;
+  text-align: center;
+}
+
+.desktop-side-nav {
+  position: fixed;
+  top: 50%;
+  left: 18px;
+  transform: translateY(-50%);
+  width: var(--desktop-rail-width);
+  height: min(84vh, 780px);
+  z-index: 120;
+  display: flex;
+  align-items: stretch;
+  overflow: visible;
+  transition: width 0.34s cubic-bezier(.22,.61,.36,1);
+}
+
+.desktop-side-nav:hover {
+  width: var(--desktop-rail-expanded);
+}
+
+.desktop-side-nav-panel {
+  width: 100%;
+  height: 100%;
+  transition: width 0.34s cubic-bezier(.22,.61,.36,1);
+  display: flex;
+  flex-direction: column;
+  padding: 18px 0 16px;
+  overflow: visible;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  backdrop-filter: none;
+}
+
+.desktop-side-links,
+.desktop-side-bottom {
+  position: relative;
+  display: grid;
+  gap: 14px;
+  align-content: start;
+  justify-items: stretch;
+}
+
+.desktop-side-links {
+  flex: 1;
+  padding-top: 2px;
+}
+
+.desktop-side-bottom {
+  margin-top: auto;
+  padding-top: 24px;
+}
+
+.desktop-nav-link,
+.desktop-nav-button {
+  width: 100%;
+  min-height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 18px;
+  padding: 0 18px;
+  color: rgba(245,245,245,0.96);
+  text-decoration: none;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  overflow: hidden;
+  white-space: nowrap;
+  font-family: 'Manrope', sans-serif;
+  transition: transform 0.18s ease, opacity 0.18s ease, color 0.18s ease, background 0.18s ease;
+  text-align: left;
+  position: relative;
+  border-radius: 18px;
+}
+
+.desktop-side-nav:hover .desktop-nav-link,
+.desktop-side-nav:hover .desktop-nav-button {
+  width: 100%;
+}
+
+.desktop-nav-link:hover,
+.desktop-nav-button:hover {
+  transform: translateX(2px);
+  background:
+    linear-gradient(90deg, rgba(212,175,55,0.16), rgba(212,175,55,0.05) 58%, transparent);
+}
+
+.desktop-nav-link.active,
+.desktop-nav-button.active {
+  color: #f5c84b;
+  background: transparent;
+}
+
+.desktop-nav-link.active::after,
+.desktop-nav-button.active::after {
+  display: none;
+}
+
+.desktop-nav-icon,
+.mobile-nav-icon {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+}
+
+.desktop-nav-icon {
+  width: 30px;
+  height: 30px;
+}
+
+.mobile-nav-icon {
+  width: 24px;
+  height: 24px;
+}
+
+.nav-icon-mask {
+  width: 100%;
+  height: 100%;
+  display: block;
+  background: #B0B0B0;
+  -webkit-mask-image: var(--icon-url);
+  mask-image: var(--icon-url);
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  filter: none;
+  opacity: 0.98;
+  transition: transform 0.18s ease, opacity 0.18s ease, background 0.18s ease;
+  pointer-events: none;
+  user-select: none;
+}
+
+.desktop-nav-link:hover .nav-icon-mask,
+.desktop-nav-button:hover .nav-icon-mask,
+.mobile-nav-link:hover .nav-icon-mask {
+  transform: scale(1.04);
+  opacity: 1;
+  background: #f5c84b !important;
+  filter: none;
+}
+
+.desktop-nav-link.active .nav-icon-mask,
+.desktop-nav-button.active .nav-icon-mask,
+.mobile-nav-link.active .nav-icon-mask {
+  background: #FFD76A !important;
+  filter: none;
+}
+
+.desktop-nav-label {
+  font-size: 16px;
+  font-weight: 500;
+  letter-spacing: 0.1px;
+  font-family: 'Manrope', sans-serif;
+  opacity: 0;
+  transform: translateX(-10px);
+  transition:
+    opacity 0.26s ease,
+    transform 0.34s cubic-bezier(.22,.61,.36,1);
+  pointer-events: none;
+  min-width: 170px;
+  max-width: 200px;
+  overflow: visible;
+  text-overflow: clip;
+  text-align: left;
+}
+
+.desktop-side-nav:hover .desktop-nav-label {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.mobile-bottom-nav-wrap {
+  display: none;
+}
+
+.submit-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--top-btn-height);
+  padding: 0 28px;
+  border-radius: 999px;
+  text-decoration: none;
+  color: #231700;
+  font-weight: 600;
+  font-size: 15px;
+  letter-spacing: 0.2px;
+  background:
+    linear-gradient(180deg, #fff5c9 0%, #f4d77a 20%, #d4af37 52%, #b98816 75%, #7c5a11 100%);
+  border: 1px solid rgba(255, 230, 150, 0.38);
+  box-shadow:
+    inset 0 2px 0 rgba(255,255,255,0.45),
+    inset 0 -2px 4px rgba(90,50,0,0.28),
+    0 12px 26px rgba(212,175,55,0.22),
+    0 0 0 1px rgba(212,175,55,0.08);
+  transition: transform 0.16s ease, box-shadow 0.16s ease, filter 0.16s ease;
+  white-space: nowrap;
+  text-shadow: 0 1px 0 rgba(255,255,255,0.22);
+  backdrop-filter: blur(2px);
+  font-family: 'Manrope', sans-serif;
+}
+
+.submit-link:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.03);
+}
+
+.metal-btn {
+  border: 1px solid rgba(255,255,255,0.16);
+  background:
+    linear-gradient(180deg, #fbfbfb 0%, #d6d6d6 16%, #b6b6b6 35%, #8b8b8b 52%, #d2d2d2 72%, #f4f4f4 100%);
+  color: #151515;
+  padding: 9px 14px;
+  border-radius: 999px;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 17px;
+  text-shadow: 0 1px 0 rgba(255,255,255,0.45);
+  box-shadow:
+    inset 0 2px 0 rgba(255,255,255,0.72),
+    inset 0 -2px 3px rgba(0,0,0,0.18),
+    0 10px 22px rgba(0,0,0,0.25);
+  transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease, opacity 0.15s ease;
+  backdrop-filter: blur(2px);
+  font-family: 'Manrope', sans-serif;
+}
+
+.metal-btn:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.02);
+}
+
+.metal-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
+  filter: grayscale(0.25);
+  box-shadow:
+    inset 0 2px 0 rgba(255,255,255,0.32),
+    inset 0 -2px 3px rgba(0,0,0,0.12),
+    0 4px 12px rgba(0,0,0,0.18);
+}
+
+.metal-btn .icon {
+  color: #6a560c;
+  margin-right: 7px;
+  font-size: 15px;
+}
+
+.skip-button-content {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+}
+
+.skip-coin-icon {
+  width: 16px;
+  height: 16px;
+  object-fit: contain;
+  display: block;
+  flex: 0 0 auto;
+}
+
+.skip-cost {
+  color: #111;
+  font-weight: 700;
+  line-height: 1;
+  font-family: 'Space Grotesk', sans-serif;
+}
+
+.liked {
+  background:
+    linear-gradient(180deg, #fff6cb 0%, #e9c75f 24%, #d4af37 52%, #b98714 76%, #826113 100%);
+  color: #111;
+  border-color: rgba(255,220,120,0.35);
+}
+
+.liked .icon {
+  color: #111;
+}
+
+@media (max-width: 768px) {
+  .desktop-side-nav {
+    display: none;
+  }
+
+  .mobile-bottom-nav-wrap {
+    display: block;
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: var(--mobile-bottom-nav-height);
+    background: var(--mobile-nav-bg);
+    backdrop-filter: blur(18px);
+    border-top: 1px solid rgba(212, 175, 55, 0.08);
+    box-shadow: 0 -8px 28px rgba(0, 0, 0, 0.28);
+    z-index: 130;
+  }
+
+  .mobile-bottom-nav {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    gap: 2px;
+    padding: 8px 8px 10px;
+  }
+
+  .mobile-nav-link {
+    flex: 1;
+    min-width: 0;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    text-decoration: none;
+    color: #f4f4f4;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.2px;
+    font-family: "Manrope", sans-serif;
+    padding: 6px 2px;
+    background: transparent;
+  }
+
+  .mobile-nav-link.hidden {
+    display: none !important;
+  }
+
+  .mobile-nav-link.active {
+    color: #fff5d2;
+  }
+
+  .mobile-nav-label {
+    line-height: 1;
+  }
+
+  .header-bar {
+    grid-template-columns: 90px 1fr 42px;
+    min-height: 68px;
+    padding: 6px 8px 2px 6px;
+  }
+
+  .header-left {
+    justify-content: flex-start;
+    margin-left: -2px;
+  }
+
+  .currency-badge {
+    min-height: 40px;
+    width: max-content;
+    min-width: 80px;
+    max-width: none;
+    padding: 0 12px 0 10px;
+    gap: 8px;
+    flex: 0 0 auto;
+    flex-shrink: 0;
+  }
+
+  .currency-badge-icon {
+    width: 24px;
+    height: 24px;
+  }
+
+  .currency-badge-value {
+    font-size: 14px;
+    white-space: nowrap;
+  }
+
+  .header-logo {
+    width: min(200px, 40vw);
+  }
+
+  .header-icon-btn,
+  .header-avatar-btn {
+    width: 38px;
+    height: 38px;
+  }
+
+  .account-menu {
+    display: none !important;
+    top: 48px;
+    right: 0;
+  }
+}
+
+/* v8 header + mobile account menu refinements */
+.account-menu:not(.hidden) {
+  display: block !important;
+}
+
+.header-logo {
+  width: min(216px, 33.75vw);
+}
+
+@media (max-width: 768px) {
+  .header-wrap .site-shell > header,
+  .header-wrap .site-header,
+  .header-wrap header {
+    grid-template-columns: 72px 1fr 72px;
+    gap: 8px;
+  }
+
+  .header-left {
+    justify-content: flex-start;
+  }
+
+  .header-center {
+    justify-content: center;
+  }
+
+  .header-right {
+    justify-content: flex-end;
+  }
+
+  .header-logo-link {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .header-logo {
+    width: min(150px, 46vw);
+    margin: 0 auto;
+  }
+
+  .account-menu {
+    top: 50px;
+    right: 0;
+    min-width: 180px;
+    padding: 8px;
+  }
+
+  .account-menu-actions {
+    gap: 6px;
+  }
+
+  .account-menu .metal-btn,
+  .account-menu .account-menu-link {
+    min-height: 42px;
+    border-radius: 14px;
+    font-size: 14px;
+  }
+}
+
+/* ================================================================
+   global.css — Gedeelde stijl voor alle pagina's (verbatim overgenomen)
+   ================================================================ */
+/* ================================================================
+   global.css — Gedeelde stijl voor alle pagina's 60 Seconds FM
+   Laad dit als LAATSTE CSS link (vlak voor </head>)
+   ================================================================ */
+
+/* Fonts */
+body, button, input, select, textarea {
+  font-family: 'Manrope', sans-serif !important;
+}
+
+h1, h2, h3, h4,
+.stat-value, .section-title, .page-title,
+[class*="title"], [class*="heading"] {
+  font-family: 'Space Grotesk', 'Manrope', sans-serif !important;
+}
+
+/* Achtergrond — wint van alle pagina CSS */
+html {
+  background-color: #000000 !important;
+}
+
+html body {
+  background-color: #000000 !important;
+  background-image:
+    linear-gradient(180deg,
+      rgba(0,0,0,0) 0%,
+      rgba(0,0,0,0) 40%,
+      rgba(0,0,0,0.65) 65%,
+      rgba(0,0,0,1) 85%
+    ),
+    url("/icons/background-radio.jpg") !important;
+  background-size: 100% 100vh, 100% 100vh !important;
+  background-position: top center, top center !important;
+  background-repeat: no-repeat, no-repeat !important;
+  background-attachment: scroll, scroll !important;
+  color: #f5f5f5 !important;
+}
+
+html body::before,
+html body::after {
+  display: none !important;
+  opacity: 0 !important;
+  content: none !important;
+}
+
+/* Header: transparant zoals index pagina */
+.header-wrap {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  width: 100vw !important;
+  z-index: 125 !important;
+  background: transparent !important;
+  border-bottom: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+/* Content padding voor fixed header */
+.site-shell,
+.page-wrap,
+[class*="page-wrap"],
+[class*="content-wrap"] {
+  padding-top: 82px !important;
+}
+
+@media (max-width: 768px) {
+  /* Index: ruimte behouden */
+  .site-shell,
+  [class*="content-wrap"] {
+    padding-top: 68px !important;
+  }
+  /* Overige pagina's: dichter bij header */
+  body.page-other .site-shell {
+    padding-top: 24px !important;
+  }
+}
+
+/* Coins badge: identiek aan index pagina */
+.currency-badge {
+  position: fixed !important;
+  top: 14px !important;
+  left: 18px !important;
+  width: 180px !important;
+  z-index: 130 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  min-height: 40px !important;
+  padding: 0 10px !important;
+  border-radius: 12px !important;
+  border: none !important;
+  background: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  box-shadow: none !important;
+  white-space: nowrap !important;
+}
+
+.currency-badge-icon {
+  width: 28px !important;
+  height: 28px !important;
+  object-fit: contain !important;
+  flex-shrink: 0 !important;
+}
+
+.currency-badge-value {
+  color: #ffffff !important;
+  font-size: 16px !important;
+  font-weight: 700 !important;
+  font-family: 'Space Grotesk', sans-serif !important;
+}
+
+.currency-store-btn {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 22px !important;
+  height: 22px !important;
+  border-radius: 999px !important;
+  border: 1px solid rgba(255,255,255,0.15) !important;
+  background: rgba(255,255,255,0.055) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.08) !important;
+  transition: transform 0.15s ease, border-color 0.18s ease !important;
+  cursor: pointer !important;
+  text-decoration: none !important;
+  flex-shrink: 0 !important;
+}
+
+.currency-store-btn:hover {
+  transform: translateY(-2px) !important;
+  border-color: rgba(245,200,75,0.55) !important;
+  background: rgba(245,200,75,0.09) !important;
+}
+
+.currency-plus-icon {
+  width: 14px !important;
+  height: 14px !important;
+  object-fit: contain !important;
+  filter: brightness(0) invert(1) !important;
+  opacity: 0.85 !important;
+  display: block !important;
+}
+
+/* Containers: glass stijl */
+.auth-card,
+.panel-card,
+.hero-card,
+.dashboard-card,
+.store-card,
+.store-hero-card,
+.store-balance-card,
+.empty-card,
+.playlist-card,
+.stat-card,
+.notification-card,
+.track-card {
+  background: rgba(255,255,255,0.055) !important;
+  border: 1px solid rgba(255,255,255,0.12) !important;
+  border-top: 1px solid rgba(255,255,255,0.18) !important;
+  backdrop-filter: blur(20px) saturate(150%) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(150%) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.10),
+    0 8px 32px rgba(0,0,0,0.28) !important;
+}
+
+/* Form inputs */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+input[type="search"],
+input[type="url"],
+textarea,
+select {
+  background: rgba(255,255,255,0.055) !important;
+  border: 1px solid rgba(255,255,255,0.13) !important;
+  color: #f5f5f5 !important;
+  border-radius: 12px !important;
+  font-family: 'Manrope', sans-serif !important;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  border-color: rgba(245,200,75,0.45) !important;
+  outline: none !important;
+  box-shadow: 0 0 0 2px rgba(245,200,75,0.12) !important;
+}
+
+/* Badges */
+.badge, .pill, .tag,
+[class*="-badge"]:not(.currency-badge):not(.currency-badge-icon):not(.currency-badge-value),
+[class*="-pill"] {
+  background: rgba(255,255,255,0.06) !important;
+  border: 1px solid rgba(255,255,255,0.10) !important;
+  color: rgba(255,255,255,0.70) !important;
+  border-radius: 999px !important;
+  font-family: 'Space Grotesk', sans-serif !important;
+}
+
+/* Coins: voorkom dat algemene badge-stijlen een container op icon/waarde zetten */
+.currency-badge,
+.currency-badge-icon,
+.currency-badge-value {
+  background: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: rgba(255,255,255,0.04); }
+::-webkit-scrollbar-thumb { background: rgba(212,175,55,0.25); border-radius: 999px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(212,175,55,0.45); }
+
+/* Mobiel: coins in relatieve positie */
+@media (max-width: 768px) {
+  .currency-badge {
+    position: relative !important;
+    top: auto !important;
+    left: auto !important;
+    width: auto !important;
+  }
+}
+
+
+/* Sidebar icon white style start */
+
+.sidebar * svg,
+.sidebar * svg path,
+.sidebar * i {
+    color: #B0B0B0 !important;
+    fill: #B0B0B0 !important;
+    stroke: #B0B0B0 !important;
+    filter: none;
+    transition: all 0.2s ease;
+}
+
+.sidebar * svg:hover,
+.sidebar * svg:hover path,
+.sidebar * i:hover {
+    color: #f5c84b !important;
+    fill: #f5c84b !important;
+    stroke: #f5c84b !important;
+    filter: none;
+}
+
+/* Sidebar icon white style end */
+
+/* ================================================================
+   Header logo — consistent op alle pagina's
+   ================================================================ */
+
+/* Header — geen glass, alle pagina's */
+.header-bar {
+  position: relative !important;
+  min-height: 96px !important;
+}
+
+/* Logo + slogan gecentreerd op volledig scherm */
+.header-center {
+  position: absolute !important;
+  left: 70px !important;
+  right: -70px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  pointer-events: none !important;
+}
+
+.header-center > * {
+  pointer-events: auto !important;
+}
+
+.header-logo-link {
+  display: inline-flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  text-decoration: none !important;
+  cursor: pointer !important;
+  pointer-events: auto !important;
+  gap: 3px !important;
+  margin-top: 5px !important;
+}
+
+.header-logo-link:hover {
+  opacity: 0.85 !important;
+}
+
+.header-logo {
+  display: block !important;
+  width: 126px !important;
+  height: auto !important;
+  object-fit: contain !important;
+}
+
+.header-slogan {
+  font-size: 10px !important;
+  letter-spacing: 0.2em !important;
+}
+
+/* Mobiel: reset naar gewone flow */
+@media (max-width: 768px) {
+  .header-center {
+    position: relative !important;
+    left: auto !important;
+    right: auto !important;
+  }
+  .header-logo {
+    width: 110px !important;
+  }
+}
+
+
+/* ================================================================
+   MOBILE ONLY — alle aanpassingen onder 768px
+   Desktop wordt NIET aangeraakt
+   ================================================================ */
+@media (max-width: 768px) {
+
+  /* --- Glass header --- */
+  .header-bar {
+    background: rgba(8, 8, 8, 0.35) !important;
+    backdrop-filter: blur(20px) saturate(160%) !important;
+    -webkit-backdrop-filter: blur(20px) saturate(160%) !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.07) !important;
+    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.3) !important;
+    position: relative !important;
+    display: grid !important;
+    grid-template-columns: 1fr auto 1fr !important;
+    align-items: center !important;
+    min-height: 72px !important;
+    padding: 10px 12px !important;
+  }
+
+  /* --- Minder ruimte onder header: alle pagina's --- */
+  .site-shell .page-wrap,
+  .page-wrap {
+    margin-top: 0 !important;
+  }
+
+  /* Community col: zelfde breedte als radio --- */
+  .content-layout {
+    grid-template-columns: 1fr !important;
+    padding: 0 !important;
+  }
+
+  .community-col {
+    position: static !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    width: 100% !important;
+  }
+
+  .community-col .news-feed-section,
+  .community-col .top-supporters-section,
+  #newsFeedSection,
+  #topSupportersSection {
+    width: 100% !important;
+    margin: 0 0 16px 0 !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Gap between artist spotlight and community col (same as between sections) */
+  .community-col {
+    margin-top: 16px !important;
+  }
+
+  /* --- Logo gecentreerd --- */
+  .header-center {
+    position: static !important;
+    left: auto !important;
+    right: auto !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    pointer-events: auto !important;
+  }
+
+  .header-logo-link {
+    margin-top: 0 !important;
+    display: inline-flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    gap: 3px !important;
+  }
+
+  .header-logo {
+    width: 100px !important;
+  }
+
+  /* --- Coins links boven (fixed op vaste positie in header) --- */
+  .header-left {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+  }
+
+  /* Currency badge: fixed maar links boven in header */
+  #currencyBadge {
+    position: fixed !important;
+    top: 16px !important;
+    left: 12px !important;
+    width: auto !important;
+    min-width: 0 !important;
+    padding: 4px 10px 4px 8px !important;
+    min-height: 36px !important;
+    border-radius: 10px !important;
+    background: rgba(212, 175, 55, 0.12) !important;
+    border: 1px solid rgba(212, 175, 55, 0.2) !important;
+    z-index: 200 !important;
+  }
+
+  /* --- Account menu: glass stijl, geen zwart --- */
+  .account-menu {
+    background: rgba(18, 16, 10, 0.55) !important;
+    backdrop-filter: blur(24px) saturate(160%) !important;
+    -webkit-backdrop-filter: blur(24px) saturate(160%) !important;
+    border: 1px solid rgba(212, 175, 55, 0.15) !important;
+    box-shadow:
+      0 8px 32px rgba(0, 0, 0, 0.35),
+      inset 0 1px 0 rgba(255, 255, 255, 0.06) !important;
+    border-radius: 18px !important;
+  }
+
+  /* --- Logout: verberg het icoon --- */
+  #logout .icon {
+    display: none !important;
+  }
+}
+
+/* ================================================================
+   Coins badge: verborgen tenzij expliciet ingelogd (alle pagina's)
+   ================================================================ */
+#currencyBadge {
+  display: none !important;
+}
+
+body.is-authenticated #currencyBadge {
+  display: inline-flex !important;
+}
+
+/* ================================================================
+   buttons.css — Eén bron van waarheid voor alle knoppen (verbatim overgenomen)
+   ================================================================ */
+/* =============================================================
+   buttons.css — v1
+   Eén bron van waarheid voor alle knoppen op alle pagina's.
+   Gebaseerd op de metal-btn stijl van index.css.
+   Importeer dit LAATSTE in elke pagina-CSS zodat het wint.
+   ============================================================= */
+
+/* ── Reset alle gradient-knoppen ──────────────────────────────── */
+.gold-btn,
+.ghost-btn,
+.store-card-btn,
+.start-btn,
+.submit-btn,
+.save-btn,
+.primary-btn,
+.secondary-btn,
+.auth-btn,
+.action-btn,
+.approve-btn,
+.clip-play-btn {
+  background: rgba(255,255,255,0.055) !important;
+  background-image: none !important;
+  color: #ffffff !important;
+  border: 1px solid rgba(255,255,255,0.16) !important;
+  border-radius: 999px !important;
+  min-height: 48px;
+  padding: 0 22px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-family: 'Manrope', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.10),
+    0 12px 30px rgba(0,0,0,0.36) !important;
+  transition:
+    transform 0.18s ease,
+    border-color 0.18s ease,
+    box-shadow 0.18s ease,
+    background-color 0.18s ease !important;
+  text-shadow: none !important;
+}
+
+.gold-btn:hover,
+.ghost-btn:hover,
+.store-card-btn:hover,
+.start-btn:hover,
+.submit-btn:hover,
+.save-btn:hover,
+.primary-btn:hover,
+.secondary-btn:hover,
+.auth-btn:hover,
+.action-btn:hover,
+.approve-btn:hover,
+.clip-play-btn:hover {
+  transform: translateY(-2px) !important;
+  background: rgba(255,255,255,0.075) !important;
+  background-image: none !important;
+  border-color: rgba(245,200,75,0.55) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.12),
+    0 16px 38px rgba(0,0,0,0.42),
+    0 0 26px rgba(245,200,75,0.25) !important;
+}
+
+.gold-btn:disabled,
+.ghost-btn:disabled,
+.submit-btn:disabled,
+.save-btn:disabled,
+.auth-btn:disabled,
+.action-btn:disabled,
+.approve-btn:disabled {
+  opacity: 0.42 !important;
+  cursor: not-allowed !important;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+/* ── metal-btn blijft exact zoals op index.css ──────────────── */
+.metal-btn {
+  border: 1px solid rgba(255,255,255,0.16);
+  background:
+    linear-gradient(180deg, #fbfbfb 0%, #d6d6d6 16%, #b6b6b6 35%, #8b8b8b 52%, #d2d2d2 72%, #f4f4f4 100%);
+  color: #151515;
+  padding: 13px 18px;
+  border-radius: 999px;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 14px;
+  text-shadow: 0 1px 0 rgba(255,255,255,0.45);
+  box-shadow:
+    inset 0 2px 0 rgba(255,255,255,0.72),
+    inset 0 -2px 3px rgba(0,0,0,0.18),
+    0 10px 22px rgba(0,0,0,0.25);
+  transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
+  backdrop-filter: blur(2px);
+  font-family: 'Manrope', sans-serif;
+}
+
+.metal-btn:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.02);
+}
+
+.metal-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
+  filter: grayscale(0.25);
+}
+
+/* ── Centrering ──────────────────────────────────────────────── */
+/* Knoppen in actie-rijen altijd gecentreerd */
+.btn-row,
+.action-row,
+.form-actions,
+.cta-empty-state {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+/* ================================================================
+   Mini radio player — ported from the injectStyles() block in
+   assets/js/radio-mini-player.js. Shown on every (site) page except
+   the homepage (which has the full player instead).
+   ================================================================ */
+.has-mini-radio-player {
+  padding-bottom: calc(var(--mobile-bottom-nav-height, 86px) + 78px + env(safe-area-inset-bottom, 0px)) !important;
+}
+
+.mini-radio-player {
+  position: fixed;
+  left: 8px;
+  right: 8px;
+  bottom: calc(var(--mobile-bottom-nav-height, 86px) + env(safe-area-inset-bottom, 0px) - 1px);
+  z-index: 115;
+  border-radius: 16px 16px 0 0;
+  padding: 8px 10px 6px;
+  background: rgba(255, 255, 255, 0.075) !important;
+  background-image: none !important;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-bottom: 0;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12), 0 -10px 28px rgba(0, 0, 0, 0.18);
+  backdrop-filter: blur(22px) saturate(1.18);
+  -webkit-backdrop-filter: blur(22px) saturate(1.18);
+  color: #f5f5f5;
+  font-family: "Manrope", sans-serif;
+}
+
+.mini-radio-player::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.015));
+  z-index: -1;
+}
+
+.mini-radio-top {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+  margin-bottom: 6px;
+}
+
+.mini-radio-artist,
+.mini-radio-title {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.24);
+}
+
+.mini-radio-artist {
+  font-size: 11px;
+  color: rgba(245, 245, 245, 0.74);
+}
+
+.mini-radio-title {
+  font-size: 13px;
+  font-weight: 700;
+  font-family: "Space Grotesk", sans-serif;
+  color: #fff;
+}
+
+.mini-radio-controls {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: nowrap;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.mini-radio-btn {
+  appearance: none;
+  -webkit-appearance: none;
+  min-height: 32px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.16) !important;
+  background: rgba(255, 255, 255, 0.07) !important;
+  background-image: none !important;
+  color: #f5f5f5 !important;
+  padding: 0 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 8px 20px rgba(0, 0, 0, 0.14);
+  white-space: nowrap;
+  text-decoration: none !important;
+  font-family: "Manrope", sans-serif;
+  line-height: 1;
+  flex: 0 0 auto;
+  backdrop-filter: blur(14px) saturate(1.12);
+  -webkit-backdrop-filter: blur(14px) saturate(1.12);
+  transition: transform 0.16s ease, border-color 0.16s ease, background-color 0.16s ease, box-shadow 0.16s ease, color 0.16s ease;
+}
+
+.mini-radio-btn:hover {
+  transform: translateY(-1px);
+  background: rgba(255, 255, 255, 0.095) !important;
+  border-color: rgba(212, 175, 55, 0.42) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.13), 0 10px 22px rgba(0, 0, 0, 0.18), 0 0 18px rgba(212, 175, 55, 0.12);
+}
+
+.mini-radio-btn span {
+  color: inherit !important;
+}
+
+.mini-radio-btn .mini-player-icon {
+  width: 14px;
+  height: 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  color: #d4af37 !important;
+  flex: 0 0 auto;
+}
+
+.mini-svg-icon {
+  width: 14px;
+  height: 14px;
+  display: block;
+}
+
+.mini-radio-btn.is-liked {
+  border-color: rgba(212, 175, 55, 0.58) !important;
+  background: rgba(255, 255, 255, 0.09) !important;
+  color: #ffd76a !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.13), 0 10px 22px rgba(0, 0, 0, 0.16), 0 0 20px rgba(212, 175, 55, 0.14);
+}
+
+.mini-radio-btn.is-liked span,
+.mini-radio-btn.is-liked .mini-player-icon {
+  color: #ffd76a !important;
+}
+
+.mini-radio-btn.like-feedback {
+  transform: scale(1.08);
+}
+
+.mini-radio-btn.is-disabled {
+  opacity: 0.45;
+  filter: grayscale(0.35);
+  cursor: not-allowed;
+}
+
+.mini-radio-volume-wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-width: 34px;
+  flex: 0 0 34px;
+  padding: 0 8px;
+  height: 32px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: rgba(255, 255, 255, 0.07);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 8px 20px rgba(0, 0, 0, 0.14);
+  margin-left: auto;
+  overflow: hidden;
+  transition: flex-basis 0.22s ease, min-width 0.22s ease, padding 0.22s ease, border-color 0.16s ease, background-color 0.16s ease;
+  backdrop-filter: blur(14px) saturate(1.12);
+  -webkit-backdrop-filter: blur(14px) saturate(1.12);
+}
+
+.mini-radio-volume-wrap:hover,
+.mini-radio-player.volume-open .mini-radio-volume-wrap {
+  background: rgba(255, 255, 255, 0.095);
+  border-color: rgba(212, 175, 55, 0.4);
+}
+
+.mini-radio-player.volume-open .mini-radio-volume-wrap {
+  min-width: 78px;
+  flex: 0 0 92px;
+  padding-right: 8px;
+}
+
+.mini-radio-volume-icon {
+  width: 14px;
+  height: 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  color: #d4af37;
+  flex: 0 0 auto;
+  cursor: pointer;
+}
+
+.mini-radio-volume-icon .mini-svg-icon {
+  width: 14px;
+  height: 14px;
+}
+
+.mini-radio-volume-wrap input[type="range"] {
+  width: 100%;
+  min-width: 0;
+  margin: 0;
+  accent-color: #d4af37;
+  background: transparent !important;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.18s ease;
+}
+
+.mini-radio-player.volume-open .mini-radio-volume-wrap input[type="range"] {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.mini-radio-time {
+  font-size: 10px;
+  color: rgba(245, 245, 245, 0.66);
+  white-space: nowrap;
+  min-width: 60px;
+  text-align: right;
+  flex: 0 0 auto;
+}
+
+@media (max-width: 420px) {
+  .mini-radio-btn {
+    padding: 0 8px;
+    font-size: 11px;
+  }
+  .mini-radio-btn span:last-child {
+    display: none;
+  }
+  .mini-radio-btn#miniRadioLike span:last-child {
+    display: inline;
+  }
+  .mini-radio-player.volume-open .mini-radio-volume-wrap {
+    min-width: 72px;
+    flex-basis: 84px;
+    padding: 0 7px;
+  }
+  .mini-radio-time {
+    min-width: 48px;
+    font-size: 9px;
+  }
+}
+
+@media (min-width: 901px) {
+  .has-mini-radio-player {
+    padding-bottom: 0 !important;
+  }
+  .mini-radio-player {
+    left: auto;
+    right: 24px;
+    bottom: 24px;
+    width: min(430px, calc(100vw - 120px));
+    border-radius: 22px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.16);
+    padding: 14px 16px;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12), 0 18px 36px rgba(0, 0, 0, 0.2);
+  }
+  .mini-radio-top {
+    gap: 4px;
+    margin-bottom: 10px;
+  }
+  .mini-radio-title {
+    font-size: 15px;
+  }
+  .mini-radio-artist {
+    font-size: 13px;
+  }
+  .mini-radio-btn {
+    min-height: 40px;
+    padding: 0 14px;
+    font-size: 14px;
+  }
+  .mini-radio-volume-wrap {
+    height: 40px;
+  }
+  .mini-radio-player.volume-open .mini-radio-volume-wrap {
+    min-width: 124px;
+    flex-basis: 140px;
+  }
+  .mini-radio-time {
+    font-size: 12px;
+    min-width: 72px;
+  }
+}

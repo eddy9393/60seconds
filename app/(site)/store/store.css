@@ -1,0 +1,492 @@
+/* Ported verbatim from assets/css/store.css (buttons.css import removed — already in app/globals.css) */
+
+body {
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at top, rgba(205, 168, 78, 0.14), transparent 32%),
+    linear-gradient(180deg, #050505 0%, #090909 48%, #040404 100%);
+  color: #f4f1e8;
+}
+
+.store-page {
+  width: min(1220px, calc(100vw - 64px));
+  margin: 0 auto;
+  padding: 140px 0 120px;
+}
+
+.store-layout {
+  display: grid;
+  gap: 42px;
+}
+
+.store-hero-card,
+.store-card,
+.empty-card {
+  border-radius: 30px;
+  border: 1px solid rgba(255,255,255,0.08);
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.045), rgba(255,255,255,0.012)),
+    linear-gradient(180deg, rgba(12,12,12,0.94), rgba(8,8,8,0.98));
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.05),
+    0 28px 60px rgba(0,0,0,0.35);
+  backdrop-filter: blur(10px);
+}
+
+.store-hero-card {
+  padding: 38px 38px 34px;
+  text-align: center;
+}
+
+.store-kicker,
+.store-section-kicker {
+  color: rgba(247, 230, 172, 0.82);
+  text-transform: uppercase;
+  letter-spacing: 0.22em;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.store-title {
+  margin: 10px 0 14px;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: clamp(34px, 4.1vw, 58px);
+  line-height: 0.98;
+  letter-spacing: -0.04em;
+}
+
+.store-subtitle,
+.store-section-copy {
+  margin: 0;
+  color: rgba(244, 241, 232, 0.72);
+  font-size: 16px;
+  line-height: 1.7;
+}
+
+.store-subtitle {
+  max-width: 760px;
+  margin: 0 auto;
+}
+
+.store-subtitle-coin {
+  display: inline-block;
+  width: 1.05em;
+  height: 1.05em;
+  margin-left: 0.24em;
+  vertical-align: -0.13em;
+  object-fit: contain;
+}
+
+.store-balance-card {
+  margin: 30px auto 0;
+  max-width: 420px;
+  padding: 18px 20px 0;
+  display: grid;
+  gap: 14px;
+  justify-items: center;
+}
+
+.store-balance-label {
+  color: rgba(244, 241, 232, 0.62);
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  text-align: center;
+}
+
+.store-balance-value-wrap,
+.store-pack-amount,
+.store-price {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.store-balance-coin,
+.store-inline-coin {
+  width: 30px;
+  height: 30px;
+  object-fit: contain;
+  flex: 0 0 auto;
+}
+
+.store-balance-coin {
+  width: clamp(40px, 6vw, 56px);
+  height: clamp(40px, 6vw, 56px);
+}
+
+.store-inline-coin--large {
+  width: 26px;
+  height: 26px;
+}
+
+.store-balance-value {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: clamp(40px, 6vw, 56px);
+  font-weight: 700;
+  color: #f7e6ac;
+  line-height: 1;
+}
+
+.store-section {
+  display: grid;
+  gap: 20px;
+}
+
+.store-section-head {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.store-section-head--centered {
+  justify-content: center;
+  text-align: center;
+}
+
+.store-section-title {
+  margin: 10px 0 0;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: clamp(24px, 3vw, 34px);
+  line-height: 1.04;
+}
+
+.store-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.store-card {
+  padding: 24px;
+  display: grid;
+  gap: 16px;
+  align-content: start;
+}
+
+.store-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.store-chip {
+  display: inline-flex;
+  align-items: center;
+  min-height: 30px;
+  padding: 0 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(247,230,172,0.18);
+  background: rgba(247,230,172,0.08);
+  color: #f7e6ac;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+
+.store-price,
+.store-pack-price {
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 700;
+  color: #f7e6ac;
+}
+
+.store-card-visual-wrap {
+  min-height: 138px;
+  display: grid;
+  place-items: center;
+  padding: 8px 0 4px;
+}
+
+.store-card-visual {
+  width: clamp(88px, 11vw, 132px);
+  height: clamp(88px, 11vw, 132px);
+  object-fit: contain;
+  display: block;
+  filter: drop-shadow(0 14px 30px rgba(0,0,0,0.34));
+}
+
+.store-card-title {
+  margin: 0;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 24px;
+  line-height: 1.08;
+  text-align: center;
+}
+
+.store-card-text {
+  margin: 0;
+  color: rgba(244, 241, 232, 0.7);
+  line-height: 1.68;
+  font-size: 15px;
+  text-align: center;
+}
+
+.store-card-btn,
+.gold-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  border-radius: 999px;
+  border: 1px solid rgba(247,230,172,0.18);
+  background: rgba(247,230,172,0.08);
+  color: #f7e6ac;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  text-decoration: none;
+  padding: 0 18px;
+}
+
+.store-card-btn[disabled] {
+  opacity: 0.54;
+  cursor: not-allowed;
+}
+
+.store-card--highlight {
+  border-color: rgba(247,230,172,0.2);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.05),
+    0 18px 42px rgba(0,0,0,0.3),
+    0 0 0 1px rgba(247,230,172,0.08);
+}
+
+.store-pack-amount {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 30px;
+  font-weight: 700;
+  color: #f7e6ac;
+}
+
+.empty-card {
+  max-width: 720px;
+  margin: 60px auto 0;
+  padding: 36px;
+  text-align: center;
+}
+
+.empty-icon {
+  font-size: 28px;
+  margin-bottom: 12px;
+}
+
+.empty-title {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 28px;
+  margin-bottom: 10px;
+}
+
+.empty-text {
+  color: rgba(244,241,232,0.72);
+  line-height: 1.7;
+  margin-bottom: 20px;
+}
+
+.hidden {
+  display: none !important;
+}
+
+@media (max-width: 1100px) {
+  .store-page {
+    width: min(100%, calc(100vw - 40px));
+  }
+
+  .store-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .store-section-head {
+    flex-direction: column;
+    align-items: center;
+  }
+}
+
+@media (max-width: 768px) {
+  .store-page {
+    width: min(100%, calc(100vw - 24px));
+    padding: 108px 0 104px;
+  }
+
+  .store-hero-card,
+  .store-card,
+  .empty-card {
+    border-radius: 22px;
+    padding: 22px;
+  }
+
+  .store-hero-card {
+    padding: 28px 22px 24px;
+  }
+
+  .store-title {
+    font-size: 38px;
+  }
+
+  .store-section-title,
+  .empty-title {
+    font-size: 26px;
+  }
+
+  .store-card-visual-wrap {
+    min-height: 104px;
+  }
+
+  .store-card-visual {
+    width: 88px;
+    height: 88px;
+  }
+}
+
+/* PREMIUM UI V3 - shared visual polish */
+:root{--premium-bg:#050507;--premium-surface:rgba(18,18,22,.74);--premium-border:rgba(255,255,255,.105);--premium-gold:#f5c84b;--premium-muted:rgba(255,255,255,.68)}
+body{background:radial-gradient(circle at 50% -10%,rgba(245,200,75,.12),transparent 34%),radial-gradient(circle at 88% 20%,rgba(146,74,255,.09),transparent 28%),#050507!important;color:#fff!important}
+.logo-slogan,.site-slogan,.slogan,[class*="slogan"]{color:#fff!important;text-shadow:0 0 18px rgba(255,255,255,.16)!important}
+.auth-card,.auth-panel-wrap,.hero-card,.panel-card,.dashboard-card,.metrics-card,.priority-card,.store-hero-card,.store-balance-card,.store-card,.empty-card,.state-card,.check-card,.playlist-card,main section:not(.desktop-side-nav-panel){background:rgba(18,18,22,.74)!important;border-color:rgba(255,255,255,.105)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 24px 70px rgba(0,0,0,.50),0 0 42px rgba(245,200,75,.08)!important;backdrop-filter:blur(20px) saturate(1.18)!important;-webkit-backdrop-filter:blur(20px) saturate(1.18)!important}
+.auth-card:hover,.hero-card:hover,.panel-card:hover,.dashboard-card:hover,.store-card:hover,.playlist-card:hover{border-color:rgba(245,200,75,.38)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.10),0 28px 78px rgba(0,0,0,.54),0 0 48px rgba(245,200,75,.15)!important}
+
+/* ============================================================
+   Store visual reset — match notifications glass
+   Scope: store page only. CSS-only, no layout changes.
+   Removes the dark stacked rectangles from store wrappers/cards.
+   ============================================================ */
+:root {
+  --store-glass-border: rgba(255, 255, 255, .18);
+  --store-glass-border-hover: rgba(245, 200, 75, .44);
+  --store-glass-bg: rgba(255, 255, 255, .072);
+  --store-glass-shadow: rgba(0, 0, 0, .26);
+}
+
+body {
+  background:
+    linear-gradient(180deg, rgba(7, 7, 7, 0.46) 0%, rgba(7, 7, 7, 0.72) 45%, rgba(7, 7, 7, 0.84) 100%),
+    radial-gradient(circle at top, rgba(212, 175, 55, 0.14), transparent 30%),
+    url("/bg-mobile-final-1080x1920.webp") !important;
+  background-size: cover, auto, cover !important;
+  background-position: center top, center top, center center !important;
+  background-repeat: no-repeat, no-repeat, no-repeat !important;
+  background-attachment: fixed, scroll, fixed !important;
+}
+
+.store-page,
+.store-layout,
+.store-hero,
+.store-section,
+.store-section-head,
+.store-grid,
+.store-card-top,
+.store-card-visual-wrap {
+  background: transparent !important;
+  box-shadow: none !important;
+  border-color: transparent !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+.store-page main,
+.store-page section,
+main.store-page section,
+main.page-wrap section,
+.page-wrap .store-section,
+.page-wrap .store-hero {
+  background: transparent !important;
+  box-shadow: none !important;
+  border: 0 !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+.page-wrap .store-hero-card,
+.page-wrap .store-card,
+.page-wrap .empty-card {
+  border: 1px solid var(--store-glass-border) !important;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.105), rgba(255,255,255,.045)) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.16),
+    inset 0 -1px 0 rgba(255,255,255,.035),
+    0 18px 42px var(--store-glass-shadow),
+    0 0 34px rgba(255,255,255,.035) !important;
+  backdrop-filter: blur(22px) saturate(1.18) !important;
+  -webkit-backdrop-filter: blur(22px) saturate(1.18) !important;
+}
+
+.page-wrap .store-balance-card {
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+.page-wrap .store-card--highlight {
+  border-color: rgba(245, 200, 75, .34) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.18),
+    inset 0 -1px 0 rgba(255,255,255,.035),
+    0 18px 42px rgba(0,0,0,.28),
+    0 0 26px rgba(245,200,75,.08) !important;
+}
+
+.page-wrap .store-chip,
+.page-wrap .store-price,
+.page-wrap .store-pack-amount,
+.page-wrap .store-pack-price {
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.page-wrap .store-chip {
+  background:
+    radial-gradient(circle at 30% 18%, rgba(255,255,255,.16), transparent 30%),
+    linear-gradient(145deg, rgba(255,255,255,.10), rgba(255,255,255,.035)) !important;
+  border: 1px solid rgba(255,255,255,.15) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.14),
+    0 10px 24px rgba(0,0,0,.20) !important;
+  backdrop-filter: blur(14px) saturate(1.12) !important;
+  -webkit-backdrop-filter: blur(14px) saturate(1.12) !important;
+}
+
+.page-wrap .store-card-btn,
+.page-wrap .gold-btn {
+  border: 1px solid rgba(255,255,255,.16) !important;
+  background:
+    radial-gradient(circle at 30% 18%, rgba(255,255,255,.18), transparent 28%),
+    linear-gradient(145deg, rgba(255,255,255,.105), rgba(255,255,255,.035)) !important;
+  color: #ffffff !important;
+  text-shadow: none !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.16),
+    inset 0 -14px 28px rgba(0,0,0,.18),
+    0 14px 30px rgba(0,0,0,.28),
+    0 0 0 rgba(245,200,75,0) !important;
+  backdrop-filter: blur(16px) saturate(1.16) !important;
+  -webkit-backdrop-filter: blur(16px) saturate(1.16) !important;
+}
+
+.page-wrap .store-card-btn:not([disabled]):hover,
+.page-wrap .gold-btn:hover {
+  border-color: var(--store-glass-border-hover) !important;
+  background:
+    radial-gradient(circle at 30% 18%, rgba(255,255,255,.24), transparent 30%),
+    linear-gradient(145deg, rgba(255,255,255,.12), rgba(245,200,75,.075)) !important;
+  color: #fff0b8 !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.20),
+    0 14px 30px rgba(0,0,0,.30),
+    0 0 22px rgba(245,200,75,.14) !important;
+}
+
+@supports (-webkit-touch-callout: none) {
+  @media (max-width: 768px) {
+    body {
+      background-size: cover, auto, cover !important;
+      background-position: center top, center top, center top !important;
+      background-attachment: scroll, scroll, scroll !important;
+    }
+  }
+}
