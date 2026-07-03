@@ -44,6 +44,7 @@ const VOLUME_AUTO_CLOSE_MS = 3000;
 
 type RadioContextValue = {
   audioRef: React.RefObject<HTMLAudioElement>;
+  analyserRef: React.RefObject<AnalyserNode | null>;
   progressFillRef: React.RefObject<HTMLDivElement>;
   elapsedRef: React.RefObject<HTMLSpanElement>;
   durationRef: React.RefObject<HTMLSpanElement>;
@@ -91,6 +92,8 @@ export function RadioProvider({ children }: { children: React.ReactNode }) {
   const { user, profile, coins, refreshProfile } = useAuth();
 
   const audioRef = useRef<HTMLAudioElement>(null);
+  const analyserRef = useRef<AnalyserNode | null>(null);
+  const audioCtxConnectedRef = useRef(false);
   const progressFillRef = useRef<HTMLDivElement>(null);
   const elapsedRef = useRef<HTMLSpanElement>(null);
   const durationRef = useRef<HTMLSpanElement>(null);
@@ -717,6 +720,32 @@ export function RadioProvider({ children }: { children: React.ReactNode }) {
     };
   }, [isLive, registerListener, updateListeners, loadTracksFromSupabase]);
 
+  // Connects the Web Audio analyser exactly once for the lifetime of the
+  // <audio> element (which itself lives here in the provider and is never
+  // remounted). A MediaElementSourceNode can only ever be created once per
+  // media element, so this must NOT live in the Waveform component, which
+  // mounts/unmounts as the user navigates to and from the homepage.
+  const connectAnalyser = useCallback(() => {
+    if (audioCtxConnectedRef.current) return;
+    const audio = audioRef.current;
+    if (!audio) return;
+    try {
+      const AudioContextCtor =
+        window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+      const audioCtx = new AudioContextCtor();
+      const analyser = audioCtx.createAnalyser();
+      analyser.fftSize = 64;
+      analyser.smoothingTimeConstant = 0.8;
+      const source = audioCtx.createMediaElementSource(audio);
+      source.connect(analyser);
+      analyser.connect(audioCtx.destination);
+      analyserRef.current = analyser;
+      audioCtxConnectedRef.current = true;
+    } catch (e) {
+      console.warn("[radio engine] Web Audio connect error:", (e as Error).message);
+    }
+  }, []);
+
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio) return;
@@ -737,6 +766,7 @@ export function RadioProvider({ children }: { children: React.ReactNode }) {
       }
     };
     const onPlay = () => {
+      connectAnalyser();
       clearUnexpectedPauseTimer();
       updatePauseButtonState();
       persistSession();
@@ -760,7 +790,7 @@ export function RadioProvider({ children }: { children: React.ReactNode }) {
       audio.removeEventListener("pause", onPause);
       audio.removeEventListener("ended", onEnded);
     };
-  }, [advanceAfterTrackCompletion, persistSession, clearUnexpectedPauseTimer, updatePauseButtonState, scheduleUnexpectedResume, setTimeDisplays]);
+  }, [advanceAfterTrackCompletion, persistSession, clearUnexpectedPauseTimer, updatePauseButtonState, scheduleUnexpectedResume, setTimeDisplays, connectAnalyser]);
 
   useEffect(() => {
     const onVisibility = () => {
@@ -812,6 +842,7 @@ export function RadioProvider({ children }: { children: React.ReactNode }) {
 
   const value: RadioContextValue = {
     audioRef,
+    analyserRef,
     progressFillRef,
     elapsedRef,
     durationRef,
