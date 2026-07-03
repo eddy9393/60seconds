@@ -4,26 +4,22 @@ import { useEffect, useRef } from "react";
 
 type WaveformProps = {
   audioRef: React.RefObject<HTMLAudioElement>;
+  analyserRef: React.RefObject<AnalyserNode | null>;
   isPaused: boolean;
 };
 
-export default function Waveform({ audioRef, isPaused }: WaveformProps) {
+export default function Waveform({ analyserRef, isPaused }: WaveformProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const wrapRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const canvas = canvasRef.current;
-    const audioEl = audioRef.current;
-    if (!canvas || !audioEl) return;
+    if (!canvas) return;
 
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    let audioCtx: AudioContext | null = null;
-    let analyser: AnalyserNode | null = null;
-    let source: MediaElementAudioSourceNode | null = null;
     let rafId = 0;
-    let isConnected = false;
     let cancelled = false;
 
     function resize() {
@@ -41,7 +37,7 @@ export default function Waveform({ audioRef, isPaused }: WaveformProps) {
     resize();
 
     function drawIdle() {
-      if (isConnected || cancelled || !ctx || !canvas) return;
+      if (cancelled || !ctx || !canvas) return;
       const W = canvas.width;
       const H = canvas.height;
       const dpr = window.devicePixelRatio || 1;
@@ -74,12 +70,11 @@ export default function Waveform({ audioRef, isPaused }: WaveformProps) {
         ctx.closePath();
         ctx.fill();
       }
-      rafId = requestAnimationFrame(drawIdle);
+      rafId = requestAnimationFrame(loop);
     }
 
-    function drawFreq() {
-      if (cancelled || !ctx || !canvas || !analyser) return;
-      rafId = requestAnimationFrame(drawFreq);
+    function drawFreq(analyser: AnalyserNode) {
+      if (cancelled || !ctx || !canvas) return;
       const W = canvas.width;
       const H = canvas.height;
       const dpr = window.devicePixelRatio || 1;
@@ -124,49 +119,24 @@ export default function Waveform({ audioRef, isPaused }: WaveformProps) {
         ctx.closePath();
         ctx.fill();
       }
+      rafId = requestAnimationFrame(loop);
     }
 
-    function connect() {
-      if (isConnected || !audioEl) return;
-      try {
-        const AudioContextCtor =
-          window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
-        audioCtx = new AudioContextCtor();
-        analyser = audioCtx.createAnalyser();
-        analyser.fftSize = 64;
-        analyser.smoothingTimeConstant = 0.8;
-        source = audioCtx.createMediaElementSource(audioEl);
-        source.connect(analyser);
-        analyser.connect(audioCtx.destination);
-        isConnected = true;
-
-        cancelAnimationFrame(rafId);
-        drawFreq();
-      } catch (e) {
-        console.warn("[waveform] Web Audio error:", (e as Error).message);
-      }
+    // Re-checks each frame whether the shared analyser (owned by the radio
+    // provider) has connected yet — it may connect slightly after this
+    // component mounts, or already be connected from before navigation.
+    function loop() {
+      const analyser = analyserRef.current;
+      if (analyser) drawFreq(analyser);
+      else drawIdle();
     }
 
-    drawIdle();
-
-    const onPlay = () => connect();
-    if (audioEl.src && !audioEl.paused) {
-      connect();
-    } else {
-      audioEl.addEventListener("play", onPlay);
-    }
+    loop();
 
     return () => {
       cancelled = true;
       cancelAnimationFrame(rafId);
       resizeObs.disconnect();
-      audioEl.removeEventListener("play", onPlay);
-      try {
-        source?.disconnect();
-        analyser?.disconnect();
-      } catch {
-        // ignore
-      }
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

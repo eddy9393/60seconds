@@ -12,6 +12,7 @@ import TopSupporters from "./TopSupporters";
 export default function RadioPlayer() {
   const {
     audioRef,
+    analyserRef,
     progressFillRef,
     elapsedRef,
     durationRef,
@@ -132,7 +133,7 @@ export default function RadioPlayer() {
                 )}
               </p>
 
-              <Waveform audioRef={audioRef} isPaused={!isPlaying} />
+              <Waveform audioRef={audioRef} analyserRef={analyserRef} isPaused={!isPlaying} />
 
               {isLoggedIn && (
                 <div id="earnSecondsWrap" className="earn-seconds-wrap">
