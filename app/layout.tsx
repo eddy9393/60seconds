@@ -3,6 +3,7 @@ import "./globals.css";
 import { AuthProvider } from "@/hooks/useAuth";
 import { RadioProvider } from "@/hooks/useRadioEngine";
 import ServiceWorkerRegister from "@/components/ServiceWorkerRegister";
+import { Analytics } from "@vercel/analytics/next";
 
 export const metadata: Metadata = {
   title: "60 Seconds FM",
@@ -42,6 +43,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <RadioProvider>{children}</RadioProvider>
         </AuthProvider>
         <ServiceWorkerRegister />
+        <Analytics />
       </body>
     </html>
   );
